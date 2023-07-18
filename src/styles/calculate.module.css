@@ -1,0 +1,92 @@
+.calculate-title {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 26px;
+    color: #000000;
+    padding-bottom: 10px;
+}
+
+.calculate-subtitle {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.calculate-inputNumber-div {
+    border: 0.5px solid #8E8E8E;
+    border-radius: 5px;
+    height: 40px;
+    width: 100%;
+}
+
+.calculate-tabs-content-title {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 14px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.calculate-tabs-content-general-div {
+    border: 0.5px solid #8C8C8C;
+    border-radius: 5px;
+    padding: 24px 16px;
+}
+
+.calculate-tabs-content-general-title {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 10px;
+    color: #000000;
+}
+
+.calculate-tabs-information-number {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #000000;
+}
+.calculate-tabs-information-rate {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #39DA00;
+}
+.calculate-tabs-information-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 20px;
+    color: #000000;
+}
+
+.calculate-tabs-button {
+    background: #0300B4;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    width: 100%;
+    height: 44px;
+}
+
+.calculate-tabs-button-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 18px;
+    color: #FFFFFF;
+    padding-right: 16px;
+}

@@ -39,7 +39,6 @@ const encrypt = (request) => {
 exports.encrypt = encrypt;
 const decrypt = (response) => {
     try {
-        console.log("received encryption: ", response);
         return JSON.parse(crypto_js_1.default.AES.decrypt(typeof response === "object" ? JSON.stringify(response) : response, key, {
             format: { stringify, parse },
         }).toString(crypto_js_1.default.enc.Utf8));

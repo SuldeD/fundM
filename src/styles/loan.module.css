@@ -1,0 +1,41 @@
+.loan-background-image {
+  background-image: url("/images/loan-bg.png");
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: black;
+  background-position: top;
+  position: relative;
+}
+
+.loan-col-padding {
+  padding: 80px 0;
+}
+
+.loan-title-text {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 48px;
+  color: #ffffff;
+}
+
+.loan-text {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 32px;
+  color: #ffffff;
+}
+
+.loan-paragraph {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 32px;
+  color: #ffffff;
+  padding-left: 30px;
+}

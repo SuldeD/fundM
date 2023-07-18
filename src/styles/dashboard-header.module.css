@@ -1,0 +1,27 @@
+.header-title-name {
+    font-family: 'Raleway', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 22px;
+    color: #000000;
+}
+
+.header-exchange-title {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 20px;
+    color: #A8A8A8;
+    text-align: center;
+}
+
+.header-subtitle {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(26, 33, 85, 0.5);   
+}

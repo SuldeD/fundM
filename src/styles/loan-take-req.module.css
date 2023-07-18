@@ -1,0 +1,134 @@
+.loanReq-title {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 22px;
+    color: #000000;
+    text-align: start;
+}
+
+.loanReq-description {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.loanReq-row-div {
+    border-top: 1px solid rgba(26, 33, 85, 0.2);
+    padding: 16px 0;
+}
+
+.loanReq-row-div-end {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(26, 33, 85, 0.2);
+}
+
+.loanReq-list-number {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 22px;
+    color: #000000;
+}
+
+.loanReq-list-title {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 16px;
+    color: #000000;
+    opacity: 0.4;
+}
+
+.loanReq-list-rate-title-1 {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 16px;
+    color: #000000;
+}
+
+.loanReq-list-rate-title-2 {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 16px;
+    color: #000000;
+    text-align: center;
+}
+
+.loanReq-list-currency-1 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    color: #000000;
+}
+
+.loanReq-list-currency-2 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    color: #000000;
+    text-align: center;
+}
+
+.loanReq-start {
+    position: absolute;
+    z-index: 1;
+    left: 17%;
+}
+
+.loanReq-list-button {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 14px;
+    color: #FFFFFF;
+}
+
+.loanReq-list-percent-title {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 16px;
+    color: #000000;
+    text-align: center;
+}
+
+.loanReq-list-percent {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    color: #39DA00;
+    text-align: center;
+}
+
+.loanReq-button {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+    color: #FFFFFF;
+    background: #0300B4;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    height: 35px;
+    width: 100%;
+}

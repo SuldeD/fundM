@@ -1,0 +1,314 @@
+.foundation-main-row {
+    background-color: #fff;
+    height: 100vh;
+    padding: 50px 0;
+    overflow: auto;
+}
+
+.foundation-title-name {
+    font-family: 'Raleway', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 22px;
+    color: #000000;
+}
+
+.foundation-exchange-title {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 20px;
+    color: #A8A8A8;
+}
+
+.foundation-subtitle {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(26, 33, 85, 0.5);
+}
+
+.foundation-slider-input {
+    background: #F2F2F2;
+    width: 100%;
+    border-radius: 12px;
+    height: 43px;
+}
+
+.foundation-slider-input-title {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.foundation-slider-price {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 22px;
+    color: #1A2155;
+    opacity: 0.5;
+}
+
+.foundation-rate-div {
+    background: #F2F2F2;
+    border-radius: 12px;
+    height: 43px;
+}
+
+.foundation-rate-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 22px;
+    color: #000000;
+}
+
+.foundation-button {
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    height: 60px;
+    width: 100%;
+}
+
+.foundation-button-active {
+    background: #0300B4;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    height: 60px;
+}
+
+.foundation-button-day-text {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 22px;
+    color: #000000;
+}
+
+.foundation-button-day-text-active {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 22px;
+    color: #FFFFFF;
+}
+
+.foundation-button-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 22px;
+    color: #000000;
+}
+
+.foundation-button-text-active {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    color: #FFFFFF;
+}
+
+.foundation-detail {
+    border: 0.5px solid #939393;
+    border-radius: 20px;
+    padding: 19px 26px;
+}
+
+.foundation-detail-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 10px;
+    color: rgba(26, 33, 85, 0.5);
+}
+
+.foundation-detail-maxValue {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    color: #000000;
+}
+
+.foundation-rate-profit {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    color: #39DA00;
+}
+
+.foundation-checkbox-text {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    text-decoration-line: underline;
+    color: #0300B4;
+}
+
+.foundation-button-back {
+    border: 1px solid #ACACAC;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    border-radius: 20px;
+    width: 211px;
+    height: 44px;
+}
+
+.foundation-button-back-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    color: #000000;
+    padding-right: 14px;
+}
+
+.foundation-button-contiune {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    width: 211px;
+    height: 44px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    color: #FFFFFF;
+}
+
+.foundation-modal-title {
+    font-family: 'Raleway', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: 0.03em;
+    text-decoration-line: underline;
+    color: #000000;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.foundation-modal-content-div {
+    background: rgba(26, 33, 85, 0.05);
+    border-radius: 20px;
+    padding: 100px 30px;
+    margin: 30px 0;
+}
+
+.foundation-modal-content-text {
+    font-family: 'Raleway', sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.03em;
+    text-align: justify;
+    color: #000000;
+}
+
+.foundation-modal-verify-title {
+    padding: 30px 0 25px 0;
+    justify-content: center;
+    text-align: center;
+}
+
+.foundation-modal-verify-button {
+    background: #0300B4;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    width: 100%;
+    height: 44px;
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+}
+
+.foundation-modal-verify-input {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    height: 44px;
+}
+
+.foundation-modal-complete-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24px;
+    color: #000000;
+    text-align: center;
+}
+
+.foundation-modal-complete-number {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 24px;
+    color: #0300B4;
+    text-align: center;
+}
+
+.foundation-change-div {
+    display: none;
+}
+
+.foundation-border-div {
+    border: 0.5px solid #000000;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.foundation-contract-text {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 14px;
+    color: #000000;
+}
+
+.foundation-change-title {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #0300B4;
+}
+
+.foundation-change-button-text {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    color: #000000;
+}
