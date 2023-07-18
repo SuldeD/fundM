@@ -58,9 +58,9 @@ export const Home = () => {
   ];
   return (
     <div>
-      <div className="bg-black bg-[url('/images/about.png')] bg-cover bg-top bg-no-repeat sm:py-[120px]">
+      <div className="bg-black bg-[url('/images/about.png')] bg-cover bg-top bg-no-repeat py-[120px]">
         <div className="container mx-auto flex justify-between">
-          <div className="w-[50%] md:m-[50px]">
+          <div className="w-full md:m-[50px]  lg:w-[50%]">
             <div className="text-[2.375rem] font-bold text-white">
               FundMe-тэй хамт бизнесийн илүү их амжилтанд хүрээрэй
             </div>
@@ -77,7 +77,7 @@ export const Home = () => {
             </Link>
           </div>
 
-          <div className="hidden md:flex">
+          <div className="hidden lg:flex">
             <div className="relative me-[14px] flex-row">
               <img src="/images/about-1.png" className="h-[254px] w-[254px]" />
               <img
@@ -93,11 +93,11 @@ export const Home = () => {
         </div>
       </div>
 
-      <div className="container mx-auto flex gap-[30px] py-[100px]">
+      <div className="container mx-auto flex-wrap justify-center gap-[30px] py-[100px] lg:flex">
         {openInto.map((el, idx) => (
           <div
             key={idx}
-            className="h-[410px] w-full rounded-[30px] bg-[#fff] px-[60px] py-[30px] shadow-custom"
+            className="mb-[20px] h-[410px] w-full rounded-[30px] bg-[#fff] px-[60px] py-[30px] shadow-custom lg:max-w-[374px]"
           >
             <img src={el.image} className="mx-auto" />
             <div className="mt-[23px]">
@@ -121,14 +121,14 @@ export const Home = () => {
           <img src="/images/medium-left-vector.png" />
         </div>
         <div className=" bg-black bg-[url('/images/fundNow-bg.png')] bg-cover bg-top bg-no-repeat py-[100px]">
-          <div className="container mx-auto flex justify-between">
+          <div className="container mx-auto justify-between md:flex">
             <div className="max-w-3xl items-center text-[22px] font-bold leading-[27px] text-[#fff]">
               ТА FUNDME-ЭЭС ХАМГИЙН БАГА ХҮҮТЭЙ 50,000₮ - 100,000,000₮ ЗЭЭЛЭХ
               БОЛОМЖТОЙ.
             </div>
             <button
               onClick={() => router.push("/login")}
-              className="h-[44px] w-[220px] rounded-[9px] bg-primary text-[14px] font-bold text-[#fff] hover:bg-sky-900"
+              className="mt-[20px] h-[44px] w-full rounded-[9px] bg-primary text-[14px] font-bold text-[#fff] hover:bg-sky-900 md:w-[220px]"
             >
               ХАЙХ
             </button>
@@ -143,12 +143,14 @@ export const Home = () => {
           FUND ME хэрхэн ажилладаг вэ?
         </div>
 
-        <div className="mx-auto mt-[75px] flex gap-[48px] px-[160px]">
-          {" "}
+        <div className="mx-auto mt-[75px] justify-center gap-[30px] px-[30px] lg:flex ">
           {workerDiagram.map((el, idx) => (
-            <div className="relative  h-[300px] w-[100%] rounded-[30px] bg-[#fff] p-[32px] shadow-custom">
+            <div
+              key={idx}
+              className="relative mb-[20px] h-[300px] w-[100%] min-w-[180px] rounded-[30px] bg-[#fff] p-[32px] shadow-custom lg:max-w-[230px]"
+            >
               {workerDiagram.length - 1 != idx && (
-                <div className="absolute right-[-62.5px] top-1/2 z-10">
+                <div className="absolute right-[-62.5px] top-1/2 z-10 hidden lg:inline">
                   <img width="100%" src="/images/arrow.svg" />
                 </div>
               )}
@@ -164,8 +166,8 @@ export const Home = () => {
         </div>
       </div>
       <div className="relative bg-[#E4E4E4]" id="app">
-        <div className="container mx-auto p-[78px]">
-          <div className="max-w-[430px] p-[20px]">
+        <div className="container mx-auto py-[78px]">
+          <div className="w-full p-[20px] lg:w-[430px]">
             <div className="text-[28px] font-bold leading-[34px] text-[#1a2155] ">
               FUND ME Аппликейшиг хэрхэн татаж авах вэ?
             </div>
@@ -182,7 +184,7 @@ export const Home = () => {
                 target="_blank"
               >
                 <img width={32} src="/images/playstore.svg" />
-                <div>
+                <div className="ms-[10px]">
                   <div className="text-left text-[8px] font-normal leading-[14px] text-[#fff]">
                     Android on app
                   </div>
@@ -200,7 +202,7 @@ export const Home = () => {
                 target="_blank"
               >
                 <img width={32} src="/images/appstore.svg" />
-                <div>
+                <div className="ms-[10px]">
                   <div className="text-left text-[8px] font-normal leading-[14px] text-[#fff]">
                     Download on the
                   </div>
@@ -212,7 +214,7 @@ export const Home = () => {
             </button>
           </div>
 
-          <div className="absolute right-10 top-0">
+          <div className="absolute right-10 top-0 hidden lg:flex">
             <img width="100%" src="/images/phone.png" />
           </div>
 

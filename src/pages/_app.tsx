@@ -10,7 +10,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  console.log("session", session);
   return (
     <>
       <Head>
@@ -18,7 +17,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <meta name="description" content="FundMe" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.svg" />
-      </Head>{" "}
+      </Head>
       <SessionProvider session={session}>
         <MainLayout>
           <Component {...pageProps} />
