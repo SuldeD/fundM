@@ -19,9 +19,7 @@ export const loanRouter = createTRPCRouter({
     });
     const raw2 = await res2.json();
     const accountStatus = decrypt(raw2);
-    console.log(accountStatus);
 
-    
     return accountStatus;
   }),
 
@@ -38,11 +36,11 @@ export const loanRouter = createTRPCRouter({
     });
     const raw2 = await res2.json();
     const accountStatus = decrypt(raw2);
-    console.log(accountStatus);
     return accountStatus;
   }),
 
   accountInfo: publicProcedure.query(async ({ ctx }) => {
+    console.log("accountInfo");
     const token = await getAccountToken(ctx);
     const res2 = await fetch("http://is.fundme.com/account/get/info", {
       method: "GET",
@@ -55,7 +53,6 @@ export const loanRouter = createTRPCRouter({
     });
     const raw2 = await res2.json();
     const accountStatus = decrypt(raw2);
-    console.log(accountStatus);
     return accountStatus;
   }),
 
@@ -79,7 +76,6 @@ export const loanRouter = createTRPCRouter({
       });
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
-      console.log(accountStatus);
       return accountStatus;
     }),
 
@@ -112,7 +108,6 @@ export const loanRouter = createTRPCRouter({
       });
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
-      console.log(accountStatus);
       return accountStatus;
     }),
 
@@ -169,7 +164,6 @@ export const loanRouter = createTRPCRouter({
       });
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
-      console.log(accountStatus);
       return accountStatus;
     }),
 
@@ -189,7 +183,6 @@ export const loanRouter = createTRPCRouter({
     );
     const raw2 = await res2.json();
     const accountStatus = decrypt(raw2);
-    console.log(accountStatus);
     return accountStatus;
   }),
 });
@@ -202,10 +195,6 @@ const getAccountToken = async (ctx: {
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   >;
 }) => {
-  const token = await ctx.prisma.account.findFirst({
-    where: {
-      userId: ctx.session?.user.id,
-    },
-  });
-  return token;
+  // console.log("getAccountToken", ctx?.session);
+  return (ctx?.session as any).token;
 };

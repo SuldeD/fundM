@@ -6,6 +6,8 @@ import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
 import { Loaderr } from "app/components/Loader";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { api } from "app/utils/api";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -177,9 +179,7 @@ export const Dashboard = () => {
   ];
 
   const { data } = useSession();
-
-  console.log(data, "session");
-
+  
   if (!data) {
     return <Loaderr />;
   } else {

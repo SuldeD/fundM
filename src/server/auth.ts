@@ -6,13 +6,10 @@ import {
   type DefaultSession,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "app/server/db";
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import { loanServiceHeaders } from "app/contants";
-import { randomBytes, randomUUID } from "crypto";
-import { api } from "app/utils/api";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -51,22 +48,38 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     session: async (message) => {
-      console.log("events this is message session", message);
+      console.log("events this is message session");
     },
     linkAccount: async (message) => {
-      console.log("events this is message linkAccount", message);
+      console.log("events this is message linkAccount");
     },
   },
   callbacks: {
     signIn: ({ user, account, profile, email, credentials }) => {
-      console.log("this is user", user, account, profile, email, credentials);
+      // console.log("this is user", user, account, profile, email, credentials);
       return true;
     },
     session: async ({ session, token, user }) => {
-      console.log("this is session", session, token, user);
+      console.log("this is session");
 
       // const { data } = api.loan.accountInfo.useQuery();
       // console.log(data);
+      // let info = (session as any).info;
+      // if (!info) {
+      //   console.log("account info fetch");
+
+      //   const res2 = await fetch("http://is.fundme.com/account/get/info", {
+      //     method: "GET",
+      //     credentials: "same-origin",
+      //     headers: {
+      //       ...loanServiceHeaders,
+      //       Cookie: token.picture!,
+      //       "Session-Token": token.token as string,
+      //     },
+      //   });
+      //   const raw2 = await res2.json();
+      //   info = decrypt(raw2);
+      // }
       return {
         ...session,
         user: {
@@ -74,16 +87,22 @@ export const authOptions: NextAuthOptions = {
           // ...data,
           id: token.id,
         },
+        // info: { ...info },
+        token: {
+          access_token: token.token,
+          id_token: token.picture,
+        },
       };
     },
     jwt: async ({ token, user, account }) => {
-      console.log("this is token", token, user, account);
+      console.log("this is token");
 
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
-        token.token = randomUUID?.() ?? randomBytes(32).toString("hex");
+        token.token = (user as any).access_token;
+        token.picture = (user as any).id_token;
       }
       return token;
     },
@@ -137,7 +156,6 @@ export const authOptions: NextAuthOptions = {
           const account = decrypt(raw2);
 
           if (res.ok && account.success) {
-            console.log(account);
             const pacc = await prisma.account.findFirst({
               where: {
                 userId: account.account.user_id,
@@ -179,6 +197,8 @@ export const authOptions: NextAuthOptions = {
               id: account.account.user_id,
               name: account.account.first_name,
               email: account.account.phone,
+              id_token: cookie,
+              access_token: token,
             };
           }
         } catch (e) {

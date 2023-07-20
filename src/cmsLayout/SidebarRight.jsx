@@ -12,12 +12,10 @@ import { FoundationReq } from "../components/foundationReq";
 import { api } from "app/utils/api";
 const { Sider } = Layout;
 
-export const SidebarRightComponent = () => {
+export const SidebarRightComponent = ({data}) => {
   const router = useRouter();
   const myFundTabKey = "1";
   // const { data } = useSession();
-  const { data } = api.loan.accountInfo.useQuery();
-  console.log(data);
 
   const NavBars = {
     "/dashboard/profile": CalculateComponent,
@@ -63,8 +61,8 @@ export const SidebarRightComponent = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["sidebar-right-profile-name"]}>
-                          {data?.account.first_name
-                            ? data?.account.first_name
+                          {data?.account?.first_name
+                            ? data?.account?.first_name
                             : "."}
                         </div>
                       </Col>

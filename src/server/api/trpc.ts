@@ -16,7 +16,6 @@ import { getServerAuthSession } from "app/server/auth";
 import { prisma } from "app/server/db";
 import { IncomingMessage } from "http";
 import ws from "ws";
-import EventEmitter from "events";
 import { NodeHTTPCreateContextFnOptions } from "@trpc/server/dist/adapters/node-http";
 
 /**
@@ -30,7 +29,7 @@ import { NodeHTTPCreateContextFnOptions } from "@trpc/server/dist/adapters/node-
 type CreateContextOptions = {
   session: Session | null;
 };
-const ee = new EventEmitter();
+// const ee = new EventEmitter();
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
  * it from here.
@@ -45,7 +44,6 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
-    ee,
   };
 };
 

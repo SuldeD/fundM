@@ -16,19 +16,30 @@ export const ProtectedLayout = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const { status } = useSession();
+  
   useRequireAuth();
+
   if (status == "loading") {
     return <Loaderr />;
   }
 
   const { data: dan } = api.loan.accountStatusDan.useQuery();
+
   function buttonClick() {
     window.open(dan.https_redirect, "_blank");
   }
 
   const { data } = api.loan.accountStatus.useQuery();
+
+  const {data: accountInfo, refetch: requestInfo } = api.loan.accountInfo.useQuery(undefined, {
+    enabled: false
+  });
+
   useEffect(() => {
-    data?.stat.dan_status == 0 && showModal();
+    requestInfo();
+  }, []);
+
+  useEffect(() => {
   }, [data?.stat.dan_status]);
 
   const [checked, setChecked] = useState(false);
@@ -374,7 +385,7 @@ export const ProtectedLayout = ({ children }) => {
       <Layout>
         <Content>{children}</Content>
       </Layout>
-      <SidebarRightComponent />
+      <SidebarRightComponent data={accountInfo}/>
     </Layout>
   );
 };
