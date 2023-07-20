@@ -2,8 +2,13 @@ import { Row, Col, Statistic, Tabs, Table, Image } from "antd";
 import styles from "../../../styles/fund.module.css";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
+import { useSession } from "next-auth/react";
+import { useRequireAuth } from "app/utils/auth";
+import { Loaderr } from "app/components/Loader";
 
 export const FundHistory = () => {
+  const { data } = useSession();
+
   // @ts-ignore
   const { Countdown } = Statistic;
   // @ts-ignore
@@ -91,7 +96,7 @@ export const FundHistory = () => {
       ),
     },
   ];
-  const data = [
+  const dataTable = [
     {
       id: 1,
       loanTotal: 100000000,
@@ -265,7 +270,7 @@ export const FundHistory = () => {
                 pageSize: 10,
                 position: ["bottomCenter"],
               }}
-              dataSource={data}
+              dataSource={dataTable}
               rowKey={"id"}
             />
           </Col>
@@ -321,24 +326,28 @@ export const FundHistory = () => {
       ),
     },
   ];
-  return (
-    <Row justify="center" className={styles["fund-main-row"]}>
-      <Col span={22}>
-        <Row gutter={[0, 20]}>
-          <HeaderDashboard
-            title={"Миний санхүүжилт"}
-            subTitle={
-              " Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-            }
-          />
+  if (!data) {
+    return <Loaderr />;
+  } else {
+    return (
+      <Row justify="center" className={styles["fund-main-row"]}>
+        <Col span={22}>
+          <Row gutter={[0, 20]}>
+            <HeaderDashboard
+              title={"Миний санхүүжилт"}
+              subTitle={
+                " Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
+              }
+            />
 
-          <Col span={24}>
-            <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
-          </Col>
-        </Row>
-      </Col>
-    </Row>
-  );
+            <Col span={24}>
+              <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    );
+  }
 };
 
 export default FundHistory;

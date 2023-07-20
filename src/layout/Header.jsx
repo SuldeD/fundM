@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Button, Col, Layout, Row, Menu, Image, Drawer } from "antd";
+import { Col, Drawer, Layout, Menu, Row } from "antd";
 import style from "../styles/Header.module.css";
 import { MenuOutlined } from "@ant-design/icons";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 
 const { Header } = Layout;
@@ -107,134 +107,152 @@ export const HeaderComponent = () => {
   };
 
   return (
-    <Header className={style["home-header-style"]}>
-      <Row justify="center">
-        <Col xs={20} lg={22}>
-          <Row align="middle" wrap={false} justify="space-between">
-            <Col flex="auto">
-              <Link href="/">
-                <Image
-                  width={180}
-                  src={"/logo.svg"}
-                  preview={false}
-                  alt="Header Logo"
-                />
-              </Link>
-            </Col>
-            <Col xs={0} lg={12} xl={15} xxl={16}>
-              <Menu
-                selectedKeys={keys}
-                theme="light"
-                mode="horizontal"
-                items={items}
-                className={style["header-menu-item"]}
-                style={{
-                  justifyContent: "center",
-                  lineHeight: 3,
-                  borderBottom: 0,
-                }}
-              />
-            </Col>
-            <Col xs={0} lg={7} xl={5} xxl={4}>
-              <Row wrap={false} justify="end" gutter={24}>
-                <Col flex="none">
-                  <Link href="/signup">
-                    <Button type="text" className={style["sign-up-button"]}>
-                      <div>БҮРТГҮҮЛЭХ</div>
-                    </Button>
-                  </Link>
-                </Col>
-                <Col flex="none">
-                  <Button
-                    type="primary"
-                    className={style["login-button"]}
-                    onClick={() => void signIn()}
-                  >
-                    НЭВТРЭХ
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-            <Col lg={0}>
-              <Row align="middle">
-                <Button
-                  type="text"
-                  className={style["hamburger-button"]}
-                  onClick={showDrawer}
-                >
-                  <MenuOutlined style={{ fontSize: 30, color: "#0300B4" }} />
-                </Button>
-              </Row>
-            </Col>
-            <Drawer
-              title={
-                <Row style={{ height: 68 }} align="middle">
-                  <Image width={180} src={"/logo.svg"} preview={false} />
-                </Row>
-              }
-              placement="right"
-              onClose={onClose}
-              open={open}
-              width="min(400px,100%)"
+    <Header className="flex h-[100px] justify-between bg-[#fff] px-[50px] py-[22px]">
+      <Link href="/">
+        <img src={"/logo.svg"} alt="Header Logo" className="w-[180px]" />
+      </Link>
+      <Menu
+        selectedKeys={keys}
+        theme="light"
+        mode="horizontal"
+        items={items}
+        className="text-[rgb(0, 0 ,0, 0.10)] hidden w-[50%] scroll-smooth border-0  font-lato text-[16px] font-normal lg:flex"
+      />
+      <div className="hidden gap-[24px] lg:flex">
+        <p>
+          <Link
+            href="/signup"
+            className="border-b border-primary font-inter text-[14px] font-bold leading-[14px] text-primary"
+          >
+            БҮРТГҮҮЛЭХ
+          </Link>
+        </p>
+
+        <button
+          onClick={() => void signIn()}
+          className=" w-[127px] rounded-[9px] bg-primary text-center text-[#fff]"
+        >
+          НЭВТРЭХ
+        </button>
+      </div>
+      <div>
+        <MenuOutlined
+          onClick={showDrawer}
+          className="flex text-[30px] text-primary active:text-sky-900 lg:hidden"
+        />
+
+        <Drawer
+          title={<img src={"/logo.svg"} className="h w-[180px]" />}
+          placement="right"
+          onClose={onClose}
+          open={open}
+          width="min(400px,100%)"
+        >
+          {phoneItems.map((el, idx) => (
+            <Col
+              span={24}
+              onClick={() => router.push(el.link)}
+              key={`phone-${idx}`}
             >
-              <Row gutter={[0, 15]}>
-                {phoneItems.map((el, idx) => (
-                  <Col
-                    span={24}
-                    onClick={() => router.push(el.link)}
-                    key={`phone-${idx}`}
-                  >
-                    <Row
-                      justify="center"
-                      gutter={10}
-                      align="middle"
-                      className={style["drawer-title-div"]}
-                      onClick={onClose}
-                    >
-                      <Col flex="none">
-                        <Image width={30} src={el.image} preview={false} />
-                      </Col>
-                      <Col flex="auto">
-                        <div className={style["drawer-title-text"]}>
-                          {el.label}
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
-                ))}
-                <Col span={24} className={style["drawer-account-pages-title"]}>
-                  Хэрэглэгчийн хуудсууд
+              <Row
+                justify="center"
+                gutter={10}
+                align="middle"
+                className={style["drawer-title-div"]}
+                onClick={onClose}
+              >
+                <img width={30} src={el.image} className="w-[30px]" />
+
+                <Col flex="auto">
+                  <div className={style["drawer-title-text"]}>{el.label}</div>
                 </Col>
-                {accountPages.map((el, idx) => (
-                  <Col
-                    span={24}
-                    onClick={() => router.push(el.link)}
-                    key={`accpg-${idx}`}
-                  >
-                    <Row
-                      justify="center"
-                      gutter={10}
-                      align="middle"
-                      className={style["drawer-title-div"]}
-                      onClick={onClose}
-                    >
-                      <Col flex="none">
-                        <Image width={30} src={el.image} preview={false} />
-                      </Col>
-                      <Col flex="auto">
-                        <div className={style["drawer-title-text"]}>
-                          {el.label}
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
-                ))}
               </Row>
-            </Drawer>
-          </Row>
-        </Col>
-      </Row>
+            </Col>
+          ))}
+          <Col span={24} className={style["drawer-account-pages-title"]}>
+            Хэрэглэгчийн хуудсууд
+          </Col>
+          {accountPages.map((el, idx) => (
+            <Col
+              span={24}
+              onClick={() => router.push(el.link)}
+              key={`accpg-${idx}`}
+            >
+              <Row
+                justify="center"
+                gutter={10}
+                align="middle"
+                className={style["drawer-title-div"]}
+                onClick={onClose}
+              >
+                <img src={el.image} className="w-[30px]" />
+
+                <Col flex="auto">
+                  <div className={style["drawer-title-text"]}>{el.label}</div>
+                </Col>
+              </Row>
+            </Col>
+          ))}
+        </Drawer>
+      </div>
     </Header>
+    // <Header className={style["home-header-style"]}>
+    //   <Row justify="center">
+    //     <Col xs={20} lg={22}>
+    //       <Row align="middle" wrap={false} justify="space-between">
+    //         <Col flex="auto">
+
+    //         </Col>
+    //         <Col xs={0} lg={12} xl={15} xxl={16}>
+    //           <Menu
+    //             selectedKeys={keys}
+    //             theme="light"
+    //             mode="horizontal"
+    //             items={items}
+    //             className={style["header-menu-item"]}
+    //             style={{
+    //               justifyContent: "center",
+    //               lineHeight: 3,
+    //               borderBottom: 0,
+    //             }}
+    //           />
+    //         </Col>
+    //         <Col xs={0} lg={7} xl={5} xxl={4}>
+    //           <Row wrap={false} justify="end" gutter={24}>
+    //             <Col flex="none">
+    //               <Link href="/signup">
+    //                 <Button type="text" className={style["sign-up-button"]}>
+    //                   <div>БҮРТГҮҮЛЭХ</div>
+    //                 </Button>
+    //               </Link>
+    //             </Col>
+    //             <Col flex="none">
+    //               <Button
+    //                 type="primary"
+    //                 className={style["login-button"]}
+    //                 onClick={() => void signIn()}
+    //               >
+    //                 НЭВТРЭХ
+    //               </Button>
+    //             </Col>
+    //           </Row>
+    //         </Col>
+    //         <Col lg={0}>
+    //           <Row align="middle">
+    //             <Button
+    //               type="text"
+    //               className={style["hamburger-button"]}
+    //               onClick={showDrawer}
+    //             >
+    //               <MenuOutlined style={{ fontSize: 30, color: "#0300B4" }} />
+    //             </Button>
+    //           </Row>
+    //         </Col>
+    //
+    //       </Row>
+    //     </Col>
+    //   </Row>
+    // </Header>
   );
 };
 

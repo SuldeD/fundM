@@ -4,7 +4,10 @@ import { type AppType } from "next/app";
 import { api } from "app/utils/api";
 import "app/styles/globals.css";
 import Head from "next/head";
+import mnMN from "antd/locale/mn_MN";
+import { ConfigProvider, App as AntdApp } from "antd";
 import MainLayout from "./mainLayout";
+import { AppWrapper } from "app/context/appContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -19,9 +22,22 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <SessionProvider session={session}>
-        <MainLayout>
-          <Component {...pageProps} />
-        </MainLayout>
+        <AntdApp>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: "#0300B4",
+              },
+            }}
+            locale={mnMN}
+          >
+            <AppWrapper>
+              <MainLayout>
+                <Component {...pageProps} />
+              </MainLayout>
+            </AppWrapper>
+          </ConfigProvider>
+        </AntdApp>
       </SessionProvider>
     </>
   );

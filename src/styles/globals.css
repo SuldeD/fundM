@@ -1,10 +1,189 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ant-btn-text:not(:disabled):hover {
+  color: #0300b4;
+  background-color: #fff;
+  font-weight: 700;
+}
+
+.ant-menu-light.ant-menu-root.ant-menu-inline {
+  border-inline-end: none;
+}
+.ant-menu-light.ant-menu-root.ant-menu-vertical {
+  border-inline-end: none;
+}
+
+.ant-table-wrapper .ant-table {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #828282;
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th {
+  background: none;
+  color: #828282;
+}
+
+.ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  display: none;
+}
+
+.ant-input-number .ant-input-number-input {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 22px;
+  color: #000000;
+  padding: 0 15px;
+  text-align: center;
+}
+
+.ant-slider .ant-slider-track {
+  background: #0300b4;
+  border-radius: 4.5px;
+}
+
+.ant-slider:hover .ant-slider-track {
+  background: #0300b4;
+}
+
+.ant-slider-horizontal .ant-slider-track {
+  height: 5px;
+}
+
+.ant-slider {
+  margin: 5px 0 25px 0;
+}
+
+.ant-checkbox {
+  border: 2px solid #0300b4;
+  backdrop-filter: blur(5px);
+  border-radius: 4px;
+}
+.ant-checkbox .ant-checkbox-inner {
+  border-radius: 0;
+}
+
+.ant-modal-root .ant-modal-mask {
+  background: rgba(196, 196, 196, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.ant-modal .ant-modal-content {
+  border-radius: 20px;
+}
+
+.ant-modal .ant-modal-close-x {
+  background-color: #0300b4;
+}
+
+.ant-modal .ant-modal-close {
+  color: #fff;
+}
+
+.ant-tabs-nav-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.ant-tabs-tab {
+  width: 50%;
+  justify-content: center;
+}
+
+.ant-tabs-top > .ant-tabs-nav::before {
+  border-bottom: 3px solid #e5e5e5;
+}
+
+.ant-tabs .ant-tabs-tab-btn {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  color: #0300b4;
+}
+
+.ant-tabs-top > .ant-tabs-nav .ant-tabs-ink-bar {
+  height: 5px;
+  border-radius: 5px;
+}
+
+.ant-tabs-top > .ant-tabs-nav {
+  margin: 0 0 33px 0;
+}
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  background: #f2f2f2;
+  border-radius: 20px;
+  height: 36px;
+  border: none;
+  align-items: center;
+  padding: 0 19px;
+}
+
+.ant-select-single .ant-select-selector {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.ant-select .ant-select-arrow {
+  color: #000000;
+  font-size: 10px;
+}
+
+.ant-picker .ant-picker-input > input {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  text-align: center;
+  text-decoration-line: underline;
+  color: #1a2155;
+}
+
+.ant-collapse-borderless {
+  background-color: transparent;
+}
+
+/* .ant-checkbox-disabled .ant-checkbox-inner {
+    background: #0300b4;
+    border-color: #0300b4;
+  }
+  .ant-checkbox-disabled .ant-checkbox-inner:after {
+    border-color: white;
+  } */

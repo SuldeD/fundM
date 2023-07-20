@@ -3,12 +3,20 @@ import { Row, Col, Tabs, Upload, Collapse, Typography, Image } from "antd";
 import styles from "../../../styles/profile.module.css";
 import { HeaderDashboard } from "../../../components/header";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { Loaderr } from "app/components/Loader";
+import { api } from "app/utils/api";
 const { Panel } = Collapse;
 const { Paragraph } = Typography;
 
 export const Profile = () => {
-  const [editNumber, seteditNumber] = useState(99234567);
-  const [editEmail, setEditEmail] = useState("nomin@fundme.mn");
+  const { data } = api.loan.accountInfo.useQuery();
+  const { data: status } = api.loan.accountStatus.useQuery();
+  console.log(status);
+
+  const [editNumber, seteditNumber] = useState(data?.account.phone);
+  const [editEmail, setEditEmail] = useState(`${data?.account.email}`);
+
   // @ts-ignore
   const onChange = (key) => {};
   const [loading, setLoading] = useState(false);
@@ -95,7 +103,9 @@ export const Profile = () => {
                     </Col>
                     <Col span={24}>
                       <div className={styles["profile-information-name"]}>
-                        Ариунзаяа
+                        {data?.account.last_name
+                          ? data?.account.last_name
+                          : "."}
                       </div>
                     </Col>
                   </Row>
@@ -109,7 +119,9 @@ export const Profile = () => {
                     </Col>
                     <Col span={24}>
                       <div className={styles["profile-information-name"]}>
-                        Ариунзаяа
+                        {data?.account.first_name
+                          ? data?.account.first_name
+                          : "."}
                       </div>
                     </Col>
                   </Row>
@@ -230,7 +242,7 @@ export const Profile = () => {
                         </Col>
                         <Col flex="none">
                           <div className={styles["profile-backaccount-value"]}>
-                            Хаан Банк
+                            {data?.bank_account.bank_name}
                           </div>
                         </Col>
                       </Row>
@@ -244,7 +256,7 @@ export const Profile = () => {
                         </Col>
                         <Col flex="none">
                           <div className={styles["profile-backaccount-value"]}>
-                            5023423423
+                            {data?.bank_account.account_num}
                           </div>
                         </Col>
                       </Row>
@@ -470,24 +482,27 @@ export const Profile = () => {
       ),
     },
   ];
-
-  return (
-    <Row justify="center" className={styles["profile-main-row"]}>
-      <Col span={22}>
-        <Row gutter={[0, 20]}>
-          <HeaderDashboard
-            title={"Миний мэдээлэл"}
-            subTitle={
-              "Та банкны мэдээллээ өөрчлөх бол манай байгууллагын таньд ойрхон салбарт хандана уу."
-            }
-          />
-          <Col span={24}>
-            <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
-          </Col>
-        </Row>
-      </Col>
-    </Row>
-  );
+  if (!data) {
+    return <Loaderr />;
+  } else {
+    return (
+      <Row justify="center" className={styles["profile-main-row"]}>
+        <Col span={22}>
+          <Row gutter={[0, 20]}>
+            <HeaderDashboard
+              title={"Миний мэдээлэл"}
+              subTitle={
+                "Та банкны мэдээллээ өөрчлөх бол манай байгууллагын таньд ойрхон салбарт хандана уу."
+              }
+            />
+            <Col span={24}>
+              <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    );
+  }
 };
 
 export default Profile;

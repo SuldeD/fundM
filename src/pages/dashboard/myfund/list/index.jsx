@@ -1,8 +1,8 @@
 import { Row, Col, Table, Image, Button } from "antd";
 import styles from "@/styles/myfund-list.module.css";
-import { numberToCurrency } from "@/helpers/number.helpers";
-import { HeaderDashboard } from "@/components/header";
-import { useAppContext } from "@/context/appContext";
+import { numberToCurrency } from "../../../../utils/number.helpers";
+import { HeaderDashboard } from "../../../../components/header";
+import { useAppContext } from "../../../../context/appContext";
 import { useRouter } from "next/router";
 
 export const List = () => {
@@ -15,6 +15,7 @@ export const List = () => {
       key: "id",
       align: "center",
       width: "6%",
+      // @ts-ignore
       render: (id) => (
         <div className={styles["myfund-tabs-content-table-id"]}>{id}</div>
       ),
@@ -25,6 +26,7 @@ export const List = () => {
       key: "loanTotal",
       align: "center",
       width: "23%",
+      // @ts-ignore
       render: (loanTotal) => (
         <div className={styles["myfund-tabs-content-table-number"]}>
           {numberToCurrency(loanTotal)}
@@ -37,6 +39,7 @@ export const List = () => {
       key: "type",
       align: "center",
       width: "23%",
+      // @ts-ignore
       render: (type) =>
         type === "Өгөх хүсэлт" ? (
           <div className={styles["myfund-tabs-2-content-table-type-text"]}>
@@ -54,6 +57,7 @@ export const List = () => {
       key: "rate",
       align: "center",
       width: "15%",
+      // @ts-ignore
       render: (rate) => (
         <div className={styles["myfund-tabs-content-table-number"]}>{rate}</div>
       ),
@@ -64,6 +68,7 @@ export const List = () => {
       key: "completion",
       align: "center",
       width: "23%",
+      // @ts-ignore
       render: (completion) => (
         <div className={styles["myfund-tabs-content-table-number"]}>
           {completion}
@@ -290,6 +295,7 @@ export const List = () => {
           <Col span={24}>
             <Table
               scroll={{ x: 430 }}
+              // @ts-ignore
               columns={columns}
               pagination={false}
               dataSource={dataLoanAll}
@@ -310,6 +316,7 @@ export const List = () => {
           <Col span={24}>
             <Table
               scroll={{ x: 430 }}
+              // @ts-ignore
               columns={columns}
               pagination={false}
               dataSource={dataFoundataionAll}

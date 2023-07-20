@@ -7,6 +7,8 @@ export default function PopupModal({
   // @ts-ignore
   closeModal,
   // @ts-ignore
+  modalWidth,
+  // @ts-ignore
   text,
   // @ts-ignore
   buttonText,
@@ -17,21 +19,24 @@ export default function PopupModal({
   // @ts-ignore
   customDiv,
   // @ts-ignore
+  // @ts-ignore
   closableM,
   // @ts-ignore
   buttonClick,
+  // @ts-ignore
+  textAlign,
 }) {
   return (
     <Modal
       centered
-      width={378}
+      width={modalWidth ? modalWidth : 378}
       title={null}
       onCancel={closeModal}
       open={open}
       footer={null}
-      closable={closableM ? false : true}
+      closable={false}
     >
-      <Row justify="center" gutter={[0, 30]} style={{ padding: "30px 0" }}>
+      <Row justify="center" gutter={[0, 30]} className="py-[20px]">
         <Col span={24}>
           <Row justify="center">
             {iconPath && (
@@ -52,8 +57,8 @@ export default function PopupModal({
           </Col>
         )}
 
+        {text && text}
         <Col span={18}>
-          {text && <p className={styles["modal-body-text"]}>{text}</p>}
           <Col span={20} style={{ margin: "0 auto" }}>
             {buttonText && (
               <Button

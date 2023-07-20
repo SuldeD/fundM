@@ -4,10 +4,11 @@ import { RightOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../components/header";
 import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
+import { Loaderr } from "app/components/Loader";
+import { useSession } from "next-auth/react";
 
 export const Dashboard = () => {
   const router = useRouter();
-
   const columns = [
     {
       title: "Зээлийн хэмжээ",
@@ -68,7 +69,7 @@ export const Dashboard = () => {
       ),
     },
   ];
-  const data = [
+  const dataTable = [
     {
       id: 1,
       price: 100000000,
@@ -175,112 +176,122 @@ export const Dashboard = () => {
     },
   ];
 
-  return (
-    <Row justify="center" className={styles["dashboard-main-row"]}>
-      <Col span={22}>
-        <Row justify="center" align="middle" gutter={[0, 30]}>
-          <HeaderDashboard title={"Цахим бирж"} subTitle={undefined} />
-          <Col span={24}>
-            <Row justify="space-between" gutter={20}>
-              <Col xs={24} lg={12}>
-                <Row
-                  className={styles["dashboard-loan-intro-div"]}
-                  gutter={[0, 10]}
+  const { data } = useSession();
+
+  console.log(data, "session");
+
+  if (!data) {
+    return <Loaderr />;
+  } else {
+    return (
+      <Row justify="center" className={styles["dashboard-main-row"]}>
+        <Col span={22}>
+          <Row justify="center" align="middle" gutter={[0, 30]}>
+            <HeaderDashboard title={"Цахим бирж"} subTitle={undefined} />
+            <Col span={24}>
+              <Row justify="space-between" gutter={20}>
+                <Col xs={24} lg={12}>
+                  <Row
+                    className={styles["dashboard-loan-intro-div"]}
+                    gutter={[0, 10]}
+                  >
+                    <Col span={24}>
+                      <div className={styles["dashboard-loan-intro-title"]}>
+                        Зээл өгөх хүсэлт
+                      </div>
+                    </Col>
+                    <Col span={24}>
+                      <div
+                        className={styles["dashboard-loan-price-title-text"]}
+                      >
+                        Нийт хэмжээ
+                      </div>
+                    </Col>
+                    <Col span={24}>
+                      <div className={styles["dashboard-loan-price-text"]}>
+                        {numberToCurrency(45000000)}
+                      </div>
+                    </Col>
+                    <Col span={24}>
+                      <Button
+                        className={styles["dashboard-loan-finance-button"]}
+                        type="primary"
+                        onClick={() => router.push("/dashboard/loan/")}
+                      >
+                        Зээл авах
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col xs={24} lg={12}>
+                  <Row className={styles["dashboard-loan-intro-div"]}>
+                    <Col span={10}>
+                      <Row gutter={[0, 42]}>
+                        <Col span={24}>
+                          <div className={styles["dashboard-loan-intro-title"]}>
+                            Зарласан хүү
+                          </div>
+                        </Col>
+                        <Col span={24}>
+                          <div className={styles["dashboard-loan-son-number"]}>
+                            1.5 %
+                          </div>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col span={14}>
+                      <Image
+                        height="100%"
+                        src={"./images/loan-image.svg"}
+                        preview={false}
+                        alt="teller"
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
+            <Col span={24} className={styles["dashboard-bg-image"]}>
+              <Row justify="end" align="bottom" style={{ height: "100%" }}>
+                <Button
+                  className={styles["dashboard-bg-image-button"]}
+                  type="primary"
                 >
-                  <Col span={24}>
-                    <div className={styles["dashboard-loan-intro-title"]}>
-                      Зээл өгөх хүсэлт
-                    </div>
-                  </Col>
-                  <Col span={24}>
-                    <div className={styles["dashboard-loan-price-title-text"]}>
-                      Нийт хэмжээ
-                    </div>
-                  </Col>
-                  <Col span={24}>
-                    <div className={styles["dashboard-loan-price-text"]}>
-                      {numberToCurrency(45000000)}
-                    </div>
-                  </Col>
-                  <Col span={24}>
-                    <Button
-                      className={styles["dashboard-loan-finance-button"]}
-                      type="primary"
-                      onClick={() => router.push("/dashboard/loan/")}
-                    >
-                      Зээл авах
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-              <Col xs={24} lg={12}>
-                <Row className={styles["dashboard-loan-intro-div"]}>
-                  <Col span={10}>
-                    <Row gutter={[0, 42]}>
-                      <Col span={24}>
-                        <div className={styles["dashboard-loan-intro-title"]}>
-                          Зарласан хүү
-                        </div>
-                      </Col>
-                      <Col span={24}>
-                        <div className={styles["dashboard-loan-son-number"]}>
-                          1.5 %
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col span={14}>
-                    <Image
-                      height="100%"
-                      src={"./images/loan-image.svg"}
-                      preview={false}
-                      alt="teller"
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={24} className={styles["dashboard-bg-image"]}>
-            <Row justify="end" align="bottom" style={{ height: "100%" }}>
-              <Button
-                className={styles["dashboard-bg-image-button"]}
-                type="primary"
-              >
-                Дэлгэрэнгүй {<RightOutlined />}
-              </Button>
-            </Row>
-          </Col>
-          <Col span={24}>
-            <Row gutter={[0, 20]} justify="start">
-              <Col flex="none">
-                <div className={styles["dashboard-complete-order-title"]}>
-                  Биелсэн захиалгууд
-                </div>
-              </Col>
-              <Col span={24}>
-                <Row>
-                  <Col span={24}>
-                    <Table
-                      scroll={{ x: 430 }}
-                      // @ts-ignore
-                      columns={columns}
-                      pagination={{
-                        pageSize: 10,
-                        position: ["bottomCenter"],
-                      }}
-                      dataSource={data}
-                      rowKey={"id"}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </Col>
-    </Row>
-  );
+                  Дэлгэрэнгүй {<RightOutlined />}
+                </Button>
+              </Row>
+            </Col>
+            <Col span={24}>
+              <Row gutter={[0, 20]} justify="start">
+                <Col flex="none">
+                  <div className={styles["dashboard-complete-order-title"]}>
+                    Биелсэн захиалгууд
+                  </div>
+                </Col>
+                <Col span={24}>
+                  <Row>
+                    <Col span={24}>
+                      <Table
+                        scroll={{ x: 430 }}
+                        // @ts-ignore
+                        columns={columns}
+                        pagination={{
+                          pageSize: 10,
+                          position: ["bottomCenter"],
+                        }}
+                        dataSource={dataTable}
+                        rowKey={"id"}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    );
+  }
 };
 
 export default Dashboard;

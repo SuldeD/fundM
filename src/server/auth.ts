@@ -6,35 +6,20 @@ import {
   type DefaultSession,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import OAuthProvider from "next-auth/providers/oauth";
 
-import { cookies, headers } from "next/headers";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "app/server/db";
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import { loanServiceHeaders } from "app/contants";
-import { getSession } from "next-auth/react";
 import { randomBytes, randomUUID } from "crypto";
+import { api } from "app/utils/api";
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 const prismaAdapter = PrismaAdapter(prisma);
 
@@ -60,11 +45,6 @@ prismaAdapter.linkAccount = async (data) => {
   });
 };
 
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
@@ -84,16 +64,21 @@ export const authOptions: NextAuthOptions = {
     },
     session: async ({ session, token, user }) => {
       console.log("this is session", session, token, user);
+
+      // const { data } = api.loan.accountInfo.useQuery();
+      // console.log(data);
       return {
         ...session,
         user: {
           ...session.user,
+          // ...data,
           id: token.id,
         },
       };
     },
     jwt: async ({ token, user, account }) => {
       console.log("this is token", token, user, account);
+
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -111,23 +96,12 @@ export const authOptions: NextAuthOptions = {
     }),
     CredentialsProvider({
       id: "credentials",
-      // The name to display on the sign in form (e.g. 'Sign in with...')
       name: "Loan Service",
-      // The credentials is used to generate a suitable form on the sign in page.
-      // You can specify whatever fields you are expecting to be submitted.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         username: { label: "Username", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
         const body = encrypt(
           JSON.stringify({
             phone: credentials!.username,
@@ -162,7 +136,6 @@ export const authOptions: NextAuthOptions = {
           const raw2 = await res2.json();
           const account = decrypt(raw2);
 
-          // If no error and we have user data, return it
           if (res.ok && account.success) {
             console.log(account);
             const pacc = await prisma.account.findFirst({
@@ -212,31 +185,16 @@ export const authOptions: NextAuthOptions = {
           console.log(e);
         }
 
-        // Return null if user data could not be retrieved
         return null;
       },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
   pages: {
-    signIn: '/login'
+    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
 export const getServerAuthSession = (ctx: {
   req: GetServerSidePropsContext["req"] | any;
   res: GetServerSidePropsContext["res"] | any;

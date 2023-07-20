@@ -4,16 +4,12 @@ import { useRouter } from "next/router";
 import style from "../styles/protectedLayout.module.css";
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
-// import { useAppContext } from "@/context/appContext";
-// import Cookie from "cookie-universal";
+
 const { Sider } = Layout;
 
 export const SidebarLeftComponent = () => {
   const router = useRouter();
   const [keys, setKeys] = useState(["/"]);
-
-  // const { setUserInfo } = useAppContext();
-  // const cookies = Cookie();
 
   useEffect(() => {
     if (router.isReady) {
@@ -58,9 +54,6 @@ export const SidebarLeftComponent = () => {
       width="18%"
       breakpoint="lg"
       collapsedWidth="0"
-      onBreakpoint={(broken) => {
-        console.log(broken);
-      }}
     >
       <Row style={{ padding: "25px 0", height: "100%" }}>
         <Col span={24}>
@@ -93,7 +86,9 @@ export const SidebarLeftComponent = () => {
               <Row justify="center">
                 <Col span={18}>
                   <Button
-                    onClick={() => void signOut()}
+                    onClick={() => {
+                      void signOut(), router.push("/");
+                    }}
                     className={style["sidebar-left-exit-button"]}
                   >
                     <Row gutter={15} align="middle">

@@ -15,7 +15,7 @@ export const FooterComponent = () => {
             <Row gutter={[0, 24]}>
               <Col span={24}>
                 <div className={style["title-text"]}>FundMe</div>
-                <ul className={style["paragraph-text"]}>
+                <ul className={`${style["paragraph-text"]} list-disc`}>
                   <Link href="/about-us">
                     <li>Бидний тухай</li>
                   </Link>

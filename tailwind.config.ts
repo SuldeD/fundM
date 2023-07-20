@@ -12,8 +12,13 @@ export default {
   ],
   theme: {
     extend: {
+      animation: {
+        fade: "fadeIn 1000s ease-out",
+      },
       fontFamily: {
         inter: ["Inter", "sans-serif"],
+        lato: ["Lato", "sans-serif"],
+        beau: ["PF BeauSans Pro", "sens-serif"],
       },
       colors: {
         primary: "#0300B4",

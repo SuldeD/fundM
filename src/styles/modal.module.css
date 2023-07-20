@@ -5,7 +5,7 @@
   font-size: 12px;
   line-height: 20px;
   color: rgba(0, 0, 0, 0.5);
-  text-align: center;
+  /* text-align: center; */
   width: 100%;
 }
 .modal-button {

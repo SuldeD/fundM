@@ -4,9 +4,14 @@ import { SearchOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../../components/header";
 import { useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
+import { useRequireAuth } from "app/utils/auth";
+import { useSession } from "next-auth/react";
+import { Loaderr } from "app/components/Loader";
 const { RangePicker } = DatePicker;
 
 const History = () => {
+  const { data } = useSession();
+
   const [type, setType] = useState(null);
   // @ts-ignore
   const onChange = (type) => {
@@ -105,7 +110,7 @@ const History = () => {
       ),
     },
   ];
-  const data = [
+  const dataTable = [
     {
       id: 1,
       loanTotal: 100000000,
@@ -171,97 +176,101 @@ const History = () => {
       icon: "",
     },
   ];
-  return (
-    <Row
-      justify="center"
-      className={styles["history-main-row"]}
-      gutter={[0, 20]}
-    >
-      <Col span={22}>
-        <Row gutter={[0, 30]}>
-          <HeaderDashboard
-            title={"Санхүүжилтын түүх"}
-            subTitle={
-              "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-            }
-          />
-          <Col xs={24} xl={18}>
-            <Row justify="space-between" align="middle" gutter={20}>
-              <Col span={6}>
-                <Select
-                  allowClear={true}
-                  style={{
-                    width: "100%",
-                  }}
-                  placeholder="Төрөл"
-                  onChange={onChange}
-                  options={[
-                    {
-                      value: "1",
-                      label: "Өгсөн санхүүжилт",
-                    },
-                    {
-                      value: "2",
-                      label: "Авсан зээл",
-                    },
-                  ]}
-                />
-              </Col>
-              <Col span={12}>
-                <RangePicker
-                  style={{ width: "100%" }}
-                  suffixIcon={null}
-                  bordered={false}
-                  value={dates || value}
-                  // @ts-ignore
-                  onCalendarChange={(val) => setDates(val)}
-                  // @ts-ignore
-                  onChange={(val) => setValue(val)}
-                  onOpenChange={onOpenChange}
-                />
-              </Col>
-              <Col span={6}>
-                <Button
-                  onClick={print}
-                  type="primary"
-                  className={styles["history-search-button"]}
-                >
-                  <Row justify="center" gutter={10} align="middle">
-                    <Col flex="none">
-                      <SearchOutlined
-                        style={{
-                          fontSize: 16,
-                          color: "#FFF",
-                        }}
-                      />
-                    </Col>
-                    <Col flex="none">
-                      <div className={styles["history-search-button-text"]}>
-                        Хайх
-                      </div>
-                    </Col>
-                  </Row>
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={24}>
-            <Table
-              scroll={{ x: 430 }}
-              // @ts-ignore
-              columns={columns}
-              pagination={{
-                pageSize: 10,
-                position: ["bottomCenter"],
-              }}
-              dataSource={data}
-              rowKey={"id"}
+  if (!data) {
+    return <Loaderr />;
+  } else {
+    return (
+      <Row
+        justify="center"
+        className={styles["history-main-row"]}
+        gutter={[0, 20]}
+      >
+        <Col span={22}>
+          <Row gutter={[0, 30]}>
+            <HeaderDashboard
+              title={"Санхүүжилтын түүх"}
+              subTitle={
+                "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
+              }
             />
-          </Col>
-        </Row>
-      </Col>
-    </Row>
-  );
+            <Col xs={24} xl={18}>
+              <Row justify="space-between" align="middle" gutter={20}>
+                <Col span={6}>
+                  <Select
+                    allowClear={true}
+                    style={{
+                      width: "100%",
+                    }}
+                    placeholder="Төрөл"
+                    onChange={onChange}
+                    options={[
+                      {
+                        value: "1",
+                        label: "Өгсөн санхүүжилт",
+                      },
+                      {
+                        value: "2",
+                        label: "Авсан зээл",
+                      },
+                    ]}
+                  />
+                </Col>
+                <Col span={12}>
+                  <RangePicker
+                    style={{ width: "100%" }}
+                    suffixIcon={null}
+                    bordered={false}
+                    value={dates || value}
+                    // @ts-ignore
+                    onCalendarChange={(val) => setDates(val)}
+                    // @ts-ignore
+                    onChange={(val) => setValue(val)}
+                    onOpenChange={onOpenChange}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Button
+                    onClick={print}
+                    type="primary"
+                    className={styles["history-search-button"]}
+                  >
+                    <Row justify="center" gutter={10} align="middle">
+                      <Col flex="none">
+                        <SearchOutlined
+                          style={{
+                            fontSize: 16,
+                            color: "#FFF",
+                          }}
+                        />
+                      </Col>
+                      <Col flex="none">
+                        <div className={styles["history-search-button-text"]}>
+                          Хайх
+                        </div>
+                      </Col>
+                    </Row>
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+            <Col span={24}>
+              <Table
+                scroll={{ x: 430 }}
+                // @ts-ignore
+                columns={columns}
+                pagination={{
+                  pageSize: 10,
+                  position: ["bottomCenter"],
+                }}
+                dataSource={dataTable}
+                rowKey={"id"}
+              />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    );
+  }
 };
 
 export default History;

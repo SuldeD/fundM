@@ -8,11 +8,16 @@ import { useRouter } from "next/router";
 import { LoanTakeReqComponent } from "../components/loanTakeRequest";
 // import { useAppContext } from "../context/appContext";
 import { FoundationReq } from "../components/foundationReq";
+// import { useSession } from "next-auth/react";
+import { api } from "app/utils/api";
 const { Sider } = Layout;
 
 export const SidebarRightComponent = () => {
   const router = useRouter();
   const myFundTabKey = "1";
+  // const { data } = useSession();
+  const { data } = api.loan.accountInfo.useQuery();
+  console.log(data);
 
   const NavBars = {
     "/dashboard/profile": CalculateComponent,
@@ -58,7 +63,9 @@ export const SidebarRightComponent = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["sidebar-right-profile-name"]}>
-                          Ариунзаяа
+                          {data?.account.first_name
+                            ? data?.account.first_name
+                            : "."}
                         </div>
                       </Col>
                     </Row>

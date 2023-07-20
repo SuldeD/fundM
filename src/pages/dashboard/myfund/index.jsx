@@ -1,11 +1,10 @@
 import { Row, Col, Tabs, Table, Image } from "antd";
-import styles from "@/styles/my-fund.module.css";
+import styles from "../../../styles/my-fund.module.css";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
-// import { useAppContext } from "@/context/appContext";
+import { useAppContext } from "../../../context/appContext";
 
 export const MyFund = () => {
-  // @ts-ignore
   const { myFundTabKey, setMyFundTabKey } = useAppContext();
   const totalFundMoney = 150000000;
   const totalLoanMoney = 100000000;
