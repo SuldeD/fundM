@@ -58,8 +58,7 @@ export const loanRouter = createTRPCRouter({
 
   phoneSignUp: publicProcedure
     .input(z.object({ phone: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const token = await getAccountToken(ctx);
+    .mutation(async ({ input }) => {
       const { phone } = input;
       const body = encrypt(
         JSON.stringify({
@@ -87,8 +86,7 @@ export const loanRouter = createTRPCRouter({
         pin_code: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const token = await getAccountToken(ctx);
+    .mutation(async ({ input }) => {
       const { phone, pin_code, tmp_user_id } = input;
 
       const body = encrypt(
@@ -125,8 +123,7 @@ export const loanRouter = createTRPCRouter({
         transaction_password: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const token = await getAccountToken(ctx);
+    .mutation(async ({ input }) => {
       const {
         phone,
         username,
@@ -158,8 +155,6 @@ export const loanRouter = createTRPCRouter({
         body: body,
         headers: {
           ...loanServiceHeaders,
-          Cookie: token!.id_token!,
-          "Session-Token": token!.access_token!,
         },
       });
       const raw2 = await res2.json();
@@ -167,8 +162,7 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  helpQuestion: publicProcedure.query(async ({ ctx }) => {
-    const token = await getAccountToken(ctx);
+  helpQuestion: publicProcedure.query(async ({}) => {
     const res2 = await fetch(
       "http://is.fundme.com/help/security/question/list",
       {
@@ -176,13 +170,231 @@ export const loanRouter = createTRPCRouter({
         credentials: "same-origin",
         headers: {
           ...loanServiceHeaders,
-          Cookie: token!.id_token!,
-          "Session-Token": token!.access_token!,
         },
       }
     );
     const raw2 = await res2.json();
     const accountStatus = decrypt(raw2);
+    return accountStatus;
+  }),
+
+  helpBankList: publicProcedure.query(async ({ ctx }) => {
+    const token = await getAccountToken(ctx);
+    const res2 = await fetch("http://is.fundme.com/help/bank/list", {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        ...loanServiceHeaders,
+        Cookie: token!.id_token!,
+        "Session-Token": token!.access_token!,
+      },
+    });
+    const raw2 = await res2.json();
+    const accountStatus = decrypt(raw2);
+    return accountStatus;
+  }),
+
+  reguestSearch: publicProcedure
+    .input(
+      z.object({
+        order: z.string(),
+        order_up: z.string(),
+        page: z.string(),
+        page_size: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { order, order_up, page, page_size } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          order,
+          order_up,
+          page,
+          page_size,
+        })
+      );
+      const res2 = await fetch("http://is.fundme.com/request/search", {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  loanSearch: publicProcedure
+    .input(
+      z.object({
+        order: z.string(),
+        order_up: z.string(),
+        page: z.string(),
+        page_size: z.string(),
+        filter_type: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { order, order_up, page, page_size, filter_type } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          order,
+          order_up,
+          page,
+          page_size,
+          filter_type,
+        })
+      );
+      const res2 = await fetch("http://is.fundme.com/loan/search", {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  loanRequest: publicProcedure
+    .input(
+      z.object({
+        loan_amount: z.string(),
+        repayment_amount: z.string(),
+        loan_month: z.string(),
+        product_id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { product_id, loan_amount, repayment_amount, loan_month } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          product_id,
+          loan_amount,
+          repayment_amount,
+          loan_month,
+        })
+      );
+      const res2 = await fetch("http://is.fundme.com/loan/request", {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  loanRequestConfirm: publicProcedure
+    .input(
+      z.object({
+        request_id: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { request_id, password } = input;
+      const form_data: any = [];
+
+      const body = encrypt(
+        JSON.stringify({
+          request_id,
+          form_data,
+          password,
+        })
+      );
+      const res2 = await fetch("http://is.fundme.com/loan/request/confirm", {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  addBank: publicProcedure
+    .input(
+      z.object({
+        account_num: z.string(),
+        bank_id: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { bank_id, password, account_num } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          bank_id,
+          account_num,
+          password,
+        })
+      );
+      const res2 = await fetch(
+        "http://is.fundme.com/account/add/bank/account",
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  loanList: publicProcedure.query(async ({ ctx }) => {
+    const token = await getAccountToken(ctx);
+    const res2 = await fetch("http://is.fundme.com/product/list", {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        ...loanServiceHeaders,
+        Cookie: token!.id_token!,
+        "Session-Token": token!.access_token!,
+      },
+    });
+    const raw2 = await res2.json();
+    const accountStatus = decrypt(raw2);
+    console.log(accountStatus);
+
     return accountStatus;
   }),
 });

@@ -3,19 +3,20 @@ import { Row, Col, Tabs, Upload, Collapse, Typography, Image } from "antd";
 import styles from "../../../styles/profile.module.css";
 import { HeaderDashboard } from "../../../components/header";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { Loaderr } from "app/components/Loader";
-import { api } from "app/utils/api";
+import { useApiContext } from "app/context/dashboardApiContext";
+import { useRequireAuth } from "app/utils/auth";
+import { useRouter } from "next/router";
 const { Panel } = Collapse;
 const { Paragraph } = Typography;
 
 export const Profile = () => {
-  const { data } = api.loan.accountInfo.useQuery();
-  const { data: status } = api.loan.accountStatus.useQuery();
-  console.log(status);
+  const { accountInfo, data } = useApiContext();
+  const router = useRouter();
+  useRequireAuth();
 
-  const [editNumber, seteditNumber] = useState(data?.account.phone);
-  const [editEmail, setEditEmail] = useState(`${data?.account.email}`);
+  const [editNumber, seteditNumber] = useState(accountInfo?.account?.phone);
+  const [editEmail, setEditEmail] = useState(`${accountInfo?.account?.email}`);
 
   // @ts-ignore
   const onChange = (key) => {};
@@ -103,8 +104,8 @@ export const Profile = () => {
                     </Col>
                     <Col span={24}>
                       <div className={styles["profile-information-name"]}>
-                        {data?.account.last_name
-                          ? data?.account.last_name
+                        {accountInfo?.account?.last_name
+                          ? accountInfo?.account?.last_name
                           : "."}
                       </div>
                     </Col>
@@ -119,8 +120,8 @@ export const Profile = () => {
                     </Col>
                     <Col span={24}>
                       <div className={styles["profile-information-name"]}>
-                        {data?.account.first_name
-                          ? data?.account.first_name
+                        {accountInfo?.account?.first_name
+                          ? accountInfo?.account?.first_name
                           : "."}
                       </div>
                     </Col>
@@ -228,6 +229,14 @@ export const Profile = () => {
                     Дансны мэдээлэл
                   </div>
                 </Col>
+                <Col flex="right">
+                  <div
+                    className="cursor-pointer font-lato text-[12px] font-normal text-primary hover:text-[#524ffd]"
+                    onClick={() => router.push("/dashboard/profile/bank")}
+                  >
+                    Данс холбох +
+                  </div>
+                </Col>
                 <Col span={24}>
                   <Row
                     justify="space-between"
@@ -242,7 +251,8 @@ export const Profile = () => {
                         </Col>
                         <Col flex="none">
                           <div className={styles["profile-backaccount-value"]}>
-                            {data?.bank_account.bank_name}
+                            {accountInfo?.bank_account &&
+                              accountInfo?.bank_account?.bank_name}
                           </div>
                         </Col>
                       </Row>
@@ -256,7 +266,8 @@ export const Profile = () => {
                         </Col>
                         <Col flex="none">
                           <div className={styles["profile-backaccount-value"]}>
-                            {data?.bank_account.account_num}
+                            {accountInfo?.bank_account &&
+                              accountInfo?.bank_account?.account_num}
                           </div>
                         </Col>
                       </Row>

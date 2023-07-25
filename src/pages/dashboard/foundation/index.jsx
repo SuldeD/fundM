@@ -16,8 +16,9 @@ import { useRef, useState } from "react";
 import { LeftOutlined, CalculatorOutlined } from "@ant-design/icons";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
-import { useSession } from "next-auth/react";
 import { Loaderr } from "app/components/Loader";
+import { useApiContext } from "app/context/dashboardApiContext";
+import { useRequireAuth } from "app/utils/auth";
 
 export const Foundation = () => {
   const [checked, setChecked] = useState(false);
@@ -25,7 +26,8 @@ export const Foundation = () => {
     setChecked(!checked);
   };
 
-  const { data } = useSession();
+  const { data, saving } = useApiContext();
+  useRequireAuth();
 
   // @ts-ignore
   const onChecked = (e) => {
@@ -38,9 +40,9 @@ export const Foundation = () => {
     setChecked(!checked);
   };
 
-  const minValue = 10000000;
-  const maxValue = 50000000;
-  const rate = "1.20 %";
+  const minValue = Number(saving && saving?.loan_min_amount);
+  const maxValue = Number(saving && saving?.loan_max_amount);
+  const rate = saving?.loan_rate_day.slice(0, 4);
 
   const [form] = Form.useForm();
   const termsRef = useRef();
@@ -98,7 +100,11 @@ export const Foundation = () => {
     },
     {
       id: 3,
-      day: "30",
+      day: "21",
+    },
+    {
+      id: 4,
+      day: "28",
     },
   ];
   const [activeDuration, setActiveDuration] = useState(0);
@@ -279,9 +285,13 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-rate-profit"]}>
-                          {numberToCurrency(
-                            ((inputValue ?? 0) * 0.012).toFixed(2)
-                          )}
+                          {typeof activeDuration == "number" &&
+                            numberToCurrency(
+                              (inputValue / 100) *
+                                rate *
+                                // @ts-ignore
+                                Number(dataTable[activeDuration].day)
+                            )}
                         </div>
                       </Col>
                     </Row>
@@ -295,7 +305,7 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {rate}
+                          {rate}%
                         </div>
                       </Col>
                     </Row>
@@ -502,7 +512,7 @@ export const Foundation = () => {
                 <Col flex="none">
                   <Button
                     type="primary"
-                    className={styles["foundation-button-contiune"]}
+                    className={`${styles["foundation-button-contiune"]} bg-primary`}
                     onClick={() =>
                       // @ts-ignore
                       termsRef.current?.input.checked

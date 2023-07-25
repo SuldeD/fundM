@@ -10,10 +10,12 @@ export function useRequireAuth() {
     "/dashboard",
     "/dashboard/fund",
     "/dashboard/myfund",
+    "/dashboard/myfund/list",
     "/dashboard/history",
     "/dashboard/loan",
     "/dashboard/foundation",
     "/dashboard/profile",
+    "/dashboard/profile/bank",
   ];
   const publicPaths: any = [
     "/login",
@@ -33,7 +35,7 @@ export function useRequireAuth() {
 
   useEffect(() => {
     if (status == "loading") {
-    } else if (data && !privatePaths?.includes(path)) {
+    } else if (data?.user && !privatePaths?.includes(path)) {
       router.replace("/dashboard");
     } else if (!data && !publicPaths?.includes(path)) {
       router.replace("/");

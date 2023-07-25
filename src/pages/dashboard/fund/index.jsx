@@ -2,12 +2,13 @@ import { Row, Col, Statistic, Tabs, Table, Image } from "antd";
 import styles from "../../../styles/fund.module.css";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
-import { useSession } from "next-auth/react";
 import { useRequireAuth } from "app/utils/auth";
 import { Loaderr } from "app/components/Loader";
+import { useApiContext } from "app/context/dashboardApiContext";
 
 export const FundHistory = () => {
-  const { data } = useSession();
+  const { data } = useApiContext();
+  useRequireAuth();
 
   // @ts-ignore
   const { Countdown } = Statistic;

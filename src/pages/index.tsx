@@ -2,7 +2,6 @@ import { RightOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { Loaderr } from "app/components/Loader";
 
 export const Home = () => {
   const router = useRouter();
@@ -60,7 +59,7 @@ export const Home = () => {
     },
   ];
   if (data) {
-    return <Loaderr />;
+    router.push("/dashboard");
   } else {
     return (
       <div>

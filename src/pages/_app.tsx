@@ -8,6 +8,7 @@ import mnMN from "antd/locale/mn_MN";
 import { ConfigProvider, App as AntdApp } from "antd";
 import MainLayout from "./mainLayout";
 import { AppWrapper } from "app/context/appContext";
+import { ApiWrapper } from "app/context/dashboardApiContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -32,9 +33,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
             locale={mnMN}
           >
             <AppWrapper>
+              {/* <ApiWrapper> */}
               <MainLayout>
                 <Component {...pageProps} />
               </MainLayout>
+              {/* </ApiWrapper> */}
             </AppWrapper>
           </ConfigProvider>
         </AntdApp>

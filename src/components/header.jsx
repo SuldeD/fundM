@@ -4,7 +4,8 @@ import styles from "../styles/dashboard-header.module.css";
 // @ts-ignore
 export const HeaderDashboard = ({ title, subTitle }) => {
   const { Countdown } = Statistic;
-  const deadline = Date.now() + 1000 * 10 * 24 * 2 + 1000 * 30;
+  const deadline = Date.now() + 1000 * 2000;
+
   return (
     <Col span={24}>
       <Row justify="space-between" align="middle">

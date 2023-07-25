@@ -102,25 +102,6 @@ export default function Signup() {
     if (values.prev_password !== values.password) {
       return error({
         title: "Амжилтгүй",
-        content: <div>Гүйлгээний нууц үгийг адилхан оруулна уу !</div>,
-      });
-    } else if (values.password.length !== 4) {
-      return error({
-        title: "Амжилтгүй",
-        content: <div>Гүйлгээний нууц үг нь 4 үсэгээс бүрдэх ёстой.</div>,
-      });
-    } else {
-      setRegisterData((prevData) => ({
-        ...prevData,
-        password: values.password,
-      }));
-    }
-  };
-
-  const validateTransactionPassword = async (values: any) => {
-    if (values.prev_password !== values.password) {
-      return error({
-        title: "Амжилтгүй",
         content: <div>Нэвтрэх нууц үгийг адилхан оруулна уу !</div>,
       });
     }
@@ -145,6 +126,25 @@ export default function Signup() {
             байх ёстой.
           </div>
         ),
+      });
+    } else {
+      setRegisterData((prevData) => ({
+        ...prevData,
+        password: values.password,
+      }));
+    }
+  };
+
+  const validateTransactionPassword = async (values: any) => {
+    if (values.prev_password !== values.password) {
+      return error({
+        title: "Амжилтгүй",
+        content: <div>Гүйлгээний нууц үгийг адилхан оруулна уу !</div>,
+      });
+    } else if (values.password.length !== 4) {
+      return error({
+        title: "Амжилтгүй",
+        content: <div>Гүйлгээний нууц үг нь 4 үсэгээс бүрдэх ёстой.</div>,
       });
     } else {
       setRegisterData((prevData) => ({

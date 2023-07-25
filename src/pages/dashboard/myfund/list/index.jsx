@@ -1,12 +1,14 @@
 import { Row, Col, Table, Image, Button } from "antd";
-import styles from "@/styles/myfund-list.module.css";
+import styles from "../../../../styles/myfund-list.module.css";
 import { numberToCurrency } from "../../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../../components/header";
 import { useAppContext } from "../../../../context/appContext";
 import { useRouter } from "next/router";
+import { useRequireAuth } from "app/utils/auth";
 
 export const List = () => {
   const router = useRouter();
+  useRequireAuth();
   const { myFundTabKey } = useAppContext();
   const columns = [
     {

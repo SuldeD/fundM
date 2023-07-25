@@ -6,16 +6,17 @@ import { LoanReqComponent } from "../components/loanRequest";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LoanTakeReqComponent } from "../components/loanTakeRequest";
-// import { useAppContext } from "../context/appContext";
 import { FoundationReq } from "../components/foundationReq";
-// import { useSession } from "next-auth/react";
-import { api } from "app/utils/api";
+import { useApiContext } from "app/context/dashboardApiContext";
+
 const { Sider } = Layout;
 
-export const SidebarRightComponent = ({data}) => {
+// @ts-ignore
+export const SidebarRightComponent = () => {
+  const { accountInfo: data } = useApiContext();
+
   const router = useRouter();
   const myFundTabKey = "1";
-  // const { data } = useSession();
 
   const NavBars = {
     "/dashboard/profile": CalculateComponent,

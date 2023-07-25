@@ -4,13 +4,14 @@ import { SearchOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../../components/header";
 import { useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
-import { useRequireAuth } from "app/utils/auth";
-import { useSession } from "next-auth/react";
 import { Loaderr } from "app/components/Loader";
+import { useApiContext } from "app/context/dashboardApiContext";
+import { useRequireAuth } from "app/utils/auth";
 const { RangePicker } = DatePicker;
 
 const History = () => {
-  const { data } = useSession();
+  const { data, publicAllOrders: dataTable } = useApiContext();
+  useRequireAuth();
 
   const [type, setType] = useState(null);
   // @ts-ignore
@@ -37,17 +38,17 @@ const History = () => {
   const columns = [
     {
       title: "№",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "index",
+      key: "request_id",
       width: "6%",
       // @ts-ignore
-      render: (id) => (
-        <div className={styles["history-table-number"]}>{id}</div>
+      render: (product_id) => (
+        <div className={styles["history-table-number"]}>{product_id}</div>
       ),
     },
     {
       title: "Зээлийн хэмжээ",
-      dataIndex: "loanTotal",
+      dataIndex: "loan_amount",
       key: "loanTotal",
       align: "center",
       width: "23%",
@@ -60,13 +61,13 @@ const History = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "type",
+      dataIndex: "product_type_code",
       key: "type",
       align: "center",
       width: "23%",
       // @ts-ignore
       render: (type) =>
-        type === "Өгсөн санхүүжилт" ? (
+        type === "saving" ? (
           <div className={styles["history-table-type-1"]}>{type}</div>
         ) : (
           <div className={styles["history-table-type-2"]}>{type}</div>
@@ -74,24 +75,28 @@ const History = () => {
     },
     {
       title: "Хүү",
-      dataIndex: "rate",
+      dataIndex: "loan_rate_day",
       key: "rate",
       align: "center",
       width: "15%",
       // @ts-ignore
       render: (rate) => (
-        <div className={styles["history-table-number"]}>{rate}</div>
+        <div className={styles["history-table-number"]}>
+          {rate.slice(0, 4)}%
+        </div>
       ),
     },
     {
       title: "Хаасан огноо",
-      dataIndex: "date",
+      dataIndex: "create_date",
       key: "date",
       align: "center",
       width: "23%",
       // @ts-ignore
       render: (date) => (
-        <div className={styles["history-table-number"]}>{date}</div>
+        <div className={styles["history-table-number"]}>
+          {date.slice(0, 10)}
+        </div>
       ),
     },
     {
@@ -110,72 +115,7 @@ const History = () => {
       ),
     },
   ];
-  const dataTable = [
-    {
-      id: 1,
-      loanTotal: 100000000,
-      type: "Өгсөн санхүүжилт",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-    {
-      id: 2,
-      loanTotal: 15000000,
-      type: "Авсан зээл",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-    {
-      id: 3,
-      loanTotal: 4500000,
-      type: "Авсан зээл",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-    {
-      id: 4,
-      loanTotal: 1000000,
-      type: "Өгсөн санхүүжилт",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-    {
-      id: 5,
-      loanTotal: 300000000,
-      type: "Авсан зээл",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-    {
-      id: 6,
-      loanTotal: 2300000,
-      type: "Өгсөн санхүүжилт",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-    {
-      id: 7,
-      loanTotal: 150000000,
-      type: "Авсан зээл",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-    {
-      id: 8,
-      loanTotal: 1000000,
-      type: "Авсан зээл",
-      rate: "2.5 %",
-      date: "12/07/23",
-      icon: "",
-    },
-  ];
+
   if (!data) {
     return <Loaderr />;
   } else {
@@ -258,12 +198,13 @@ const History = () => {
                 scroll={{ x: 430 }}
                 // @ts-ignore
                 columns={columns}
+                key={"request_id"}
                 pagination={{
                   pageSize: 10,
                   position: ["bottomCenter"],
                 }}
                 dataSource={dataTable}
-                rowKey={"id"}
+                rowKey={"request_id"}
               />
             </Col>
           </Row>

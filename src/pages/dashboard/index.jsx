@@ -5,17 +5,20 @@ import { HeaderDashboard } from "../../components/header";
 import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
 import { Loaderr } from "app/components/Loader";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
-import { api } from "app/utils/api";
+import { useApiContext } from "app/context/dashboardApiContext";
+import { useRequireAuth } from "app/utils/auth";
 
 export const Dashboard = () => {
   const router = useRouter();
+  useRequireAuth();
+
+  const { loan, orders, data, sumLoan, sumSaving } = useApiContext();
+
   const columns = [
     {
       title: "Зээлийн хэмжээ",
-      dataIndex: "price",
-      key: "price",
+      dataIndex: "loan_amount",
+      key: "loan_amount",
       width: "20%",
       render: (/** @type {any} */ price) => (
         <div className={styles["dashboard-list-item-text"]}>
@@ -25,162 +28,61 @@ export const Dashboard = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "type",
+      dataIndex: "product_type_code",
       key: "type",
       align: "center",
       width: "20%",
       // @ts-ignore
       render: (type) =>
-        type === "Авах хүсэлт" ? (
-          <div className={styles["dashboard-list-item-type-1"]}>{type}</div>
+        type == "loan" ? (
+          <div className={styles["dashboard-list-item-type-1"]}>
+            Авах хүсэлт
+          </div>
         ) : (
-          <div className={styles["dashboard-list-item-type-2"]}>{type}</div>
+          <div className={styles["dashboard-list-item-type-2"]}>
+            Өгөх хүсэлт
+          </div>
         ),
     },
     {
       title: "Хүү",
-      dataIndex: "rate",
+      dataIndex: "loan_rate_month",
       key: "rate",
       width: "20%",
       align: "center",
       // @ts-ignore
       render: (rate) => (
-        <div className={styles["dashboard-list-item-text"]}>{rate}</div>
+        <div className={styles["dashboard-list-item-text"]}>{rate} %</div>
       ),
     },
     {
       title: "Хугацаа",
-      dataIndex: "day",
+      dataIndex: "loan_day",
       key: "day",
       width: "20%",
       align: "center",
       // @ts-ignore
       render: (day) => (
-        <div className={styles["dashboard-list-item-text"]}>{day}</div>
+        <div className={styles["dashboard-list-item-text"]}>{day} хоног</div>
       ),
     },
     {
       title: "Огноо",
-      dataIndex: "date",
+      dataIndex: "create_date",
       align: "right",
       key: "date",
       width: "20%",
       // @ts-ignore
       render: (date) => (
-        <div className={styles["dashboard-list-item-text"]}>{date}</div>
+        <div className={styles["dashboard-list-item-text"]}>
+          {date.slice(0, 10)}
+        </div>
       ),
     },
   ];
-  const dataTable = [
-    {
-      id: 1,
-      price: 100000000,
-      type: "Авах хүсэлт",
-      rate: "2.5 %",
-      day: "14 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 2,
-      price: 30000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "30 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 3,
-      price: 20000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "60 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 4,
-      price: 15000000,
-      type: "Авах хүсэлт",
-      rate: "2.5 %",
-      day: "14 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 5,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 6,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 7,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 8,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 9,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 10,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 11,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 12,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 13,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-  ];
 
-  const { data } = useSession();
-  
   if (!data) {
+    router.push("/");
     return <Loaderr />;
   } else {
     return (
@@ -209,12 +111,18 @@ export const Dashboard = () => {
                     </Col>
                     <Col span={24}>
                       <div className={styles["dashboard-loan-price-text"]}>
-                        {numberToCurrency(45000000)}
+                        {numberToCurrency(
+                          sumLoan
+                            ? sumLoan > sumSaving
+                              ? sumLoan
+                              : sumSaving
+                            : 0
+                        )}
                       </div>
                     </Col>
                     <Col span={24}>
                       <Button
-                        className={styles["dashboard-loan-finance-button"]}
+                        className={`${styles["dashboard-loan-finance-button"]} bg-primary`}
                         type="primary"
                         onClick={() => router.push("/dashboard/loan/")}
                       >
@@ -234,7 +142,7 @@ export const Dashboard = () => {
                         </Col>
                         <Col span={24}>
                           <div className={styles["dashboard-loan-son-number"]}>
-                            1.5 %
+                            {loan && loan?.loan_rate_month.slice(0, 4)}
                           </div>
                         </Col>
                       </Row>
@@ -254,7 +162,7 @@ export const Dashboard = () => {
             <Col span={24} className={styles["dashboard-bg-image"]}>
               <Row justify="end" align="bottom" style={{ height: "100%" }}>
                 <Button
-                  className={styles["dashboard-bg-image-button"]}
+                  className={`${styles["dashboard-bg-image-button"]} bg-primary`}
                   type="primary"
                 >
                   Дэлгэрэнгүй {<RightOutlined />}
@@ -279,8 +187,8 @@ export const Dashboard = () => {
                           pageSize: 10,
                           position: ["bottomCenter"],
                         }}
-                        dataSource={dataTable}
-                        rowKey={"id"}
+                        dataSource={orders}
+                        rowKey={"CheckMbAccount"}
                       />
                     </Col>
                   </Row>
