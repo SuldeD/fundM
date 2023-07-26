@@ -17,8 +17,7 @@ const superjson_1 = __importDefault(require("superjson"));
 const zod_1 = require("zod");
 const auth_1 = require("app/server/auth");
 const db_1 = require("app/server/db");
-const events_1 = __importDefault(require("events"));
-const ee = new events_1.default();
+// const ee = new EventEmitter();
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
  * it from here.
@@ -33,7 +32,6 @@ const createInnerTRPCContext = (opts) => {
     return {
         session: opts.session,
         prisma: db_1.prisma,
-        ee,
     };
 };
 /**

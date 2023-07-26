@@ -1,7 +1,6 @@
 import { exampleRouter } from "app/server/api/routers/example";
 import { createTRPCRouter } from "app/server/api/trpc";
 import { postsRouter } from "./routers/posts";
-import { roomRouter } from "./routers/room";
 import { loanRouter } from "./routers/loan";
 
 /**
@@ -12,7 +11,6 @@ import { loanRouter } from "./routers/loan";
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
   posts: postsRouter,
-  room: roomRouter,
   loan: loanRouter,
 });
 

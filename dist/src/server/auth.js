@@ -11,7 +11,6 @@ const credentials_1 = __importDefault(require("next-auth/providers/credentials")
 const db_1 = require("app/server/db");
 const aes_helper_1 = require("app/utils/aes.helper");
 const contants_1 = require("app/contants");
-const crypto_1 = require("crypto");
 const prismaAdapter = (0, prisma_adapter_1.PrismaAdapter)(db_1.prisma);
 // @ts-ignore
 prismaAdapter.createUser = (data) => {
@@ -34,46 +33,64 @@ prismaAdapter.linkAccount = async (data) => {
         },
     });
 };
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
 exports.authOptions = {
     session: {
         strategy: "jwt",
     },
     events: {
         session: async (message) => {
-            console.log("events this is message session", message);
+            console.log("events this is message session");
         },
         linkAccount: async (message) => {
-            console.log("events this is message linkAccount", message);
+            console.log("events this is message linkAccount");
         },
     },
     callbacks: {
         signIn: ({ user, account, profile, email, credentials }) => {
-            console.log("this is user", user, account, profile, email, credentials);
+            // console.log("this is user", user, account, profile, email, credentials);
             return true;
         },
         session: async ({ session, token, user }) => {
-            console.log("this is session", session, token, user);
+            console.log("this is session");
+            // const { data } = api.loan.accountInfo.useQuery();
+            // console.log(data);
+            // let info = (session as any).info;
+            // if (!info) {
+            //   console.log("account info fetch");
+            //   const res2 = await fetch("http://is.fundme.com/account/get/info", {
+            //     method: "GET",
+            //     credentials: "same-origin",
+            //     headers: {
+            //       ...loanServiceHeaders,
+            //       Cookie: token.picture!,
+            //       "Session-Token": token.token as string,
+            //     },
+            //   });
+            //   const raw2 = await res2.json();
+            //   info = decrypt(raw2);
+            // }
             return {
                 ...session,
                 user: {
                     ...session.user,
+                    // ...data,
                     id: token.id,
+                },
+                // info: { ...info },
+                token: {
+                    access_token: token.token,
+                    id_token: token.picture,
                 },
             };
         },
         jwt: async ({ token, user, account }) => {
-            var _a;
-            console.log("this is token", token, user, account);
+            console.log("this is token");
             if (user) {
                 token.id = user.id;
                 token.name = user.name;
                 token.email = user.email;
-                token.token = (_a = crypto_1.randomUUID === null || crypto_1.randomUUID === void 0 ? void 0 : (0, crypto_1.randomUUID)()) !== null && _a !== void 0 ? _a : (0, crypto_1.randomBytes)(32).toString("hex");
+                token.token = user.access_token;
+                token.picture = user.id_token;
             }
             return token;
         },
@@ -86,23 +103,12 @@ exports.authOptions = {
         }),
         (0, credentials_1.default)({
             id: "credentials",
-            // The name to display on the sign in form (e.g. 'Sign in with...')
             name: "Loan Service",
-            // The credentials is used to generate a suitable form on the sign in page.
-            // You can specify whatever fields you are expecting to be submitted.
-            // e.g. domain, username, password, 2FA token, etc.
-            // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
                 username: { label: "Username", type: "text", placeholder: "jsmith" },
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials, req) {
-                // You need to provide your own logic here that takes the credentials
-                // submitted and returns either a object representing a user or value
-                // that is false/null if the credentials are invalid.
-                // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-                // You can also use the `req` object to obtain additional parameters
-                // (i.e., the request IP address)
                 const body = (0, aes_helper_1.encrypt)(JSON.stringify({
                     phone: credentials.username,
                     pin_code: credentials.password,
@@ -131,9 +137,7 @@ exports.authOptions = {
                     });
                     const raw2 = await res2.json();
                     const account = (0, aes_helper_1.decrypt)(raw2);
-                    // If no error and we have user data, return it
                     if (res.ok && account.success) {
-                        console.log(account);
                         const pacc = await db_1.prisma.account.findFirst({
                             where: {
                                 userId: account.account.user_id,
@@ -175,33 +179,23 @@ exports.authOptions = {
                             id: account.account.user_id,
                             name: account.account.first_name,
                             email: account.account.phone,
+                            id_token: cookie,
+                            access_token: token,
                         };
                     }
                 }
                 catch (e) {
                     console.log(e);
                 }
-                // Return null if user data could not be retrieved
                 return null;
             },
         }),
-        /**
-         * ...add more providers here.
-         *
-         * Most other providers require a bit more work than the Discord provider. For example, the
-         * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-         * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-         *
-         * @see https://next-auth.js.org/providers/github
-         */
     ],
+    pages: {
+        signIn: "/login",
+    },
     secret: process.env.NEXTAUTH_SECRET,
 };
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
 const getServerAuthSession = (ctx) => {
     return (0, next_auth_1.getServerSession)(ctx.req, ctx.res, exports.authOptions);
 };
