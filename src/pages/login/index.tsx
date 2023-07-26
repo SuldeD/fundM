@@ -7,6 +7,7 @@ export default function Login({
   csrfToken,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
+  const { error } = router.query;
   const { data } = useSession();
 
   if (data) {
@@ -18,6 +19,7 @@ export default function Login({
           <div className="inter text-[40px] font-bold leading-[48px] text-[#fff]">
             Fund Me нэвтрэх
           </div>
+          {error && <p className="mt-2 max-w-md text-red-500">{error}</p>}
           <form
             method="post"
             action="/api/auth/callback/credentials"

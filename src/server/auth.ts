@@ -10,6 +10,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "app/server/db";
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import { loanServiceHeaders } from "app/contants";
+import { use } from "react";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -61,25 +62,6 @@ export const authOptions: NextAuthOptions = {
     },
     session: async ({ session, token, user }) => {
       console.log("this is session");
-
-      // const { data } = api.loan.accountInfo.useQuery();
-      // console.log(data);
-      // let info = (session as any).info;
-      // if (!info) {
-      //   console.log("account info fetch");
-
-      //   const res2 = await fetch("http://is.fundme.com/account/get/info", {
-      //     method: "GET",
-      //     credentials: "same-origin",
-      //     headers: {
-      //       ...loanServiceHeaders,
-      //       Cookie: token.picture!,
-      //       "Session-Token": token.token as string,
-      //     },
-      //   });
-      //   const raw2 = await res2.json();
-      //   info = decrypt(raw2);
-      // }
       return {
         ...session,
         user: {
@@ -129,28 +111,31 @@ export const authOptions: NextAuthOptions = {
             longitude: "",
           })
         );
-        try {
-          const res = await fetch(`${process.env.BACKEND_URL}/account/login`, {
-            method: "POST",
-            body: body,
-            credentials: "same-origin",
-            headers: loanServiceHeaders,
-          });
-          const cookie = res.headers.get("Set-Cookie");
-          const token = res.headers.get("Session-Token");
+        const res = await fetch(`${process.env.BACKEND_URL}/account/login`, {
+          method: "POST",
+          body: body,
+          credentials: "same-origin",
+          headers: loanServiceHeaders,
+        });
+        const cookie = res.headers.get("Set-Cookie");
+        const token = res.headers.get("Session-Token");
 
-          const raw = await res.json();
-          const user = decrypt(raw);
-
-          const res2 = await fetch("http://is.fundme.com/account/get/info", {
-            method: "GET",
-            credentials: "same-origin",
-            headers: {
-              ...loanServiceHeaders,
-              Cookie: cookie!,
-              "Session-Token": token!,
-            },
-          });
+        const raw = await res.json();
+        const user = decrypt(raw);
+        console.log(user);
+        if (user.success) {
+          const res2 = await fetch(
+            `${process.env.BACKEND_URL}/account/get/info`,
+            {
+              method: "GET",
+              credentials: "same-origin",
+              headers: {
+                ...loanServiceHeaders,
+                Cookie: cookie!,
+                "Session-Token": token!,
+              },
+            }
+          );
 
           const raw2 = await res2.json();
           const account = decrypt(raw2);
@@ -201,8 +186,8 @@ export const authOptions: NextAuthOptions = {
               access_token: token,
             };
           }
-        } catch (e) {
-          console.log(e);
+        } else {
+          throw new Error(encodeURIComponent(user.description));
         }
 
         return null;
@@ -210,8 +195,10 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
+    error: "/login",
     signIn: "/login",
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 
