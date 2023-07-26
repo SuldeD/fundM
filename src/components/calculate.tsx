@@ -6,14 +6,15 @@ import { useState } from "react";
 export const CalculateComponent = () => {
   const [inputValue, setInputValue] = useState();
   const onChange = (
-    /** @type {import("react").SetStateAction<undefined>} */ value
+    /** @type {import("react").SetStateAction<undefined>} */ value: import("react").SetStateAction<undefined>
   ) => {
     setInputValue(value);
   };
 
-  const handleChange = (/** @type {any} */ value) => {
+  const handleChange = (/** @type {any} */ value: any) => {
     console.log(`selected ${value}`);
   };
+
   const items = [
     {
       key: "1",

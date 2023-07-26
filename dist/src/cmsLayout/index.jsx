@@ -1,70 +1,53 @@
-import { Button, Checkbox, Col, Form, Layout, Row } from "antd";
-import { CalculatorOutlined } from "@ant-design/icons";
-import SidebarRightComponent from "./SidebarRight";
-import SidebarLeftComponent from "./SidebarLeft";
-import PopupModal from "../components/modal";
-import { useRequireAuth } from "app/utils/auth";
-import { Loaderr } from "app/components/Loader";
-import styles from "../styles/foundation.module.css";
-import { useSession } from "next-auth/react";
-import { ApiWrapper } from "app/context/dashboardApiContext";
-import { api } from "app/utils/api";
-import { useState } from "react";
-const { Content } = Layout;
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProtectedLayout = void 0;
+const antd_1 = require("antd");
+const icons_1 = require("@ant-design/icons");
+const SidebarRight_1 = __importDefault(require("./SidebarRight"));
+const SidebarLeft_1 = __importDefault(require("./SidebarLeft"));
+const modal_1 = __importDefault(require("../components/modal"));
+const auth_1 = require("app/utils/auth");
+const Loader_1 = require("app/components/Loader");
+const foundation_module_css_1 = __importDefault(require("../styles/foundation.module.css"));
+const react_1 = require("next-auth/react");
+const dashboardApiContext_1 = require("app/context/dashboardApiContext");
+const api_1 = require("app/utils/api");
+const react_2 = require("react");
+const { Content } = antd_1.Layout;
 // @ts-ignore
-export const ProtectedLayout = ({ children }) => {
-  const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(true);
-  
-  const [form] = Form.useForm();
-  const { status } = useSession();
-
-  const { data: statusData } = api.loan.accountStatus.useQuery();
-  const { data: dan } = api.loan.accountStatusDan.useQuery();
-
-  useRequireAuth();
-  if (status == "loading") {
-    return <Loaderr />;
-  }
-
-  function buttonClick() {
-    window.open(dan?.https_redirect, "_blank");
-  }
-
-  const toggleChecked = () => {
-    setChecked(!checked);
-  };
-
-
-  const handleOk = async () => {
-    await form.validateFields();
-    toggleChecked();
-    setIsModalOpen(false);
-    setOpen(true);
-  };
-
-  return (
-    <Layout>
-      <ApiWrapper>
-        <PopupModal
-          modalWidth={"70%"}
-          open={statusData?.stat?.valid_dan == 0 && isModalOpen}
-          closeModal={null}
-          buttonText={null}
-          iconPath={null}
-          customIconWidth={null}
-          customDiv={
-            <div className="border-b border-black font-beau text-[16px] font-normal text-black">
+const ProtectedLayout = ({ children }) => {
+    var _a;
+    const [open, setOpen] = (0, react_2.useState)(false);
+    const [checked, setChecked] = (0, react_2.useState)(false);
+    const [isModalOpen, setIsModalOpen] = (0, react_2.useState)(true);
+    const [form] = antd_1.Form.useForm();
+    const { status } = (0, react_1.useSession)();
+    const { data: statusData } = api_1.api.loan.accountStatus.useQuery();
+    const { data: dan } = api_1.api.loan.accountStatusDan.useQuery();
+    (0, auth_1.useRequireAuth)();
+    if (status == "loading") {
+        return <Loader_1.Loaderr />;
+    }
+    function buttonClick() {
+        window.open(dan === null || dan === void 0 ? void 0 : dan.https_redirect, "_blank");
+    }
+    const toggleChecked = () => {
+        setChecked(!checked);
+    };
+    const handleOk = async () => {
+        await form.validateFields();
+        toggleChecked();
+        setIsModalOpen(false);
+        setOpen(true);
+    };
+    return (<antd_1.Layout>
+      <dashboardApiContext_1.ApiWrapper>
+        <modal_1.default modalWidth={"70%"} open={((_a = statusData === null || statusData === void 0 ? void 0 : statusData.stat) === null || _a === void 0 ? void 0 : _a.valid_dan) == 0 && isModalOpen} closeModal={null} buttonText={null} iconPath={null} customIconWidth={null} customDiv={<div className="border-b border-black font-beau text-[16px] font-normal text-black">
               ҮЙЛЧИЛГЭЭНИЙ ЕРӨНХИЙ НӨХЦӨЛ
-            </div>
-          }
-          closableM={"true"}
-          textAlign={"start"}
-          buttonClick={buttonClick}
-          text={
-            <>
+            </div>} closableM={"true"} textAlign={"start"} buttonClick={buttonClick} text={<>
               <div className="rounded-[20px] bg-[#1A21550D] p-[60px] font-beau font-light">
                 <p className="text-center">НЭГ. НИЙТЛЭГ ҮНДЭСЛЭЛ</p>
                 <br />
@@ -297,86 +280,52 @@ export const ProtectedLayout = ({ children }) => {
                 тохиолдолд буруугүй талын гэрээг цуцалж, учирсан хохирлыг
                 буруутай этгээдээс шаардах эрхтэй.{" "}
               </div>
-              <Form form={form}>
-                <Row justify="center">
-                  <Col span={24}>
-                    <Form.Item
-                      name="agreement"
-                      valuePropName="checked"
-                      rules={[
-                        {
-                          validator: (_, value) =>
-                            value
-                              ? Promise.resolve()
-                              : Promise.reject(
-                                  new Error(
-                                    "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
-                                  )
-                                ),
-                        },
-                      ]}
-                    >
-                      <Checkbox>
-                        <div className={styles["foundation-checkbox-text"]}>
+              <antd_1.Form form={form}>
+                <antd_1.Row justify="center">
+                  <antd_1.Col span={24}>
+                    <antd_1.Form.Item name="agreement" valuePropName="checked" rules={[
+                {
+                    validator: (_, value) => value
+                        ? Promise.resolve()
+                        : Promise.reject(new Error("Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна.")),
+                },
+            ]}>
+                      <antd_1.Checkbox>
+                        <div className={foundation_module_css_1.default["foundation-checkbox-text"]}>
                           Зээлийн үйлчилгээний нөхцөл
                         </div>
-                      </Checkbox>
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Row justify="space-between">
-                      <Col flex="none">
-                        <Button className={styles["foundation-button-back"]}>
-                          <div
-                            className={styles["foundation-button-back-text"]}
-                          >
+                      </antd_1.Checkbox>
+                    </antd_1.Form.Item>
+                  </antd_1.Col>
+                  <antd_1.Col span={24}>
+                    <antd_1.Row justify="space-between">
+                      <antd_1.Col flex="none">
+                        <antd_1.Button className={foundation_module_css_1.default["foundation-button-back"]}>
+                          <div className={foundation_module_css_1.default["foundation-button-back-text"]}>
                             Буцах
                           </div>
-                        </Button>
-                      </Col>
-                      <Col flex="none">
-                        <Form.Item>
-                          <Button
-                            type="primary"
-                            className={`${styles["foundation-button-contiune"]} bg-primary`}
-                            onClick={handleOk}
-                            htmlType="submit"
-                          >
-                            <CalculatorOutlined />
+                        </antd_1.Button>
+                      </antd_1.Col>
+                      <antd_1.Col flex="none">
+                        <antd_1.Form.Item>
+                          <antd_1.Button type="primary" className={`${foundation_module_css_1.default["foundation-button-contiune"]} bg-primary`} onClick={handleOk} htmlType="submit">
+                            <icons_1.CalculatorOutlined />
                             Үргэлжлүүлэх
-                          </Button>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </Form>
-            </>
-          }
-        />
-        {!isModalOpen && (
-          <PopupModal
-            modalWidth={null}
-            textAlign={null}
-            open={open}
-            closeModal={null}
-            buttonText={"Үргэлжлүүлэх"}
-            iconPath={"/images/e-mongolia"}
-            customIconWidth={278}
-            customDiv={null}
-            closableM={"false"}
-            buttonClick={buttonClick}
-            text={
-              "Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах салбар нэгжид хандан нээлгэнэ үү."
-            }
-          />
-        )}
-        <SidebarLeftComponent />
-        <Layout>
+                          </antd_1.Button>
+                        </antd_1.Form.Item>
+                      </antd_1.Col>
+                    </antd_1.Row>
+                  </antd_1.Col>
+                </antd_1.Row>
+              </antd_1.Form>
+            </>}/>
+        {!isModalOpen && (<modal_1.default modalWidth={null} textAlign={null} open={open} closeModal={null} buttonText={"Үргэлжлүүлэх"} iconPath={"/images/e-mongolia"} customIconWidth={278} customDiv={null} closableM={"false"} buttonClick={buttonClick} text={"Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах салбар нэгжид хандан нээлгэнэ үү."}/>)}
+        <SidebarLeft_1.default />
+        <antd_1.Layout>
           <Content>{children}</Content>
-        </Layout>
-        <SidebarRightComponent />
-      </ApiWrapper>
-    </Layout>
-  );
+        </antd_1.Layout>
+        <SidebarRight_1.default />
+      </dashboardApiContext_1.ApiWrapper>
+    </antd_1.Layout>);
 };
+exports.ProtectedLayout = ProtectedLayout;

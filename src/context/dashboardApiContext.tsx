@@ -69,7 +69,7 @@ export const ApiWrapper = ({ children }: any) => {
   const [myFundTabKey, setMyFundTabKey] = useState("1");
 
   const order = "date";
-  const order_up = "1";
+  const order_up = "0";
   const page = "1";
   const page_size = "20";
   const filter_type = "dp";

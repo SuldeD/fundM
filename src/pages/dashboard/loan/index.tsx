@@ -22,7 +22,8 @@ import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
 
 export const Loan = () => {
-  const { loan, data, loanReqMutate, loanReqConfirmMut } = useApiContext();
+  const { loan, data, loanReqMutate, loanReqConfirmMut, accountInfo } =
+    useApiContext();
   useRequireAuth();
   const { error } = Modal;
 
@@ -705,7 +706,18 @@ export const Loan = () => {
                     className={`${styles["dloan-button-contiune"]} bg-primary`}
                     onClick={() => {
                       // @ts-ignore
-                      termsRef.current?.input.checked ? submit() : showModal();
+                      termsRef.current?.input.checked
+                        ? !accountInfo.bank_account
+                          ? error({
+                              title: "Амжилтгүй",
+                              content: (
+                                <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
+                              ),
+                            }) &&
+                            // @ts-ignore
+                            router.push("/dashboard/profile/bank")
+                          : submit()
+                        : showModal();
                     }}
                   >
                     <CalculatorOutlined />
