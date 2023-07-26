@@ -34,13 +34,13 @@ export const Dashboard = () => {
       width: "20%",
       // @ts-ignore
       render: (type) =>
-        type == "loan" ? (
-          <div className={styles["dashboard-list-item-type-1"]}>
-            Авах хүсэлт
-          </div>
-        ) : (
+        type == "saving" ? (
           <div className={styles["dashboard-list-item-type-2"]}>
             Өгөх хүсэлт
+          </div>
+        ) : (
+          <div className={styles["dashboard-list-item-type-1"]}>
+            Авах хүсэлт
           </div>
         ),
     },

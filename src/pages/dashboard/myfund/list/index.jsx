@@ -5,11 +5,13 @@ import { HeaderDashboard } from "../../../../components/header";
 import { useAppContext } from "../../../../context/appContext";
 import { useRouter } from "next/router";
 import { useRequireAuth } from "app/utils/auth";
+import { useApiContext } from "app/context/dashboardApiContext";
 
 export const List = () => {
   const router = useRouter();
   useRequireAuth();
   const { myFundTabKey } = useAppContext();
+  const { myLoanOrders, mySavingOrders } = useApiContext();
   const columns = [
     {
       title: "Дараалал",

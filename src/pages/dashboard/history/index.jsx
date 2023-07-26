@@ -10,7 +10,7 @@ import { useRequireAuth } from "app/utils/auth";
 const { RangePicker } = DatePicker;
 
 const History = () => {
-  const { data, publicAllOrders: dataTable } = useApiContext();
+  const { data, orders: dataTable } = useApiContext();
   useRequireAuth();
 
   const [type, setType] = useState(null);
@@ -38,8 +38,8 @@ const History = () => {
   const columns = [
     {
       title: "№",
-      dataIndex: "index",
-      key: "request_id",
+      dataIndex: "CheckMbAccount",
+      key: "CheckMbAccount",
       width: "6%",
       // @ts-ignore
       render: (product_id) => (
@@ -204,7 +204,7 @@ const History = () => {
                   position: ["bottomCenter"],
                 }}
                 dataSource={dataTable}
-                rowKey={"request_id"}
+                rowKey={"CheckMbAccount"}
               />
             </Col>
           </Row>

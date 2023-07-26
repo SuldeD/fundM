@@ -23,6 +23,10 @@ interface AppContext {
   loanReqConfirmMut: any;
   helpBankList: any;
   addBankVerMutate: any;
+  myLoanOrders: any;
+  mySavingOrders: any;
+  sumMyLoan: any;
+  sumMySaving: any;
 }
 const AppContext = createContext<AppContext>({} as AppContext);
 
@@ -69,7 +73,9 @@ export const ApiWrapper = ({ children }: any) => {
   const page = "1";
   const page_size = "20";
   const filter_type = "dp";
-  const [orders, setOrders] = useState();
+  const [orders, setMyOrders] = useState<any[]>([]);
+  const [myLoanOrders, setMyLoanOrders] = useState<any[]>([]);
+  const [mySavingOrders, setMySavingOrders] = useState<any[]>([]);
 
   const [publicLoanOrders, setPublicLoanOrders] = useState<any[]>([]);
   const [publicSavingOrders, setPublicSavingOrders] = useState<any[]>([]);
@@ -88,7 +94,13 @@ export const ApiWrapper = ({ children }: any) => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data.success) {
-            setOrders(data.loan_requests);
+            setPublicAllOrders(data.loan_requests);
+
+            data?.loan_requests?.forEach((el: any) =>
+              el.product_type_code == "saving"
+                ? setPublicSavingOrders((prev) => [...prev, el])
+                : setPublicLoanOrders((prev) => [...prev, el])
+            );
           } else {
             signOut();
             error({
@@ -107,12 +119,12 @@ export const ApiWrapper = ({ children }: any) => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data.success) {
-            setPublicAllOrders(data.loan_requests);
+            setMyOrders(data.loan_requests);
 
             data?.loan_requests?.forEach((el: any) =>
               el.product_type_code == "saving"
-                ? setPublicSavingOrders((prev) => [...prev, el])
-                : setPublicLoanOrders((prev) => [...prev, el])
+                ? setMySavingOrders((prev) => [...prev, el])
+                : setMyLoanOrders((prev) => [...prev, el])
             );
           } else {
             signOut();
@@ -137,6 +149,18 @@ export const ApiWrapper = ({ children }: any) => {
       setSumSaving((prev) => prev + Number(el.loan_amount));
     });
   }, [publicLoanOrders]);
+
+  const [sumMyLoan, setMySumLoan] = useState(0);
+  const [sumMySaving, setMySumSaving] = useState(0);
+
+  useEffect(() => {
+    myLoanOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
+      setMySumLoan((prev) => prev + Number(el.loan_amount));
+    });
+    mySavingOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
+      setMySumSaving((prev) => prev + Number(el.loan_amount));
+    });
+  }, [myLoanOrders]);
 
   useEffect(() => {
     loanData?.product_list.forEach(
@@ -175,6 +199,10 @@ export const ApiWrapper = ({ children }: any) => {
     loanReqMutate,
     addBankVerMutate,
     helpBankList,
+    mySavingOrders,
+    myLoanOrders,
+    sumMyLoan,
+    sumMySaving,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -9,7 +9,6 @@ import { useApiContext } from "app/context/dashboardApiContext";
 export const FoundationReq = () => {
   const router = useRouter();
   const { publicSavingOrders: data } = useApiContext();
-  console.log(data);
   // const data = [
   //   {
   //     id: 1,
@@ -110,7 +109,17 @@ export const FoundationReq = () => {
                       <Row align="middle">
                         <Col span={5}>
                           <div className={styles["loanReq-list-number"]}>
-                            {indx + 1}
+                            {el.is_my_request == "1" ? (
+                              <div className={styles["loanReq-start"]}>
+                                <Image
+                                  width={23}
+                                  src="/images/star.svg"
+                                  preview={false}
+                                />
+                              </div>
+                            ) : (
+                              indx + 1
+                            )}
                           </div>
                         </Col>
                         <Col span={19}>
@@ -191,20 +200,21 @@ export const FoundationReq = () => {
                       [styles["loanReq-row-div-end"]]: data.length - 1 === indx,
                     })}
                   >
-                    {el.take && (
-                      <div className={styles["loanReq-start"]}>
-                        <Image
-                          width={23}
-                          src="/images/star.svg"
-                          preview={false}
-                        />
-                      </div>
-                    )}
                     <Col span={22}>
                       <Row align="middle">
                         <Col span={5}>
                           <div className={styles["loanReq-list-number"]}>
-                            {indx + 1}
+                            {el.is_my_request == "1" ? (
+                              <div className={styles["loanReq-start"]}>
+                                <Image
+                                  width={23}
+                                  src="/images/star.svg"
+                                  preview={false}
+                                />
+                              </div>
+                            ) : (
+                              indx + 1
+                            )}
                           </div>
                         </Col>
                         <Col span={19}>

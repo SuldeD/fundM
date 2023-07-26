@@ -4,17 +4,19 @@ import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { useAppContext } from "../../../context/appContext";
 import { useRequireAuth } from "app/utils/auth";
+import { useApiContext } from "app/context/dashboardApiContext";
 
 export const MyFund = () => {
   const { myFundTabKey, setMyFundTabKey } = useAppContext();
+  const { myLoanOrders, mySavingOrders, sumMyLoan, sumMySaving } =
+    useApiContext();
   useRequireAuth();
-  const totalFundMoney = 150000000;
-  const totalLoanMoney = 100000000;
+
   const columns = [
     {
       title: "Дараалал",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "CheckMbAccount",
+      key: "CheckMbAccount",
       align: "center",
       width: "6%",
       // @ts-ignore
@@ -24,8 +26,8 @@ export const MyFund = () => {
     },
     {
       title: "Зээлийн хэмжээ",
-      dataIndex: "loanTotal",
-      key: "loanTotal",
+      dataIndex: "loan_amount",
+      key: "loan_amount",
       align: "center",
       width: "23%",
       // @ts-ignore
@@ -37,26 +39,26 @@ export const MyFund = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "product_type_code",
+      key: "product_type_code",
       align: "center",
       width: "23%",
       // @ts-ignore
-      render: (type) =>
-        type === "Өгөх хүсэлт" ? (
+      render: (product_type_code) =>
+        product_type_code === "saving" ? (
           <div className={styles["myfund-tabs-2-content-table-type-text"]}>
-            {type}
+            {product_type_code}
           </div>
         ) : (
           <div className={styles["myfund-tabs-1-content-table-type-text"]}>
-            {type}
+            {product_type_code}
           </div>
         ),
     },
     {
       title: "Хүү",
-      dataIndex: "rate",
-      key: "rate",
+      dataIndex: "loan_rate_month",
+      key: "loan_rate_month",
       align: "center",
       width: "15%",
       // @ts-ignore
@@ -104,24 +106,6 @@ export const MyFund = () => {
       icon: " ",
     },
   ];
-  const data1 = [
-    {
-      id: 1,
-      loanTotal: 100000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      completion: "80 %",
-      icon: " ",
-    },
-    {
-      id: 3,
-      loanTotal: 50000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      completion: "0",
-      icon: "",
-    },
-  ];
 
   const items = [
     {
@@ -139,18 +123,20 @@ export const MyFund = () => {
                 Оруулсан хүсэлтийн хэмжээ
               </div>
               <div className={styles["myfund-tabs-1-content-money"]}>
-                {numberToCurrency(totalLoanMoney)}
+                {numberToCurrency(sumMyLoan)}
               </div>
             </Col>
             <Col flex="none">
               <div className={styles["myfund-tabs-content-title"]}>
                 Биржийн хүү
               </div>
-              <div className={styles["myfund-tabs-content-rate"]}>1.50 %</div>
+              <div className={styles["myfund-tabs-content-rate"]}>
+                {myLoanOrders[0]?.loan_rate_month} %
+              </div>
             </Col>
             <Col flex="none">
               <div className={styles["myfund-tabs-content-title"]}>Биелэлт</div>
-              <div className={styles["myfund-tabs-content-rate"]}>0 %</div>
+              <div className={styles["myfund-tabs-content-rate"]}>80 %</div>
             </Col>
             <Col flex="none">
               <div className={styles["myfund-tabs-content-title"]}>
@@ -169,8 +155,8 @@ export const MyFund = () => {
                   pageSize: 10,
                   position: ["bottomCenter"],
                 }}
-                dataSource={data}
-                rowKey={"id"}
+                dataSource={myLoanOrders}
+                rowKey={"CheckMbAccount"}
               />
             </Col>
           </Row>
@@ -193,7 +179,7 @@ export const MyFund = () => {
                   Оруулсан хүсэлтийн хэмжээ
                 </div>
                 <div className={styles["myfund-tabs-2-content-money"]}>
-                  {numberToCurrency(totalFundMoney)}
+                  {numberToCurrency(sumMySaving)}
                 </div>
               </Col>
               <Col flex="none">
@@ -225,8 +211,8 @@ export const MyFund = () => {
                     pageSize: 10,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={data1}
-                  rowKey={"id"}
+                  dataSource={mySavingOrders}
+                  rowKey={"CheckMbAccount"}
                 />
               </Col>
             </Row>
