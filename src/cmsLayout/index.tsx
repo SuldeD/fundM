@@ -21,13 +21,8 @@ export const ProtectedLayout = ({ children }) => {
   const [form] = Form.useForm();
   const { status } = useSession();
 
-  const { data: statusData } = api.loan.accountStatus.useQuery(undefined, {
-    enabled: false,
-  });
-
-  const { data: dan } = api.loan.accountStatusDan.useQuery(undefined, {
-    enabled: false,
-  });
+  const { data: statusData } = api.loan.accountStatus.useQuery();
+  const { data: dan } = api.loan.accountStatusDan.useQuery();
 
   useRequireAuth();
   if (status == "loading") {
@@ -35,7 +30,7 @@ export const ProtectedLayout = ({ children }) => {
   }
 
   function buttonClick() {
-    window.open(dan.https_redirect, "_blank");
+    window.open(dan?.https_redirect, "_blank");
   }
 
   const toggleChecked = () => {

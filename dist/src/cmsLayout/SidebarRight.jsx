@@ -28,7 +28,7 @@ const SidebarRightComponent = () => {
         "/dashboard/foundation": loanTakeRequest_1.LoanTakeReqComponent,
         "/dashboard/myfund": myFundTabKey === "1" ? loanTakeRequest_1.LoanTakeReqComponent : foundationReq_1.FoundationReq,
     };
-    const renderNavbar = (/** @type {string} */ pathname) => {
+    const renderNavbar = (pathname) => {
         var _a;
         // @ts-ignore
         const Comp = (_a = NavBars[pathname]) !== null && _a !== void 0 ? _a : NavBars["/dashboard/profile"];

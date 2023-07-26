@@ -25,18 +25,14 @@ const ProtectedLayout = ({ children }) => {
     const [isModalOpen, setIsModalOpen] = (0, react_2.useState)(true);
     const [form] = antd_1.Form.useForm();
     const { status } = (0, react_1.useSession)();
-    const { data: statusData } = api_1.api.loan.accountStatus.useQuery(undefined, {
-        enabled: false,
-    });
-    const { data: dan } = api_1.api.loan.accountStatusDan.useQuery(undefined, {
-        enabled: false,
-    });
+    const { data: statusData } = api_1.api.loan.accountStatus.useQuery();
+    const { data: dan } = api_1.api.loan.accountStatusDan.useQuery();
     (0, auth_1.useRequireAuth)();
     if (status == "loading") {
         return <Loader_1.Loaderr />;
     }
     function buttonClick() {
-        window.open(dan.https_redirect, "_blank");
+        window.open(dan === null || dan === void 0 ? void 0 : dan.https_redirect, "_blank");
     }
     const toggleChecked = () => {
         setChecked(!checked);
