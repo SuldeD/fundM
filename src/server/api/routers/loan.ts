@@ -8,7 +8,7 @@ import z from "zod";
 export const loanRouter = createTRPCRouter({
   accountStatus: publicProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
-    const res2 = await fetch("http://is.fundme.com/account/status", {
+    const res2 = await fetch(`${process.env.BACKEND_URL}/account/status`, {
       method: "GET",
       credentials: "same-origin",
       headers: {
@@ -25,7 +25,7 @@ export const loanRouter = createTRPCRouter({
 
   accountStatusDan: publicProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
-    const res2 = await fetch("http://is.fundme.com/sso/request/user", {
+    const res2 = await fetch(`${process.env.BACKEND_URL}/sso/request/user`, {
       method: "GET",
       credentials: "same-origin",
       headers: {
@@ -42,7 +42,7 @@ export const loanRouter = createTRPCRouter({
   accountInfo: publicProcedure.query(async ({ ctx }) => {
     console.log("accountInfo");
     const token = await getAccountToken(ctx);
-    const res2 = await fetch("http://is.fundme.com/account/get/info", {
+    const res2 = await fetch(`${process.env.BACKEND_URL}/account/get/info`, {
       method: "GET",
       credentials: "same-origin",
       headers: {
@@ -65,7 +65,7 @@ export const loanRouter = createTRPCRouter({
           phone,
         })
       );
-      const res2 = await fetch("http://is.fundme.com/account/signup", {
+      const res2 = await fetch(`${process.env.BACKEND_URL}/account/signup`, {
         method: "POST",
         credentials: "same-origin",
         body: body,
@@ -96,14 +96,17 @@ export const loanRouter = createTRPCRouter({
           tmp_user_id,
         })
       );
-      const res2 = await fetch("http://is.fundme.com/account/verify/phone", {
-        method: "POST",
-        credentials: "same-origin",
-        body: body,
-        headers: {
-          ...loanServiceHeaders,
-        },
-      });
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/verify/phone`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+          },
+        }
+      );
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       return accountStatus;
@@ -149,7 +152,7 @@ export const loanRouter = createTRPCRouter({
           transaction_password,
         })
       );
-      const res2 = await fetch("http://is.fundme.com/account/new/user", {
+      const res2 = await fetch(`${process.env.BACKEND_URL}/account/new/user`, {
         method: "POST",
         credentials: "same-origin",
         body: body,
@@ -164,7 +167,7 @@ export const loanRouter = createTRPCRouter({
 
   helpQuestion: publicProcedure.query(async ({}) => {
     const res2 = await fetch(
-      "http://is.fundme.com/help/security/question/list",
+      `${process.env.BACKEND_URL}/help/security/question/list`,
       {
         method: "GET",
         credentials: "same-origin",
@@ -180,7 +183,7 @@ export const loanRouter = createTRPCRouter({
 
   helpBankList: publicProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
-    const res2 = await fetch("http://is.fundme.com/help/bank/list", {
+    const res2 = await fetch(`${process.env.BACKEND_URL}/help/bank/list`, {
       method: "GET",
       credentials: "same-origin",
       headers: {
@@ -215,7 +218,7 @@ export const loanRouter = createTRPCRouter({
           page_size,
         })
       );
-      const res2 = await fetch("http://is.fundme.com/request/search", {
+      const res2 = await fetch(`${process.env.BACKEND_URL}/request/search`, {
         method: "POST",
         credentials: "same-origin",
         body: body,
@@ -254,7 +257,7 @@ export const loanRouter = createTRPCRouter({
           filter_type,
         })
       );
-      const res2 = await fetch("http://is.fundme.com/loan/search", {
+      const res2 = await fetch(`${process.env.BACKEND_URL}/loan/search`, {
         method: "POST",
         credentials: "same-origin",
         body: body,
@@ -291,7 +294,7 @@ export const loanRouter = createTRPCRouter({
           loan_month,
         })
       );
-      const res2 = await fetch("http://is.fundme.com/loan/request", {
+      const res2 = await fetch(`${process.env.BACKEND_URL}/loan/request`, {
         method: "POST",
         credentials: "same-origin",
         body: body,
@@ -326,16 +329,19 @@ export const loanRouter = createTRPCRouter({
           password,
         })
       );
-      const res2 = await fetch("http://is.fundme.com/loan/request/confirm", {
-        method: "POST",
-        credentials: "same-origin",
-        body: body,
-        headers: {
-          ...loanServiceHeaders,
-          Cookie: token!.id_token!,
-          "Session-Token": token!.access_token!,
-        },
-      });
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/loan/request/confirm`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);
@@ -362,7 +368,7 @@ export const loanRouter = createTRPCRouter({
         })
       );
       const res2 = await fetch(
-        "http://is.fundme.com/account/add/bank/account",
+        `${process.env.BACKEND_URL}/account/add/bank/account`,
         {
           method: "POST",
           credentials: "same-origin",
@@ -402,7 +408,7 @@ export const loanRouter = createTRPCRouter({
         })
       );
       const res2 = await fetch(
-        "http://is.fundme.com/loan/bank/account/verify",
+        `${process.env.BACKEND_URL}/loan/bank/account/verify`,
         {
           method: "POST",
           credentials: "same-origin",
@@ -422,7 +428,7 @@ export const loanRouter = createTRPCRouter({
 
   loanList: publicProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
-    const res2 = await fetch("http://is.fundme.com/product/list", {
+    const res2 = await fetch(`${process.env.BACKEND_URL}/product/list`, {
       method: "GET",
       credentials: "same-origin",
       headers: {
