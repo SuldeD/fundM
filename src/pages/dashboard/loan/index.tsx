@@ -33,9 +33,9 @@ export const Loan = () => {
     setChecked(!checked);
   };
 
-  const onChecked = (
-    /** @type {{ target: { checked: boolean | ((prevState: boolean) => boolean); }; }} */ e
-  ) => {
+  const onChecked = (e: {
+    target: { checked: boolean | ((prevState: boolean) => boolean) };
+  }) => {
     setChecked(e.target.checked);
   };
 
@@ -55,9 +55,7 @@ export const Loan = () => {
 
   const [inputValue, setInputValue] = useState(minValue);
 
-  const onChange = (
-    /** @type {import("react").SetStateAction<number>} */ newValue
-  ) => {
+  const onChange = (newValue: number) => {
     setInputValue(newValue);
   };
 
@@ -86,9 +84,12 @@ export const Loan = () => {
         password: password && password,
       },
       {
-        onSuccess: (
-          /** @type {{ success: any; request_id:any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
+        onSuccess: (data: {
+          success: any;
+          request_id: any;
+          loan_requests: import("react").SetStateAction<undefined>;
+          description: any;
+        }) => {
           if (data.success) {
             console.log(data);
           } else {
@@ -142,9 +143,7 @@ export const Loan = () => {
   ];
   const [activeDuration, setActiveDuration] = useState(0);
 
-  const changeActive = (
-    /** @type {import("react").SetStateAction<number>} */ indx
-  ) => {
+  const changeActive = (indx: number) => {
     setActiveDuration(indx);
   };
 
@@ -174,9 +173,12 @@ export const Loan = () => {
           .toString(),
       },
       {
-        onSuccess: (
-          /** @type {{ success: any; request_id:any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
+        onSuccess: (data: {
+          success: any;
+          request_id: any;
+          loan_requests: import("react").SetStateAction<undefined>;
+          description: any;
+        }) => {
           if (data.success) {
             setRequestId(data?.request_id);
             verifyShowModal();

@@ -27,7 +27,7 @@ export const SidebarRightComponent = () => {
       myFundTabKey === "1" ? LoanTakeReqComponent : FoundationReq,
   };
 
-  const renderNavbar = (/** @type {string} */ pathname) => {
+  const renderNavbar = (pathname: string) => {
     // @ts-ignore
     const Comp = NavBars[pathname] ?? NavBars["/dashboard/profile"];
 

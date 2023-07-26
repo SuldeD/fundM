@@ -20,7 +20,7 @@ export const Dashboard = () => {
       dataIndex: "loan_amount",
       key: "loan_amount",
       width: "20%",
-      render: (/** @type {any} */ price) => (
+      render: (price: any) => (
         <div className={styles["dashboard-list-item-text"]}>
           {numberToCurrency(price)}
         </div>
