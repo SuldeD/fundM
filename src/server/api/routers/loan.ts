@@ -380,6 +380,46 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
+  addBankVerify: publicProcedure
+    .input(
+      z.object({
+        photo: z.string(),
+        confirm_code: z.string(),
+        password: z.string(),
+        request_id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { photo, password, confirm_code, request_id } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          photo,
+          confirm_code,
+          request_id,
+          password,
+        })
+      );
+      const res2 = await fetch(
+        "http://is.fundme.com/loan/bank/account/verify",
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
   loanList: publicProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
     const res2 = await fetch("http://is.fundme.com/product/list", {

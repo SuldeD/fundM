@@ -24,9 +24,10 @@ import { useRequireAuth } from "app/utils/auth";
 export const Loan = () => {
   const { loan, data, loanReqMutate, loanReqConfirmMut } = useApiContext();
   useRequireAuth();
+  const { error } = Modal;
 
   const [checked, setChecked] = useState(false);
-  const [requestId, setRequestId] = useState("100");
+  const [requestId, setRequestId] = useState();
   const [password, setPassword] = useState(null);
   const toggleChecked = () => {
     setChecked(!checked);
@@ -92,10 +93,10 @@ export const Loan = () => {
             console.log(data);
           } else {
             console.log("err", data);
-            // error({
-            //   title: "Амжилтгүй",
-            //   content: <div>{data?.description || null}</div>,
-            // });
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
           }
         },
       }
@@ -126,17 +127,17 @@ export const Loan = () => {
     {
       id: 2,
       day: "14",
-      fee_percent: fee_percent * 2,
+      fee_percent: fee_percent,
     },
     {
       id: 3,
       day: "21",
-      fee_percent: fee_percent * 3,
+      fee_percent: fee_percent,
     },
     {
       id: 4,
       day: "28",
-      fee_percent: fee_percent * 4,
+      fee_percent: fee_percent,
     },
   ];
   const [activeDuration, setActiveDuration] = useState(0);
@@ -178,12 +179,13 @@ export const Loan = () => {
         ) => {
           if (data.success) {
             setRequestId(data?.request_id);
+            verifyShowModal();
           } else {
             console.log("err", data);
-            // error({
-            //   title: "Амжилтгүй",
-            //   content: <div>{data?.description || null}</div>,
-            // });
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
           }
         },
       }
@@ -787,7 +789,7 @@ export const Loan = () => {
                               <Form.Item>
                                 <Button
                                   type="primary"
-                                  className={styles["dloan-button-contiune"]}
+                                  className={`${styles["dloan-button-contiune"]} bg-primary`}
                                   onClick={handleOk}
                                   htmlType="submit"
                                 >

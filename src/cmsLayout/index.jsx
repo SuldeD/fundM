@@ -8,8 +8,8 @@ import { useRequireAuth } from "app/utils/auth";
 import { Loaderr } from "app/components/Loader";
 import styles from "../styles/foundation.module.css";
 import { useSession } from "next-auth/react";
-
-import { ApiWrapper, useApiContext } from "app/context/dashboardApiContext";
+import { ApiWrapper } from "app/context/dashboardApiContext";
+import { api } from "app/utils/api";
 const { Content } = Layout;
 
 // @ts-ignore
@@ -18,7 +18,13 @@ export const ProtectedLayout = ({ children }) => {
   const [form] = Form.useForm();
   const { status } = useSession();
 
-  const { dan, accountInfo } = useApiContext();
+  const { data: statusData } = api.loan.accountStatus.useQuery(undefined, {
+    enabled: false,
+  });
+
+  const { data: dan } = api.loan.accountStatusDan.useQuery(undefined, {
+    enabled: false,
+  });
 
   useRequireAuth();
   if (status == "loading") {
@@ -34,7 +40,7 @@ export const ProtectedLayout = ({ children }) => {
     setChecked(!checked);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleOk = async () => {
     await form.validateFields();
@@ -48,7 +54,7 @@ export const ProtectedLayout = ({ children }) => {
       <ApiWrapper>
         <PopupModal
           modalWidth={"70%"}
-          open={isModalOpen}
+          open={statusData?.stat?.valid_dan == 0 && isModalOpen}
           closeModal={null}
           buttonText={null}
           iconPath={null}

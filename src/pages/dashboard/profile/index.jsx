@@ -1,5 +1,14 @@
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Row, Col, Tabs, Upload, Collapse, Typography, Image } from "antd";
+import {
+  Row,
+  Col,
+  Tabs,
+  Upload,
+  Collapse,
+  Typography,
+  Image,
+  Modal,
+} from "antd";
 import styles from "../../../styles/profile.module.css";
 import { HeaderDashboard } from "../../../components/header";
 import { useState } from "react";
@@ -13,6 +22,7 @@ const { Paragraph } = Typography;
 export const Profile = () => {
   const { accountInfo, data } = useApiContext();
   const router = useRouter();
+  const { error } = Modal;
   useRequireAuth();
 
   const [editNumber, seteditNumber] = useState(accountInfo?.account?.phone);
@@ -232,7 +242,19 @@ export const Profile = () => {
                 <Col flex="right">
                   <div
                     className="cursor-pointer font-lato text-[12px] font-normal text-primary hover:text-[#524ffd]"
-                    onClick={() => router.push("/dashboard/profile/bank")}
+                    onClick={() => {
+                      !accountInfo.bank_account
+                        ? router.push("/dashboard/profile/bank")
+                        : error({
+                            title: "Амжилтгүй",
+                            content: (
+                              <div>
+                                Ta dans solih bol manai salbar deer ochij
+                                soliulna uu!!!
+                              </div>
+                            ),
+                          });
+                    }}
                   >
                     Данс холбох +
                   </div>

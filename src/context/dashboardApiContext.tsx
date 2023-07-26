@@ -12,7 +12,6 @@ interface AppContext {
   mutate: any;
   accountInfo: any;
   data: any;
-  dan: any;
   saving: any;
   status: any;
   orders: any;
@@ -23,6 +22,7 @@ interface AppContext {
   addBankMutate: any;
   loanReqConfirmMut: any;
   helpBankList: any;
+  addBankVerMutate: any;
 }
 const AppContext = createContext<AppContext>({} as AppContext);
 
@@ -37,19 +37,10 @@ export const ApiWrapper = ({ children }: any) => {
   const { mutate: loanReqConfirmMut } =
     api.loan.loanRequestConfirm.useMutation();
   const { mutate: addBankMutate } = api.loan.addBank.useMutation();
+  const { mutate: addBankVerMutate } = api.loan.addBankVerify.useMutation();
 
   const { data: loanData, refetch: requestLoanList } =
     api.loan.loanList.useQuery(undefined, {
-      enabled: false,
-    });
-
-  const { data: dan, refetch: requestStatusDan } =
-    api.loan.accountStatusDan.useQuery(undefined, {
-      enabled: false,
-    });
-
-  const { data: status, refetch: requestAccountStatus } =
-    api.loan.accountStatus.useQuery(undefined, {
       enabled: false,
     });
 
@@ -66,8 +57,6 @@ export const ApiWrapper = ({ children }: any) => {
   useEffect(() => {
     requestInfo();
     requestLoanList();
-    requestStatusDan();
-    requestAccountStatus();
     requestHelpBankList();
   }, []);
 
@@ -120,7 +109,7 @@ export const ApiWrapper = ({ children }: any) => {
           if (data.success) {
             setPublicAllOrders(data.loan_requests);
 
-            data.loan_requests.forEach((el: any) =>
+            data?.loan_requests?.forEach((el: any) =>
               el.product_type_code == "saving"
                 ? setPublicSavingOrders((prev) => [...prev, el])
                 : setPublicLoanOrders((prev) => [...prev, el])
@@ -178,13 +167,13 @@ export const ApiWrapper = ({ children }: any) => {
     mutate,
     accountInfo,
     data,
-    dan,
     saving,
     status,
     publicAllOrders,
     orders,
     loanReqConfirmMut,
     loanReqMutate,
+    addBankVerMutate,
     helpBankList,
   };
 

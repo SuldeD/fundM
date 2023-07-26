@@ -52,11 +52,15 @@ export const CalculateComponent = () => {
                       },
                       {
                         value: "14",
-                        label: "7 хоног",
+                        label: "14 хоног",
                       },
                       {
-                        value: "30",
-                        label: "30 хоног",
+                        value: "21",
+                        label: "21 хоног",
+                      },
+                      {
+                        value: "28",
+                        label: "28 хоног",
                       },
                     ]}
                   />
@@ -69,11 +73,11 @@ export const CalculateComponent = () => {
                     options={[
                       {
                         value: "1",
-                        label: "1.5 %",
+                        label: "1.0 %",
                       },
                       {
                         value: "2",
-                        label: "2.5 %",
+                        label: "2.4 %",
                       },
                     ]}
                   />

@@ -19,6 +19,7 @@ import { HeaderDashboard } from "../../../components/header";
 import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
+import moment from "moment";
 
 export const Foundation = () => {
   const [checked, setChecked] = useState(false);
@@ -42,7 +43,7 @@ export const Foundation = () => {
 
   const minValue = Number(saving && saving?.loan_min_amount);
   const maxValue = Number(saving && saving?.loan_max_amount);
-  const rate = saving?.loan_rate_day.slice(0, 4);
+  const rate = saving?.loan_rate_month.slice(0, 4);
 
   const [form] = Form.useForm();
   const termsRef = useRef();
@@ -300,12 +301,12 @@ export const Foundation = () => {
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["foundation-detail-text"]}>
-                          Хүүгийн хэмжээ
+                          Хүүгийн хэмжээ (хоногоор)
                         </div>
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {rate}%
+                          {saving?.loan_rate_day.slice(0, 4)} %
                         </div>
                       </Col>
                     </Row>
@@ -336,7 +337,11 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          2023.05.20
+                          {typeof activeDuration == "number" &&
+                            moment()
+                              // @ts-ignore
+                              .add(dataTable[activeDuration].day, "days")
+                              .calendar()}
                         </div>
                       </Col>
                     </Row>
@@ -392,9 +397,13 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-rate-profit"]}>
-                          {numberToCurrency(
-                            ((inputValue ?? 0) * 0.012).toFixed(2)
-                          )}
+                          {typeof activeDuration == "number" &&
+                            numberToCurrency(
+                              (inputValue / 100) *
+                                rate *
+                                // @ts-ignore
+                                Number(dataTable[activeDuration].day)
+                            )}
                         </div>
                       </Col>
                     </Row>
@@ -403,12 +412,12 @@ export const Foundation = () => {
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["foundation-detail-text"]}>
-                          Хүүгийн хэмжээ
+                          Хүүгийн хэмжээ (хоногоор)
                         </div>
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {rate}
+                          {saving?.loan_rate_day.slice(0, 4)} %
                         </div>
                       </Col>
                     </Row>
@@ -439,7 +448,11 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          2023.05.20
+                          {typeof activeDuration == "number" &&
+                            moment()
+                              // @ts-ignore
+                              .add(dataTable[activeDuration].day, "days")
+                              .calendar()}
                         </div>
                       </Col>
                     </Row>
@@ -607,9 +620,7 @@ export const Foundation = () => {
                               <Form.Item>
                                 <Button
                                   type="primary"
-                                  className={
-                                    styles["foundation-button-contiune"]
-                                  }
+                                  className={`${styles["foundation-button-contiune"]} bg-primary`}
                                   onClick={handleOk}
                                   htmlType="submit"
                                 >
