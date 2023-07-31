@@ -22,18 +22,10 @@ import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
 
 export const Loan = () => {
-  const {
-    loan,
-    data,
-    loanReqMutate,
-    loanReqConfirmMut,
-    accountInfo,
-    loanConrtact,
-  } = useApiContext();
+  const { loan, data, loanReqMutate, loanReqConfirmMut, accountInfo } =
+    useApiContext();
   useRequireAuth();
   const { error } = Modal;
-
-  // console.log("loanConrtact", loanConrtact);
 
   const [checked, setChecked] = useState<boolean>(false);
   const [requestId, setRequestId] = useState();
@@ -53,9 +45,11 @@ export const Loan = () => {
     setActiveClass(!activeClass);
   };
 
-  const minValue = 10000000;
-  const maxValue = 30000000;
-  const rate = "1.20 %";
+  const minValue = Number(loan?.loan_min_amount);
+  const maxValue = Number(loan?.loan_max_amount);
+  const rate = loan?.loan_rate_month;
+  const fee_percent = loan?.fee_percent;
+
   const [form] = Form.useForm();
   const termsRef = useRef();
   const router = useRouter();

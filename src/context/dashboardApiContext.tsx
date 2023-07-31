@@ -27,7 +27,6 @@ interface AppContext {
   sumMyLoan: any;
   sumMySaving: any;
   setMyOrders: any;
-  loanConrtact: any;
   addEmail: any;
   changePhoneConfirm: any;
   changePhone: any;
@@ -66,16 +65,10 @@ export const ApiWrapper = ({ children }: any) => {
       enabled: false,
     });
 
-  const { data: loanConrtact, refetch: requestContract } =
-    api.loan.loanContract.useQuery(undefined, {
-      enabled: false,
-    });
-
   useEffect(() => {
     requestInfo();
     requestLoanList();
     requestHelpBankList();
-    requestContract();
   }, []);
 
   const [loan, setLoan] = useState();
@@ -156,6 +149,7 @@ export const ApiWrapper = ({ children }: any) => {
   const [sumLoan, setSumLoan] = useState(0);
   const [sumSaving, setSumSaving] = useState(0);
 
+
   useEffect(() => {
     publicLoanOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
       setSumLoan((prev) => prev + Number(el.loan_amount));
@@ -163,7 +157,7 @@ export const ApiWrapper = ({ children }: any) => {
     publicSavingOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
       setSumSaving((prev) => prev + Number(el.loan_amount));
     });
-  }, [publicLoanOrders]);
+  }, [publicSavingOrders]);
 
   const [sumMyLoan, setMySumLoan] = useState(0);
   const [sumMySaving, setMySumSaving] = useState(0);
@@ -219,7 +213,7 @@ export const ApiWrapper = ({ children }: any) => {
     sumMyLoan,
     sumMySaving,
     setMyOrders,
-    loanConrtact,
+
     changePhoneConfirm,
     addEmail,
   };

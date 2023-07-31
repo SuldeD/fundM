@@ -1,17 +1,15 @@
-import { Col, Row, Button, Image, Table, Modal } from "antd";
+import { Col, Row, Button, Image, Table } from "antd";
 import styles from "../../styles/dashboard.module.css";
 import { RightOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../components/header";
 import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
-import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 
 export const Dashboard = () => {
   const router = useRouter();
   useRequireAuth();
-
   const { loan, orders, data, sumLoan, sumSaving } = useApiContext();
 
   const columns = [
@@ -19,6 +17,7 @@ export const Dashboard = () => {
       title: "Зээлийн хэмжээ",
       dataIndex: "loan_amount",
       key: "loan_amount",
+
       width: "20%",
       render: (price: any) => (
         <div className={styles["dashboard-list-item-text"]}>
@@ -28,21 +27,26 @@ export const Dashboard = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "type",
+      dataIndex: "product_type_code",
       key: "type",
       align: "center",
       width: "20%",
       // @ts-ignore
       render: (type) =>
-        type === "Авах хүсэлт" ? (
-          <div className={styles["dashboard-list-item-type-1"]}>{type}</div>
+        type == "loan" ? (
+          <div className={styles["dashboard-list-item-type-1"]}>
+            Авах хүсэлт
+          </div>
         ) : (
-          <div className={styles["dashboard-list-item-type-2"]}>{type}</div>
+          <div className={styles["dashboard-list-item-type-2"]}>
+            Өгөх хүсэлт
+          </div>
         ),
     },
     {
       title: "Хүү",
-      dataIndex: "rate",
+      dataIndex: "loan_rate_month",
+
       key: "rate",
       width: "20%",
       align: "center",
@@ -54,6 +58,7 @@ export const Dashboard = () => {
     {
       title: "Хугацаа",
       dataIndex: "loan_day",
+
       key: "day",
       width: "20%",
       align: "center",
@@ -65,6 +70,7 @@ export const Dashboard = () => {
     {
       title: "Огноо",
       dataIndex: "create_date",
+
       align: "right",
       key: "date",
       width: "20%",
@@ -76,120 +82,8 @@ export const Dashboard = () => {
       ),
     },
   ];
-  const dataTable = [
-    {
-      id: 1,
-      price: 100000000,
-      type: "Авах хүсэлт",
-      rate: "2.5 %",
-      day: "14 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 2,
-      price: 30000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "30 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 3,
-      price: 20000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "60 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 4,
-      price: 15000000,
-      type: "Авах хүсэлт",
-      rate: "2.5 %",
-      day: "14 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 5,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 6,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 7,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 8,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 9,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 10,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 11,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 12,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-    {
-      id: 13,
-      price: 22000000,
-      type: "Өгөх хүсэлт",
-      rate: "2.5 %",
-      day: "7 хоног",
-      date: "23/04/23",
-    },
-  ];
-
-  const { data } = useSession();
-
-  console.log(data, "session");
 
   if (!data) {
-    router.push("/");
-    return <Loaderr />;
   } else {
     return (
       <Row justify="center" className={styles["dashboard-main-row"]}>
@@ -217,7 +111,7 @@ export const Dashboard = () => {
                     </Col>
                     <Col span={24}>
                       <div className={styles["dashboard-loan-price-text"]}>
-                        {numberToCurrency(45000000)}
+                        {sumSaving > sumLoan && sumSaving} ₮
                       </div>
                     </Col>
                     <Col span={24}>
@@ -242,7 +136,7 @@ export const Dashboard = () => {
                         </Col>
                         <Col span={24}>
                           <div className={styles["dashboard-loan-son-number"]}>
-                            1.5 %
+                            {loan?.loan_rate_month}
                           </div>
                         </Col>
                       </Row>
@@ -287,7 +181,7 @@ export const Dashboard = () => {
                           pageSize: 10,
                           position: ["bottomCenter"],
                         }}
-                        dataSource={dataTable}
+                        dataSource={orders}
                         rowKey={"id"}
                       />
                     </Col>

@@ -140,7 +140,7 @@ export const MyFund = () => {
                 Биржийн хүү
               </div>
               <div className={styles["myfund-tabs-content-rate"]}>
-                {myLoanOrders[0]?.loan_rate_month} %
+                {myLoanOrders && myLoanOrders[0]?.loan_rate_month} %
               </div>
             </Col>
             <Col flex="none">

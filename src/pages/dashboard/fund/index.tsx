@@ -128,7 +128,7 @@ export const FundHistory = () => {
                   Дундаж хүү
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {mySavingOrders[0]?.loan_rate_month} %
+                  {mySavingOrders && mySavingOrders[0]?.loan_rate_month} %
                 </div>
               </Col>
               <Col flex="none">
@@ -136,7 +136,7 @@ export const FundHistory = () => {
                   Санхүүжилтын тоо
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {mySavingOrders.length}
+                  {mySavingOrders && mySavingOrders.length}
                 </div>
               </Col>
             </Row>
@@ -180,7 +180,7 @@ export const FundHistory = () => {
                   Дундаж хүү
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {myLoanOrders[0]?.loan_rate_month} %
+                  {myLoanOrders && myLoanOrders[0]?.loan_rate_month} %
                 </div>
               </Col>
               <Col flex="none">
@@ -188,7 +188,7 @@ export const FundHistory = () => {
                   Зээлийн тоо
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {myLoanOrders.length}
+                  {myLoanOrders && myLoanOrders.length}
                 </div>
               </Col>
             </Row>
@@ -210,6 +210,7 @@ export const FundHistory = () => {
       ),
     },
   ];
+
   if (!data) {
     return <Loaderr />;
   } else {
