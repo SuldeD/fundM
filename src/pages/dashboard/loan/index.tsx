@@ -53,11 +53,9 @@ export const Loan = () => {
     setActiveClass(!activeClass);
   };
 
-  const minValue = Number(loan && loan?.loan_min_amount);
-  const maxValue = Number(loan && loan?.loan_max_amount);
-  const rate = loan?.loan_rate_day.slice(0, 4);
-  const fee_percent = Number(loan?.fee_percent);
-
+  const minValue = 10000000;
+  const maxValue = 30000000;
+  const rate = "1.20 %";
   const [form] = Form.useForm();
   const termsRef = useRef();
   const router = useRouter();

@@ -9,10 +9,10 @@ const { Content } = Layout;
 // @ts-ignore
 const SimpleLayout = ({ children }) => {
   const { status } = useSession();
-  useRequireAuth();
-  if (status == "loading") {
-    return <Loaderr />;
-  }
+  // useRequireAuth();
+  // if (status == "loading") {
+  //   return <Loaderr />;
+  // }
 
   return (
     <Layout>
