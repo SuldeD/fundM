@@ -49,7 +49,10 @@ export default function Login({
                 type="password"
               />
             </label>
-            <p className="mt-[25px] pb-[13px] text-end font-inter text-[14px] font-normal leading-[14px] text-[#fff]">
+            <p
+              className="mt-[25px] cursor-pointer pb-[13px] text-end font-inter text-[14px] font-normal leading-[14px] text-[#fff]"
+              onClick={() => router.push("/forgot")}
+            >
               Нууц үгээ мартсан уу ?
             </p>
             <div className="mt-[42px] flex justify-between">

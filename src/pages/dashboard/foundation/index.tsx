@@ -23,12 +23,15 @@ import moment from "moment";
 
 export const Foundation = () => {
   const [checked, setChecked] = useState(false);
+
+  const { data, saving, loanReqMutate, loanReqConfirmMut, accountInfo } =
+    useApiContext();
+  useRequireAuth();
+  const { error } = Modal;
+
   const toggleChecked = () => {
     setChecked(!checked);
   };
-
-  const { data, saving } = useApiContext();
-  useRequireAuth();
 
   // @ts-ignore
   const onChecked = (e) => {
@@ -72,10 +75,7 @@ export const Foundation = () => {
   const verifyShowModal = () => {
     setIsVerifyOpen(true);
   };
-  const verifyCompleteModal = async () => {
-    await setIsVerifyOpen(false);
-    completeShowModal();
-  };
+
   const verifyCancelModal = () => {
     setIsVerifyOpen(false);
   };
@@ -113,6 +113,81 @@ export const Foundation = () => {
   const changeActive = (indx) => {
     setActiveDuration(indx);
   };
+
+  const [requestId, setRequestId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  function submit() {
+    loanReqMutate(
+      {
+        product_id: (saving?.product_id).toString(),
+        loan_amount: inputValue.toString(),
+        repayment_amount: (
+          (inputValue / 100) *
+            rate *
+            // @ts-ignore
+            Number(dataTable[activeDuration].day) +
+          inputValue
+        ).toString(),
+        // @ts-ignore
+        loan_month: dataTable[activeDuration].day,
+      },
+      {
+        onSuccess: (data: {
+          success: any;
+          request_id: any;
+          loan_requests: import("react").SetStateAction<undefined>;
+          description: any;
+        }) => {
+          if (data.success) {
+            setRequestId(data?.request_id);
+            verifyShowModal();
+          } else {
+            console.log("err", data);
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }
+
+  const verifyCompleteModal = async () => {
+    if (password.length > 0) {
+      loanReqConfirmMut(
+        {
+          request_id: requestId && requestId,
+          password: password && password,
+        },
+        {
+          onSuccess: (data: {
+            success: any;
+            request_id: any;
+            loan_requests: import("react").SetStateAction<undefined>;
+            description: any;
+          }) => {
+            if (data.success) {
+              setIsVerifyOpen(false);
+              completeShowModal();
+            } else {
+              error({
+                title: "Амжилтгүй",
+                content: <div>{data?.description || null}</div>,
+              });
+            }
+          },
+        }
+      );
+    } else {
+      error({
+        title: "Амжилтгүй",
+        content: <div>FundMe кодоо оруулна уу!!!</div>,
+      });
+    }
+  };
+
   if (!data) {
     <Loaderr />;
   } else {
@@ -526,12 +601,21 @@ export const Foundation = () => {
                   <Button
                     type="primary"
                     className={`${styles["foundation-button-contiune"]} bg-primary`}
-                    onClick={() =>
+                    onClick={() => {
                       // @ts-ignore
                       termsRef.current?.input.checked
-                        ? verifyShowModal()
-                        : showModal()
-                    }
+                        ? !accountInfo.bank_account
+                          ? error({
+                              title: "Амжилтгүй",
+                              content: (
+                                <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
+                              ),
+                            }) &&
+                            // @ts-ignore
+                            router.push("/dashboard/profile/bank")
+                          : submit()
+                        : showModal();
+                    }}
                   >
                     <CalculatorOutlined />
                     Үргэлжлүүлэх
@@ -544,7 +628,7 @@ export const Foundation = () => {
                 width="50%"
                 title={
                   <div className={styles["foundation-modal-title"]}>
-                    Зээл авах хүсэлт нөхцөл
+                    САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ
                   </div>
                 }
                 open={isModalOpen}
@@ -554,22 +638,53 @@ export const Foundation = () => {
                   <Col>
                     <Col
                       span={24}
-                      className={styles["foundation-modal-content-div"]}
+                      className="my-5 rounded-[9px] bg-bank p-[50px]"
                     >
                       <div className={styles["foundation-modal-content-text"]}>
-                        Гэрээгээр нэг талаас Зээлдүүлэгчээс Зээлдэгчид тодорхой
-                        хугацаа, хүүтэйгээр зээл олгох, түүнийг эргүүлэн
-                        төлүүлэх үйл ажиллагаатай холбогдон үүсэх харилцаа;
-                        нөгөө талаас Зээлдэгч Зээлдүүлэгчээс тодорхой хугацаа,
-                        хүүтэйгээр зээл авах, түүнийг эргүүлэн төлөх, гэрээний
-                        үүргийн гүйцэтгэлийг баталгаажуулж үл хөдлөх хөрөнгө
-                        барьцаалуулах үйл ажиллагаатай холбогдон үүсэх харилцааг
-                        тус тус зохицуулна. 1.2. Нэг талаас Зээлдэгч нь зээлийг
-                        энэхүү Гэрээнд заасан хэмжээ, нөхцөлөөр авах, нөгөө
-                        талаас Зээлдүүлэгч нь гэрээнд заасан нөхцөлөөр зээл
-                        олгохоор харилцан хүсэл зоригоо илэрхийлсний үндсэн дээр
-                        Гэрээнд заасан зээл, зээлийн хүү, анзын дор дурдсан
-                        нөхцөлүүдийг харилцан тохиролцов.
+                        1.1 Харилцагч та 5,000,000 /таван сая/ төгрөгнөөс
+                        500,000,000 /таван зуун сая/ төгрөгний санхүүжилт өгөх
+                        боломжтой.
+                        <br />
+                        <br />
+                        1.2 “ФАНД МИ БИРЖ” ХХК нь Мөнгө угаах болон терроризмыг
+                        санхүүжүүлэхтэй тэмцэх тухай Монгол улсын хууль болон
+                        холбогдох бусад зохицуулагч байгууллагын хууль тогтоомж,
+                        олон улсын гэрээ, конвенцийн хэрэгжилтийг хангах
+                        зорилгоор харилцагчийг таних, эцсийн өмчлөгчийг
+                        тодорхойлох арга хэмжээний хүрээнд санхүүжүүлэгчээс
+                        “FUNDME” апликейшн болон вэбсайтад оруулсан мэдээллээс
+                        гадна нэмэлт мэдээ мэдээлэл, баримт бичгийг зохих ёсны
+                        шаардлагын дагуу биетээр хүргүүлэхийг шаардах бүрэн
+                        эрхтэй байна.
+                        <br />
+                        <br />
+                        1.3 Таны санхүүжилт өгөх захиалга нь “ФАНД МИ БИРЖ”
+                        ХХК-тай “Богино хугацааны санхүүжилтын” гэрээ байгуулсан
+                        гэх нөхцөл биш бөгөөд таны захиалга биелсэн тохиолдолд
+                        тус гэрээ байгуулагдана.
+                        <br />
+                        <br />
+                        1.4 Таны захиалга хэсэгчилэн биелэх боломжтой ба тухайн
+                        өдрийн 18:00 цагаас өмнө биелсэн захиалгын дагуу “ФАНД
+                        МИ БИРЖ” ХХК нь “Богино хугацаат санхүүжилтын” гэрээг
+                        байгуулж таны бүртгэлтэй и-мэйл хаяг болон мэдэгдэл
+                        хэсэгт хүргүүлнэ. Хэрэв та гэрээг эх хувиар авахыг
+                        хүсвэл өөрт ойр салбарт хандан авах боломжтой.
+                        <br />
+                        <br />
+                        1.5 Таны захиалга тухайн өдрөө биелээгүй тохиолдолд
+                        автоматаар цуцлагдах ба та дараагийн өдөр шинээр
+                        захиалгаа оруулах боломжтой.
+                        <br />
+                        <br />
+                        1.6 Биелээгүй захиалгыг тухайн өдрийн 18 цагаас өмнө
+                        таны бүртгэлтэй данс руу буцаан шилжүүлнэ.
+                        <br />
+                        <br />
+                        1.7 Харилцагч та захиалгын дагуу мөнгөн дүнгээ шилжүүлэх
+                        үүрэгтэй ба зөрүүтэй дүнгээр гүйлгээ хийсэн бол
+                        захиалгыг цуцалж гүйлгээг буцаана. Ингэхдээ гүйлгээний
+                        шимтгэлд 300 төгрөг суутгана.
                       </div>
                     </Col>
                     <Form form={form}>
@@ -660,6 +775,9 @@ export const Foundation = () => {
                         <Input.Password
                           className={styles["foundation-modal-verify-input"]}
                           placeholder="FundMe кодоо оруулна уу!!!"
+                          onChange={(e) => setPassword(e.target.value)}
+                          maxLength={4}
+                          autoFocus
                         />
                       </Col>
                       <Col span={20}>

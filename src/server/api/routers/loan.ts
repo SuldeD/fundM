@@ -426,6 +426,24 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
+  loanContract: publicProcedure.query(async ({ ctx }) => {
+    const token = await getAccountToken(ctx);
+    const res2 = await fetch(`${process.env.BACKEND_URL}/help/loan/contract`, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        ...loanServiceHeaders,
+        Cookie: token!.id_token!,
+        "Session-Token": token!.access_token!,
+      },
+    });
+    const raw2 = await res2.json();
+    const accountStatus = decrypt(raw2);
+    console.log(accountStatus);
+
+    return accountStatus;
+  }),
+
   loanList: publicProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
     const res2 = await fetch(`${process.env.BACKEND_URL}/product/list`, {
@@ -443,6 +461,148 @@ export const loanRouter = createTRPCRouter({
 
     return accountStatus;
   }),
+  forgotPass: publicProcedure
+    .input(
+      z.object({
+        phone: z.string(),
+        answer: z.string(),
+        security_question_id: z.string(),
+        username: z.string(),
+        register: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { phone, answer, security_question_id, username, register } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          phone,
+          answer,
+          security_question_id,
+          username,
+          register,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/forgot/password`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      return accountStatus;
+    }),
+  addEmail: publicProcedure
+
+    .input(
+      z.object({
+        email: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { email, password } = input;
+      const token = await getAccountToken(ctx);
+
+      const body = encrypt(
+        JSON.stringify({
+          email,
+          password,
+        })
+      );
+      const res2 = await fetch(`${process.env.BACKEND_URL}/account/add/email`, {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      return accountStatus;
+    }),
+  changePhone: publicProcedure
+    .input(
+      z.object({
+        phone: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { phone, password } = input;
+      const token = await getAccountToken(ctx);
+
+      const body = encrypt(
+        JSON.stringify({
+          phone,
+          password,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/change/phone/request
+      `,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      return accountStatus;
+    }),
+
+  changePhoneConfirm: publicProcedure
+    .input(
+      z.object({
+        change_phone_id: z.string(),
+        form_token: z.string(),
+        pin_code: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { change_phone_id, form_token, pin_code } = input;
+      const token = await getAccountToken(ctx);
+
+      const body = encrypt(
+        JSON.stringify({
+          change_phone_id,
+          form_token,
+          pin_code,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/change/phone/confirm
+      `,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      return accountStatus;
+    }),
 });
 
 const getAccountToken = async (ctx: {

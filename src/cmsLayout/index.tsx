@@ -9,7 +9,7 @@ import styles from "../styles/foundation.module.css";
 import { useSession } from "next-auth/react";
 import { ApiWrapper } from "app/context/dashboardApiContext";
 import { api } from "app/utils/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const { Content } = Layout;
 
 // @ts-ignore
@@ -17,12 +17,25 @@ export const ProtectedLayout = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(true);
-  
+
   const [form] = Form.useForm();
   const { status } = useSession();
 
-  const { data: statusData } = api.loan.accountStatus.useQuery();
-  const { data: dan } = api.loan.accountStatusDan.useQuery();
+  const { data: statusData, refetch: requestStatus } =
+    api.loan.accountStatus.useQuery(undefined, {
+      enabled: false,
+    });
+  const { data: dan, refetch: requestDan } = api.loan.accountStatusDan.useQuery(
+    undefined,
+    {
+      enabled: false,
+    }
+  );
+
+  useEffect(() => {
+    requestStatus();
+    requestDan();
+  }, []);
 
   useRequireAuth();
   if (status == "loading") {
@@ -36,7 +49,6 @@ export const ProtectedLayout = ({ children }) => {
   const toggleChecked = () => {
     setChecked(!checked);
   };
-
 
   const handleOk = async () => {
     await form.validateFields();

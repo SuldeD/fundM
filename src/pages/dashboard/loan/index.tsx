@@ -22,14 +22,22 @@ import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
 
 export const Loan = () => {
-  const { loan, data, loanReqMutate, loanReqConfirmMut, accountInfo } =
-    useApiContext();
+  const {
+    loan,
+    data,
+    loanReqMutate,
+    loanReqConfirmMut,
+    accountInfo,
+    loanConrtact,
+  } = useApiContext();
   useRequireAuth();
   const { error } = Modal;
 
-  const [checked, setChecked] = useState(false);
+  // console.log("loanConrtact", loanConrtact);
+
+  const [checked, setChecked] = useState<boolean>(false);
   const [requestId, setRequestId] = useState();
-  const [password, setPassword] = useState(null);
+  const [password, setPassword] = useState<any>();
   const toggleChecked = () => {
     setChecked(!checked);
   };
@@ -79,32 +87,39 @@ export const Loan = () => {
     setIsVerifyOpen(true);
   };
   const verifyCompleteModal = async () => {
-    loanReqConfirmMut(
-      {
-        request_id: requestId && requestId,
-        password: password && password,
-      },
-      {
-        onSuccess: (data: {
-          success: any;
-          request_id: any;
-          loan_requests: import("react").SetStateAction<undefined>;
-          description: any;
-        }) => {
-          if (data.success) {
-            console.log(data);
-          } else {
-            console.log("err", data);
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
+    if (password && password.length > 0) {
+      loanReqConfirmMut(
+        {
+          request_id: requestId && requestId,
+          password: password && password,
         },
-      }
-    );
-    setIsVerifyOpen(false);
-    completeShowModal();
+        {
+          onSuccess: (data: {
+            success: any;
+            request_id: any;
+            loan_requests: import("react").SetStateAction<undefined>;
+            description: any;
+          }) => {
+            if (data.success) {
+              console.log(data);
+              setIsVerifyOpen(false);
+              completeShowModal();
+            } else {
+              console.log("err", data);
+              error({
+                title: "Амжилтгүй",
+                content: <div>{data?.description || null}</div>,
+              });
+            }
+          },
+        }
+      );
+    } else {
+      error({
+        title: "Амжилтгүй",
+        content: <div>FundMe кодоо оруулна уу!!!</div>,
+      });
+    }
   };
   const verifyCancelModal = () => {
     setIsVerifyOpen(false);
@@ -167,11 +182,8 @@ export const Loan = () => {
             // @ts-ignore
             Number(dataTable[activeDuration].day)
         ).toString(),
-        loan_month: moment()
-          // @ts-ignore
-          .add(dataTable[activeDuration].day, "days")
-          .calendar()
-          .toString(),
+        // @ts-ignore
+        loan_month: dataTable[activeDuration].day,
       },
       {
         onSuccess: (data: {
@@ -731,7 +743,7 @@ export const Loan = () => {
                 width="50%"
                 title={
                   <div className={styles["dloan-modal-title"]}>
-                    Зээл авах хүсэлт нөхцөл
+                    ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
                   </div>
                 }
                 open={isModalOpen}
@@ -741,22 +753,41 @@ export const Loan = () => {
                   <Col>
                     <Col
                       span={24}
-                      className={styles["dloan-modal-content-div"]}
+                      className="my-5 rounded-[9px] bg-bank p-[50px]"
                     >
                       <div className={styles["dloan-modal-content-text"]}>
-                        Гэрээгээр нэг талаас Зээлдүүлэгчээс Зээлдэгчид тодорхой
-                        хугацаа, хүүтэйгээр зээл олгох, түүнийг эргүүлэн
-                        төлүүлэх үйл ажиллагаатай холбогдон үүсэх харилцаа;
-                        нөгөө талаас Зээлдэгч Зээлдүүлэгчээс тодорхой хугацаа,
-                        хүүтэйгээр зээл авах, түүнийг эргүүлэн төлөх, гэрээний
-                        үүргийн гүйцэтгэлийг баталгаажуулж үл хөдлөх хөрөнгө
-                        барьцаалуулах үйл ажиллагаатай холбогдон үүсэх харилцааг
-                        тус тус зохицуулна. 1.2. Нэг талаас Зээлдэгч нь зээлийг
-                        энэхүү Гэрээнд заасан хэмжээ, нөхцөлөөр авах, нөгөө
-                        талаас Зээлдүүлэгч нь гэрээнд заасан нөхцөлөөр зээл
-                        олгохоор харилцан хүсэл зоригоо илэрхийлсний үндсэн дээр
-                        Гэрээнд заасан зээл, зээлийн хүү, анзын дор дурдсан
-                        нөхцөлүүдийг харилцан тохиролцов.
+                        1.1 Таны зээл авах захиалга бол зээл олгосон нөхцөл биш
+                        бөгөөд таны захиалга биелээгүй тохиолдолд ямар нэгэн хүү
+                        болон шимтгэл бодогдохгүй болно.
+                        <br />
+                        <br />
+                        1.2 Таны зээл авах захиалга тухайн өдрийн бирж хаах цаг
+                        хүртэл биелээгүй тохиолдолд захиалга автоматаар
+                        цуцлагдаж, та дараагийн өдөр дахин зээл авах захиалгаа
+                        шинээр оруулж болно. <br />
+                        <br />
+                        1.3 Харилцагч та зээл авах захиалгыг дээд тал нь өөрийн
+                        эрхийн хүрээнд 3 удаа хуваан оруулах боломжтой байна.
+                        <br />
+                        <br />
+                        1.4 Хэрэв таны зээл авах захиалга биелсэн бол “Зээлийн
+                        эрх нээх” гэрээний дагуу тухайн зээлийг олгосонд тооцно.
+                        <br />
+                        <br />
+                        1.5 Зээлийг таны “FundMe” апликейшн болон веб сайтад
+                        бүртгэлтэй банкны данс руу “Зээлийн эрх нээх” гэрээний
+                        дагуу зээл зуучлалын шимтгэлийг суутган шилжүүлнэ.{" "}
+                        <br />
+                        <br />
+                        1.6 Зээл олгогдсон өдрөөс таны зээлийн хүү тооцогдож
+                        эхлэх ба та зээлийн төлбөрөө тохирсон хугацаандаа төлөх
+                        үүргийг “Зээлийн эрх нээх” гэрээний дагуу хүлээнэ.
+                        <br />
+                        <br /> 1.7 Таны зээлтэй холбоотой мэдээлэл нь “FundMe”
+                        апликейшн болон веб сайтад бүртгэгдсэн мэдэгдэл хэсэгт
+                        болон бүртгэлтэй утасны дугаар, и-мэйл хаягаар хүргэгдэх
+                        ба энэ нь эргэн төлөлтийн хуваарьтай танилцсанд
+                        тооцогдоно.
                       </div>
                     </Col>
                     <Form form={form}>

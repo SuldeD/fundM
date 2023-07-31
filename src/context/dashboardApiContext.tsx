@@ -13,7 +13,6 @@ interface AppContext {
   accountInfo: any;
   data: any;
   saving: any;
-  status: any;
   orders: any;
   publicAllOrders: any;
   sumLoan: any;
@@ -27,6 +26,11 @@ interface AppContext {
   mySavingOrders: any;
   sumMyLoan: any;
   sumMySaving: any;
+  setMyOrders: any;
+  loanConrtact: any;
+  addEmail: any;
+  changePhoneConfirm: any;
+  changePhone: any;
 }
 const AppContext = createContext<AppContext>({} as AppContext);
 
@@ -42,6 +46,10 @@ export const ApiWrapper = ({ children }: any) => {
     api.loan.loanRequestConfirm.useMutation();
   const { mutate: addBankMutate } = api.loan.addBank.useMutation();
   const { mutate: addBankVerMutate } = api.loan.addBankVerify.useMutation();
+  const { mutate: addEmail } = api.loan.addEmail.useMutation();
+  const { mutate: changePhone } = api.loan.changePhone.useMutation();
+  const { mutate: changePhoneConfirm } =
+    api.loan.changePhoneConfirm.useMutation();
 
   const { data: loanData, refetch: requestLoanList } =
     api.loan.loanList.useQuery(undefined, {
@@ -58,10 +66,16 @@ export const ApiWrapper = ({ children }: any) => {
       enabled: false,
     });
 
+  const { data: loanConrtact, refetch: requestContract } =
+    api.loan.loanContract.useQuery(undefined, {
+      enabled: false,
+    });
+
   useEffect(() => {
     requestInfo();
     requestLoanList();
     requestHelpBankList();
+    requestContract();
   }, []);
 
   const [loan, setLoan] = useState();
@@ -69,10 +83,11 @@ export const ApiWrapper = ({ children }: any) => {
   const [myFundTabKey, setMyFundTabKey] = useState("1");
 
   const order = "date";
-  const order_up = "0";
+  const order_up = "1";
   const page = "1";
   const page_size = "20";
   const filter_type = "dp";
+
   const [orders, setMyOrders] = useState<any[]>([]);
   const [myLoanOrders, setMyLoanOrders] = useState<any[]>([]);
   const [mySavingOrders, setMySavingOrders] = useState<any[]>([]);
@@ -163,14 +178,14 @@ export const ApiWrapper = ({ children }: any) => {
   }, [myLoanOrders]);
 
   useEffect(() => {
-    loanData?.product_list.forEach(
+    loanData?.product_list?.forEach(
       (
         /** @type {{ product_code: string; }} */ list: { product_code: string }
       ) =>
         // @ts-ignore
         list.product_code !== "saving" && setLoan(list)
     );
-    loanData?.product_list.forEach(
+    loanData?.product_list?.forEach(
       (
         /** @type {{ product_code: string; }} */ list: { product_code: string }
       ) =>
@@ -191,8 +206,8 @@ export const ApiWrapper = ({ children }: any) => {
     mutate,
     accountInfo,
     data,
+    changePhone,
     saving,
-    status,
     publicAllOrders,
     orders,
     loanReqConfirmMut,
@@ -203,6 +218,10 @@ export const ApiWrapper = ({ children }: any) => {
     myLoanOrders,
     sumMyLoan,
     sumMySaving,
+    setMyOrders,
+    loanConrtact,
+    changePhoneConfirm,
+    addEmail,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

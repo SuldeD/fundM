@@ -1,8 +1,9 @@
 import { Row, Col, Select, DatePicker, Button, Image, Table } from "antd";
 import styles from "../../../styles/history.module.css";
+import stylesList from "../../../styles/dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../../components/header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
@@ -11,6 +12,7 @@ const { RangePicker } = DatePicker;
 
 const History = () => {
   const { data, orders: dataTable } = useApiContext();
+  const [filterData, setFilterData] = useState<any>();
   useRequireAuth();
 
   const [type, setType] = useState(null);
@@ -30,20 +32,49 @@ const History = () => {
       setDates(null);
     }
   };
+
   const print = () => {
-    // @ts-ignore
-    console.log(type, value?.[0].format("YYYY-MM-DD"));
+    setFilterData([]);
+
+    dataTable?.forEach((dt: any) => {
+      if (
+        // @ts-ignore
+        dt?.create_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
+        // @ts-ignore
+        dt?.create_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD") &&
+        dt?.product_type_code == type
+      ) {
+        dt && setFilterData((prev: any) => [...prev, dt]);
+        // @ts-ignore
+      } else if (type && value?.[0].format("YYYY-MM-DD") == undefined) {
+        dt?.product_type_code == type &&
+          dt &&
+          setFilterData((prev: any) => [...prev, dt]);
+      } else if (
+        type == undefined && // @ts-ignore
+        dt?.create_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
+        // @ts-ignore
+        dt?.create_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD")
+      ) {
+        dt && setFilterData((prev: any) => [...prev, dt]);
+      } else if (
+        type == undefined && // @ts-ignore
+        value?.[0].format("YYYY-MM-DD") == undefined
+      ) {
+        setFilterData(dataTable);
+      }
+    });
   };
 
   const columns = [
     {
       title: "№",
-      dataIndex: "CheckMbAccount",
-      key: "CheckMbAccount",
+      dataIndex: "is_status",
+      key: "is_status",
       width: "6%",
       // @ts-ignore
-      render: (product_id) => (
-        <div className={styles["history-table-number"]}>{product_id}</div>
+      render: (is_status) => (
+        <div className={styles["history-table-number"]}>{is_status}</div>
       ),
     },
     {
@@ -67,22 +98,26 @@ const History = () => {
       width: "23%",
       // @ts-ignore
       render: (type) =>
-        type === "saving" ? (
-          <div className={styles["history-table-type-1"]}>{type}</div>
+        type == "saving" ? (
+          <div className={stylesList["dashboard-list-item-type-2"]}>
+            Өгсөн санхүүжилт
+          </div>
         ) : (
-          <div className={styles["history-table-type-2"]}>{type}</div>
+          <div className={stylesList["dashboard-list-item-type-1"]}>
+            Авсан зээл
+          </div>
         ),
     },
     {
       title: "Хүү",
-      dataIndex: "loan_rate_day",
+      dataIndex: "loan_rate_month",
       key: "rate",
       align: "center",
       width: "15%",
       // @ts-ignore
       render: (rate) => (
         <div className={styles["history-table-number"]}>
-          {rate.slice(0, 4)}%
+          {rate?.slice(0, 4)} %
         </div>
       ),
     },
@@ -95,23 +130,8 @@ const History = () => {
       // @ts-ignore
       render: (date) => (
         <div className={styles["history-table-number"]}>
-          {date.slice(0, 10)}
+          {date?.slice(0, 10)}
         </div>
-      ),
-    },
-    {
-      title: " ",
-      dataIndex: "icon",
-      key: "icon",
-      width: "10%",
-      align: "center",
-      render: () => (
-        <Image
-          width={25}
-          src={"/images/info-icon.png"}
-          preview={false}
-          alt="Information"
-        />
       ),
     },
   ];
@@ -145,11 +165,11 @@ const History = () => {
                     onChange={onChange}
                     options={[
                       {
-                        value: "1",
+                        value: "saving",
                         label: "Өгсөн санхүүжилт",
                       },
                       {
-                        value: "2",
+                        value: "loan",
                         label: "Авсан зээл",
                       },
                     ]}
@@ -203,8 +223,8 @@ const History = () => {
                   pageSize: 10,
                   position: ["bottomCenter"],
                 }}
-                dataSource={dataTable}
-                rowKey={"CheckMbAccount"}
+                dataSource={filterData ? filterData : dataTable}
+                rowKey={"request_id"}
               />
             </Col>
           </Row>

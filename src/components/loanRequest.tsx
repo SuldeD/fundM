@@ -5,10 +5,13 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { useApiContext } from "app/context/dashboardApiContext";
+import { useAppContext } from "app/context/appContext";
 
 export const LoanReqComponent = () => {
   const router = useRouter();
-  const { publicSavingOrders: data } = useApiContext();
+  const { publicSavingOrders: dataTable } = useApiContext();
+  const data = dataTable.toReversed();
+  const { setMyFundTabKey } = useAppContext();
 
   return (
     <Row gutter={[0, 25]} justify="center">
@@ -211,7 +214,10 @@ export const LoanReqComponent = () => {
         <Button
           type="primary"
           className={styles["loanReq-button"]}
-          onClick={() => router.push("/dashboard/myfund/list")}
+          onClick={() => {
+            router.push("/dashboard/myfund/list");
+            setMyFundTabKey("1");
+          }}
         >
           Бүгдийг харах
         </Button>

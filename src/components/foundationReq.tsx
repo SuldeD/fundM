@@ -5,10 +5,15 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { useApiContext } from "app/context/dashboardApiContext";
+import { useAppContext } from "app/context/appContext";
 
 export const FoundationReq = () => {
   const router = useRouter();
-  const { publicSavingOrders: data } = useApiContext();
+  const { publicSavingOrders: dataTable } = useApiContext();
+  const { setMyFundTabKey } = useAppContext();
+
+  const data = dataTable.toReversed();
+
   // const data = [
   //   {
   //     id: 1,
@@ -273,7 +278,10 @@ export const FoundationReq = () => {
         <Button
           type="primary"
           className={styles["loanReq-button"]}
-          onClick={() => router.push("/dashboard/myfund/list")}
+          onClick={() => {
+            router.push("/dashboard/myfund/list");
+            setMyFundTabKey("2");
+          }}
         >
           Бүгдийг харах
         </Button>

@@ -19,8 +19,9 @@ export const SidebarRightComponent = () => {
   const myFundTabKey = "1";
 
   const NavBars = {
-    "/dashboard/profile": CalculateComponent,
-    "/dashboard": FoundationReq,
+    // CalculateComponent
+    "/dashboard/profile": LoanReqComponent,
+    "/dashboard": LoanTakeReqComponent,
     "/dashboard/loan": LoanReqComponent,
     "/dashboard/foundation": LoanTakeReqComponent,
     "/dashboard/myfund":

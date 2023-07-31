@@ -7,6 +7,8 @@ export const Home = () => {
   const router = useRouter();
   const { data } = useSession();
 
+  console.log("process.env.NEXT_BACKEND_URL", process.env.NEXTBACKEND_URL);
+
   const openInto = [
     {
       title: "САНХҮҮЖИЛТ ӨГӨХ",

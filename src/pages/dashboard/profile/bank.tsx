@@ -9,6 +9,7 @@ import { Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
 import { useRouter } from "next/router";
+import PopupModal from "app/components/modal";
 
 export default function Bank() {
   const { helpBankList, addBankMutate, addBankVerMutate, data, accountInfo } =
@@ -24,6 +25,8 @@ export default function Bank() {
   const { error } = Modal;
   const router = useRouter();
   useRequireAuth();
+
+  const [check, setCheck] = useState<boolean>(false);
 
   function submit() {
     addBankMutate(
@@ -71,9 +74,10 @@ export default function Bank() {
           }
         ) => {
           if (data.success) {
-            console.log(data);
             setOpenVerifyPass(true);
             setOpen(false);
+            setCheck(true);
+            router.push("/dashboard/profile");
           } else {
             error({
               title: "Амжилтгүй",
@@ -106,7 +110,7 @@ export default function Bank() {
     imgWindow?.document.write(image.outerHTML);
   };
 
-  if (accountInfo?.bank_account) {
+  if (accountInfo?.account?.bank) {
     router.push("/dashboard/profile");
   } else {
     return (
@@ -294,6 +298,20 @@ export default function Bank() {
             </Col>
           </Row>
         </Modal>
+
+        <PopupModal
+          buttonClick={() => setCheck(false)}
+          buttonText={"Хаах"}
+          closableM={null}
+          closeModal={null}
+          customDiv={null}
+          customIconWidth={null}
+          iconPath={"/images/check"}
+          modalWidth={null}
+          open={check}
+          text={<p>Таны данс амжилттай холбогдлоо.</p>}
+          textAlign={"center"}
+        />
       </div>
     );
   }

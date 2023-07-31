@@ -20,6 +20,7 @@ export function useRequireAuth() {
   const publicPaths: any = [
     "/login",
     "/signup",
+    "/forgot",
     "/signup/verify-phone",
     "/signup/password",
     "/signup/question",

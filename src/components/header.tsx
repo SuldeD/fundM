@@ -1,10 +1,33 @@
 import { Col, Statistic, Row } from "antd";
 import styles from "../styles/dashboard-header.module.css";
 
-// @ts-ignore
-export const HeaderDashboard = ({ title, subTitle }) => {
+export const HeaderDashboard = ({ title, subTitle }: any) => {
   const { Countdown } = Statistic;
-  const deadline = Date.now() + 1000 * 2000;
+
+  function generateTimeSlots(startDate: any, endDate: any) {
+    const hourInMillis = 60 * 60 * 1000;
+    const startHour = 9;
+    const endHour = 14;
+
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      currentDate.setHours(startHour, 0, 0, 0);
+
+      while (currentDate.getHours() < endHour) {
+        currentDate.setTime(currentDate.getTime() + hourInMillis);
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  }
+
+  const startingDate = new Date();
+  const endingDate = new Date(startingDate);
+  endingDate.setDate(endingDate.getDate() + 5);
+  generateTimeSlots(startingDate, endingDate);
+  const targetDate: any = new Date();
+  targetDate.setHours(14, 0, 0, 0);
 
   return (
     <Col span={24}>
@@ -19,9 +42,10 @@ export const HeaderDashboard = ({ title, subTitle }) => {
                 Бирж хаагдах хугацаа:
               </div>
             </Col>
+
             <Col flex="none">
               <Countdown
-                value={deadline}
+                value={targetDate}
                 format="HH:mm:ss"
                 valueStyle={{
                   fontFamily: "Raleway",

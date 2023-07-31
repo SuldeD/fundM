@@ -29,7 +29,7 @@ export const Dashboard = () => {
     {
       title: "Төрөл",
       dataIndex: "product_type_code",
-      key: "type",
+      key: "product_type_code",
       align: "center",
       width: "20%",
       // @ts-ignore
@@ -47,7 +47,7 @@ export const Dashboard = () => {
     {
       title: "Хүү",
       dataIndex: "loan_rate_month",
-      key: "rate",
+      key: "loan_rate_month",
       width: "20%",
       align: "center",
       // @ts-ignore
@@ -188,7 +188,7 @@ export const Dashboard = () => {
                           position: ["bottomCenter"],
                         }}
                         dataSource={orders}
-                        rowKey={"CheckMbAccount"}
+                        rowKey={"request_id"}
                       />
                     </Col>
                   </Row>
