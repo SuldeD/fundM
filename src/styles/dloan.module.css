@@ -310,3 +310,7 @@
     line-height: 18px;
     color: #000000;
 }
+.input{
+    background-color: #000000;
+    border: 2px solid white
+}

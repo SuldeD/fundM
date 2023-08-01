@@ -20,6 +20,7 @@ import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
 import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
+import InputCode from "app/components/input";
 
 export const Loan = () => {
   const { loan, data, loanReqMutate, loanReqConfirmMut, accountInfo } =
@@ -29,7 +30,6 @@ export const Loan = () => {
 
   const [checked, setChecked] = useState<boolean>(false);
   const [requestId, setRequestId] = useState();
-  const [password, setPassword] = useState<any>();
   const toggleChecked = () => {
     setChecked(!checked);
   };
@@ -74,16 +74,17 @@ export const Loan = () => {
     setIsModalOpen(false);
   };
 
-  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
+  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
+
   const verifyShowModal = () => {
     setIsVerifyOpen(true);
   };
-  const verifyCompleteModal = async () => {
-    if (password && password.length > 0) {
+  const verifyCompleteModal = async (code: any) => {
+    if (code) {
       loanReqConfirmMut(
         {
           request_id: requestId && requestId,
-          password: password && password,
+          password: code.toString(),
         },
         {
           onSuccess: (data: {
@@ -112,9 +113,6 @@ export const Loan = () => {
         content: <div>FundMe кодоо оруулна уу!!!</div>,
       });
     }
-  };
-  const verifyCancelModal = () => {
-    setIsVerifyOpen(false);
   };
 
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
@@ -842,55 +840,12 @@ export const Loan = () => {
                   </Col>
                 </Row>
               </Modal>
-              <Modal
-                centered
-                width={378}
-                title={
-                  <div className={styles["dloan-modal-verify-title"]}>
-                    <Image
-                      width="50%"
-                      src={"/logo.svg"}
-                      preview={false}
-                      alt="Header Logo"
-                    />
-                  </div>
-                }
-                onCancel={verifyCancelModal}
+
+              <InputCode
                 open={isVerifyOpen}
-                footer={null}
-              >
-                <Row justify="center">
-                  <Col span={20}>
-                    <Row justify="center" gutter={[0, 20]}>
-                      <Col span={24}>
-                        <Input.Password
-                          className={styles["dloan-modal-verify-input"]}
-                          placeholder="FundMe кодоо оруулна уу!!!"
-                          // @ts-ignore
-                          onChange={(e) => setPassword(e.target.value)}
-                          maxLength={4}
-                          autoFocus
-                        />
-                      </Col>
-                      <Col span={20}>
-                        <div className={styles["dloan-modal-content-text"]}>
-                          Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах
-                          салбар нэгжид хандан нээлгэнэ үү.
-                        </div>
-                      </Col>
-                      <Col span={20}>
-                        <Button
-                          type="primary"
-                          className={styles["dloan-modal-verify-button"]}
-                          onClick={verifyCompleteModal}
-                        >
-                          Баталгаажуулах
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </Modal>
+                onFinish={verifyCompleteModal}
+                setOpen={setIsVerifyOpen}
+              />
 
               <Modal
                 centered

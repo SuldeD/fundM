@@ -6,6 +6,8 @@ import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
+import InputCode from "app/components/input";
+import { useState } from "react";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -99,7 +101,9 @@ export const Dashboard = () => {
                   >
                     <Col span={24}>
                       <div className={styles["dashboard-loan-intro-title"]}>
-                        Зээл өгөх хүсэлт
+                        {sumSaving > sumLoan
+                          ? "Санхүүжилт өгөх хүсэлт"
+                          : "Зээл өгөх хүсэлт"}
                       </div>
                     </Col>
                     <Col span={24}>
@@ -110,17 +114,29 @@ export const Dashboard = () => {
                       </div>
                     </Col>
                     <Col span={24}>
-                      <div className={styles["dashboard-loan-price-text"]}>
-                        {sumSaving > sumLoan && sumSaving} ₮
+                      <div
+                        className={
+                          sumSaving > sumLoan
+                            ? styles["dashboard-loan-price-text"]
+                            : styles["dashboard-loan-price1-text"]
+                        }
+                      >
+                        {sumSaving > sumLoan
+                          ? numberToCurrency(sumSaving)
+                          : numberToCurrency(sumLoan)}
                       </div>
                     </Col>
                     <Col span={24}>
                       <Button
                         className={`${styles["dashboard-loan-finance-button"]} bg-primary`}
                         type="primary"
-                        onClick={() => router.push("/dashboard/loan/")}
+                        onClick={() => {
+                          sumSaving > sumLoan
+                            ? router.push("/dashboard/foundation/")
+                            : router.push("/dashboard/loan/");
+                        }}
                       >
-                        Зээл авах
+                        {sumSaving > sumLoan ? "Санхүүжилт өгөх" : "Зээл авах"}
                       </Button>
                     </Col>
                   </Row>
@@ -182,7 +198,7 @@ export const Dashboard = () => {
                           position: ["bottomCenter"],
                         }}
                         dataSource={orders}
-                        rowKey={"id"}
+                        rowKey={"request_id"}
                       />
                     </Col>
                   </Row>

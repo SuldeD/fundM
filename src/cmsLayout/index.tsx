@@ -12,8 +12,7 @@ import { api } from "app/utils/api";
 import { useEffect, useState } from "react";
 const { Content } = Layout;
 
-// @ts-ignore
-export const ProtectedLayout = ({ children }) => {
+export const ProtectedLayout = ({ children }: any) => {
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -25,6 +24,7 @@ export const ProtectedLayout = ({ children }) => {
     api.loan.accountStatus.useQuery(undefined, {
       enabled: false,
     });
+
   const { data: dan, refetch: requestDan } = api.loan.accountStatusDan.useQuery(
     undefined,
     {
@@ -62,7 +62,7 @@ export const ProtectedLayout = ({ children }) => {
       <ApiWrapper>
         <PopupModal
           modalWidth={"70%"}
-          open={statusData?.stat?.valid_dan == 0 && isModalOpen}
+          open={statusData?.stat?.valid_dan == 2 && isModalOpen}
           closeModal={null}
           buttonText={null}
           iconPath={null}

@@ -20,6 +20,7 @@ import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import moment from "moment";
+import InputCode from "app/components/input";
 
 export const Foundation = () => {
   const [checked, setChecked] = useState(false);
@@ -71,13 +72,9 @@ export const Foundation = () => {
     setIsModalOpen(false);
   };
 
-  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
+  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
   const verifyShowModal = () => {
     setIsVerifyOpen(true);
-  };
-
-  const verifyCancelModal = () => {
-    setIsVerifyOpen(false);
   };
 
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
@@ -115,7 +112,6 @@ export const Foundation = () => {
   };
 
   const [requestId, setRequestId] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
 
   function submit() {
     loanReqMutate(
@@ -143,7 +139,6 @@ export const Foundation = () => {
             setRequestId(data?.request_id);
             verifyShowModal();
           } else {
-            console.log("err", data);
             error({
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
@@ -154,12 +149,12 @@ export const Foundation = () => {
     );
   }
 
-  const verifyCompleteModal = async () => {
-    if (password.length > 0) {
+  function verifyCompleteModal(code: any) {
+    if (code) {
       loanReqConfirmMut(
         {
           request_id: requestId && requestId,
-          password: password && password,
+          password: code.toString(),
         },
         {
           onSuccess: (data: {
@@ -186,7 +181,7 @@ export const Foundation = () => {
         content: <div>FundMe кодоо оруулна уу!!!</div>,
       });
     }
-  };
+  }
 
   if (!data) {
     <Loaderr />;
@@ -751,56 +746,12 @@ export const Foundation = () => {
                   </Col>
                 </Row>
               </Modal>
-              <Modal
-                centered
-                width={378}
-                title={
-                  <div className={styles["foundation-modal-verify-title"]}>
-                    <Image
-                      width="50%"
-                      src={"/logo.svg"}
-                      preview={false}
-                      alt="Header Logo"
-                    />
-                  </div>
-                }
-                onCancel={verifyCancelModal}
+
+              <InputCode
                 open={isVerifyOpen}
-                footer={null}
-              >
-                <Row justify="center">
-                  <Col span={20}>
-                    <Row justify="center" gutter={[0, 20]}>
-                      <Col span={24}>
-                        <Input.Password
-                          className={styles["foundation-modal-verify-input"]}
-                          placeholder="FundMe кодоо оруулна уу!!!"
-                          onChange={(e) => setPassword(e.target.value)}
-                          maxLength={4}
-                          autoFocus
-                        />
-                      </Col>
-                      <Col span={20}>
-                        <div
-                          className={styles["foundation-modal-content-text"]}
-                        >
-                          Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах
-                          салбар нэгжид хандан нээлгэнэ үү.
-                        </div>
-                      </Col>
-                      <Col span={20}>
-                        <Button
-                          type="primary"
-                          className={styles["foundation-modal-verify-button"]}
-                          onClick={verifyCompleteModal}
-                        >
-                          Баталгаажуулах
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </Modal>
+                onFinish={verifyCompleteModal}
+                setOpen={setIsVerifyOpen}
+              />
 
               <Modal
                 centered
