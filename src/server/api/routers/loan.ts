@@ -142,6 +142,9 @@ export const loanRouter = createTRPCRouter({
         security_question_id: z.string(),
         question: z.string(),
         answer: z.string(),
+        register: z.string(),
+        first_name: z.string(),
+        last_name: z.string(),
         transaction_password: z.string(),
       })
     )
@@ -156,6 +159,9 @@ export const loanRouter = createTRPCRouter({
         question,
         answer,
         transaction_password,
+        register,
+        first_name,
+        last_name,
       } = input;
 
       const body = encrypt(
@@ -169,6 +175,9 @@ export const loanRouter = createTRPCRouter({
           question,
           answer,
           transaction_password,
+          register,
+          first_name,
+          last_name,
         })
       );
       const res2 = await fetch(`${process.env.BACKEND_URL}/account/new/user`, {
@@ -386,8 +395,7 @@ export const loanRouter = createTRPCRouter({
         })
       );
       const res2 = await fetch(
-        `${process.env.BACKEND_URL}/account/add/bank/account
-        `,
+        `${process.env.BACKEND_URL}/account/add/bank/account`,
         {
           method: "POST",
           credentials: "same-origin",

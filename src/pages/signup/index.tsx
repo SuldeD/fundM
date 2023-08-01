@@ -18,6 +18,9 @@ interface RegisterType {
   question: string;
   answer: string;
   transaction_password: string;
+  register: string;
+  last_name: string;
+  first_name: string;
 }
 
 export default function Signup() {
@@ -40,6 +43,9 @@ export default function Signup() {
     question: "",
     answer: "",
     transaction_password: "",
+    register: "",
+    last_name: "",
+    first_name: "",
   });
 
   const onFinishPhone = async (values: any) => {
@@ -96,6 +102,28 @@ export default function Signup() {
         },
       }
     );
+  };
+
+  const validateRegister = async (values: any) => {
+    if (
+      values.last_name.length > 0 &&
+      values.last_name.length < 50 &&
+      values.first_name.length > 0 &&
+      values.first_name.length < 50 &&
+      values.register.length == 10
+    ) {
+      setRegisterData((prevData) => ({
+        ...prevData,
+        register: values.register,
+        first_name: values.first_name,
+        last_name: values.last_name,
+      }));
+    } else {
+      error({
+        title: "Амжилтгүй",
+        content: <div>Medeelle zuw oruulna uu!!!</div>,
+      });
+    }
   };
 
   const validatePassword = async (values: any) => {
@@ -348,6 +376,111 @@ export default function Signup() {
             registerData.tmp_user_id.length > 0 &&
             registerData.username.length > 0 &&
             registerData.pin_code.length > 0 &&
+            registerData.register == "" && (
+              <motion.div
+                animate={{ x: "0", opacity: 1, scale: 1 }}
+                initial={{ x: "10%", opacity: 0, scale: 0.5 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Row justify="start" gutter={[0, 25]}>
+                  <Col span={24}>
+                    <div className={styles["header-text"]}>
+                      Өөрийн мэдээллээ оруулах
+                    </div>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
+                    <Form
+                      name="basic"
+                      initialValues={{
+                        remember: true,
+                      }}
+                      className="login-form"
+                      autoComplete="off"
+                      layout="vertical"
+                      onFinish={validateRegister}
+                    >
+                      <Row gutter={[0, 13]}>
+                        <Col span={24}>
+                          <div className={styles["phone-number-label"]}>
+                            Өөрийн нэр
+                          </div>
+                        </Col>
+                        <Col span={24}>
+                          <Form.Item
+                            name="first_name"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Өөрийн нэр!",
+                              },
+                            ]}
+                          >
+                            <Input
+                              className={styles["input-style"]}
+                              autoFocus
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                          <div className={styles["phone-number-label"]}>
+                            Овог
+                          </div>
+                        </Col>
+                        <Col span={24}>
+                          <Form.Item
+                            name="last_name"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Овог!",
+                              },
+                            ]}
+                          >
+                            <Input className={styles["input-style"]} />
+                          </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                          <div className={styles["phone-number-label"]}>
+                            Регистрийн дугаар
+                          </div>
+                        </Col>
+                        <Col span={24}>
+                          <Form.Item
+                            name="register"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Регистрийн дугаар!",
+                              },
+                            ]}
+                          >
+                            <Input className={styles["input-style"]} />
+                          </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                          <Row gutter={25}>
+                            <Col span={24}>
+                              <Button
+                                type="primary"
+                                htmlType="submit"
+                                className={`${styles["login-button"]} bg-primary`}
+                              >
+                                Үргэлжлүүлэх
+                              </Button>
+                            </Col>
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Col>
+                </Row>
+              </motion.div>
+            )}
+          {registerData.phone.length > 0 &&
+            registerData.tmp_user_id.length > 0 &&
+            registerData.username.length > 0 &&
+            registerData.pin_code.length > 0 &&
+            registerData.register.length > 0 &&
             registerData.password == "" && (
               <motion.div
                 animate={{ x: "0", opacity: 1, scale: 1 }}
