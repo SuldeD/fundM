@@ -110,7 +110,8 @@ export default function Bank() {
     imgWindow?.document.write(image.outerHTML);
   };
 
-  if (accountInfo?.account?.bank) {
+  if (!data) {
+  } else if (accountInfo?.account?.bank) {
     router.push("/dashboard/profile");
   } else {
     return (

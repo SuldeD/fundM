@@ -256,12 +256,16 @@ export const Profile = () => {
                     <Row gutter={5}>
                       <Col flex="none">
                         <div className={styles["profile-information-name"]}>
-                          АХ
+                          {accountInfo?.account?.register
+                            ? accountInfo?.account?.register.slice(0, 2)
+                            : "."}
                         </div>
                       </Col>
                       <Col flex="none">
                         <div className={styles["profile-information-register"]}>
-                          82043023
+                          {accountInfo?.account?.register
+                            ? accountInfo?.account?.register.slice(2, 10)
+                            : "."}
                         </div>
                       </Col>
                     </Row>
@@ -340,8 +344,8 @@ export const Profile = () => {
                             title: "Амжилтгүй",
                             content: (
                               <div>
-                                Ta dans solih bol manai salbar deer ochij
-                                soliulna uu!!!
+                                Та данс солих бол манай салбар дээр ирж солино
+                                уу !!!
                               </div>
                             ),
                           });
@@ -394,8 +398,8 @@ export const Profile = () => {
                         </Col>
                         <Col flex="none">
                           <div className={styles["profile-backaccount-value"]}>
-                            {accountInfo?.bank_account?.name
-                              ? accountInfo?.bank_account?.name
+                            {accountInfo?.bank_account?.account_name
+                              ? accountInfo?.bank_account?.account_name
                               : "."}
                           </div>
                         </Col>
