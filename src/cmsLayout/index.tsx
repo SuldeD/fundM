@@ -62,7 +62,7 @@ export const ProtectedLayout = ({ children }: any) => {
       <ApiWrapper>
         <PopupModal
           modalWidth={"70%"}
-          open={statusData?.stat?.valid_dan == 2 && isModalOpen}
+          open={statusData?.stat?.valid_dan == 0 && isModalOpen}
           closeModal={null}
           buttonText={null}
           iconPath={null}

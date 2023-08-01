@@ -23,7 +23,7 @@ export const Profile = () => {
   const [isOpenVerifyPass, setIsOpenVerifyPass] = useState<boolean>(false);
 
   const [editNumber, setEditNumber] = useState(accountInfo?.account?.phone);
-  const [editEmail, setEditEmail] = useState(`${accountInfo?.account?.email}`);
+  const [editEmail, setEditEmail] = useState(accountInfo?.account?.email);
   const [password, setPassword] = useState<any>("");
   const [confirmCode, setConfirmCode] = useState<any>("");
   const [clickedEdit, setClickedEdit] = useState<any>();
@@ -97,7 +97,7 @@ export const Profile = () => {
       if (emailRegex.test(editEmail) == false) {
         error({
           title: "Амжилтгүй",
-          content: <div>Zow email oruulna uu!!!</div>,
+          content: <div>Зөв Имэйл хаяг оруулана уу!!!</div>,
         });
       } else {
         setIsOpen(true);
