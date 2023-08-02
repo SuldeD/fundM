@@ -6,7 +6,6 @@ import {
   Button,
   Checkbox,
   Modal,
-  Input,
   Image,
   Form,
 } from "antd";
@@ -23,10 +22,17 @@ import { useRequireAuth } from "app/utils/auth";
 import InputCode from "app/components/input";
 
 export const Loan = () => {
-  const { loan, data, loanReqMutate, loanReqConfirmMut, accountInfo } =
-    useApiContext();
+  const {
+    loan,
+    data,
+    loanReqMutate,
+    loanReqConfirmMut,
+    accountInfo,
+    myLoanOrders,
+  } = useApiContext();
   useRequireAuth();
   const { error } = Modal;
+  console.log("myLoanOrders", myLoanOrders);
 
   const [checked, setChecked] = useState<boolean>(false);
   const [requestId, setRequestId] = useState();
@@ -183,6 +189,7 @@ export const Loan = () => {
           description: any;
         }) => {
           if (data.success) {
+            console.log(data);
             setRequestId(data?.request_id);
             verifyShowModal();
           } else {

@@ -63,7 +63,7 @@ export const ProtectedLayout = ({ children }: any) => {
         <PopupModal
           modalWidth={"70%"}
           open={statusData?.stat?.valid_dan == 0 && isModalOpen}
-          closeModal={null}
+          closeModal={() => setIsModalOpen(false)}
           buttonText={null}
           iconPath={null}
           customIconWidth={null}
@@ -338,7 +338,10 @@ export const ProtectedLayout = ({ children }: any) => {
                   <Col span={24}>
                     <Row justify="space-between">
                       <Col flex="none">
-                        <Button className={styles["foundation-button-back"]}>
+                        <Button
+                          className={styles["foundation-button-back"]}
+                          onClick={() => setIsModalOpen(false)}
+                        >
                           <div
                             className={styles["foundation-button-back-text"]}
                           >

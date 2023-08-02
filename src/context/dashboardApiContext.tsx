@@ -79,7 +79,7 @@ export const ApiWrapper = ({ children }: any) => {
   const order_up = "1";
   const page = "1";
   const page_size = "20";
-  const filter_type = "dp";
+  const filter_type = "active";
 
   const [orders, setMyOrders] = useState<any[]>([]);
   const [myLoanOrders, setMyLoanOrders] = useState<any[]>([]);
@@ -148,7 +148,6 @@ export const ApiWrapper = ({ children }: any) => {
 
   const [sumLoan, setSumLoan] = useState(0);
   const [sumSaving, setSumSaving] = useState(0);
-
 
   useEffect(() => {
     publicLoanOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {

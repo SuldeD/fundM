@@ -34,7 +34,7 @@ export default function PopupModal({
       onCancel={closeModal}
       open={open}
       footer={null}
-      closable={false}
+      closable={closableM ? true : false}
     >
       <Row justify="center" gutter={[0, 30]} className="py-[20px]">
         <Col span={24}>
