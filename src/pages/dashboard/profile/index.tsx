@@ -1,5 +1,15 @@
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Row, Col, Tabs, Upload, Collapse, Modal, Button, Input } from "antd";
+import {
+  Row,
+  Col,
+  Tabs,
+  Upload,
+  Collapse,
+  Modal,
+  Button,
+  Input,
+  Alert,
+} from "antd";
 import styles from "../../../styles/profile.module.css";
 import { HeaderDashboard } from "../../../components/header";
 import { useState } from "react";
@@ -348,6 +358,7 @@ export const Profile = () => {
                                 уу !!!
                               </div>
                             ),
+                            onOk() {},
                           });
                     }}
                   >
@@ -612,6 +623,7 @@ export const Profile = () => {
       ),
     },
   ];
+
   if (!data) {
     return <Loaderr />;
   } else {

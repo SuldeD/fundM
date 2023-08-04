@@ -1,6 +1,5 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 export function useRequireAuth() {
   const router = useRouter();
@@ -33,13 +32,10 @@ export function useRequireAuth() {
     "/#contact",
   ];
   const path = router.asPath.split("?")[0];
-
-  useEffect(() => {
-    if (status == "loading") {
-    } else if (data?.user && !privatePaths?.includes(path)) {
-      router.replace("/dashboard");
-    } else if (!data && !publicPaths?.includes(path)) {
-      router.replace("/");
-    }
-  }, []);
+  if (status == "loading") {
+  } else if (data?.user && !privatePaths?.includes(path)) {
+    router.replace("/dashboard");
+  } else if (!data && !publicPaths?.includes(path)) {
+    router.replace("/");
+  }
 }

@@ -1,4 +1,4 @@
-import { Row, Col, Select, DatePicker, Button, Image, Table } from "antd";
+import { Row, Col, Select, DatePicker, Button, Table, Modal } from "antd";
 import styles from "../../../styles/history.module.css";
 import stylesList from "../../../styles/dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
@@ -8,25 +8,59 @@ import { numberToCurrency } from "../../../utils/number.helpers";
 import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
+import { api } from "app/utils/api";
+import { signOut } from "next-auth/react";
 const { RangePicker } = DatePicker;
 
 const History = () => {
-  const { data, orders: dataTable } = useApiContext();
-  const [filterData, setFilterData] = useState<any>();
+  const { data } = useApiContext();
   useRequireAuth();
 
-  const [type, setType] = useState(null);
-  // @ts-ignore
-  const onChange = (type) => {
-    setType(type);
-  };
+  const { error } = Modal;
 
-  const [dates, setDates] = useState(null);
-  const [value, setValue] = useState(null);
-  // @ts-ignore
-  const onOpenChange = (open) => {
+  const [filterData, setFilterData] = useState<any>();
+
+  const [type, setType] = useState<any>(null);
+  const [dates, setDates] = useState<any>(null);
+  const [value, setValue] = useState<any>(null);
+
+  const [doneOrders, setDoneOrders] = useState<any[]>([]);
+  const dataTable = doneOrders?.reverse();
+
+  const { mutate } = api.loan.reguestSearch.useMutation();
+
+  useEffect(() => {
+    mutate(
+      {
+        order: "date",
+        order_up: "1",
+        page: "1",
+        page_size: "30",
+        filter_type: "done",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            console.log(data);
+            data?.requests?.forEach((el: any) => {
+              setDoneOrders((prev) => [...prev, el]);
+            });
+          } else {
+            signOut();
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }, []);
+
+  const onOpenChange = (open: any) => {
     if (open) {
-      // @ts-ignore
       setDates([null, null]);
     } else {
       setDates(null);
@@ -38,27 +72,23 @@ const History = () => {
 
     dataTable?.forEach((dt: any) => {
       if (
-        // @ts-ignore
         dt?.create_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
-        // @ts-ignore
         dt?.create_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD") &&
-        dt?.product_type_code == type
+        dt?.request_type == type
       ) {
         dt && setFilterData((prev: any) => [...prev, dt]);
-        // @ts-ignore
       } else if (type && value?.[0].format("YYYY-MM-DD") == undefined) {
-        dt?.product_type_code == type &&
+        dt?.request_type == type &&
           dt &&
           setFilterData((prev: any) => [...prev, dt]);
       } else if (
-        type == undefined && // @ts-ignore
+        type == undefined &&
         dt?.create_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
-        // @ts-ignore
         dt?.create_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD")
       ) {
         dt && setFilterData((prev: any) => [...prev, dt]);
       } else if (
-        type == undefined && // @ts-ignore
+        type == undefined &&
         value?.[0].format("YYYY-MM-DD") == undefined
       ) {
         setFilterData(dataTable);
@@ -66,15 +96,14 @@ const History = () => {
     });
   };
 
-  const columns = [
+  const columns: any[] = [
     {
       title: "№",
-      dataIndex: "is_status",
-      key: "is_status",
+      dataIndex: "request_id",
+      key: "request_id",
       width: "6%",
-      // @ts-ignore
-      render: (is_status) => (
-        <div className={styles["history-table-number"]}>{is_status}</div>
+      render: (request_id: string) => (
+        <div className={styles["history-table-number"]}>{request_id}</div>
       ),
     },
     {
@@ -83,8 +112,7 @@ const History = () => {
       key: "loanTotal",
       align: "center",
       width: "23%",
-      // @ts-ignore
-      render: (loanTotal) => (
+      render: (loanTotal: string) => (
         <div className={styles["history-table-number"]}>
           {numberToCurrency(loanTotal)}
         </div>
@@ -92,12 +120,11 @@ const History = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "product_type_code",
+      dataIndex: "request_type",
       key: "type",
       align: "center",
       width: "23%",
-      // @ts-ignore
-      render: (type) =>
+      render: (type: string) =>
         type == "saving" ? (
           <div className={stylesList["dashboard-list-item-type-2"]}>
             Өгсөн санхүүжилт
@@ -110,12 +137,11 @@ const History = () => {
     },
     {
       title: "Хүү",
-      dataIndex: "loan_rate_month",
+      dataIndex: "rate_month",
       key: "rate",
       align: "center",
       width: "15%",
-      // @ts-ignore
-      render: (rate) => (
+      render: (rate: string) => (
         <div className={styles["history-table-number"]}>
           {rate?.slice(0, 4)} %
         </div>
@@ -127,8 +153,7 @@ const History = () => {
       key: "date",
       align: "center",
       width: "23%",
-      // @ts-ignore
-      render: (date) => (
+      render: (date: string) => (
         <div className={styles["history-table-number"]}>
           {date?.slice(0, 10)}
         </div>
@@ -162,14 +187,14 @@ const History = () => {
                       width: "100%",
                     }}
                     placeholder="Төрөл"
-                    onChange={onChange}
+                    onChange={(e) => setType(e)}
                     options={[
                       {
                         value: "saving",
                         label: "Өгсөн санхүүжилт",
                       },
                       {
-                        value: "loan",
+                        value: "wallet",
                         label: "Авсан зээл",
                       },
                     ]}
@@ -181,9 +206,7 @@ const History = () => {
                     suffixIcon={null}
                     bordered={false}
                     value={dates || value}
-                    // @ts-ignore
                     onCalendarChange={(val) => setDates(val)}
-                    // @ts-ignore
                     onChange={(val) => setValue(val)}
                     onOpenChange={onOpenChange}
                   />
@@ -216,15 +239,14 @@ const History = () => {
             <Col span={24}>
               <Table
                 scroll={{ x: 430 }}
-                // @ts-ignore
                 columns={columns}
                 key={"request_id"}
                 pagination={{
-                  pageSize: 10,
+                  pageSize: 8,
                   position: ["bottomCenter"],
                 }}
                 dataSource={filterData ? filterData : dataTable}
-                rowKey={"request_id"}
+                rowKey={"create_date"}
               />
             </Col>
           </Row>

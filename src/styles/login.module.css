@@ -1,10 +1,10 @@
 .login-background-image {
-    background-image: url("/images/about.png");
-    width: 100%;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-color: black;
-    background-position: top;
+  background-image: url("/images/about.png");
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: black;
+  background-position: top;
 }
 
 .login-col-padding {
@@ -12,62 +12,62 @@
 }
 
 .header-text {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 700;
   font-size: 40px;
   line-height: 48px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .phone-number-label {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 14px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .input-style {
   width: 100%;
   height: 55px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #ffffff;
   border-radius: 21px;
   padding-left: 20px;
 }
 
 .forget-password-text {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 14px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: end;
 }
 
 .signup-button {
   height: 44px;
   width: 100%;
-  border: 2px solid #FFFFFF;
+  border: 2px solid #ffffff;
   border-radius: 9px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 14px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .login-button {
   height: 44px;
   width: 100%;
   border-radius: 9px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 14px;
-  color: #FFFFFF;
+  color: #ffffff;
 }

@@ -1,6 +1,6 @@
 import { Col, Row, Button, Form, Input, Modal } from "antd";
 import styles from "../../styles/login.module.css";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
 import { Loaderr } from "app/components/Loader";
@@ -121,7 +121,7 @@ export default function Signup() {
     } else {
       error({
         title: "Амжилтгүй",
-        content: <div>Medeelle zuw oruulna uu!!!</div>,
+        content: <div>Мэдээллээ зөв оруулна уу!!!</div>,
       });
     }
   };
@@ -164,20 +164,15 @@ export default function Signup() {
   };
 
   const validateTransactionPassword = async (values: any) => {
-    if (values.prev_password !== values.password) {
+    if (code.join("") !== code2.join("")) {
       return error({
         title: "Амжилтгүй",
         content: <div>Гүйлгээний нууц үгийг адилхан оруулна уу !</div>,
       });
-    } else if (values.password.length !== 4) {
-      return error({
-        title: "Амжилтгүй",
-        content: <div>Гүйлгээний нууц үг нь 4 үсэгээс бүрдэх ёстой.</div>,
-      });
     } else {
       setRegisterData((prevData) => ({
         ...prevData,
-        transaction_password: values.password,
+        transaction_password: code2.toString(),
       }));
     }
   };
@@ -223,6 +218,54 @@ export default function Signup() {
         }
       },
     });
+  };
+
+  const length = 4;
+  const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
+  const [code2, setCode2] = useState<any>([...Array(length)].map(() => ""));
+
+  const inputs = useRef<any>([]);
+  const inputs2 = useRef<any>([]);
+  useRef<(HTMLInputElement | null)[]>([]);
+
+  const processInput = (e: React.ChangeEvent<HTMLInputElement>, slot: any) => {
+    const num = e.target.value;
+    if (/[^0-9]/.test(num)) return;
+    const newCode = [...code];
+    newCode[slot] = num;
+    setCode(newCode);
+    if (slot !== length - 1) {
+      inputs.current[slot + 1].focus();
+    }
+  };
+
+  const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>, slot: any) => {
+    if (e.keyCode === 8 && !code[slot] && slot !== 0) {
+      const newCode = [...code];
+      newCode[slot - 1] = "";
+      setCode(newCode);
+      inputs.current[slot - 1].focus();
+    }
+  };
+
+  const processInput2 = (e: React.ChangeEvent<HTMLInputElement>, slot: any) => {
+    const num = e.target.value;
+    if (/[^0-9]/.test(num)) return;
+    const newCode = [...code2];
+    newCode[slot] = num;
+    setCode2(newCode);
+    if (slot !== length - 1) {
+      inputs2.current[slot + 1].focus();
+    }
+  };
+
+  const onKeyUp2 = (e: React.KeyboardEvent<HTMLInputElement>, slot: any) => {
+    if (e.keyCode === 8 && !code2[slot] && slot !== 0) {
+      const newCode = [...code2];
+      newCode[slot - 1] = "";
+      setCode2(newCode);
+      inputs2.current[slot - 1].focus();
+    }
   };
 
   const { data } = useSession();
@@ -567,6 +610,7 @@ export default function Signup() {
             registerData.tmp_user_id.length > 0 &&
             registerData.username.length > 0 &&
             registerData.pin_code.length > 0 &&
+            registerData.register.length > 0 &&
             registerData.password.length > 0 &&
             registerData.transaction_password == "" && (
               <motion.div
@@ -577,7 +621,7 @@ export default function Signup() {
                 <Row justify="start" gutter={[0, 25]}>
                   <Col span={24}>
                     <div className={styles["header-text"]}>
-                      Гүйлгээний нууц үг үүсгэх
+                      Гүйлгээний FundMe ПИН код үүсгэх
                     </div>
                   </Col>
                   <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
@@ -594,42 +638,69 @@ export default function Signup() {
                       <Row gutter={[0, 13]}>
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
-                            Гүйлгээний нууц үг
+                            Гүйлгээний <span className="font-bold">FundMe</span>{" "}
+                            ПИН код оруулах
                           </div>
                         </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="prev_password"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Гүйлгээний нууц үг оруулна уу!",
-                              },
-                            ]}
-                          >
-                            <Input.Password
-                              className={styles["input-style"]}
-                              autoFocus
-                            />
-                          </Form.Item>
+                        <Col span={24} className="flex gap-5">
+                          {code.map(
+                            (
+                              num:
+                                | string
+                                | number
+                                | readonly string[]
+                                | undefined,
+                              idx: React.Key | null | undefined
+                            ) => {
+                              return (
+                                <input
+                                  key={idx}
+                                  type="text"
+                                  inputMode="numeric"
+                                  className="h-[55px] w-[55px] rounded-[15px] border p-2 text-center text-[22px] font-bold"
+                                  maxLength={1}
+                                  value={num}
+                                  autoFocus={!code[0].length && idx === 0}
+                                  onChange={(e) => processInput(e, idx)}
+                                  onKeyUp={(e) => onKeyUp(e, idx)}
+                                  ref={(ref) => inputs.current.push(ref)}
+                                />
+                              );
+                            }
+                          )}
                         </Col>
-                        <Col span={24}>
+                        <Col span={24} className="pt-[20px]">
                           <div className={styles["phone-number-label"]}>
-                            Гүйлгээний нууц үг дахин оруулах
+                            Гүйлгээний <span className="font-bold">FundMe</span>{" "}
+                            ПИН код дахин оруулах
                           </div>
                         </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="password"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Гүйлгээний нууц үг дахин оруулна уу!",
-                              },
-                            ]}
-                          >
-                            <Input.Password className={styles["input-style"]} />
-                          </Form.Item>
+                        <Col span={24} className="flex gap-5">
+                          {code2.map(
+                            (
+                              num:
+                                | string
+                                | number
+                                | readonly string[]
+                                | undefined,
+                              idx: React.Key | null | undefined
+                            ) => {
+                              return (
+                                <input
+                                  key={idx}
+                                  type="text"
+                                  inputMode="numeric"
+                                  className="h-[55px] w-[55px] rounded-[15px] border p-2 text-center text-[22px] font-bold"
+                                  maxLength={1}
+                                  value={num}
+                                  autoFocus={!code2[0].length && idx === 0}
+                                  onChange={(e) => processInput2(e, idx)}
+                                  onKeyUp={(e) => onKeyUp2(e, idx)}
+                                  ref={(ref) => inputs2.current.push(ref)}
+                                />
+                              );
+                            }
+                          )}
                         </Col>
                         <Col span={24}>
                           <Row gutter={25}>
@@ -637,7 +708,8 @@ export default function Signup() {
                               <Button
                                 type="primary"
                                 htmlType="submit"
-                                className={`${styles["login-button"]} bg-primary`}
+                                className={`
+                               mt-[20px] h-[44px] w-[70%] rounded-[9px] bg-primary font-inter text-[14px] font-bold leading-[14px] text-[#fff]`}
                               >
                                 Үргэлжлүүлэх
                               </Button>

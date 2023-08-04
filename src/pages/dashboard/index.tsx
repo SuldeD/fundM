@@ -1,4 +1,4 @@
-import { Col, Row, Button, Image, Table } from "antd";
+import { Col, Row, Button, Image, Table, Modal } from "antd";
 import styles from "../../styles/dashboard.module.css";
 import { RightOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../components/header";
@@ -6,19 +6,24 @@ import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
-import InputCode from "app/components/input";
-import { useState } from "react";
+import { api } from "app/utils/api";
+import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 
 export const Dashboard = () => {
   const router = useRouter();
   useRequireAuth();
-  const { loan, orders, data, sumLoan, sumSaving } = useApiContext();
+  const { loan, data, sumLoan, sumSaving } = useApiContext();
+
+  const { error } = Modal;
+
+  const [doneOrders, setDoneOrders] = useState<any[]>([]);
 
   const columns = [
     {
       title: "Зээлийн хэмжээ",
-      dataIndex: "loan_amount",
-      key: "loan_amount",
+      dataIndex: "filled_amount",
+      key: "filled_amount",
 
       width: "20%",
       render: (price: any) => (
@@ -29,13 +34,13 @@ export const Dashboard = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "product_type_code",
+      dataIndex: "request_type",
       key: "type",
       align: "center",
       width: "20%",
       // @ts-ignore
       render: (type) =>
-        type == "loan" ? (
+        type == "wallet" ? (
           <div className={styles["dashboard-list-item-type-1"]}>
             Авах хүсэлт
           </div>
@@ -47,8 +52,7 @@ export const Dashboard = () => {
     },
     {
       title: "Хүү",
-      dataIndex: "loan_rate_month",
-
+      dataIndex: "rate_month",
       key: "rate",
       width: "20%",
       align: "center",
@@ -59,7 +63,7 @@ export const Dashboard = () => {
     },
     {
       title: "Хугацаа",
-      dataIndex: "loan_day",
+      dataIndex: "request_date",
 
       key: "day",
       width: "20%",
@@ -84,6 +88,40 @@ export const Dashboard = () => {
       ),
     },
   ];
+
+  const { mutate } = api.loan.reguestSearch.useMutation();
+
+  useEffect(() => {
+    mutate(
+      {
+        order: "date",
+        order_up: "1",
+        page: "1",
+        page_size: "30",
+        filter_type: "done",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            console.log(data);
+            data?.requests?.forEach((el: any) => {
+              setDoneOrders((prev) => [...prev, el]);
+            });
+          } else {
+            signOut();
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }, []);
+
+  const dataTable = doneOrders?.reverse();
 
   if (!data) {
   } else {
@@ -132,11 +170,11 @@ export const Dashboard = () => {
                         type="primary"
                         onClick={() => {
                           sumSaving > sumLoan
-                            ? router.push("/dashboard/foundation/")
-                            : router.push("/dashboard/loan/");
+                            ? router.push("/dashboard/loan/")
+                            : router.push("/dashboard/foundation/");
                         }}
                       >
-                        {sumSaving > sumLoan ? "Санхүүжилт өгөх" : "Зээл авах"}
+                        {sumSaving > sumLoan ? "Зээл авах" : "Санхүүжилт өгөх"}
                       </Button>
                     </Col>
                   </Row>
@@ -151,8 +189,11 @@ export const Dashboard = () => {
                           </div>
                         </Col>
                         <Col span={24}>
-                          <div className={styles["dashboard-loan-son-number"]}>
-                            {loan?.loan_rate_month}
+                          <div
+                            className={`${styles["dashboard-loan-son-number"]} flex`}
+                          >
+                            {loan?.loan_rate_month}{" "}
+                            <p className="h-[15px] w-[15px]">%</p>
                           </div>
                         </Col>
                       </Row>
@@ -194,11 +235,11 @@ export const Dashboard = () => {
                         // @ts-ignore
                         columns={columns}
                         pagination={{
-                          pageSize: 10,
+                          pageSize: 8,
                           position: ["bottomCenter"],
                         }}
-                        dataSource={orders}
-                        rowKey={"request_id"}
+                        dataSource={dataTable}
+                        rowKey={"create_date"}
                       />
                     </Col>
                   </Row>

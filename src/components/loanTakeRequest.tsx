@@ -1,17 +1,58 @@
-import { Col, Row, Image, Button } from "antd";
+import { Col, Row, Image, Button, Modal } from "antd";
 import styles from "../styles/loan-take-req.module.css";
 import { numberToCurrency } from "../utils/number.helpers";
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useAppContext } from "app/context/appContext";
+import { signOut } from "next-auth/react";
+import { api } from "app/utils/api";
 
 export const LoanTakeReqComponent = () => {
   const router = useRouter();
-  const { publicLoanOrders: dataTable } = useApiContext();
   const { setMyFundTabKey } = useAppContext();
-  const data = dataTable.toReversed();
+
+  const { error } = Modal;
+
+  const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
+
+  const data = activeSavingOrders.reverse();
+  const { mutate } = api.loan.reguestSearch.useMutation();
+
+  useEffect(() => {
+    mutate(
+      {
+        order: "date",
+        order_up: "1",
+        page: "1",
+        page_size: "30",
+        filter_type: "active",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            console.log(data);
+            data?.requests?.forEach((el: any) => {
+              if (el.filled_percent.slice(0, 3) != "100") {
+                if (el.request_type == "wallet") {
+                  setActiveSavingOrders((prev) => [...prev, el]);
+                }
+              }
+            });
+          } else {
+            signOut();
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }, []);
 
   return (
     <Row gutter={[0, 25]} justify="center">
@@ -91,7 +132,7 @@ export const LoanTakeReqComponent = () => {
                               </div>
 
                               <div className={styles["loanReq-list-percent"]}>
-                                {el.percent} %
+                                {el.filled_percent.slice(0, 3)} %
                               </div>
                             </Col>
                             <Col span={24}>
@@ -109,7 +150,7 @@ export const LoanTakeReqComponent = () => {
                                       styles["loanReq-list-currency-1"]
                                     }
                                   >
-                                    {el.loan_rate_month}
+                                    {el.rate_month}
                                   </div>
                                 </Col>
                                 <Col flex="none">
@@ -195,7 +236,7 @@ export const LoanTakeReqComponent = () => {
                                       styles["loanReq-list-currency-2"]
                                     }
                                   >
-                                    {el.loan_rate_month}
+                                    {el.rate_month}
                                   </div>
                                 </Col>
                               </Row>

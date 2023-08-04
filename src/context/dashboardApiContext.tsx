@@ -7,30 +7,27 @@ interface AppContext {
   myFundTabKey: string;
   setMyFundTabKey: React.Dispatch<React.SetStateAction<string>>;
   loan: any;
-  publicSavingOrders: any;
-  publicLoanOrders: any;
-  mutate: any;
-  accountInfo: any;
-  data: any;
-  saving: any;
-  orders: any;
-  publicAllOrders: any;
   sumLoan: any;
   sumSaving: any;
-  loanReqMutate: any;
+
+  activeSavingOrders: any;
+  activeLoanOrders: any;
   addBankMutate: any;
-  loanReqConfirmMut: any;
-  helpBankList: any;
-  addBankVerMutate: any;
-  myLoanOrders: any;
-  mySavingOrders: any;
-  sumMyLoan: any;
-  sumMySaving: any;
-  setMyOrders: any;
-  addEmail: any;
-  changePhoneConfirm: any;
+
+  accountInfo: any;
+  data: any;
   changePhone: any;
+  saving: any;
+
+  loanReqConfirmMut: any;
+  loanReqMutate: any;
+  addBankVerMutate: any;
+  helpBankList: any;
+
+  changePhoneConfirm: any;
+  addEmail: any;
 }
+
 const AppContext = createContext<AppContext>({} as AppContext);
 
 export const ApiWrapper = ({ children }: any) => {
@@ -39,7 +36,6 @@ export const ApiWrapper = ({ children }: any) => {
   const { data } = useSession();
 
   const { mutate } = api.loan.reguestSearch.useMutation();
-  const { mutate: loanMutate } = api.loan.loanSearch.useMutation();
   const { mutate: loanReqMutate } = api.loan.loanRequest.useMutation();
   const { mutate: loanReqConfirmMut } =
     api.loan.loanRequestConfirm.useMutation();
@@ -75,19 +71,9 @@ export const ApiWrapper = ({ children }: any) => {
   const [saving, setSaving] = useState();
   const [myFundTabKey, setMyFundTabKey] = useState("1");
 
-  const order = "date";
-  const order_up = "1";
-  const page = "1";
-  const page_size = "20";
-  const filter_type = "active";
+  const [activeLoanOrders, setActiveLoanOrders] = useState<any[]>([]);
+  const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
 
-  const [orders, setMyOrders] = useState<any[]>([]);
-  const [myLoanOrders, setMyLoanOrders] = useState<any[]>([]);
-  const [mySavingOrders, setMySavingOrders] = useState<any[]>([]);
-
-  const [publicLoanOrders, setPublicLoanOrders] = useState<any[]>([]);
-  const [publicSavingOrders, setPublicSavingOrders] = useState<any[]>([]);
-  const [publicAllOrders, setPublicAllOrders] = useState<any[]>([]);
   const [accountInfo, setAccountInfo] = useState<any[]>([]);
 
   useEffect(() => {
@@ -96,44 +82,27 @@ export const ApiWrapper = ({ children }: any) => {
 
   useEffect(() => {
     mutate(
-      { order, order_up, page, page_size },
+      {
+        order: "date",
+        order_up: "1",
+        page: "1",
+        page_size: "1",
+        filter_type: "active",
+      },
       {
         onSuccess: (
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
-          if (data.success) {
-            setPublicAllOrders(data.loan_requests);
-
-            data?.loan_requests?.forEach((el: any) =>
-              el.product_type_code == "saving"
-                ? setPublicSavingOrders((prev) => [...prev, el])
-                : setPublicLoanOrders((prev) => [...prev, el])
-            );
-          } else {
-            signOut();
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
+          if (data?.success) {
+            data?.requests?.forEach((el: any) => {
+              if (el.is_my_request == "0") {
+                if (el.request_type == "wallet") {
+                  setActiveLoanOrders((prev) => [...prev, el]);
+                } else if (el.request_type == "saving") {
+                  setActiveSavingOrders((prev) => [...prev, el]);
+                }
+              }
             });
-          }
-        },
-      }
-    );
-
-    loanMutate(
-      { order, order_up, page, page_size, filter_type },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data.success) {
-            setMyOrders(data.loan_requests);
-
-            data?.loan_requests?.forEach((el: any) =>
-              el.product_type_code == "saving"
-                ? setMySavingOrders((prev) => [...prev, el])
-                : setMyLoanOrders((prev) => [...prev, el])
-            );
           } else {
             signOut();
             error({
@@ -150,25 +119,13 @@ export const ApiWrapper = ({ children }: any) => {
   const [sumSaving, setSumSaving] = useState(0);
 
   useEffect(() => {
-    publicLoanOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
+    activeLoanOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
       setSumLoan((prev) => prev + Number(el.loan_amount));
     });
-    publicSavingOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
+    activeSavingOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
       setSumSaving((prev) => prev + Number(el.loan_amount));
     });
-  }, [publicSavingOrders]);
-
-  const [sumMyLoan, setMySumLoan] = useState(0);
-  const [sumMySaving, setMySumSaving] = useState(0);
-
-  useEffect(() => {
-    myLoanOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
-      setMySumLoan((prev) => prev + Number(el.loan_amount));
-    });
-    mySavingOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
-      setMySumSaving((prev) => prev + Number(el.loan_amount));
-    });
-  }, [myLoanOrders]);
+  }, [activeSavingOrders]);
 
   useEffect(() => {
     loanData?.product_list?.forEach(
@@ -193,25 +150,20 @@ export const ApiWrapper = ({ children }: any) => {
     loan,
     sumLoan,
     sumSaving,
-    publicSavingOrders,
-    publicLoanOrders,
+
+    activeSavingOrders,
+    activeLoanOrders,
     addBankMutate,
-    mutate,
+
     accountInfo,
     data,
     changePhone,
     saving,
-    publicAllOrders,
-    orders,
+
     loanReqConfirmMut,
     loanReqMutate,
     addBankVerMutate,
     helpBankList,
-    mySavingOrders,
-    myLoanOrders,
-    sumMyLoan,
-    sumMySaving,
-    setMyOrders,
 
     changePhoneConfirm,
     addEmail,

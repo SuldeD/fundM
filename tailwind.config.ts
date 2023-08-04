@@ -20,6 +20,7 @@ export default {
         lato: ["Lato", "sans-serif"],
         raleway: ["Raleway", "sans-serif"],
         beau: ["PF BeauSans Pro"],
+        tahoma: ["Tahoma"],
       },
       colors: {
         primary: "#0300B4",

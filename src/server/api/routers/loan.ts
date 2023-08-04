@@ -232,11 +232,12 @@ export const loanRouter = createTRPCRouter({
         order_up: z.string(),
         page: z.string(),
         page_size: z.string(),
+        filter_type: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
-      const { order, order_up, page, page_size } = input;
+      const { order, order_up, page, page_size, filter_type } = input;
 
       const body = encrypt(
         JSON.stringify({
@@ -244,6 +245,7 @@ export const loanRouter = createTRPCRouter({
           order_up,
           page,
           page_size,
+          filter_type,
         })
       );
       const res2 = await fetch(`${process.env.BACKEND_URL}/request/search`, {
@@ -256,6 +258,8 @@ export const loanRouter = createTRPCRouter({
           "Session-Token": token!.access_token!,
         },
       });
+
+      console.log(res2, "res2");
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);
@@ -585,6 +589,103 @@ export const loanRouter = createTRPCRouter({
       );
       const res2 = await fetch(
         `${process.env.BACKEND_URL}/account/forgot/password`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  walletToBank: publicProcedure
+    .input(
+      z.object({
+        account_num: z.string(),
+        bank_id: z.string(),
+        account_name: z.string(),
+        amount: z.string(),
+        description: z.string(),
+        loan_duration_day: z.string(),
+        loan_duration_month: z.string(),
+        pay_day: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const {
+        account_name,
+        bank_id,
+        account_num,
+        amount,
+        description,
+        loan_duration_day,
+        loan_duration_month,
+        pay_day,
+      } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          account_name,
+          bank_id,
+          account_num,
+          amount,
+          description,
+          loan_duration_day,
+          loan_duration_month,
+          pay_day,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/wallet/to/bank/account`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  walletToBankConfirm: publicProcedure
+    .input(
+      z.object({
+        transaction_id: z.string(),
+        pin_code: z.string(),
+        form_token: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { transaction_id, pin_code, form_token, password } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          transaction_id,
+          pin_code,
+          form_token,
+          password,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/wallet/to/bank/account/confirm`,
         {
           method: "POST",
           credentials: "same-origin",

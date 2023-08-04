@@ -33,11 +33,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
             locale={mnMN}
           >
             <AppWrapper>
-              {/* <ApiWrapper> */}
               <MainLayout>
                 <Component {...pageProps} />
               </MainLayout>
-              {/* </ApiWrapper> */}
             </AppWrapper>
           </ConfigProvider>
         </AntdApp>

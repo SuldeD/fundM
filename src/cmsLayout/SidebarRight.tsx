@@ -8,15 +8,16 @@ import { useRouter } from "next/router";
 import { LoanTakeReqComponent } from "../components/loanTakeRequest";
 import { FoundationReq } from "../components/foundationReq";
 import { useApiContext } from "app/context/dashboardApiContext";
+import { useAppContext } from "app/context/appContext";
 
 const { Sider } = Layout;
 
 // @ts-ignore
 export const SidebarRightComponent = () => {
   const { accountInfo: data } = useApiContext();
+  const { myFundTabKey } = useAppContext();
 
   const router = useRouter();
-  const myFundTabKey = "1";
 
   const NavBars = {
     // CalculateComponent
@@ -26,6 +27,8 @@ export const SidebarRightComponent = () => {
     "/dashboard/foundation": LoanTakeReqComponent,
     "/dashboard/myfund":
       myFundTabKey === "1" ? LoanTakeReqComponent : FoundationReq,
+    "/dashboard/myfund/list":
+      myFundTabKey === "2" ? LoanTakeReqComponent : FoundationReq,
   };
 
   const renderNavbar = (pathname: string) => {

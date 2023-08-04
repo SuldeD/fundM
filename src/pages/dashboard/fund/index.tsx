@@ -1,4 +1,4 @@
-import { Row, Col, Tabs, Table, Image, Button } from "antd";
+import { Row, Col, Tabs, Table, Image, Button, Modal } from "antd";
 import styles from "../../../styles/fund.module.css";
 import stylesDL from "../../../styles/dloan.module.css";
 import stylesFD from "../../../styles/foundation.module.css";
@@ -8,22 +8,30 @@ import { HeaderDashboard } from "../../../components/header";
 import { useRequireAuth } from "app/utils/auth";
 import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "app/utils/api";
+import { signOut } from "next-auth/react";
 
 export const FundHistory = () => {
-  const { data, mySavingOrders, myLoanOrders, sumMyLoan, sumMySaving, orders } =
-    useApiContext();
+  const { data } = useApiContext();
   useRequireAuth();
-  const [activeClass, setSelectedId] = useState<any>();
+  const { error } = Modal;
 
-  const columns = [
+  const [activeClass, setSelectedId] = useState<any>();
+  const [mySavingOrders, setMyDoneSavingOrders] = useState<any[]>([]);
+  const [myLoanOrders, setMyDoneLoanOrders] = useState<any[]>([]);
+
+  const [sumMySaving, setSumMySaving] = useState<number>(0);
+  const [sumMyLoan, setSumMyLoan] = useState<number>(0);
+  const [orders, setOrders] = useState<any[]>([]);
+
+  const columns: any[] = [
     {
       title: "№",
-      dataIndex: "is_status",
+      dataIndex: "request_id",
       key: "is_status",
       width: "6%",
-      // @ts-ignore
-      render: (id) => (
+      render: (id: string) => (
         <div className={styles["fund-tabs-content-table-number"]}>{id}</div>
       ),
     },
@@ -33,8 +41,7 @@ export const FundHistory = () => {
       key: "loan_amount",
       align: "center",
       width: "23%",
-      // @ts-ignore
-      render: (loan_amount) => (
+      render: (loan_amount: string) => (
         <div className={styles["fund-tabs-content-table-number"]}>
           {numberToCurrency(loan_amount)}
         </div>
@@ -46,8 +53,7 @@ export const FundHistory = () => {
       key: "type",
       align: "center",
       width: "23%",
-      // @ts-ignore
-      render: (type) =>
+      render: (type: string) =>
         type == "saving" ? (
           <div className={stylesList["dashboard-list-item-type-2"]}>
             Өгөх хүсэлт
@@ -60,12 +66,11 @@ export const FundHistory = () => {
     },
     {
       title: "Хүү",
-      dataIndex: "loan_rate_month",
+      dataIndex: "rate_month",
       key: "rate",
       align: "center",
       width: "15%",
-      // @ts-ignore
-      render: (rate) => (
+      render: (rate: string) => (
         <div className={styles["fund-tabs-content-table-number"]}>{rate} %</div>
       ),
     },
@@ -75,8 +80,7 @@ export const FundHistory = () => {
       key: "day",
       align: "center",
       width: "23%",
-      // @ts-ignore
-      render: (day) => (
+      render: (day: string) => (
         <div className={styles["fund-tabs-content-table-number"]}>
           {day.slice(0, 10)}
         </div>
@@ -88,8 +92,7 @@ export const FundHistory = () => {
       key: "request_id",
       width: "10%",
       align: "center",
-      // @ts-ignore
-      render: (request_id) => (
+      render: (request_id: string) => (
         <Image
           width={25}
           onClick={() => {
@@ -103,6 +106,48 @@ export const FundHistory = () => {
       ),
     },
   ];
+
+  const { mutate } = api.loan.reguestSearch.useMutation();
+
+  useEffect(() => {
+    mutate(
+      {
+        order: "date",
+        order_up: "1",
+        page: "1",
+        page_size: "30",
+        filter_type: "my",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            console.log(data);
+            data?.requests?.forEach((el: any) => {
+              setOrders((prev) => [...prev, el]);
+              if (el.filled_percent.slice(0, 3) == "100") {
+                if (el.request_type == "wallet") {
+                  setMyDoneLoanOrders((prev) => [...prev, el]);
+                  setSumMyLoan((prev) => prev + Number(el.loan_amount));
+                } else if (el.request_type == "saving") {
+                  setMyDoneSavingOrders((prev) => [...prev, el]);
+                  setSumMySaving((prev) => prev + Number(el.loan_amount));
+                }
+              } else {
+              }
+            });
+          } else {
+            signOut();
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }, []);
 
   const items = [
     {
@@ -128,7 +173,10 @@ export const FundHistory = () => {
                   Дундаж хүү
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {mySavingOrders && mySavingOrders[0]?.loan_rate_month} %
+                  {mySavingOrders && mySavingOrders[0]?.rate_month
+                    ? mySavingOrders[0]?.rate_month
+                    : "0"}{" "}
+                  %
                 </div>
               </Col>
               <Col flex="none">
@@ -144,7 +192,6 @@ export const FundHistory = () => {
           <Col span={24}>
             <Table
               scroll={{ x: 430 }}
-              // @ts-ignore
               columns={columns}
               pagination={{
                 pageSize: 10,
@@ -180,7 +227,10 @@ export const FundHistory = () => {
                   Дундаж хүү
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {myLoanOrders && myLoanOrders[0]?.loan_rate_month} %
+                  {myLoanOrders && myLoanOrders[0]?.rate_month
+                    ? myLoanOrders[0]?.rate_month
+                    : "0"}{" "}
+                  %
                 </div>
               </Col>
               <Col flex="none">
@@ -196,7 +246,6 @@ export const FundHistory = () => {
           <Col span={24}>
             <Table
               scroll={{ x: 430 }}
-              // @ts-ignore
               columns={columns}
               pagination={{
                 pageSize: 10,
@@ -344,7 +393,7 @@ export const FundHistory = () => {
                               <div
                                 className={stylesDL["dloan-detail-maxValue"]}
                               >
-                                {o.loan_rate_month} %
+                                {o.rate_month} %
                               </div>
                             </Col>
                           </Row>
