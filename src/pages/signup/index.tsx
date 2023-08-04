@@ -28,7 +28,7 @@ export default function Signup() {
 
   const { mutate } = api.loan.phoneSignUp.useMutation();
   const mutationPhoneVer = api.loan.phoneSignUpVerify.useMutation();
-  const mutationSignUp = api.loan.SignUp.useMutation();
+  const mutationSignUp = api.loan.signUp.useMutation();
 
   const [selectedQuestion, setSelectedQuestion] = useState<any>("");
   const { data: securityQuestion } = api.loan.helpQuestion.useQuery();

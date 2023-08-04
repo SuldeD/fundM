@@ -123,7 +123,6 @@ export const FundHistory = () => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data?.success) {
-            console.log(data);
             data?.requests?.forEach((el: any) => {
               setOrders((prev) => [...prev, el]);
               if (el.filled_percent.slice(0, 3) == "100") {

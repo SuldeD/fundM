@@ -6,13 +6,12 @@ import {
   Button,
   Checkbox,
   Modal,
-  Input,
   Image,
   Form,
 } from "antd";
 import styles from "../../../styles/foundation.module.css";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LeftOutlined, CalculatorOutlined } from "@ant-design/icons";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
@@ -21,14 +20,18 @@ import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import moment from "moment";
 import InputCode from "app/components/input";
+import { api } from "app/utils/api";
 
 export const Foundation = () => {
   const [checked, setChecked] = useState(false);
+  const myRef = useRef<any>();
 
   const { data, saving, loanReqMutate, loanReqConfirmMut, accountInfo } =
     useApiContext();
   useRequireAuth();
   const { error } = Modal;
+
+  const { mutate: getContent } = api.loan.getContent.useMutation();
 
   const toggleChecked = () => {
     setChecked(!checked);
@@ -87,29 +90,13 @@ export const Foundation = () => {
     changeClass();
   };
 
-  const dataTable = [
-    {
-      id: 1,
-      day: "7",
-    },
-    {
-      id: 2,
-      day: "14",
-    },
-    {
-      id: 3,
-      day: "21",
-    },
-    {
-      id: 4,
-      day: "28",
-    },
-  ];
+  const [dataTable, setTable] = useState<any[]>(saving?.duration);
+
+  useEffect(() => {
+    setTable(saving?.duration);
+  }, []);
+
   const [activeDuration, setActiveDuration] = useState(0);
-  // @ts-ignore
-  const changeActive = (indx) => {
-    setActiveDuration(indx);
-  };
 
   const [requestId, setRequestId] = useState<string>("");
 
@@ -121,12 +108,10 @@ export const Foundation = () => {
         repayment_amount: (
           (inputValue / 100) *
             rate *
-            // @ts-ignore
-            Number(dataTable[activeDuration].day) +
+            Number(dataTable[activeDuration].duration) +
           inputValue
         ).toString(),
-        // @ts-ignore
-        loan_month: dataTable[activeDuration].day,
+        loan_month: dataTable[activeDuration].duration,
       },
       {
         onSuccess: (data: {
@@ -182,6 +167,28 @@ export const Foundation = () => {
       });
     }
   }
+
+  useEffect(() => {
+    getContent(
+      {
+        code: "saving",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            myRef.current.innerHTML = data?.page_html && data?.page_html;
+          } else {
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }, []);
 
   if (!data) {
     <Loaderr />;
@@ -288,43 +295,46 @@ export const Foundation = () => {
 
                       <Col span={24}>
                         <Row wrap={false} gutter={30} align="middle">
-                          {dataTable.map((el, idx) => (
-                            <Col flex="none" key={`data-${idx}`}>
-                              <Button
-                                onClick={() => changeActive(idx)}
-                                className={
-                                  styles[
-                                    activeDuration === idx
-                                      ? "foundation-button-active"
-                                      : "foundation-button"
-                                  ]
-                                }
-                              >
-                                <div
+                          {dataTable &&
+                            dataTable?.map((el: any, idx: any) => (
+                              <Col flex="none" key={`data-${idx}`}>
+                                <Button
+                                  onClick={() =>
+                                    setActiveDuration(el.row_order - 1)
+                                  }
                                   className={
                                     styles[
-                                      activeDuration === idx
-                                        ? "foundation-button-day-text-active"
-                                        : "foundation-button-day-text"
+                                      activeDuration === el.row_order - 1
+                                        ? "foundation-button-active"
+                                        : "foundation-button"
                                     ]
                                   }
                                 >
-                                  {el.day}
-                                </div>
-                                <div
-                                  className={
-                                    styles[
-                                      activeDuration === idx
-                                        ? "foundation-button-text-active"
-                                        : "foundation-button-text"
-                                    ]
-                                  }
-                                >
-                                  хоног
-                                </div>
-                              </Button>
-                            </Col>
-                          ))}
+                                  <div
+                                    className={
+                                      styles[
+                                        activeDuration === el.row_order - 1
+                                          ? "foundation-button-day-text-active"
+                                          : "foundation-button-day-text"
+                                      ]
+                                    }
+                                  >
+                                    {el.duration}
+                                  </div>
+                                  <div
+                                    className={
+                                      styles[
+                                        activeDuration === el.row_order - 1
+                                          ? "foundation-button-text-active"
+                                          : "foundation-button-text"
+                                      ]
+                                    }
+                                  >
+                                    хоног
+                                  </div>
+                                </Button>
+                              </Col>
+                            ))}
                         </Row>
                       </Col>
                     </Row>
@@ -356,12 +366,12 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-rate-profit"]}>
-                          {typeof activeDuration == "number" &&
+                          {dataTable &&
+                            typeof activeDuration == "number" &&
                             numberToCurrency(
                               (inputValue / 100) *
                                 rate *
-                                // @ts-ignore
-                                Number(dataTable[activeDuration].day)
+                                Number(dataTable[activeDuration].duration)
                             )}
                         </div>
                       </Col>
@@ -390,9 +400,9 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {typeof activeDuration == "number" &&
-                            // @ts-ignore
-                            dataTable[activeDuration].day}{" "}
+                          {dataTable &&
+                            typeof activeDuration == "number" &&
+                            dataTable[activeDuration].duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -407,10 +417,10 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {typeof activeDuration == "number" &&
+                          {dataTable &&
+                            typeof activeDuration == "number" &&
                             moment()
-                              // @ts-ignore
-                              .add(dataTable[activeDuration].day, "days")
+                              .add(dataTable[activeDuration].duration, "days")
                               .calendar()}
                         </div>
                       </Col>
@@ -467,12 +477,14 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-rate-profit"]}>
-                          {typeof activeDuration == "number" &&
+                          {dataTable &&
+                            typeof activeDuration == "number" &&
                             numberToCurrency(
-                              (inputValue / 100) *
-                                rate *
-                                // @ts-ignore
-                                Number(dataTable[activeDuration].day)
+                              Number(
+                                dataTable[activeDuration].duration *
+                                  (inputValue / 100) *
+                                  rate
+                              )
                             )}
                         </div>
                       </Col>
@@ -501,9 +513,9 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {typeof activeDuration == "number" &&
-                            // @ts-ignore
-                            dataTable[activeDuration].day}{" "}
+                          {dataTable &&
+                            typeof activeDuration == "number" &&
+                            dataTable[activeDuration].duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -518,10 +530,11 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {typeof activeDuration == "number" &&
+                          {dataTable &&
+                            typeof activeDuration == "number" &&
                             moment()
                               // @ts-ignore
-                              .add(dataTable[activeDuration].day, "days")
+                              .add(dataTable[activeDuration].duration, "days")
                               .calendar()}
                         </div>
                       </Col>
@@ -635,52 +648,7 @@ export const Foundation = () => {
                       span={24}
                       className="my-5 rounded-[9px] bg-bank p-[50px]"
                     >
-                      <div className={styles["foundation-modal-content-text"]}>
-                        1.1 Харилцагч та 5,000,000 /таван сая/ төгрөгнөөс
-                        500,000,000 /таван зуун сая/ төгрөгний санхүүжилт өгөх
-                        боломжтой.
-                        <br />
-                        <br />
-                        1.2 “ФАНД МИ БИРЖ” ХХК нь Мөнгө угаах болон терроризмыг
-                        санхүүжүүлэхтэй тэмцэх тухай Монгол улсын хууль болон
-                        холбогдох бусад зохицуулагч байгууллагын хууль тогтоомж,
-                        олон улсын гэрээ, конвенцийн хэрэгжилтийг хангах
-                        зорилгоор харилцагчийг таних, эцсийн өмчлөгчийг
-                        тодорхойлох арга хэмжээний хүрээнд санхүүжүүлэгчээс
-                        “FUNDME” апликейшн болон вэбсайтад оруулсан мэдээллээс
-                        гадна нэмэлт мэдээ мэдээлэл, баримт бичгийг зохих ёсны
-                        шаардлагын дагуу биетээр хүргүүлэхийг шаардах бүрэн
-                        эрхтэй байна.
-                        <br />
-                        <br />
-                        1.3 Таны санхүүжилт өгөх захиалга нь “ФАНД МИ БИРЖ”
-                        ХХК-тай “Богино хугацааны санхүүжилтын” гэрээ байгуулсан
-                        гэх нөхцөл биш бөгөөд таны захиалга биелсэн тохиолдолд
-                        тус гэрээ байгуулагдана.
-                        <br />
-                        <br />
-                        1.4 Таны захиалга хэсэгчилэн биелэх боломжтой ба тухайн
-                        өдрийн 18:00 цагаас өмнө биелсэн захиалгын дагуу “ФАНД
-                        МИ БИРЖ” ХХК нь “Богино хугацаат санхүүжилтын” гэрээг
-                        байгуулж таны бүртгэлтэй и-мэйл хаяг болон мэдэгдэл
-                        хэсэгт хүргүүлнэ. Хэрэв та гэрээг эх хувиар авахыг
-                        хүсвэл өөрт ойр салбарт хандан авах боломжтой.
-                        <br />
-                        <br />
-                        1.5 Таны захиалга тухайн өдрөө биелээгүй тохиолдолд
-                        автоматаар цуцлагдах ба та дараагийн өдөр шинээр
-                        захиалгаа оруулах боломжтой.
-                        <br />
-                        <br />
-                        1.6 Биелээгүй захиалгыг тухайн өдрийн 18 цагаас өмнө
-                        таны бүртгэлтэй данс руу буцаан шилжүүлнэ.
-                        <br />
-                        <br />
-                        1.7 Харилцагч та захиалгын дагуу мөнгөн дүнгээ шилжүүлэх
-                        үүрэгтэй ба зөрүүтэй дүнгээр гүйлгээ хийсэн бол
-                        захиалгыг цуцалж гүйлгээг буцаана. Ингэхдээ гүйлгээний
-                        шимтгэлд 300 төгрөг суутгана.
-                      </div>
+                      <div ref={myRef.current && myRef}></div>
                     </Col>
                     <Form form={form}>
                       <Row justify="center" gutter={[0, 10]}>
@@ -789,7 +757,7 @@ export const Foundation = () => {
                       >
                         {" "}
                         {typeof activeDuration == "number" &&
-                          // @ts-ignore
+                          dataTable &&
                           dataTable[activeDuration].day}{" "}
                       </span>
                       хоногийн хугацаатай{" "}

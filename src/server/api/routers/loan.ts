@@ -24,6 +24,49 @@ export const loanRouter = createTRPCRouter({
     return accountStatus;
   }),
 
+  loanContract: publicProcedure.query(async ({ ctx }) => {
+    const token = await getAccountToken(ctx);
+    const res2 = await fetch(`${process.env.BACKEND_URL}/help/loan/contract`, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        ...loanServiceHeaders,
+        Cookie: token!.id_token!,
+        "Session-Token": token!.access_token!,
+      },
+    });
+    const raw2 = await res2.json();
+    const accountStatus = decrypt(raw2);
+    console.log(accountStatus);
+
+    return accountStatus;
+  }),
+
+  getContent: publicProcedure
+    .input(z.object({ code: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { code } = input;
+      const body = encrypt(
+        JSON.stringify({
+          code,
+        })
+      );
+      const res2 = await fetch(`${process.env.BACKEND_URL}/help/get/content`, {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      return accountStatus;
+    }),
+
   loanList: publicProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
     const res2 = await fetch(`${process.env.BACKEND_URL}/product/list`, {
@@ -131,7 +174,7 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  SignUp: publicProcedure
+  signUp: publicProcedure
     .input(
       z.object({
         phone: z.string(),
@@ -305,43 +348,6 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  loanRequest: publicProcedure
-    .input(
-      z.object({
-        loan_amount: z.string(),
-        repayment_amount: z.string(),
-        loan_month: z.string(),
-        product_id: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const token = await getAccountToken(ctx);
-      const { product_id, loan_amount, repayment_amount, loan_month } = input;
-
-      const body = encrypt(
-        JSON.stringify({
-          product_id,
-          loan_amount,
-          repayment_amount,
-          loan_month,
-        })
-      );
-      const res2 = await fetch(`${process.env.BACKEND_URL}/loan/request`, {
-        method: "POST",
-        credentials: "same-origin",
-        body: body,
-        headers: {
-          ...loanServiceHeaders,
-          Cookie: token!.id_token!,
-          "Session-Token": token!.access_token!,
-        },
-      });
-      const raw2 = await res2.json();
-      const accountStatus = decrypt(raw2);
-      console.log(accountStatus);
-      return accountStatus;
-    }),
-
   loanRequestConfirm: publicProcedure
     .input(
       z.object({
@@ -373,6 +379,43 @@ export const loanRouter = createTRPCRouter({
           },
         }
       );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  loanRequest: publicProcedure
+    .input(
+      z.object({
+        product_id: z.string(),
+        loan_amount: z.string(),
+        repayment_amount: z.string(),
+        loan_month: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { product_id, loan_amount, repayment_amount, loan_month } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          product_id,
+          loan_amount,
+          repayment_amount,
+          loan_month,
+        })
+      );
+      const res2 = await fetch(`${process.env.BACKEND_URL}/loan/request`, {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);
@@ -439,7 +482,7 @@ export const loanRouter = createTRPCRouter({
         })
       );
       const res2 = await fetch(
-        `${process.env.BACKEND_URL}/account/add/bank/verify`,
+        `${process.env.BACKEND_URL}/loan/bank/account/verify`,
         {
           method: "POST",
           credentials: "same-origin",
@@ -508,7 +551,7 @@ export const loanRouter = createTRPCRouter({
         })
       );
       const res2 = await fetch(
-        `${process.env.BACKEND_URL} /account/change/phone/request`,
+        `${process.env.BACKEND_URL}/account/change/phone/request`,
         {
           method: "POST",
           credentials: "same-origin",
@@ -697,6 +740,43 @@ export const loanRouter = createTRPCRouter({
           },
         }
       );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  notficationSearch: publicProcedure
+    .input(
+      z.object({
+        order: z.string(),
+        order_up: z.string(),
+        page: z.string(),
+        page_size: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { order, order_up, page, page_size } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          order,
+          order_up,
+          page,
+          page_size,
+        })
+      );
+      const res2 = await fetch(`${process.env.BACKEND_URL}/activity/search`, {
+        method: "POST",
+        credentials: "same-origin",
+        body: body,
+        headers: {
+          ...loanServiceHeaders,
+          Cookie: token!.id_token!,
+          "Session-Token": token!.access_token!,
+        },
+      });
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);

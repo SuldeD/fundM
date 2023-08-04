@@ -390,7 +390,7 @@ export const ProtectedLayout = ({ children }: any) => {
         <Layout>
           <Content>{children}</Content>
         </Layout>
-        <SidebarRightComponent />
+        <SidebarRightComponent statusData={statusData} />
       </ApiWrapper>
     </Layout>
   );

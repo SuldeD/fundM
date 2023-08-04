@@ -21,7 +21,6 @@ import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
-import { exit } from "process";
 
 export const Loan = () => {
   const { loan, data, loanReqMutate, loanReqConfirmMut, accountInfo } =
@@ -33,6 +32,7 @@ export const Loan = () => {
   const { mutate: walletToBank } = api.loan.walletToBank.useMutation();
   const { mutate: walletToBankConfirm } =
     api.loan.walletToBankConfirm.useMutation();
+  const { mutate: getContent } = api.loan.getContent.useMutation();
 
   const [checked, setChecked] = useState<boolean>(false);
   const [requestId, setRequestId] = useState();
@@ -56,6 +56,8 @@ export const Loan = () => {
   const [dataTable, setTable] = useState<any[]>(loan?.duration);
   const [activeDuration, setActiveDuration] = useState(0);
   const [loanReq, setLoanReq] = useState<any[]>([]);
+  const [pageHtml, setPageHtml] = useState<any>();
+  const myRef = useRef<any>();
 
   useEffect(() => {
     setTable(loan?.duration);
@@ -90,7 +92,27 @@ export const Loan = () => {
     );
   }, []);
 
-  // BreakError =
+  useEffect(() => {
+    getContent(
+      {
+        code: "loan",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            myRef.current.innerHTML = data?.page_html && data?.page_html;
+          } else {
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }, []);
 
   function submit() {
     loanReq?.forEach((ln: any) => {
@@ -103,13 +125,13 @@ export const Loan = () => {
             // @ts-ignore
             loan_duration_day:
               dataTable &&
-              Number(dataTable[activeDuration].LoanDuration).toString(),
+              Number(dataTable[activeDuration].duration).toString(),
             loan_duration_month: "D",
             pay_day: moment()
               // @ts-ignore
               .add(
                 // @ts-ignore
-                dataTable[activeDuration].LoanDuration,
+                dataTable[activeDuration].duration,
                 "days"
               )
               .calendar(),
@@ -147,12 +169,12 @@ export const Loan = () => {
             product_id: (loan?.product_id).toString(),
             loan_amount: inputValue.toString(),
             repayment_amount: (
-              Number(dataTable[activeDuration].LoanDuration) *
+              Number(dataTable[activeDuration].duration) *
                 rate *
                 (inputValue / 100) +
               inputValue +
-              Number(dataTable[activeDuration].LoanDuration) *
-                Number(dataTable[activeDuration].FeePercent) *
+              Number(dataTable[activeDuration].duration) *
+                Number(dataTable[activeDuration].fee_percent) *
                 (inputValue / 100)
             ).toString(),
             loan_month: dataTable[activeDuration].LoanDuration,
@@ -348,45 +370,46 @@ export const Loan = () => {
 
                       <Col span={24}>
                         <Row wrap={false} gutter={30} align="middle">
-                          {dataTable?.map((el: any, idx: any) => (
-                            <Col flex="none" key={`data-${idx}`}>
-                              <Button
-                                onClick={() =>
-                                  setActiveDuration(el.RowOrder - 1)
-                                }
-                                className={
-                                  styles[
-                                    activeDuration === el.RowOrder - 1
-                                      ? "dloan-button-active"
-                                      : "dloan-button"
-                                  ]
-                                }
-                              >
-                                <div
+                          {dataTable &&
+                            dataTable?.map((el: any, idx: any) => (
+                              <Col flex="none" key={`data-${idx}`}>
+                                <Button
+                                  onClick={() =>
+                                    setActiveDuration(el.row_order - 1)
+                                  }
                                   className={
                                     styles[
-                                      activeDuration === el.RowOrder - 1
-                                        ? "dloan-button-day-text-active"
-                                        : "dloan-button-day-text"
+                                      activeDuration === el.row_order - 1
+                                        ? "dloan-button-active"
+                                        : "dloan-button"
                                     ]
                                   }
                                 >
-                                  {el.LoanDuration}
-                                </div>
-                                <div
-                                  className={
-                                    styles[
-                                      activeDuration === el.RowOrder - 1
-                                        ? "dloan-button-text-active"
-                                        : "dloan-button-text"
-                                    ]
-                                  }
-                                >
-                                  хоног
-                                </div>
-                              </Button>
-                            </Col>
-                          ))}
+                                  <div
+                                    className={
+                                      styles[
+                                        activeDuration === el.row_order - 1
+                                          ? "dloan-button-day-text-active"
+                                          : "dloan-button-day-text"
+                                      ]
+                                    }
+                                  >
+                                    {el.duration}
+                                  </div>
+                                  <div
+                                    className={
+                                      styles[
+                                        activeDuration === el.row_order - 1
+                                          ? "dloan-button-text-active"
+                                          : "dloan-button-text"
+                                      ]
+                                    }
+                                  >
+                                    хоног
+                                  </div>
+                                </Button>
+                              </Col>
+                            ))}
                         </Row>
                       </Col>
                     </Row>
@@ -423,8 +446,7 @@ export const Loan = () => {
                             numberToCurrency(
                               (inputValue / 100) *
                                 rate *
-                                // @ts-ignore
-                                Number(dataTable[activeDuration].LoanDuration)
+                                Number(dataTable[activeDuration].duration)
                             )}
                         </div>
                       </Col>
@@ -444,10 +466,8 @@ export const Loan = () => {
                             // @ts-ignore
                             numberToCurrency(
                               (inputValue / 100) *
-                                // @ts-ignore
-                                Number(dataTable[activeDuration].FeePercent) *
-                                // @ts-ignore
-                                Number(dataTable[activeDuration].LoanDuration)
+                                Number(dataTable[activeDuration].fee_percent) *
+                                Number(dataTable[activeDuration].duration)
                             )}
                         </div>
                       </Col>
@@ -468,15 +488,15 @@ export const Loan = () => {
                               (inputValue / 100) *
                                 rate *
                                 // @ts-ignore
-                                Number(dataTable[activeDuration].LoanDuration) +
+                                Number(dataTable[activeDuration].duration) +
                                 inputValue +
                                 (inputValue / 100) *
                                   Number(
                                     // @ts-ignore
-                                    dataTable[activeDuration].FeePercent
+                                    dataTable[activeDuration].fee_percent
                                   ) *
                                   // @ts-ignore
-                                  Number(dataTable[activeDuration].LoanDuration)
+                                  Number(dataTable[activeDuration].duration)
                             )}
                         </div>
                       </Col>
@@ -508,7 +528,7 @@ export const Loan = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             // @ts-ignore
-                            dataTable[activeDuration].LoanDuration}{" "}
+                            dataTable[activeDuration].duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -529,7 +549,7 @@ export const Loan = () => {
                               // @ts-ignore
                               .add(
                                 // @ts-ignore
-                                dataTable[activeDuration].LoanDuration,
+                                dataTable[activeDuration].duration,
                                 "days"
                               )
                               .calendar()}
@@ -596,7 +616,7 @@ export const Loan = () => {
                               (inputValue / 100) *
                                 rate *
                                 // @ts-ignore
-                                Number(dataTable[activeDuration].LoanDuration)
+                                Number(dataTable[activeDuration].duration)
                             )}
                         </div>
                       </Col>
@@ -616,9 +636,9 @@ export const Loan = () => {
                             numberToCurrency(
                               (inputValue / 100) *
                                 // @ts-ignore
-                                Number(dataTable[activeDuration].FeePercent) *
+                                Number(dataTable[activeDuration].fee_percent) *
                                 // @ts-ignore
-                                Number(dataTable[activeDuration].LoanDuration)
+                                Number(dataTable[activeDuration].duration)
                             )}
                         </div>
                       </Col>
@@ -639,15 +659,15 @@ export const Loan = () => {
                               (inputValue / 100) *
                                 rate *
                                 // @ts-ignore
-                                Number(dataTable[activeDuration].LoanDuration) +
+                                Number(dataTable[activeDuration].duration) +
                                 inputValue +
                                 (inputValue / 100) *
                                   Number(
                                     // @ts-ignore
-                                    dataTable[activeDuration].FeePercent
+                                    dataTable[activeDuration].fee_percent
                                   ) *
                                   // @ts-ignore
-                                  Number(dataTable[activeDuration].LoanDuration)
+                                  Number(dataTable[activeDuration].duration)
                             )}
                         </div>
                       </Col>
@@ -679,7 +699,7 @@ export const Loan = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             // @ts-ignore
-                            dataTable[activeDuration].LoanDuration}{" "}
+                            dataTable[activeDuration].duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -700,7 +720,7 @@ export const Loan = () => {
                               // @ts-ignore
                               .add(
                                 // @ts-ignore
-                                dataTable[activeDuration].LoanDuration,
+                                dataTable[activeDuration].duration,
                                 "days"
                               )
                               .calendar()}
@@ -816,40 +836,7 @@ export const Loan = () => {
                       span={24}
                       className="my-5 rounded-[9px] bg-bank p-[50px]"
                     >
-                      <div className={styles["dloan-modal-content-text"]}>
-                        1.1 Таны зээл авах захиалга бол зээл олгосон нөхцөл биш
-                        бөгөөд таны захиалга биелээгүй тохиолдолд ямар нэгэн хүү
-                        болон шимтгэл бодогдохгүй болно.
-                        <br />
-                        <br />
-                        1.2 Таны зээл авах захиалга тухайн өдрийн бирж хаах цаг
-                        хүртэл биелээгүй тохиолдолд захиалга автоматаар
-                        цуцлагдаж, та дараагийн өдөр дахин зээл авах захиалгаа
-                        шинээр оруулж болно. <br />
-                        <br />
-                        1.3 Харилцагч та зээл авах захиалгыг дээд тал нь өөрийн
-                        эрхийн хүрээнд 3 удаа хуваан оруулах боломжтой байна.
-                        <br />
-                        <br />
-                        1.4 Хэрэв таны зээл авах захиалга биелсэн бол “Зээлийн
-                        эрх нээх” гэрээний дагуу тухайн зээлийг олгосонд тооцно.
-                        <br />
-                        <br />
-                        1.5 Зээлийг таны “FundMe” апликейшн болон веб сайтад
-                        бүртгэлтэй банкны данс руу “Зээлийн эрх нээх” гэрээний
-                        дагуу зээл зуучлалын шимтгэлийг суутган шилжүүлнэ.{" "}
-                        <br />
-                        <br />
-                        1.6 Зээл олгогдсон өдрөөс таны зээлийн хүү тооцогдож
-                        эхлэх ба та зээлийн төлбөрөө тохирсон хугацаандаа төлөх
-                        үүргийг “Зээлийн эрх нээх” гэрээний дагуу хүлээнэ.
-                        <br />
-                        <br /> 1.7 Таны зээлтэй холбоотой мэдээлэл нь “FundMe”
-                        апликейшн болон веб сайтад бүртгэгдсэн мэдэгдэл хэсэгт
-                        болон бүртгэлтэй утасны дугаар, и-мэйл хаягаар хүргэгдэх
-                        ба энэ нь эргэн төлөлтийн хуваарьтай танилцсанд
-                        тооцогдоно.
-                      </div>
+                      <div ref={myRef && myRef}></div>
                     </Col>
                     <Form form={form}>
                       <Row justify="center" gutter={[0, 10]}>
@@ -959,7 +946,7 @@ export const Loan = () => {
                         {dataTable &&
                           typeof activeDuration == "number" &&
                           // @ts-ignore
-                          dataTable[activeDuration].LoanDuration}
+                          dataTable[activeDuration].duration}
                       </span>{" "}
                       хоногийн хугацаатай{" "}
                       <span className={styles["dloan-modal-complete-number"]}>

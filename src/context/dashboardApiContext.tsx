@@ -10,8 +10,6 @@ interface AppContext {
   sumLoan: any;
   sumSaving: any;
 
-  activeSavingOrders: any;
-  activeLoanOrders: any;
   addBankMutate: any;
 
   accountInfo: any;
@@ -45,6 +43,7 @@ export const ApiWrapper = ({ children }: any) => {
   const { mutate: changePhone } = api.loan.changePhone.useMutation();
   const { mutate: changePhoneConfirm } =
     api.loan.changePhoneConfirm.useMutation();
+  const { mutate: getContent } = api.loan.getContent.useMutation();
 
   const { data: loanData, refetch: requestLoanList } =
     api.loan.loanList.useQuery(undefined, {
@@ -61,20 +60,28 @@ export const ApiWrapper = ({ children }: any) => {
       enabled: false,
     });
 
+  // const { data: loanContract, refetch: requestHelpLoanContract } =
+  //   api.loan.loanContract.useQuery(undefined, {
+  //     enabled: false,
+  //   });
+
   useEffect(() => {
     requestInfo();
     requestLoanList();
     requestHelpBankList();
+    // requestHelpLoanContract();
   }, []);
 
-  const [loan, setLoan] = useState();
-  const [saving, setSaving] = useState();
+  // console.log(loanContract);
+
+  const [loan, setLoan] = useState<any>();
+  const [saving, setSaving] = useState<any>();
   const [myFundTabKey, setMyFundTabKey] = useState("1");
 
-  const [activeLoanOrders, setActiveLoanOrders] = useState<any[]>([]);
-  const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
-
   const [accountInfo, setAccountInfo] = useState<any[]>([]);
+
+  const [sumLoan, setSumLoan] = useState(0);
+  const [sumSaving, setSumSaving] = useState(0);
 
   useEffect(() => {
     setAccountInfo(accountInfoData);
@@ -94,15 +101,8 @@ export const ApiWrapper = ({ children }: any) => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data?.success) {
-            data?.requests?.forEach((el: any) => {
-              if (el.is_my_request == "0") {
-                if (el.request_type == "wallet") {
-                  setActiveLoanOrders((prev) => [...prev, el]);
-                } else if (el.request_type == "saving") {
-                  setActiveSavingOrders((prev) => [...prev, el]);
-                }
-              }
-            });
+            setSumSaving(data?.saving_request_amount);
+            setSumLoan(data?.loan_request_amount);
           } else {
             signOut();
             error({
@@ -115,32 +115,16 @@ export const ApiWrapper = ({ children }: any) => {
     );
   }, []);
 
-  const [sumLoan, setSumLoan] = useState(0);
-  const [sumSaving, setSumSaving] = useState(0);
-
-  useEffect(() => {
-    activeLoanOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
-      setSumLoan((prev) => prev + Number(el.loan_amount));
-    });
-    activeSavingOrders.forEach((/** @type {{ loan_amount: number; }} */ el) => {
-      setSumSaving((prev) => prev + Number(el.loan_amount));
-    });
-  }, [activeSavingOrders]);
-
   useEffect(() => {
     loanData?.product_list?.forEach(
       (
         /** @type {{ product_code: string; }} */ list: { product_code: string }
-      ) =>
-        // @ts-ignore
-        list.product_code !== "saving" && setLoan(list)
+      ) => list.product_code !== "saving" && setLoan(list)
     );
     loanData?.product_list?.forEach(
       (
         /** @type {{ product_code: string; }} */ list: { product_code: string }
-      ) =>
-        // @ts-ignore
-        list.product_code == "saving" && setSaving(list)
+      ) => list.product_code == "saving" && setSaving(list)
     );
   }, [loanData]);
 
@@ -151,8 +135,6 @@ export const ApiWrapper = ({ children }: any) => {
     sumLoan,
     sumSaving,
 
-    activeSavingOrders,
-    activeLoanOrders,
     addBankMutate,
 
     accountInfo,

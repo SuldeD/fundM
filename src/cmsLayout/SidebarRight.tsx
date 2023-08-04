@@ -13,7 +13,7 @@ import { useAppContext } from "app/context/appContext";
 const { Sider } = Layout;
 
 // @ts-ignore
-export const SidebarRightComponent = () => {
+export const SidebarRightComponent = ({ statusData }) => {
   const { accountInfo: data } = useApiContext();
   const { myFundTabKey } = useAppContext();
 
@@ -37,6 +37,7 @@ export const SidebarRightComponent = () => {
 
     return <Comp />;
   };
+  // notification_count
 
   return (
     <Sider
@@ -78,9 +79,10 @@ export const SidebarRightComponent = () => {
                   <Row
                     align="middle"
                     justify="center"
-                    className={styles["sidebar-right-notification-div"]}
+                    className={`${styles["sidebar-right-notification-div"]} cursor-pointer`}
+                    onClick={() => router.push("/dashboard/notfication")}
                   >
-                    <Badge count={5}>
+                    <Badge count={statusData?.stat?.notification_count}>
                       <Avatar size={21} src={"/images/notification.svg"} />
                     </Badge>
                   </Row>
