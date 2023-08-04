@@ -141,44 +141,42 @@ export const Loan = () => {
             },
           }
         );
-      } else if (ln.is_status != "5" && ln.product_type_code != "loan") {
-        console.log("a");
-        // throw BreakError
-        // return loanReqMutate(
-        //   {
-        //     product_id: (loan?.product_id).toString(),
-        //     loan_amount: inputValue.toString(),
-        //     repayment_amount: (
-        //       Number(dataTable[activeDuration].LoanDuration) *
-        //         rate *
-        //         (inputValue / 100) +
-        //       inputValue +
-        //       Number(dataTable[activeDuration].LoanDuration) *
-        //         Number(dataTable[activeDuration].FeePercent) *
-        //         (inputValue / 100)
-        //     ).toString(),
-        //     loan_month: dataTable[activeDuration].LoanDuration,
-        //   },
-        //   {
-        //     onSuccess: (data: {
-        //       success: any;
-        //       request_id: any;
-        //       loan_requests: import("react").SetStateAction<undefined>;
-        //       description: any;
-        //     }) => {
-        //       if (data.success) {
-        //         console.log(data);
-        //         setRequestId(data?.request_id);
-        //         setIsVerifyOpen(true);
-        //       } else {
-        //         error({
-        //           title: "Амжилтгүй",
-        //           content: <div>{data?.description || null}</div>,
-        //         });
-        //       }
-        //     },
-        //   }
-        // );
+      } else {
+        throw loanReqMutate(
+          {
+            product_id: (loan?.product_id).toString(),
+            loan_amount: inputValue.toString(),
+            repayment_amount: (
+              Number(dataTable[activeDuration].LoanDuration) *
+                rate *
+                (inputValue / 100) +
+              inputValue +
+              Number(dataTable[activeDuration].LoanDuration) *
+                Number(dataTable[activeDuration].FeePercent) *
+                (inputValue / 100)
+            ).toString(),
+            loan_month: dataTable[activeDuration].LoanDuration,
+          },
+          {
+            onSuccess: (data: {
+              success: any;
+              request_id: any;
+              loan_requests: import("react").SetStateAction<undefined>;
+              description: any;
+            }) => {
+              if (data.success) {
+                console.log(data);
+                setRequestId(data?.request_id);
+                setIsVerifyOpen(true);
+              } else {
+                error({
+                  title: "Амжилтгүй",
+                  content: <div>{data?.description || null}</div>,
+                });
+              }
+            },
+          }
+        );
       }
     });
   }
@@ -214,32 +212,31 @@ export const Loan = () => {
             }
           );
         } else {
-          console.log("eee");
-          // return loanReqConfirmMut(
-          //   {
-          //     request_id: requestId && requestId,
-          //     password: code.toString(),
-          //   },
-          //   {
-          //     onSuccess: (data: {
-          //       success: any;
-          //       request_id: any;
-          //       loan_requests: import("react").SetStateAction<undefined>;
-          //       description: any;
-          //     }) => {
-          //       if (data.success) {
-          //         console.log(data);
-          //         setIsVerifyOpen(false);
-          //         setIsCompleteOpen(true);
-          //       } else {
-          //         error({
-          //           title: "Амжилтгүй",
-          //           content: <div>{data?.description || null}</div>,
-          //         });
-          //       }
-          //     },
-          //   }
-          // );
+          throw loanReqConfirmMut(
+            {
+              request_id: requestId && requestId,
+              password: code.toString(),
+            },
+            {
+              onSuccess: (data: {
+                success: any;
+                request_id: any;
+                loan_requests: import("react").SetStateAction<undefined>;
+                description: any;
+              }) => {
+                if (data.success) {
+                  console.log(data);
+                  setIsVerifyOpen(false);
+                  setIsCompleteOpen(true);
+                } else {
+                  error({
+                    title: "Амжилтгүй",
+                    content: <div>{data?.description || null}</div>,
+                  });
+                }
+              },
+            }
+          );
         }
       });
     } else {

@@ -43,7 +43,6 @@ const History = () => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data?.success) {
-            console.log(data);
             data?.requests?.forEach((el: any) => {
               setDoneOrders((prev) => [...prev, el]);
             });

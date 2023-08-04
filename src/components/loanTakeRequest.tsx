@@ -34,7 +34,6 @@ export const LoanTakeReqComponent = () => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data?.success) {
-            console.log(data);
             data?.requests?.forEach((el: any) => {
               if (el.filled_percent.slice(0, 3) != "100") {
                 if (el.request_type == "wallet") {
