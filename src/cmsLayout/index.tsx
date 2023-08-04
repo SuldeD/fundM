@@ -374,12 +374,12 @@ export const ProtectedLayout = ({ children }: any) => {
             modalWidth={null}
             textAlign={null}
             open={open}
-            closeModal={null}
+            closeModal={() => setOpen(false)}
             buttonText={"Үргэлжлүүлэх"}
             iconPath={"/images/e-mongolia"}
             customIconWidth={278}
             customDiv={null}
-            closableM={"false"}
+            closableM={"true"}
             buttonClick={buttonClick}
             text={
               "Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах салбар нэгжид хандан нээлгэнэ үү."

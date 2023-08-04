@@ -90,6 +90,8 @@ export const Loan = () => {
     );
   }, []);
 
+  // BreakError =
+
   function submit() {
     loanReq?.forEach((ln: any) => {
       if (ln.is_status == "5" && ln.product_type_code == "loan") {
@@ -139,8 +141,9 @@ export const Loan = () => {
             },
           }
         );
-      } else {
-        console.log("exit");
+      } else if (ln.is_status != "5" && ln.product_type_code != "loan") {
+        console.log("a");
+        // throw BreakError
         // return loanReqMutate(
         //   {
         //     product_id: (loan?.product_id).toString(),
