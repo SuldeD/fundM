@@ -1,5 +1,5 @@
-import { Layout, Row, Col, Avatar, Badge } from "antd";
-import React from "react";
+import { Layout, Row, Col, Avatar, Badge, Popover, Modal } from "antd";
+import React, { useEffect } from "react";
 import styles from "../styles/protectedLayout.module.css";
 import { CalculateComponent } from "../components/calculate";
 import { LoanReqComponent } from "../components/loanRequest";
@@ -9,6 +9,8 @@ import { LoanTakeReqComponent } from "../components/loanTakeRequest";
 import { FoundationReq } from "../components/foundationReq";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useAppContext } from "app/context/appContext";
+import { signOut } from "next-auth/react";
+import { api } from "app/utils/api";
 
 const { Sider } = Layout;
 
@@ -16,8 +18,8 @@ const { Sider } = Layout;
 export const SidebarRightComponent = ({ statusData }) => {
   const { accountInfo: data } = useApiContext();
   const { myFundTabKey } = useAppContext();
-
   const router = useRouter();
+  const { error } = Modal;
 
   const NavBars = {
     // CalculateComponent
@@ -37,7 +39,59 @@ export const SidebarRightComponent = ({ statusData }) => {
 
     return <Comp />;
   };
-  // notification_count
+
+  const items = [
+    <div>
+      <div className="flex w-[400px] gap-3 border-b p-[10px]">
+        <div className="flex h-[40px] w-[40px] justify-center rounded-[50%] bg-bank pt-2">
+          <img
+            className="h-[22px] w-[22px]"
+            src="/images/notficationIcon.svg"
+            alt=""
+          />
+        </div>
+        <div className="">
+          <p className="leading-[18px font-lato] text-[14px] font-medium text-[#1A2155]">
+            Таны зээлийг хүсэлт амжилттай биеллээ
+          </p>
+          <p className="font-lato text-[8px] font-medium text-sub">
+            20/08/2023
+          </p>
+        </div>
+      </div>
+      <div className="mx-auto w-[100px] cursor-pointer border-b border-[#1375ED] pt-[15px] text-center font-lato text-[14px] leading-[18px] text-[#1375ED]">
+        Бүгдийг харах
+      </div>
+    </div>,
+  ];
+
+  const { mutate } = api.loan.notficationSearch.useMutation();
+
+  useEffect(() => {
+    mutate(
+      {
+        order: "date",
+        order_up: "1",
+        page: "1",
+        page_size: "10",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            console.log(data);
+          } else {
+            // signOut();
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }, []);
 
   return (
     <Sider
@@ -76,16 +130,26 @@ export const SidebarRightComponent = ({ statusData }) => {
                   </Link>
                 </Col>
                 <Col flex="none">
-                  <Row
-                    align="middle"
-                    justify="center"
-                    className={`${styles["sidebar-right-notification-div"]} cursor-pointer`}
-                    onClick={() => router.push("/dashboard/notfication")}
+                  <Popover
+                    placement="leftBottom"
+                    title={
+                      <div className="text-center font-lato text-[18px] font-medium leading-[18px]">
+                        Мэдэгдэл
+                      </div>
+                    }
+                    content={items}
+                    trigger="click"
                   >
-                    <Badge count={statusData?.stat?.notification_count}>
-                      <Avatar size={21} src={"/images/notification.svg"} />
-                    </Badge>
-                  </Row>
+                    <Row
+                      align="middle"
+                      justify="center"
+                      className={`${styles["sidebar-right-notification-div"]} cursor-pointer`}
+                    >
+                      <Badge count={statusData?.stat?.notification_count}>
+                        <Avatar size={21} src={"/images/notification.svg"} />
+                      </Badge>
+                    </Row>
+                  </Popover>
                 </Col>
               </Row>
             </Col>

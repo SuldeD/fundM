@@ -117,24 +117,17 @@ export const Loan = () => {
   function submit() {
     loanReq?.forEach((ln: any) => {
       if (ln.is_status == "5" && ln.product_type_code == "loan") {
-        return walletToBank(
+        throw walletToBank(
           {
             account_name: accountInfo?.bank_account?.account_name,
             amount: inputValue.toString(),
-            description: "a",
+            description: "test loan",
             // @ts-ignore
             loan_duration_day:
               dataTable &&
               Number(dataTable[activeDuration].duration).toString(),
-            loan_duration_month: "D",
-            pay_day: moment()
-              // @ts-ignore
-              .add(
-                // @ts-ignore
-                dataTable[activeDuration].duration,
-                "days"
-              )
-              .calendar(),
+            loan_duration_month: "day",
+            pay_day: "0",
             account_num: accountInfo?.bank_account?.account_num,
             bank_id: accountInfo?.bank_account?.BankId,
           },
@@ -177,7 +170,7 @@ export const Loan = () => {
                 Number(dataTable[activeDuration].fee_percent) *
                 (inputValue / 100)
             ).toString(),
-            loan_month: dataTable[activeDuration].LoanDuration,
+            loan_month: dataTable[activeDuration].duration,
           },
           {
             onSuccess: (data: {
@@ -207,10 +200,10 @@ export const Loan = () => {
     if (code) {
       loanReq?.forEach((ln: any) => {
         if (ln.is_status == "5" && ln.product_type_code == "loan") {
-          return walletToBankConfirm(
+          throw walletToBankConfirm(
             {
               transaction_id: transaction_id && transaction_id,
-              password: code.toString(),
+              password: "Sono2022",
               form_token: form_token && form_token,
               pin_code: pin_code && pin_code,
             },

@@ -27,6 +27,7 @@ export default {
         detail: "rgba(26, 33, 85, 0.5)",
         bank: "rgba(40, 82, 164, 0.05)",
         sub: "rgba(0, 0, 0, 0.5)",
+        
       },
       boxShadow: {
         custom: "0px 1px 20px 1px rgba(0, 0, 0, 0.15)",

@@ -15,7 +15,6 @@ export function useRequireAuth() {
     "/dashboard/foundation",
     "/dashboard/profile",
     "/dashboard/profile/bank",
-    "/dashboard/notfication",
   ];
   const publicPaths: any = [
     "/login",
