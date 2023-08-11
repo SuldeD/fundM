@@ -17,7 +17,7 @@ export const MyFund = () => {
   const { myFundTabKey, setMyFundTabKey } = useAppContext();
   const { data } = useApiContext();
   useRequireAuth();
-
+  const { mutate } = api.loan.reguestSearch.useMutation();
   const { error } = Modal;
 
   const [activeClass, setSelectedId] = useState<any>();
@@ -34,8 +34,6 @@ export const MyFund = () => {
 
   const [orders, setOrders] = useState<any[]>([]);
 
-  const { mutate } = api.loan.reguestSearch.useMutation();
-
   useEffect(() => {
     mutate(
       {
@@ -50,9 +48,7 @@ export const MyFund = () => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data?.success) {
-            console.log(data.requests);
             data?.requests?.forEach((el: any) => {
-              console.log("req", el);
               setOrders((prev) => [...prev, el]);
               if (el.filled_percent.slice(0, 3) != "100") {
                 if (el.request_type == "wallet") {
@@ -60,17 +56,13 @@ export const MyFund = () => {
                   setMyActiveLoanOrdersSum(
                     (prev) => prev + Number(el.filled_percent.slice(0, 3))
                   );
-                  setSumMyLoan(
-                    (prev) => prev + Number(el.loan_amount.slice(0, 3))
-                  );
+                  setSumMyLoan((prev) => prev + Number(el.loan_amount));
                 } else if (el.request_type == "saving") {
                   setMyActiveSavingOrders((prev) => [...prev, el]);
                   setMyActiveSavingOrdersSum(
                     (prev) => prev + Number(el.filled_percent.slice(0, 3))
                   );
-                  setSumMySaving(
-                    (prev) => prev + Number(el.loan_amount.slice(0, 3))
-                  );
+                  setSumMySaving((prev) => prev + Number(el.loan_amount));
                 }
               }
             });
@@ -89,7 +81,7 @@ export const MyFund = () => {
   const columns: any[] = [
     {
       title: "Дараалал",
-      dataIndex: "request_id",
+      dataIndex: "id",
       key: "IsActive",
       align: "center",
       width: "6%",
@@ -133,7 +125,9 @@ export const MyFund = () => {
       align: "center",
       width: "15%",
       render: (rate: string) => (
-        <div className={styles["myfund-tabs-content-table-number"]}>{rate}</div>
+        <div className={styles["myfund-tabs-content-table-number"]}>
+          {rate} %
+        </div>
       ),
     },
     {
@@ -144,17 +138,17 @@ export const MyFund = () => {
       width: "23%",
       render: (completion: string) => (
         <div className={styles["myfund-tabs-content-table-number"]}>
-          {completion}
+          {completion.slice(0, 3)} %
         </div>
       ),
     },
     {
       title: " ",
-      dataIndex: "request_id",
-      key: "request_id",
+      dataIndex: "create_date",
+      key: "create_date",
       width: "10%",
       align: "center",
-      render: (request_id: string) => (
+      render: (create_date: string) => (
         <Image
           width={25}
           src={"/images/info-icon.png"}
@@ -162,7 +156,7 @@ export const MyFund = () => {
           alt="Information"
           className="cursor-pointer"
           onClick={() => {
-            setSelectedId(request_id);
+            setSelectedId(create_date);
             setOpen(true);
           }}
         />
@@ -222,7 +216,7 @@ export const MyFund = () => {
                   pageSize: 10,
                   position: ["bottomCenter"],
                 }}
-                dataSource={myLoanOrders}
+                dataSource={myLoanOrders.reverse()}
                 rowKey={"create_date"}
               />
             </Col>
@@ -284,7 +278,7 @@ export const MyFund = () => {
                     pageSize: 10,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={mySavingOrders}
+                  dataSource={mySavingOrders.reverse()}
                   rowKey={"create_date"}
                 />
               </Col>
@@ -302,24 +296,22 @@ export const MyFund = () => {
       <Row justify="center" className={styles["myfund-main-row"]}>
         <Col span={22}>
           <Row gutter={[0, 20]}>
-            {!activeClass && (
-              <HeaderDashboard
-                title={"Миний хүсэлтүүд"}
-                subTitle={
-                  "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-                }
+            <HeaderDashboard
+              title={"Миний хүсэлтүүд"}
+              subTitle={
+                "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
+              }
+            />
+
+            <Col span={24}>
+              <Tabs
+                activeKey={myFundTabKey}
+                onChange={(key) => setMyFundTabKey(key)}
+                items={items}
+                tabBarGutter={0}
               />
-            )}
-            {!activeClass && (
-              <Col span={24}>
-                <Tabs
-                  activeKey={myFundTabKey}
-                  onChange={(key) => setMyFundTabKey(key)}
-                  items={items}
-                  tabBarGutter={0}
-                />
-              </Col>
-            )}
+            </Col>
+
             <Modal
               open={open}
               onCancel={() => setOpen(false)}
@@ -397,9 +389,11 @@ export const MyFund = () => {
                                         }
                                       >
                                         {numberToCurrency(
-                                          (o.filled_amount / 100) *
-                                            Number(o.rate_day) *
-                                            Number(o.duration)
+                                          Math.round(
+                                            Number(o.filled_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration)
+                                          )
                                         )}
                                       </div>
                                     </Col>
@@ -448,9 +442,10 @@ export const MyFund = () => {
                                             : stylesDL["dloan-rate-profit"]
                                         }
                                       >
-                                        {(o.loan_amount / 100) *
-                                          Number(o.fee_percent) *
-                                          Number(o.duration)}{" "}
+                                        {Math.round(
+                                          (o.loan_amount / 100) *
+                                            Number(o.fee_percent)
+                                        )}
                                         %
                                       </div>
                                     </Col>
@@ -476,15 +471,15 @@ export const MyFund = () => {
                                         }
                                       >
                                         {numberToCurrency(
-                                          (o.loan_amount / 100) *
-                                            o.rate_day *
-                                            Number(o.duration) +
-                                            o.loan_amount +
+                                          Math.ceil(
                                             (o.loan_amount / 100) *
-                                              Number(o.fee_percent) *
-                                              Number(o.duration)
-                                        )}{" "}
-                                        {o.rate_month}
+                                              o.rate_day *
+                                              Number(o.duration) +
+                                              Number(o.loan_amount) +
+                                              (o.loan_amount / 100) *
+                                                Number(o.fee_percent)
+                                          )
+                                        )}
                                       </div>
                                     </Col>
                                   </Row>
@@ -588,6 +583,7 @@ export const MyFund = () => {
                         <Row className="mt-[20px]">
                           {activeClass && (
                             <Button
+                              type="primary"
                               className={`${stylesDL["dloan-button-back"]} bg-primary text-[#fff]`}
                               onClick={() => {
                                 setSelectedId("");

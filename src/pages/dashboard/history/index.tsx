@@ -25,7 +25,7 @@ const History = () => {
   const [value, setValue] = useState<any>(null);
 
   const [doneOrders, setDoneOrders] = useState<any[]>([]);
-  const dataTable = doneOrders?.reverse();
+  const dataTable = doneOrders;
 
   const { mutate } = api.loan.reguestSearch.useMutation();
 
@@ -98,7 +98,7 @@ const History = () => {
   const columns: any[] = [
     {
       title: "№",
-      dataIndex: "request_id",
+      dataIndex: "id",
       key: "request_id",
       width: "6%",
       render: (request_id: string) => (

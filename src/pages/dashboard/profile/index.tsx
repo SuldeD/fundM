@@ -8,7 +8,7 @@ import {
   Modal,
   Button,
   Input,
-  Alert,
+  message,
 } from "antd";
 import styles from "../../../styles/profile.module.css";
 import { HeaderDashboard } from "../../../components/header";
@@ -18,13 +18,40 @@ import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import { useRouter } from "next/router";
 import stylesL from "../../../styles/dloan.module.css";
+import { api } from "app/utils/api";
+import InputCode from "app/components/input";
+import type { RcFile } from "antd/es/upload/interface";
 const { Panel } = Collapse;
+
+const beforeUpload = (file: any) => {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+  if (!isJpgOrPng) {
+    message.error("You can only upload JPG/PNG file!");
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error("Image must smaller than 2MB!");
+  }
+  return isJpgOrPng && isLt2M;
+};
+
+const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
 
 export const Profile = () => {
   const { accountInfo, data, addEmail, changePhone, changePhoneConfirm } =
     useApiContext();
+  const { mutate } = api.loan.changePass.useMutation();
+  const { mutate: fundMutate } = api.loan.changePassFund.useMutation();
+  const { mutate: forgotTransPass } = api.loan.forgotTransPass.useMutation();
+  const { mutate: forgotTransPassConfirm } =
+    api.loan.forgotTransPassConfirm.useMutation();
+
   const router = useRouter();
-  const { error } = Modal;
+  const { error, warning } = Modal;
   useRequireAuth();
 
   const [open, setOpen] = useState<boolean>(false);
@@ -32,9 +59,22 @@ export const Profile = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenVerifyPass, setIsOpenVerifyPass] = useState<boolean>(false);
 
-  const [editNumber, setEditNumber] = useState(accountInfo?.account?.phone);
-  const [editEmail, setEditEmail] = useState(accountInfo?.account?.email);
-  const [password, setPassword] = useState<any>("");
+  const [forgotId, setForgotId] = useState<string>("");
+
+  const [editNumber, setEditNumber] = useState<string>(
+    accountInfo?.account?.phone
+  );
+  const [editEmail, setEditEmail] = useState<string>(
+    accountInfo?.account?.email
+  );
+  const [loginPassPrev, setLoginPassPrev] = useState<string>("");
+  const [loginPassNew, setLoginPassNew] = useState<string>("");
+  const [loginPassNewVer, setLoginPassNewVer] = useState<string>("");
+
+  const [fundPassPrev, setFundPassPrev] = useState<string>("");
+  const [fundPassNew, setFundPassNew] = useState<string>("");
+  const [fundPassNewVer, setFundPassNewVer] = useState<string>("");
+
   const [confirmCode, setConfirmCode] = useState<any>("");
   const [clickedEdit, setClickedEdit] = useState<any>();
   const [changeId, setChangeId] = useState<any>("");
@@ -42,37 +82,25 @@ export const Profile = () => {
 
   // @ts-ignore
   const onChange = (key) => {};
+
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
-  // @ts-ignore
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-    if (!isJpgOrPng) {
-      // @ts-ignore
-      message.error("You can only upload JPG/PNG file!");
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      // @ts-ignore
-      message.error("Image must smaller than 2MB!");
-    }
-    return isJpgOrPng && isLt2M;
-  };
-  // @ts-ignore
-  const handleChange = (info) => {
+
+  const handleChange = (info: any) => {
     if (info.file.status === "uploading") {
       setLoading(true);
       return;
     }
     if (info.file.status === "done") {
-      // Get this url from response in real world.
-      // @ts-ignore
-      getBase64(info.file.originFileObj, (url) => {
+      getBase64(info.file.originFileObj, (url: any) => {
         setLoading(false);
         setImageUrl(url);
       });
     }
   };
+
+  // console.log("imageUrl", imageUrl);
+
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -98,16 +126,16 @@ export const Profile = () => {
       if (editNumber.length == 8) {
         setIsOpen(true);
       } else {
-        error({
+        warning({
           title: "Амжилтгүй",
           content: <div>Хүчинтэй утасны дугаар оруулна уу !</div>,
         });
       }
     } else if (clickedEdit == 1) {
       if (emailRegex.test(editEmail) == false) {
-        error({
+        warning({
           title: "Амжилтгүй",
-          content: <div>Зөв Имэйл хаяг оруулана уу!!!</div>,
+          content: <div>Зөв имэйл хаяг оруулана уу!!!</div>,
         });
       } else {
         setIsOpen(true);
@@ -115,22 +143,22 @@ export const Profile = () => {
     }
   }
 
-  function submit() {
+  function submit(code: any) {
     clickedEdit == 0
       ? changePhone(
-          { phone: editNumber, password: password },
+          { phone: editNumber, password: code.toString() },
           {
             onSuccess: (
               /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
             ) => {
               if (data.success) {
-                setPassword("");
                 setEditNumber("");
                 setIsOpen(false);
                 setOpen(false);
                 setIsOpenVerifyPass(true);
                 setChangeId(data.change_phone_id);
                 setFormToken(data.form_token);
+                message.success(data.description);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -141,16 +169,16 @@ export const Profile = () => {
           }
         )
       : addEmail(
-          { email: editEmail, password: password },
+          { email: editEmail, password: code.toString() },
           {
             onSuccess: (
               /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
             ) => {
               if (data.success) {
-                setPassword("");
                 setEditEmail("");
                 setIsOpen(false);
                 setOpen(false);
+                message.success(data.description);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -170,7 +198,7 @@ export const Profile = () => {
         pin_code: confirmCode,
       },
       {
-        onSuccess: (
+        onSuccess: async (
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
         ) => {
           if (data.success) {
@@ -179,6 +207,7 @@ export const Profile = () => {
             setChangeId("");
             setFormToken("");
             setConfirmCode("");
+            message.success(data?.description);
           } else {
             error({
               title: "Амжилтгүй",
@@ -188,8 +217,177 @@ export const Profile = () => {
         },
       }
     );
+  }
 
-    console.log("A");
+  function handleOkPanel2() {
+    const hasUppercase = /[A-Z]/.test(loginPassNewVer);
+    const hasLowercase = /[a-z]/.test(loginPassNewVer);
+    const hasNumber = /[0-9]/.test(loginPassNewVer);
+    if (clickedEdit == 2) {
+      if (
+        loginPassPrev.length <= 0 ||
+        loginPassNew.length <= 0 ||
+        loginPassNewVer.length <= 0
+      ) {
+        return warning({
+          title: "Амжилтгүй",
+          content: (
+            <div>Нууц үг хамгийн багадаа 8 тэмдэгтээс бүрдэх ёстой.</div>
+          ),
+        });
+      } else if (loginPassNew != loginPassNewVer) {
+        return warning({
+          title: "Амжилтгүй",
+          content: <div>Нэвтрэх нууц үгийг адилхан оруулна уу </div>,
+        });
+      } else if (!hasUppercase || !hasLowercase || !hasNumber) {
+        return warning({
+          title: "Амжилтгүй",
+          content: (
+            <div>
+              Нууц үг нь дор хаяж нэг том, нэг жижиг үсэг бас нэг тоо агуулсан
+              байх ёстой.
+            </div>
+          ),
+        });
+      } else {
+        return mutate(
+          { old_password: loginPassPrev, new_password: loginPassNewVer },
+          {
+            onSuccess: (
+              /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
+            ) => {
+              if (data.success) {
+                setLoginPassPrev("");
+                setLoginPassNew("");
+                setLoginPassNewVer("");
+                setOpen(false);
+                message.success(data.description);
+              } else {
+                error({
+                  title: "Амжилтгүй",
+                  content: <div>{data?.description || null}</div>,
+                });
+              }
+            },
+          }
+        );
+      }
+    }
+
+    if (clickedEdit == 3) {
+      if (
+        fundPassPrev.length <= 0 ||
+        fundPassNew.length <= 0 ||
+        fundPassNewVer.length <= 0
+      ) {
+        return warning({
+          title: "Амжилтгүй",
+          content: <div>FundMe код нь 4 тооноос бүрдэх ястой.</div>,
+        });
+      } else if (fundPassNew !== fundPassNewVer) {
+        return warning({
+          title: "Амжилтгүй",
+          content: <div>FundMe код адилхан оруулна уу</div>,
+        });
+      } else {
+        fundMutate(
+          { old_password: fundPassPrev, new_password: fundPassNewVer },
+          {
+            onSuccess: (
+              /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
+            ) => {
+              if (data.success) {
+                setFundPassPrev("");
+                setFundPassNew("");
+                setFundPassNewVer("");
+                setOpen(false);
+                message.success(data.description);
+              } else {
+                error({
+                  title: "Амжилтгүй",
+                  content: <div>{data?.description || null}</div>,
+                });
+              }
+            },
+          }
+        );
+      }
+    }
+  }
+
+  function handleOkForgotTrans() {
+    if (clickedEdit == 4) {
+      if (fundPassNew.length <= 0 || fundPassNewVer.length <= 0) {
+        return warning({
+          title: "Амжилтгүй",
+          content: <div>FundMe код нь 4 тооноос бүрдэх ястой.</div>,
+        });
+      } else if (fundPassNew !== fundPassNewVer) {
+        return warning({
+          title: "Амжилтгүй",
+          content: <div>FundMe код адилхан оруулна уу</div>,
+        });
+      } else {
+        forgotTransPass(
+          {
+            answer: accountInfo?.answer,
+            register: accountInfo?.account?.register,
+            security_question_id: accountInfo?.security_question_id,
+            username: accountInfo?.account?.first_name,
+          },
+          {
+            onSuccess: (
+              /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
+            ) => {
+              if (data.success) {
+                setForgotId(data?.forgot_id);
+                setOpen(false);
+                setIsOpenVerifyPass(true);
+                message.success(data.description);
+              } else {
+                error({
+                  title: "Амжилтгүй",
+                  content: <div>{data?.description || null}</div>,
+                });
+              }
+            },
+          }
+        );
+      }
+    }
+  }
+
+  function verifyTransPass() {
+    forgotTransPassConfirm(
+      {
+        answer: accountInfo?.answer,
+        register: accountInfo?.account?.register,
+        security_question_id: accountInfo?.security_question_id,
+        username: accountInfo?.account?.first_name,
+        forgot_id: forgotId,
+        new_password: fundPassNewVer,
+        pin_code: confirmCode,
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
+        ) => {
+          if (data.success) {
+            setFundPassNew("");
+            setIsOpenVerifyPass(false);
+            setFundPassNew("");
+            setFundPassNewVer("");
+            message.success(data.description);
+          } else {
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
   }
 
   const items = [
@@ -205,20 +403,25 @@ export const Profile = () => {
                   <Upload
                     name="avatar"
                     listType="picture-circle"
-                    className="avatar-uploader"
+                    className="avatar-uploader  overflow-hidden"
                     showUploadList={false}
-                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     beforeUpload={beforeUpload}
                     onChange={handleChange}
                   >
                     {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{
-                          width: "100%",
-                        }}
-                      />
+                      <div className="relative">
+                        <img
+                          src={imageUrl}
+                          alt="avatar"
+                          className="h-[100%] w-[100%] "
+                        />
+                        <img
+                          src="/images/camera.svg"
+                          className="absolute right-[-10px] top-0 z-50 rounded-[50%] bg-white p-1"
+                          alt="cemera"
+                        />
+                      </div>
                     ) : (
                       uploadButton
                     )}
@@ -296,9 +499,7 @@ export const Profile = () => {
                       <input
                         type="text"
                         disabled
-                        defaultValue={
-                          editNumber ? editNumber : accountInfo?.account?.phone
-                        }
+                        defaultValue={accountInfo?.account?.phone}
                         className="w-[160px] overflow-hidden border-b border-[#000] bg-[#fff] pe-[25px] ps-[5px]"
                       />
                       <img
@@ -321,9 +522,7 @@ export const Profile = () => {
                       <input
                         type="text"
                         disabled
-                        defaultValue={
-                          editEmail ? editEmail : accountInfo?.account?.email
-                        }
+                        defaultValue={accountInfo?.account?.email}
                         className="w-[160px] overflow-hidden border-b border-[#000] bg-[#fff] pe-[25px] ps-[5px]"
                       />
                       <img
@@ -350,7 +549,7 @@ export const Profile = () => {
                     onClick={() => {
                       !accountInfo.bank_account
                         ? router.push("/dashboard/profile/bank")
-                        : error({
+                        : warning({
                             title: "Амжилтгүй",
                             content: (
                               <div>
@@ -429,42 +628,54 @@ export const Profile = () => {
       label: "Нууцлал",
       children: (
         <Col span={24}>
+          <div className="block">
+            <button
+              onClick={() => validate(2)}
+              className={`${styles["profile-tabs-2-collapse-title"]} flex w-full justify-between border-b px-3 py-[10px] text-start`}
+            >
+              <div>Нэвтрэх нууц үг солих</div>
+              <svg width="25px" height="25px" viewBox="0 0 32 32" version="1.1">
+                <g id="icomoon-ignore"></g>
+                <path
+                  d="M19.159 16.767l0.754-0.754-6.035-6.035-0.754 0.754 5.281 5.281-5.256 5.256 0.754 0.754 3.013-3.013z"
+                  fill="#000000"
+                ></path>
+              </svg>
+            </button>
+            <button
+              onClick={() => validate(3)}
+              className={`${styles["profile-tabs-2-collapse-title"]} flex w-full justify-between border-b px-3 py-[10px] text-start`}
+            >
+              <div>Fund me код солих</div>
+              <svg width="25px" height="25px" viewBox="0 0 32 32" version="1.1">
+                <g id="icomoon-ignore"></g>
+                <path
+                  d="M19.159 16.767l0.754-0.754-6.035-6.035-0.754 0.754 5.281 5.281-5.256 5.256 0.754 0.754 3.013-3.013z"
+                  fill="#000000"
+                ></path>
+              </svg>
+            </button>
+            <button
+              className={`${styles["profile-tabs-2-collapse-title"]} flex w-full justify-between border-b px-3 py-[10px] text-start`}
+              onClick={() => validate(4)}
+            >
+              <div>Fund me код шинээр үүсгэх</div>
+              <svg width="25px" height="25px" viewBox="0 0 32 32" version="1.1">
+                <g id="icomoon-ignore"></g>
+                <path
+                  d="M19.159 16.767l0.754-0.754-6.035-6.035-0.754 0.754 5.281 5.281-5.256 5.256 0.754 0.754 3.013-3.013z"
+                  fill="#000000"
+                ></path>
+              </svg>
+            </button>
+          </div>
           <Collapse
             onChange={onChange}
             bordered={false}
             expandIconPosition="end"
           >
             <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Нэвтрэх нууц үг солих
-                </div>
-              }
-              key="1"
-            >
-              <p>adasd</p>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Fund me код солих
-                </div>
-              }
-              key="2"
-            >
-              <p>asdasd</p>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Fund me код сэргээх
-                </div>
-              }
-              key="3"
-            >
-              <p>asdasd</p>
-            </Panel>
-            <Panel
+              className=""
               header={
                 <div className={styles["profile-tabs-2-collapse-title"]}>
                   Fund Me нууцлалын горим
@@ -631,11 +842,20 @@ export const Profile = () => {
       <Row justify="center" className={styles["profile-main-row"]}>
         <Modal
           title={
-            clickedEdit == 0 ? "Утасны дугаар өөрчлөх" : "Имэйл хаяг өөрчлөх"
+            clickedEdit == 0
+              ? "Утасны дугаар өөрчлөх"
+              : clickedEdit == 1
+              ? "Имэйл хаяг өөрчлөх"
+              : clickedEdit == 2
+              ? "Нэвтрэх нууц үг солих"
+              : clickedEdit == 3
+              ? "Fund me код солих"
+              : clickedEdit == 4 && "Fund me код шинээр үүсгэх"
           }
           centered
           open={open}
           width={378}
+          closeIcon={false}
           footer={[
             <div className="flex justify-between">
               <Button
@@ -648,79 +868,156 @@ export const Profile = () => {
               <Button
                 className="w-[168px] rounded-[20px] bg-primary text-[#fff]"
                 type="primary"
-                onClick={handleOk}
+                onClick={
+                  clickedEdit == 0
+                    ? handleOk
+                    : clickedEdit == 4
+                    ? handleOkForgotTrans
+                    : clickedEdit == 1
+                    ? handleOk
+                    : handleOkPanel2
+                }
               >
-                Үргэлжлүүлэх
+                {clickedEdit == 0
+                  ? "Үргэлжлүүлэх"
+                  : clickedEdit == 4
+                  ? "Үргэлжлүүлэх"
+                  : clickedEdit == 1
+                  ? "Үргэлжлүүлэх"
+                  : "Хадгалах"}
               </Button>
             </div>,
           ]}
           onCancel={() => setOpen(false)}
         >
-          <Input
-            className="my-5 w-full rounded-[9px] border px-2 py-1"
-            defaultValue={clickedEdit == 0 ? editNumber : editEmail}
-            onChange={(e) =>
-              clickedEdit == 0
-                ? setEditNumber(e.target.value)
-                : setEditEmail(e.target.value)
-            }
-          />
+          {clickedEdit == 2 && (
+            <div className="mt-5">
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Одоогын нууц үг оруулах
+              </label>{" "}
+              <Input.Password
+                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                value={loginPassPrev}
+                onChange={(e) => setLoginPassPrev(e.target.value)}
+              />
+            </div>
+          )}
+          {clickedEdit == 2 && (
+            <div>
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Шинэ нууц үг оруулах
+              </label>
+              <Input.Password
+                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                value={loginPassNew}
+                onChange={(e) => setLoginPassNew(e.target.value)}
+              />
+            </div>
+          )}
+          {clickedEdit == 2 && (
+            <div>
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Шинэ нууц үг дахин оруулах
+              </label>
+              <Input.Password
+                className=" w-full rounded-[9px] border px-2 py-1"
+                value={loginPassNewVer}
+                onChange={(e) => setLoginPassNewVer(e.target.value)}
+              />
+            </div>
+          )}
+          {clickedEdit == 3 && (
+            <div className="mt-5">
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Одоогын FundMe код оруулах
+              </label>{" "}
+              <Input.Password
+                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                value={fundPassPrev}
+                maxLength={4}
+                onChange={(e) => setFundPassPrev(e.target.value)}
+              />
+            </div>
+          )}
+          {clickedEdit == 3 && (
+            <div>
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Шинэ FundMe код оруулах
+              </label>
+              <Input.Password
+                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                value={fundPassNew}
+                maxLength={4}
+                onChange={(e) => setFundPassNew(e.target.value)}
+              />
+            </div>
+          )}
+          {clickedEdit == 3 && (
+            <div>
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Шинэ FundMe код дахин оруулах
+              </label>
+              <Input.Password
+                className=" w-full rounded-[9px] border px-2 py-1"
+                value={fundPassNewVer}
+                maxLength={4}
+                onChange={(e) => setFundPassNewVer(e.target.value)}
+              />
+            </div>
+          )}
+          {clickedEdit == 0 && (
+            <Input
+              className="my-5 w-full rounded-[9px] border px-2 py-1"
+              value={editNumber}
+              onChange={(e) => setEditNumber(e.target.value)}
+            />
+          )}
+          {clickedEdit == 1 && (
+            <Input
+              className="my-5 w-full rounded-[9px] border px-2 py-1"
+              value={editEmail}
+              onChange={(e) => setEditEmail(e.target.value)}
+            />
+          )}
+
+          {clickedEdit == 4 && (
+            <div className="mt-5">
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Шинэ FundMe код оруулах
+              </label>
+              <Input.Password
+                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                value={fundPassNew}
+                maxLength={4}
+                onChange={(e) => setFundPassNew(e.target.value)}
+              />
+            </div>
+          )}
+          {clickedEdit == 4 && (
+            <div>
+              <label className="text-sm font-normal text-black text-opacity-50">
+                Шинэ FundMe код дахин оруулах
+              </label>
+              <Input.Password
+                className="mb-[20px] w-full rounded-[9px] border px-2 py-1"
+                value={fundPassNewVer}
+                maxLength={4}
+                onChange={(e) => setFundPassNewVer(e.target.value)}
+              />
+            </div>
+          )}
           <p className="font-sub mx-auto mb-[40px] w-[60%] text-center font-raleway text-[12px] font-normal">
             {clickedEdit == 0
               ? "Та өөрийн шинээр бүртгүүлэх утасны дугаараа оруулна уу."
-              : "Та өөрийн шинээр бүртгүүлэх имэйл хаяг оруулна уу."}
+              : clickedEdit == 4
+              ? "Та өөрийн FundMe код оруулж зээл авах хүсэлтээ баталгаажуулна уу."
+              : clickedEdit == 1
+              ? "Та өөрийн шинээр бүртгүүлэх имэйл хаяг оруулна уу."
+              : ""}
           </p>
         </Modal>
 
-        <Modal
-          centered
-          width={378}
-          title={
-            <div className={stylesL["dloan-modal-verify-title"]}>
-              <img
-                width="50%"
-                className="mx-auto"
-                src={"/logo.svg"}
-                alt="Header Logo"
-              />
-            </div>
-          }
-          open={isOpen}
-          footer={null}
-          closable={false}
-        >
-          <Row justify="center">
-            <Col span={20}>
-              <Row justify="center" gutter={[0, 20]}>
-                <Col span={24}>
-                  <Input.Password
-                    className={stylesL["dloan-modal-verify-input"]}
-                    placeholder="FundMe кодоо оруулна уу!!!"
-                    // @ts-ignore
-                    onChange={(e) => setPassword(e.target.value)}
-                    maxLength={4}
-                    autoFocus
-                  />
-                </Col>
-                <Col span={20}>
-                  <div className={stylesL["dloan-modal-content-text"]}>
-                    Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах
-                    салбар нэгжид хандан нээлгэнэ үү.
-                  </div>
-                </Col>
-                <Col span={20}>
-                  <Button
-                    type="primary"
-                    onClick={password.length > 0 ? submit : undefined}
-                    className={stylesL["dloan-modal-verify-button"]}
-                  >
-                    Баталгаажуулах
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Modal>
+        <InputCode open={isOpen} onFinish={submit} setOpen={setIsOpen} />
 
         <Modal
           centered
@@ -730,7 +1027,8 @@ export const Profile = () => {
               Баталгаажуулах код оруулах
             </div>
           }
-          closable={false}
+          closable={true}
+          onCancel={() => setIsOpenVerifyPass(false)}
           open={isOpenVerifyPass}
           footer={null}
         >
@@ -759,7 +1057,9 @@ export const Profile = () => {
                     className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
                     onClick={() =>
                       confirmCode.length > 0
-                        ? verifyPass()
+                        ? clickedEdit == 0
+                          ? verifyPass()
+                          : verifyTransPass()
                         : error({
                             title: "Амжилтгүй",
                             content: (

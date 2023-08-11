@@ -43,7 +43,6 @@ export const ApiWrapper = ({ children }: any) => {
   const { mutate: changePhone } = api.loan.changePhone.useMutation();
   const { mutate: changePhoneConfirm } =
     api.loan.changePhoneConfirm.useMutation();
-  const { mutate: getContent } = api.loan.getContent.useMutation();
 
   const { data: loanData, refetch: requestLoanList } =
     api.loan.loanList.useQuery(undefined, {
@@ -71,8 +70,6 @@ export const ApiWrapper = ({ children }: any) => {
     requestHelpBankList();
     // requestHelpLoanContract();
   }, []);
-
-  // console.log(loanContract);
 
   const [loan, setLoan] = useState<any>();
   const [saving, setSaving] = useState<any>();

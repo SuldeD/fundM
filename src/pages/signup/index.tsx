@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form, Input, Modal } from "antd";
+import { Col, Row, Button, Form, Input, Modal, message } from "antd";
 import styles from "../../styles/login.module.css";
 import React, { useRef, useState } from "react";
 import { api } from "app/utils/api";
@@ -62,6 +62,7 @@ export default function Signup() {
         onSuccess: (data) => {
           console.log(data);
           if (data.success) {
+            message.success(data.test_pin_code);
             setRegisterData((prevData) => ({
               ...prevData,
               phone: values.phone_number,
@@ -172,7 +173,7 @@ export default function Signup() {
     } else {
       setRegisterData((prevData) => ({
         ...prevData,
-        transaction_password: code2.toString(),
+        transaction_password: code.join("").toString(),
       }));
     }
   };
@@ -210,6 +211,7 @@ export default function Signup() {
       onSuccess: (data) => {
         if (data.success) {
           router.push("/login");
+          message.success(data.description);
         } else {
           error({
             title: "Амжилтгүй",
@@ -223,6 +225,8 @@ export default function Signup() {
   const length = 4;
   const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
   const [code2, setCode2] = useState<any>([...Array(length)].map(() => ""));
+
+  // console.log("code", code);
 
   const inputs = useRef<any>([]);
   const inputs2 = useRef<any>([]);
@@ -327,7 +331,7 @@ export default function Signup() {
                             <Button
                               type="primary"
                               htmlType="submit"
-                              className={`${styles["login-button"]} bg-primary`}
+                              className={`h-[40px] w-full rounded-[9px] bg-primary`}
                             >
                               Нэг удаагын код авах
                             </Button>
@@ -397,15 +401,32 @@ export default function Signup() {
                         <Col span={24}>
                           <Row gutter={25}>
                             <Col span={24}>
-                              <Form.Item>
+                              <div className="flex w-full justify-between">
                                 <Button
-                                  type="primary"
-                                  htmlType="submit"
-                                  className={`${styles["login-button"]} bg-primary`}
+                                  type="default"
+                                  onClick={() =>
+                                    setRegisterData((prevData) => ({
+                                      ...prevData,
+                                      phone: "",
+                                      username: "",
+                                      tmp_user_id: "",
+                                    }))
+                                  }
+                                  className="h-[40px] w-[45%] rounded-[9px] text-white"
                                 >
-                                  Баталгаажуулах
+                                  Буцах
                                 </Button>
-                              </Form.Item>
+
+                                <Form.Item className="w-[45%]">
+                                  <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                  >
+                                    Баталгаажуулах
+                                  </Button>
+                                </Form.Item>
+                              </div>
                             </Col>
                           </Row>
                         </Col>
@@ -503,13 +524,30 @@ export default function Signup() {
                         <Col span={24}>
                           <Row gutter={25}>
                             <Col span={24}>
-                              <Button
-                                type="primary"
-                                htmlType="submit"
-                                className={`${styles["login-button"]} bg-primary`}
-                              >
-                                Үргэлжлүүлэх
-                              </Button>
+                              <div className="flex w-full justify-between">
+                                <Button
+                                  type="default"
+                                  onClick={() =>
+                                    setRegisterData((prevData) => ({
+                                      ...prevData,
+                                      pin_code: "",
+                                    }))
+                                  }
+                                  className="h-[40px] w-[45%] rounded-[9px] text-white"
+                                >
+                                  Буцах
+                                </Button>
+
+                                <Form.Item className="w-[45%]">
+                                  <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                  >
+                                    Үргэлжлүүлэх
+                                  </Button>
+                                </Form.Item>
+                              </div>
                             </Col>
                           </Row>
                         </Col>
@@ -590,13 +628,30 @@ export default function Signup() {
                         <Col span={24}>
                           <Row gutter={25}>
                             <Col span={24}>
-                              <Button
-                                type="primary"
-                                htmlType="submit"
-                                className={`${styles["login-button"]} bg-primary`}
-                              >
-                                Үргэлжлүүлэх
-                              </Button>
+                              <div className="flex w-full justify-between">
+                                <Button
+                                  type="default"
+                                  onClick={() =>
+                                    setRegisterData((prevData) => ({
+                                      ...prevData,
+                                      register: "",
+                                    }))
+                                  }
+                                  className="h-[40px] w-[45%] rounded-[9px] text-white"
+                                >
+                                  Буцах
+                                </Button>
+
+                                <Form.Item className="w-[45%]">
+                                  <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                  >
+                                    Үргэлжлүүлэх
+                                  </Button>
+                                </Form.Item>
+                              </div>
                             </Col>
                           </Row>
                         </Col>
@@ -705,14 +760,30 @@ export default function Signup() {
                         <Col span={24}>
                           <Row gutter={25}>
                             <Col span={24}>
-                              <Button
-                                type="primary"
-                                htmlType="submit"
-                                className={`
-                               mt-[20px] h-[44px] w-[70%] rounded-[9px] bg-primary font-inter text-[14px] font-bold leading-[14px] text-[#fff]`}
-                              >
-                                Үргэлжлүүлэх
-                              </Button>
+                              <div className="flex w-full justify-between">
+                                <Button
+                                  type="default"
+                                  onClick={() =>
+                                    setRegisterData((prevData) => ({
+                                      ...prevData,
+                                      password: "",
+                                    }))
+                                  }
+                                  className="h-[40px] w-[45%] rounded-[9px] text-white"
+                                >
+                                  Буцах
+                                </Button>
+
+                                <Form.Item className="w-[45%]">
+                                  <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                  >
+                                    Үргэлжлүүлэх
+                                  </Button>
+                                </Form.Item>
+                              </div>
                             </Col>
                           </Row>
                         </Col>
@@ -804,13 +875,30 @@ export default function Signup() {
                         <Col span={24}>
                           <Row gutter={25}>
                             <Col span={24}>
-                              <Button
-                                type="primary"
-                                htmlType="submit"
-                                className={`${styles["login-button"]} bg-primary`}
-                              >
-                                Үргэлжлүүлэх
-                              </Button>
+                              <div className="flex w-full justify-between">
+                                <Button
+                                  type="default"
+                                  onClick={() =>
+                                    setRegisterData((prevData) => ({
+                                      ...prevData,
+                                      transaction_password: "",
+                                    }))
+                                  }
+                                  className="h-[40px] w-[45%] rounded-[9px] text-white"
+                                >
+                                  Буцах
+                                </Button>
+
+                                <Form.Item className="w-[45%]">
+                                  <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                  >
+                                    Үргэлжлүүлэх
+                                  </Button>
+                                </Form.Item>
+                              </div>
                             </Col>
                           </Row>
                         </Col>

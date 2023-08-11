@@ -73,7 +73,7 @@ export const List = () => {
   const columns: any[] = [
     {
       title: "Дараалал",
-      dataIndex: "request_id",
+      dataIndex: "id",
       key: "request_id",
       align: "center",
       width: "6%",
@@ -205,7 +205,7 @@ export const List = () => {
                     pageSize: 8,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={myLoanOrders}
+                  dataSource={myLoanOrders.reverse()}
                   rowKey={"create_date"}
                 />
               </Col>
@@ -228,7 +228,7 @@ export const List = () => {
                     pageSize: 8,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={mySavingOrders}
+                  dataSource={mySavingOrders.reverse()}
                   rowKey={"create_date"}
                 />
               </Col>
@@ -293,7 +293,7 @@ export const List = () => {
                                 <div
                                   className={stylesDL["dloan-detail-maxValue"]}
                                 >
-                                  {numberToCurrency(o.loan_amount)}
+                                  {numberToCurrency(Math.round(o.loan_amount))}
                                 </div>
                               </Col>
                             </Row>
@@ -318,9 +318,11 @@ export const List = () => {
                                     }
                                   >
                                     {numberToCurrency(
-                                      (o.filled_amount / 100) *
-                                        Number(o.rate_day) *
-                                        Number(o.duration)
+                                      Math.round(
+                                        (o.filled_amount / 100) *
+                                          Number(o.rate_day) *
+                                          Number(o.duration)
+                                      )
                                     )}
                                   </div>
                                 </Col>
@@ -365,10 +367,12 @@ export const List = () => {
                                         : stylesDL["dloan-rate-profit"]
                                     }
                                   >
-                                    {(o.loan_amount / 100) *
-                                      Number(o.fee_percent) *
-                                      Number(o.duration)}{" "}
-                                    %
+                                    {numberToCurrency(
+                                      Math.round(
+                                        Number(o.loan_amount / 100) *
+                                          Number(o.fee_percent)
+                                      )
+                                    )}
                                   </div>
                                 </Col>
                               </Row>
@@ -391,15 +395,15 @@ export const List = () => {
                                     }
                                   >
                                     {numberToCurrency(
-                                      (o.loan_amount / 100) *
-                                        o.rate_day *
-                                        Number(o.duration) +
-                                        o.loan_amount +
+                                      Math.ceil(
                                         (o.loan_amount / 100) *
-                                          Number(o.fee_percent) *
-                                          Number(o.duration)
-                                    )}{" "}
-                                    {o.rate_month}
+                                          o.rate_day *
+                                          Number(o.duration) +
+                                          Number(o.loan_amount) +
+                                          (o.loan_amount / 100) *
+                                            Number(o.fee_percent)
+                                      )
+                                    )}
                                   </div>
                                 </Col>
                               </Row>
@@ -437,7 +441,7 @@ export const List = () => {
                                       stylesDL["dloan-detail-maxValue"]
                                     }
                                   >
-                                    {o.create_date.slice(0, 10)}
+                                    {o.expire_date}
                                   </div>
                                 </Col>
                               </Row>
@@ -495,6 +499,7 @@ export const List = () => {
                     <Row className="mt-[20px]">
                       {activeClass && (
                         <Button
+                          type="primary"
                           className={`${stylesDL["dloan-button-back"]} bg-primary text-[#fff]`}
                           onClick={() => {
                             setSelectedId("");

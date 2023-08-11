@@ -6,6 +6,7 @@ import { Loaderr } from "app/components/Loader";
 
 export const Loan = () => {
   const { data } = useSession();
+
   if (data) {
     return <Loaderr />;
   } else {

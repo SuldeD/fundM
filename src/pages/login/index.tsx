@@ -2,6 +2,7 @@ import { getCsrfToken, useSession } from "next-auth/react";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import { Loaderr } from "app/components/Loader";
+import { Input } from "antd";
 
 export default function Login({
   csrfToken,
@@ -43,7 +44,7 @@ export default function Login({
               <p className="mt-[25px] pb-[13px] font-inter text-[14px] font-normal leading-[14px] text-[#fff]">
                 Нууц үг оруулах
               </p>
-              <input
+              <Input.Password
                 className="w-full rounded-[21px] border border-white bg-[#fff] px-5 py-3 text-[14px] focus:outline-none"
                 name="password"
                 type="password"

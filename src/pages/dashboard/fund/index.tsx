@@ -31,7 +31,7 @@ export const FundHistory = () => {
   const columns: any[] = [
     {
       title: "№",
-      dataIndex: "request_id",
+      dataIndex: "id",
       key: "is_status",
       width: "6%",
       render: (id: string) => (
@@ -91,18 +91,19 @@ export const FundHistory = () => {
     },
     {
       title: " ",
-      dataIndex: "request_id",
-      key: "request_id",
+      dataIndex: "create_date",
+      key: "create_date",
       width: "10%",
       align: "center",
-      render: (request_id: string, data: any) => (
+      render: (create_date: string, data: any) => (
         <Image
           width={25}
           onClick={() => {
-            setSelectedId(request_id);
+            setSelectedId(create_date);
             data?.request_type == "saving"
               ? setMyFundTabKey("2")
               : setMyFundTabKey("1");
+            setOpen(true);
           }}
           src={"/images/info-icon.png"}
           preview={false}
@@ -204,7 +205,7 @@ export const FundHistory = () => {
                 position: ["bottomCenter"],
               }}
               dataSource={mySavingOrders}
-              rowKey={"request_id"}
+              rowKey={"create_date"}
             />
           </Col>
         </Row>
@@ -258,7 +259,7 @@ export const FundHistory = () => {
                 position: ["bottomCenter"],
               }}
               dataSource={myLoanOrders}
-              rowKey={"request_id"}
+              rowKey={"create_date"}
             />
           </Col>
         </Row>
@@ -272,20 +273,19 @@ export const FundHistory = () => {
     return (
       <Row justify="center" className={styles["fund-main-row"]}>
         <Col span={22}>
-          {!activeClass && (
-            <Row gutter={[0, 20]}>
-              <HeaderDashboard
-                title={"Миний санхүүжилт"}
-                subTitle={
-                  " Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-                }
-              />
+          <Row gutter={[0, 20]}>
+            <HeaderDashboard
+              title={"Миний санхүүжилт"}
+              subTitle={
+                " Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
+              }
+            />
 
-              <Col span={24}>
-                <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
-              </Col>
-            </Row>
-          )}
+            <Col span={24}>
+              <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
+            </Col>
+          </Row>
+
           <Modal
             open={open}
             onCancel={() => setOpen(false)}
@@ -406,10 +406,10 @@ export const FundHistory = () => {
                                           : stylesDL["dloan-rate-profit"]
                                       }
                                     >
-                                      {(o.loan_amount / 100) *
-                                        Number(o.fee_percent) *
-                                        Number(o.duration)}{" "}
-                                      %
+                                      {numberToCurrency(
+                                        (o.loan_amount / 100) *
+                                          Number(o.fee_percent)
+                                      )}
                                     </div>
                                   </Col>
                                 </Row>
@@ -435,12 +435,10 @@ export const FundHistory = () => {
                                         (o.loan_amount / 100) *
                                           o.rate_day *
                                           Number(o.duration) +
-                                          o.loan_amount +
+                                          Number(o.loan_amount) +
                                           (o.loan_amount / 100) *
-                                            Number(o.fee_percent) *
-                                            Number(o.duration)
-                                      )}{" "}
-                                      {o.rate_month}
+                                            Number(o.fee_percent)
+                                      )}
                                     </div>
                                   </Col>
                                 </Row>
@@ -482,7 +480,8 @@ export const FundHistory = () => {
                                         stylesDL["dloan-detail-maxValue"]
                                       }
                                     >
-                                      {o.create_date.slice(0, 10)}
+                                      {o.expire_date.slice(0, 10)}
+                                      {/* + o.duration */}
                                     </div>
                                   </Col>
                                 </Row>
@@ -542,6 +541,7 @@ export const FundHistory = () => {
                         {activeClass && (
                           <Button
                             className={`${stylesDL["dloan-button-back"]} bg-primary text-[#fff]`}
+                            type="primary"
                             onClick={() => {
                               setSelectedId("");
                               setOpen(false);

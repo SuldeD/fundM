@@ -14,9 +14,8 @@ export const Dashboard = () => {
   const router = useRouter();
   useRequireAuth();
   const { loan, data, sumLoan, sumSaving } = useApiContext();
-
+  const { mutate } = api.loan.reguestSearch.useMutation();
   const { error } = Modal;
-
   const [doneOrders, setDoneOrders] = useState<any[]>([]);
 
   const columns = [
@@ -89,8 +88,6 @@ export const Dashboard = () => {
     },
   ];
 
-  const { mutate } = api.loan.reguestSearch.useMutation();
-
   useEffect(() => {
     mutate(
       {
@@ -141,7 +138,7 @@ export const Dashboard = () => {
                       <div className={styles["dashboard-loan-intro-title"]}>
                         {sumSaving > sumLoan
                           ? "Санхүүжилт өгөх хүсэлт"
-                          : "Зээл өгөх хүсэлт"}
+                          : "Зээл авах хүсэлт"}
                       </div>
                     </Col>
                     <Col span={24}>

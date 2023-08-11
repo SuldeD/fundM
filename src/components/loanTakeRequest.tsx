@@ -4,7 +4,6 @@ import { numberToCurrency } from "../utils/number.helpers";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useAppContext } from "app/context/appContext";
 import { signOut } from "next-auth/react";
 import { api } from "app/utils/api";
@@ -17,7 +16,7 @@ export const LoanTakeReqComponent = () => {
 
   const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
 
-  const data = activeSavingOrders.reverse();
+  const data = activeSavingOrders;
   const { mutate } = api.loan.reguestSearch.useMutation();
 
   useEffect(() => {

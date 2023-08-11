@@ -231,6 +231,7 @@ export const loanRouter = createTRPCRouter({
           ...loanServiceHeaders,
         },
       });
+      console.log(res2, "res2")
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       return accountStatus;
@@ -427,18 +428,18 @@ export const loanRouter = createTRPCRouter({
       z.object({
         account_num: z.string(),
         password: z.string(),
-        number: z.string(),
+        bank_id: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
-      const { account_num, password, number } = input;
+      const { account_num, password, bank_id } = input;
 
       const body = encrypt(
         JSON.stringify({
           account_num,
           password,
-          number,
+          bank_id,
         })
       );
       const res2 = await fetch(
@@ -777,6 +778,209 @@ export const loanRouter = createTRPCRouter({
           "Session-Token": token!.access_token!,
         },
       });
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  changePass: publicProcedure
+    .input(
+      z.object({
+        old_password: z.string(),
+        new_password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { old_password, new_password } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          old_password,
+          new_password,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/change/password`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  changePassFund: publicProcedure
+    .input(
+      z.object({
+        old_password: z.string(),
+        new_password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { old_password, new_password } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          old_password,
+          new_password,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/change/trans/password`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  repayment: publicProcedure
+    .input(
+      z.object({
+        request_id: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { request_id, password } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          request_id,
+          password,
+          pay_type: "",
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/loan/repayment/info`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  forgotTransPass: publicProcedure
+    .input(
+      z.object({
+        security_question_id: z.string(),
+        answer: z.string(),
+        username: z.string(),
+        register: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { security_question_id, answer, username, register } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          security_question_id,
+          answer,
+          username,
+          register,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/forgot/trans/password`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  forgotTransPassConfirm: publicProcedure
+    .input(
+      z.object({
+        security_question_id: z.string(),
+        answer: z.string(),
+        username: z.string(),
+        register: z.string(),
+        forgot_id: z.string(),
+        new_password: z.string(),
+        pin_code: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const {
+        security_question_id,
+        answer,
+        username,
+        register,
+        forgot_id,
+        new_password,
+        pin_code,
+      } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          security_question_id,
+          answer,
+          username,
+          register,
+          forgot_id,
+          new_password,
+          pin_code,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/forgot/trans/password`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);

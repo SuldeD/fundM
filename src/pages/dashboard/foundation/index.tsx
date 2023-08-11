@@ -6,13 +6,13 @@ import {
   Button,
   Checkbox,
   Modal,
-  Image,
   Form,
+  message,
 } from "antd";
 import styles from "../../../styles/foundation.module.css";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { LeftOutlined, CalculatorOutlined } from "@ant-design/icons";
+import { LeftOutlined } from "@ant-design/icons";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { Loaderr } from "app/components/Loader";
@@ -21,84 +21,47 @@ import { useRequireAuth } from "app/utils/auth";
 import moment from "moment";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
+import sanitizeHtml from "sanitize-html";
 
 export const Foundation = () => {
   const [checked, setChecked] = useState(false);
-  const myRef = useRef<any>();
+  const [form] = Form.useForm();
+  const termsRef = useRef();
+  const router = useRouter();
 
   const { data, saving, loanReqMutate, loanReqConfirmMut, accountInfo } =
     useApiContext();
   useRequireAuth();
   const { error } = Modal;
 
-  const { mutate: getContent } = api.loan.getContent.useMutation();
-
-  const toggleChecked = () => {
-    setChecked(!checked);
-  };
-
-  // @ts-ignore
-  const onChecked = (e) => {
-    setChecked(e.target.checked);
-  };
-
-  const [activeClass, setActiveClass] = useState(true);
-  const changeClass = () => {
-    setActiveClass(!activeClass);
-    setChecked(!checked);
-  };
-
   const minValue = Number(saving && saving?.loan_min_amount);
   const maxValue = Number(saving && saving?.loan_max_amount);
   const rate = saving?.loan_rate_month.slice(0, 4);
 
-  const [form] = Form.useForm();
-  const termsRef = useRef();
-  const router = useRouter();
+  const { mutate: getContent } = api.loan.getContent.useMutation();
+  const { mutate: repayment } = api.loan.repayment.useMutation();
 
+  const [activeClass, setActiveClass] = useState(true);
   const [inputValue, setInputValue] = useState(minValue);
-  // @ts-ignore
-  const onChange = (newValue) => {
-    setInputValue(newValue);
-  };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
+  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const [dataTable, setTable] = useState<any[]>(saving?.duration);
+  const [activeDuration, setActiveDuration] = useState(0);
+  const [requestId, setRequestId] = useState<string>("");
+  const [foundationBankData, setFoundationBankData] = useState<any>("");
+
+  const [html, setHtml] = useState<any>();
+
   const handleOk = async () => {
     await form.validateFields();
-    toggleChecked();
+    setChecked(!checked);
     setIsModalOpen(false);
   };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
-  const verifyShowModal = () => {
-    setIsVerifyOpen(true);
-  };
-
-  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
-  const completeShowModal = () => {
-    setIsCompleteOpen(true);
-  };
-
-  const completeCancelModal = () => {
-    setIsCompleteOpen(false);
-    changeClass();
-  };
-
-  const [dataTable, setTable] = useState<any[]>(saving?.duration);
 
   useEffect(() => {
     setTable(saving?.duration);
   }, []);
-
-  const [activeDuration, setActiveDuration] = useState(0);
-
-  const [requestId, setRequestId] = useState<string>("");
 
   function submit() {
     loanReqMutate(
@@ -122,7 +85,7 @@ export const Foundation = () => {
         }) => {
           if (data.success) {
             setRequestId(data?.request_id);
-            verifyShowModal();
+            setIsVerifyOpen(true);
           } else {
             error({
               title: "Амжилтгүй",
@@ -150,7 +113,30 @@ export const Foundation = () => {
           }) => {
             if (data.success) {
               setIsVerifyOpen(false);
-              completeShowModal();
+              setIsCompleteOpen(true);
+              repayment(
+                {
+                  request_id: requestId && requestId,
+                  password: code.toString(),
+                },
+                {
+                  onSuccess: (data: {
+                    success: any;
+                    request_id: any;
+                    loan_requests: import("react").SetStateAction<undefined>;
+                    description: any;
+                  }) => {
+                    if (data.success) {
+                      setFoundationBankData(data);
+                    } else {
+                      error({
+                        title: "Амжилтгүй",
+                        content: <div>{data?.description || null}</div>,
+                      });
+                    }
+                  },
+                }
+              );
             } else {
               error({
                 title: "Амжилтгүй",
@@ -178,7 +164,7 @@ export const Foundation = () => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
           if (data?.success) {
-            myRef.current.innerHTML = data?.page_html && data?.page_html;
+            setHtml(sanitizeHtml(data?.page_html));
           } else {
             error({
               title: "Амжилтгүй",
@@ -228,7 +214,7 @@ export const Foundation = () => {
                       max={maxValue}
                       value={inputValue}
                       defaultValue={minValue}
-                      onChange={onChange}
+                      onChange={(e: any) => setInputValue(e)}
                       formatter={(value) => numberToCurrency(value)}
                       className={styles["foundation-slider-input"]}
                     />
@@ -249,7 +235,7 @@ export const Foundation = () => {
                     <Slider
                       min={minValue}
                       max={maxValue}
-                      onChange={onChange}
+                      onChange={(e) => setInputValue(e)}
                       value={typeof inputValue === "number" ? inputValue : 0}
                       step={100000}
                     />
@@ -277,7 +263,7 @@ export const Foundation = () => {
                           justify="center"
                         >
                           <div className={styles["foundation-rate-text"]}>
-                            {rate}
+                            {rate} %
                           </div>
                         </Row>
                       </Col>
@@ -299,12 +285,10 @@ export const Foundation = () => {
                             dataTable?.map((el: any, idx: any) => (
                               <Col flex="none" key={`data-${idx}`}>
                                 <Button
-                                  onClick={() =>
-                                    setActiveDuration(el.row_order - 1)
-                                  }
+                                  onClick={() => setActiveDuration(idx)}
                                   className={
                                     styles[
-                                      activeDuration === el.row_order - 1
+                                      activeDuration === idx
                                         ? "foundation-button-active"
                                         : "foundation-button"
                                     ]
@@ -313,7 +297,7 @@ export const Foundation = () => {
                                   <div
                                     className={
                                       styles[
-                                        activeDuration === el.row_order - 1
+                                        activeDuration === idx
                                           ? "foundation-button-day-text-active"
                                           : "foundation-button-day-text"
                                       ]
@@ -324,7 +308,7 @@ export const Foundation = () => {
                                   <div
                                     className={
                                       styles[
-                                        activeDuration === el.row_order - 1
+                                        activeDuration === idx
                                           ? "foundation-button-text-active"
                                           : "foundation-button-text"
                                       ]
@@ -369,9 +353,11 @@ export const Foundation = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             numberToCurrency(
-                              (inputValue / 100) *
-                                rate *
-                                Number(dataTable[activeDuration].duration)
+                              Math.floor(
+                                (inputValue / 100) *
+                                  rate *
+                                  Number(dataTable[activeDuration].duration)
+                              )
                             )}
                         </div>
                       </Col>
@@ -434,14 +420,16 @@ export const Foundation = () => {
                     <Checkbox
                       // @ts-ignore
                       ref={termsRef}
-                      onChange={onChecked}
+                      onChange={(e) => setChecked(e.target.checked)}
                       checked={checked}
                       disabled
                     />
                   </Col>
                   <Col flex="none">
                     <div className={styles["foundation-checkbox-text"]}>
-                      <a onClick={showModal}>Зээлийн үйлчилгээний нөхцөл</a>
+                      <a onClick={() => setIsModalOpen(true)}>
+                        Санхүүжилтын үйлчилгээний нөхцөл
+                      </a>
                     </div>
                   </Col>
                 </Row>
@@ -480,10 +468,12 @@ export const Foundation = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             numberToCurrency(
-                              Number(
-                                dataTable[activeDuration].duration *
-                                  (inputValue / 100) *
-                                  rate
+                              Math.floor(
+                                Number(
+                                  dataTable[activeDuration].duration *
+                                    (inputValue / 100) *
+                                    rate
+                                )
                               )
                             )}
                         </div>
@@ -622,10 +612,9 @@ export const Foundation = () => {
                             // @ts-ignore
                             router.push("/dashboard/profile/bank")
                           : submit()
-                        : showModal();
+                        : setIsModalOpen(true);
                     }}
                   >
-                    <CalculatorOutlined />
                     Үргэлжлүүлэх
                   </Button>
                 </Col>
@@ -648,7 +637,7 @@ export const Foundation = () => {
                       span={24}
                       className="my-5 rounded-[9px] bg-bank p-[50px]"
                     >
-                      <div ref={myRef.current && myRef}></div>
+                      <div dangerouslySetInnerHTML={{ __html: html }} />
                     </Col>
                     <Form form={form}>
                       <Row justify="center" gutter={[0, 10]}>
@@ -673,7 +662,7 @@ export const Foundation = () => {
                               <div
                                 className={styles["foundation-checkbox-text"]}
                               >
-                                Зээлийн үйлчилгээний нөхцөл
+                                Санхүүжилтын үйлчилгээний нөхцөл
                               </div>
                             </Checkbox>
                           </Form.Item>
@@ -683,7 +672,7 @@ export const Foundation = () => {
                             <Col flex="none">
                               <Button
                                 className={styles["foundation-button-back"]}
-                                onClick={handleCancel}
+                                onClick={() => setIsModalOpen(false)}
                               >
                                 <div
                                   className={
@@ -702,7 +691,6 @@ export const Foundation = () => {
                                   onClick={handleOk}
                                   htmlType="submit"
                                 >
-                                  <CalculatorOutlined />
                                   Үргэлжлүүлэх
                                 </Button>
                               </Form.Item>
@@ -725,75 +713,148 @@ export const Foundation = () => {
                 centered
                 width={378}
                 title={null}
-                onCancel={completeCancelModal}
                 open={isCompleteOpen}
-                footer={null}
-              >
-                <Row
-                  justify="center"
-                  gutter={[0, 30]}
-                  style={{ padding: "50px 0" }}
-                >
-                  <Col span={24}>
-                    <Row justify="center">
-                      <Image
-                        width={56}
-                        src={"/images/check.svg"}
-                        preview={false}
-                        alt="Header Logo"
-                      />
-                    </Row>
-                  </Col>
-                  <Col span={16}>
-                    <div className={styles["foundation-modal-complete-text"]}>
-                      Таны
-                      <span className={styles["foundation-rate-profit"]}>
-                        {" "}
-                        {numberToCurrency(inputValue)}{" "}
-                      </span>
-                      төгрөг
-                      <span
-                        className={styles["foundation-modal-complete-number"]}
-                      >
-                        {" "}
-                        {typeof activeDuration == "number" &&
-                          dataTable &&
-                          dataTable[activeDuration].day}{" "}
-                      </span>
-                      хоногийн хугацаатай{" "}
-                      <span
-                        className={styles["foundation-modal-complete-number"]}
-                      >
-                        {" "}
-                        {rate}
-                      </span>{" "}
-                      хувийн өгөөжтэй санхүүжилт өгөх хүсэлт амжилттай
-                      бүртгэгдлээ.
-                    </div>
-                  </Col>
-                </Row>
-              </Modal>
-            </Col>
-          </Row>
-          <Row
-            justify={"center"}
-            align="bottom"
-            style={{ height: "100%" }}
-            className={styles[activeClass ? "foundation-change-div" : ""]}
-          >
-            <Col span={22}>
-              <Row>
-                <Col flex="none">
+                closeIcon={false}
+                footer={
                   <Button
-                    className={styles["foundation-button-back"]}
-                    onClick={() => router.push("/dashboard/myfund")}
+                    className={`mt-[40px] flex h-[40px] w-[50%] justify-start rounded-[20px]`}
+                    onClick={() => setIsCompleteOpen(false)}
                   >
-                    <div className={styles["foundation-change-button-text"]}>
-                      Хаах
-                    </div>
+                    <p className="w-full p-[4px] text-center">Хаах</p>
                   </Button>
-                </Col>
-              </Row>
+                }
+              >
+                <div className="text-center text-lg font-bold text-black">
+                  Санхүүжилт өгөх хүсэлт дансаар шилжүүлэх
+                </div>
+                <div>
+                  <div className="mt-[20px] ">
+                    <label className="text-sm font-normal text-black text-opacity-50">
+                      Банкны нэр
+                    </label>
+                    <input
+                      value={foundationBankData?.product?.bank_name}
+                      disabled
+                      className="mt-[8px] h-[44px] w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                  </div>
+                  <div className="mt-[20px]">
+                    <label className="text-sm font-normal text-black text-opacity-50">
+                      Данс эзэмшигчийн нэр
+                    </label>
+                    <div className="mt-[8px] flex h-[44px] justify-between">
+                      <input
+                        value={foundationBankData?.product?.account_name}
+                        disabled
+                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                      />
+                      <img
+                        src="/images/iconamoon_copy.svg"
+                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                        alt=""
+                        onClick={() => {
+                          message.info("Copy to clipboard");
+                          navigator.clipboard.writeText(
+                            foundationBankData?.product?.account_name
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-[20px]">
+                    <label className="text-sm font-normal text-black text-opacity-50">
+                      Дансны дугаар
+                    </label>
+                    <div className="mt-[8px] flex h-[44px] justify-between">
+                      <input
+                        value={foundationBankData?.product?.account_num}
+                        disabled
+                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                      />
+                      <img
+                        src="/images/iconamoon_copy.svg"
+                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                        alt=""
+                        onClick={() => {
+                          message.info("Copy to clipboard");
+                          navigator.clipboard.writeText(
+                            foundationBankData?.product?.account_num
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-[20px]">
+                    <label className="text-sm font-normal text-black text-opacity-50">
+                      Гүйлгээний дүн
+                    </label>
+                    <div className="mt-[8px] flex h-[44px] justify-between">
+                      <input
+                        value={
+                          foundationBankData?.product?.now_month_pay_amount
+                        }
+                        disabled
+                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                      />
+                      <img
+                        src="/images/iconamoon_copy.svg"
+                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                        alt=""
+                        onClick={() => {
+                          message.info("Copy to clipboard");
+                          navigator.clipboard.writeText(
+                            foundationBankData?.product?.now_month_pay_amount
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-[20px]">
+                    <label className="text-sm font-normal text-black text-opacity-50">
+                      Гүйлгээний утга
+                    </label>
+                    <div className="mt-[8px] flex h-[44px] justify-between">
+                      <input
+                        value={
+                          foundationBankData?.product?.transaction_description
+                        }
+                        disabled
+                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                      />
+                      <img
+                        src="/images/iconamoon_copy.svg"
+                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                        alt=""
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            foundationBankData?.product?.transaction_description
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-[30px] text-xs font-normal leading-[18px] text-red-600">
+                    <p>
+                      Дараах тохиолдлуудад таны данс цэнэглэлт амжилтгүй болох
+                      бөгөөд ажлын 2 хоногийн дотор анх шилжүүлсэн данс руу
+                      буцаан шилжүүлэхийг АНХААРНА УУ!
+                    </p>
+                    <ol className="list-disc ps-[35px] pt-[15px]">
+                      <li>Гүйлгээний утга буруу</li>
+                      <li>KYC баталгаажуулалт хийгдээгүй</li>
+                      <li>Бүртгэлгүй банкны данснаас шилжүүлэг хийсэн</li>
+                      <li>
+                        Бүртгэлтэй, гэхдээ баталгаажуулаагүй данснаас шилжүүлэг
+                        хийсэн
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+              </Modal>
             </Col>
           </Row>
         </Col>

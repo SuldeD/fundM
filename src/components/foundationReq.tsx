@@ -51,7 +51,7 @@ export const FoundationReq = () => {
     );
   }, []);
 
-  const data = activeSavingOrders.reverse();
+  const data = activeSavingOrders;
 
   return (
     <Row gutter={[0, 25]} justify="center">
@@ -103,7 +103,7 @@ export const FoundationReq = () => {
                             <Row justify="center">
                               <Col span={24}>
                                 <div className={styles["loanReq-list-title"]}>
-                                  Зээлийн хэмжээ
+                                  Санхүүжилтын хэмжээ
                                 </div>
                               </Col>
                               <Col span={24}>
@@ -194,7 +194,7 @@ export const FoundationReq = () => {
                             <Row justify="center">
                               <Col span={24}>
                                 <div className={styles["loanReq-list-title"]}>
-                                  Зээлийн хэмжээ
+                                  Санхүүжилтын хэмжээ
                                 </div>
                               </Col>
                               <Col span={24}>

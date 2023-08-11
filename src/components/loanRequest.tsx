@@ -18,7 +18,7 @@ export const LoanReqComponent = () => {
 
   const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
 
-  const data = activeSavingOrders.reverse();
+  const data = activeSavingOrders;
   const { mutate } = api.loan.reguestSearch.useMutation();
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export const LoanReqComponent = () => {
   return (
     <Row gutter={[0, 25]} justify="center">
       <Col span={24}>
-        <div className={styles["loanReq-title"]}>Зээл өгөх хүсэлт</div>
+        <div className={styles["loanReq-title"]}>Санхүүжилт өгөх хүсэлт</div>
       </Col>
       <Col span={24}>
         <div className={styles["loanReq-description"]}>
@@ -110,7 +110,7 @@ export const LoanReqComponent = () => {
                               <Row justify="center">
                                 <Col span={24}>
                                   <div className={styles["loanReq-list-title"]}>
-                                    Зээлийн хэмжээ
+                                    Санхүүжилтын хэмжээ
                                   </div>
                                 </Col>
                                 <Col span={24}>
@@ -205,7 +205,7 @@ export const LoanReqComponent = () => {
                               <Row justify="center">
                                 <Col span={24}>
                                   <div className={styles["loanReq-list-title"]}>
-                                    Зээлийн хэмжээ
+                                    Санхүүжилтын хэмжээ
                                   </div>
                                 </Col>
                                 <Col span={24}>

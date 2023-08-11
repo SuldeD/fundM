@@ -1,4 +1,4 @@
-import { Col, Modal, Row, Input, Button } from "antd";
+import { Col, Modal, Row, Input, message } from "antd";
 import { HeaderDashboard } from "app/components/header";
 import { useApiContext } from "app/context/dashboardApiContext";
 import React, { useState } from "react";
@@ -10,6 +10,16 @@ import ImgCrop from "antd-img-crop";
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
 import { useRouter } from "next/router";
 import PopupModal from "app/components/modal";
+import InputCode from "app/components/input";
+import { Loaderr } from "app/components/Loader";
+import { UploadChangeParam } from "antd/lib/upload/interface";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+
+const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
 
 export default function Bank() {
   const { helpBankList, addBankMutate, addBankVerMutate, data, accountInfo } =
@@ -27,10 +37,13 @@ export default function Bank() {
   useRequireAuth();
 
   const [check, setCheck] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
 
-  function submit() {
+  function submit(code: any) {
+    setPassword(code.toString());
     addBankMutate(
-      { password, account_num: number, bank_id: selectedBank },
+      { password: code.toString(), account_num: number, bank_id: selectedBank },
       {
         onSuccess: (
           /** @type {{ request_id: any; success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: {
@@ -38,13 +51,15 @@ export default function Bank() {
             loan_requests: import("react").SetStateAction<undefined>;
             description: any;
             request_id: any;
+            confirm_code: any;
           }
         ) => {
           if (data.success) {
-            console.log(data);
             setReqId(data?.request_id);
             setOpenVerifyPass(true);
             setOpen(false);
+            message.success(data.description);
+            message.success(data.confirm_code);
           } else {
             error({
               title: "Амжилтгүй",
@@ -58,62 +73,70 @@ export default function Bank() {
   }
 
   function submitVerify() {
-    addBankVerMutate(
-      {
-        password,
-        confirm_code: confirmCode,
-        photo: fileList[0]?.thumbUrl,
-        request_id: requestId,
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: {
-            success: any;
-            loan_requests: import("react").SetStateAction<undefined>;
-            description: any;
-          }
-        ) => {
-          if (data.success) {
-            setOpenVerifyPass(true);
-            setOpen(false);
-            setCheck(true);
-            router.push("/dashboard/profile");
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
+    if (
+      imageUrl.length > 0 &&
+      password.length > 0 &&
+      requestId.length > 0 &&
+      confirmCode.length > 0
+    ) {
+      addBankVerMutate(
+        {
+          password,
+          confirm_code: confirmCode,
+          photo: imageUrl,
+          request_id: requestId,
         },
-      }
-    );
+        {
+          onSuccess: (
+            /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: {
+              success: any;
+              loan_requests: import("react").SetStateAction<undefined>;
+              description: any;
+            }
+          ) => {
+            if (data.success) {
+              setOpenVerifyPass(true);
+              setOpen(false);
+              setCheck(true);
+            } else {
+              error({
+                title: "Амжилтгүй",
+                content: <div>{data?.description || null}</div>,
+              });
+            }
+          },
+        }
+      );
+    }
   }
 
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-
-  const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-  const onPreview = async (file: UploadFile) => {
-    let src = file.url as string;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj as RcFile);
-        reader.onload = () => resolve(reader.result as string);
+  const handleChange: UploadProps["onChange"] = (
+    info: UploadChangeParam<UploadFile>
+  ) => {
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      getBase64(info.file.originFileObj as RcFile, (url) => {
+        setLoading(false);
+        setImageUrl(url);
       });
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
   };
 
+  const uploadButton = (
+    <div>
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div className="h-[40px] w-[60px]" style={{ marginTop: 8 }}>
+        Upload
+      </div>
+    </div>
+  );
+
   if (!data) {
-  } else if (accountInfo?.account?.bank) {
-    router.push("/dashboard/profile");
-  } else {
+    return <Loaderr />;
+  } else if (!accountInfo?.bank_account?.bank_name) {
     return (
       <div className="h-full w-full bg-[#fff] px-[30px] py-[40px]">
         <HeaderDashboard
@@ -160,55 +183,7 @@ export default function Bank() {
           />
         </div>
 
-        <Modal
-          centered
-          width={378}
-          title={
-            <div className={stylesL["dloan-modal-verify-title"]}>
-              <img
-                width="50%"
-                className="mx-auto"
-                src={"/logo.svg"}
-                alt="Header Logo"
-              />
-            </div>
-          }
-          open={isOpen}
-          footer={null}
-          closable={false}
-        >
-          <Row justify="center">
-            <Col span={20}>
-              <Row justify="center" gutter={[0, 20]}>
-                <Col span={24}>
-                  <Input.Password
-                    className={stylesL["dloan-modal-verify-input"]}
-                    placeholder="FundMe кодоо оруулна уу!!!"
-                    // @ts-ignore
-                    onChange={(e) => setPassword(e.target.value)}
-                    maxLength={4}
-                    autoFocus
-                  />
-                </Col>
-                <Col span={20}>
-                  <div className={stylesL["dloan-modal-content-text"]}>
-                    Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах
-                    салбар нэгжид хандан нээлгэнэ үү.
-                  </div>
-                </Col>
-                <Col span={20}>
-                  <Button
-                    type="primary"
-                    onClick={password.length > 0 ? submit : undefined}
-                    className={stylesL["dloan-modal-verify-button"]}
-                  >
-                    Баталгаажуулах
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Modal>
+        <InputCode open={isOpen} onFinish={submit} setOpen={setOpen} />
 
         <Modal
           centered
@@ -231,7 +206,7 @@ export default function Bank() {
                     placeholder="Гүйлгээний нууц үг оруулна уу!!!"
                     name="password"
                     maxLength={4}
-                    onChange={(e) => setConfirmCode(e.target.value)}
+                    onChange={(e: any) => setConfirmCode(e.target.value)}
                     autoFocus
                   />
                 </Col>
@@ -275,22 +250,28 @@ export default function Bank() {
               <Row justify="center" gutter={[0, 20]}>
                 <ImgCrop rotationSlider>
                   <Upload
-                    action=""
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     listType="picture"
-                    fileList={fileList}
-                    onChange={onChange}
-                    onPreview={onPreview}
+                    showUploadList={false}
+                    onChange={handleChange}
                     className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
                   >
-                    {fileList.length < 1 &&
-                      "+ Drag or drop files here or browser"}
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="avatar"
+                        className="h-[60px] w-[60px]"
+                      />
+                    ) : (
+                      uploadButton
+                    )}
                   </Upload>
                 </ImgCrop>
-                <Col span={20}>
+                <Col span={24}>
                   <button
                     type="submit"
-                    onClick={fileList.length > 0 ? submitVerify : undefined}
-                    className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
+                    onClick={imageUrl.length > 0 ? submitVerify : undefined}
+                    className={`${stylesL["dloan-modal-verify-button"]} mt-[20px] bg-primary text-white`}
                   >
                     Баталгаажуулах
                   </button>
@@ -301,7 +282,10 @@ export default function Bank() {
         </Modal>
 
         <PopupModal
-          buttonClick={() => setCheck(false)}
+          buttonClick={() => {
+            setCheck(false);
+            router.push("/dashboard/profile");
+          }}
           buttonText={"Хаах"}
           closableM={null}
           closeModal={null}
@@ -315,5 +299,7 @@ export default function Bank() {
         />
       </div>
     );
+  } else {
+    router.push("/dashboard/profile");
   }
 }
