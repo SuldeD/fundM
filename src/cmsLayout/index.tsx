@@ -28,7 +28,7 @@ import sanitizeHtml from "sanitize-html";
 import { MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useApiContext } from "dist/src/context/dashboardApiContext";
+import { useApiContext } from "src/context/dashboardApiContext";
 const { Header } = Layout;
 const { Content } = Layout;
 
