@@ -1,114 +1,114 @@
 .fund-main-row {
-    background-color: #fff;
-    height: 100vh;
-    padding: 40px 0;
-    overflow: auto;
+  background-color: #fff;
+  height: 100vh;
+  padding: 25px 0;
+  overflow: auto;
 }
 
 .fund-title-name {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 22px;
-    line-height: 22px;
-    color: #000000;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 22px;
+  color: #000000;
 }
 
 .fund-exchange-title {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 20px;
-    color: #A8A8A8;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 20px;
+  color: #a8a8a8;
 }
 
 .fund-subtitle {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 16px;
-    color: rgba(26, 33, 85, 0.5);   
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(26, 33, 85, 0.5);
 }
 
 .fund-tabs-content-border {
-    border: 0.5px solid #939393;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-    padding: 30px 25px;
+  border: 0.5px solid #939393;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 30px 25px;
 }
 
 .fund-tabs-content-title {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 16px;
-    color: rgba(0, 0, 0, 0.5);
-    padding-bottom: 6px;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.5);
+  padding-bottom: 6px;
 }
 
 .fund-tabs-1-content-money {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 32px;
-    line-height: 28px;
-    color: #39DA00;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 28px;
+  color: #39da00;
 }
 
 .fund-tabs-2-content-money {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 32px;
-    line-height: 28px;
-    color: #FF0000;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 28px;
+  color: #ff0000;
 }
 
 .fund-tabs-content-rate {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 28px;
-    line-height: 28px;
-    color: #000000;
-    text-align: center;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 28px;
+  color: #000000;
+  text-align: center;
 }
 
 .fund-tabs-content-table-title {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 16px;
-    color: rgba(0, 0, 0, 0.5);
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .fund-tabs-content-table-number {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 20px;
-    color: #000000;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
 }
 
 .fund-tabs-2-content-table-type-text {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 20px;
-    color: #FF0000;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ff0000;
 }
 
 .fund-tabs-1-content-table-type-text {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 20px;
-    color: #39DA00;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #39da00;
 }

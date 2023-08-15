@@ -4,50 +4,87 @@ import { useRouter } from "next/router";
 import style from "../styles/protectedLayout.module.css";
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
+import { useApiContext } from "app/context/dashboardApiContext";
 
 const { Sider } = Layout;
 
 export const SidebarLeftComponent = () => {
   const router = useRouter();
   const [keys, setKeys] = useState(["/"]);
+  const { accountInfo } = useApiContext();
 
   useEffect(() => {
     if (router.isReady) {
       setKeys([router.asPath]);
     }
   }, [router]);
-  const items = [
-    {
-      key: "/dashboard",
-      label: <Link href="/dashboard">Дашбоард</Link>,
-      icon: <img src="/images/menu.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/fund",
-      label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
-      icon: <img src="/images/stats.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/myfund",
-      label: <Link href="/dashboard/myfund">Миний хүсэлтүүд</Link>,
-      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/history",
-      label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
-      icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/loan",
-      label: <Link href="/dashboard/loan">Зээл авах хүсэлт</Link>,
-      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/foundation",
-      label: <Link href="/dashboard/foundation">Санхүүжилт өгөх хүсэлт</Link>,
-      icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
-    },
-  ];
+
+  const items =
+    accountInfo?.account?.menu_close == "1"
+      ? [
+          {
+            key: "/dashboard",
+            label: <Link href="/dashboard">Дашбоард</Link>,
+            icon: <img src="/images/menu.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/fund",
+            label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
+            icon: <img src="/images/stats.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/myfund",
+            label: <Link href="/dashboard/myfund">Миний хүсэлтүүд</Link>,
+            icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/history",
+            label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
+            icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/loan",
+            label: <Link href="/dashboard/loan">Зээл авах хүсэлт</Link>,
+            icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/foundation",
+            label: (
+              <Link href="/dashboard/foundation">Санхүүжилт өгөх хүсэлт</Link>
+            ),
+            icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
+          },
+        ]
+      : [
+          {
+            key: "/dashboard",
+            label: <Link href="/dashboard">Дашбоард</Link>,
+            icon: <img src="/images/menu.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/fund",
+            label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
+            icon: <img src="/images/stats.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/myfund",
+            label: <Link href="/dashboard/myfund">Миний хүсэлтүүд</Link>,
+            icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
+          },
+          {
+            key: "/dashboard/history",
+            label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
+            icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
+          },
+
+          {
+            key: "/dashboard/foundation",
+            label: (
+              <Link href="/dashboard/foundation">Санхүүжилт өгөх хүсэлт</Link>
+            ),
+            icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
+          },
+        ];
   return (
     <Sider
       className={style["sidebar-left-main"]}

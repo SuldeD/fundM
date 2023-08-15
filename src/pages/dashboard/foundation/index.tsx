@@ -200,7 +200,7 @@ export const Foundation = () => {
               gutter={[0, 20]}
               className={styles[activeClass ? "" : "foundation-change-div"]}
             >
-              <Col span={22}>
+              <Col md={22}>
                 <Row gutter={[22, 10]} justify="space-between" align="middle">
                   <Col span={24}>
                     <div className={styles["foundation-slider-input-title"]}>
@@ -242,7 +242,7 @@ export const Foundation = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col span={22}>
+              <Col md={22}>
                 <Row
                   // @ts-ignore
                   gutter={[22]}
@@ -280,7 +280,7 @@ export const Foundation = () => {
                       </Col>
 
                       <Col span={24}>
-                        <Row wrap={false} gutter={30} align="middle">
+                        <Row wrap={true} gutter={30} align="middle">
                           {dataTable &&
                             dataTable?.map((el: any, idx: any) => (
                               <Col flex="none" key={`data-${idx}`}>
@@ -325,7 +325,7 @@ export const Foundation = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col span={22}>
+              <Col md={22}>
                 <Row className={styles["foundation-detail"]} gutter={[0, 22]}>
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
@@ -595,7 +595,7 @@ export const Foundation = () => {
                     </Row>
                   </Button>
                 </Col>
-                <Col flex="none">
+                <Col flex="none" className="mt-[10px]">
                   <Button
                     type="primary"
                     className={`${styles["foundation-button-contiune"]} bg-primary`}
@@ -622,7 +622,7 @@ export const Foundation = () => {
               <Modal
                 centered
                 closable={false}
-                width="50%"
+                width="90%"
                 title={
                   <div className={styles["foundation-modal-title"]}>
                     САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ
@@ -683,7 +683,7 @@ export const Foundation = () => {
                                 </div>
                               </Button>
                             </Col>
-                            <Col flex="none">
+                            <Col flex="none" className="mt-[10px]">
                               <Form.Item>
                                 <Button
                                   type="primary"

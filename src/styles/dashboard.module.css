@@ -1,150 +1,150 @@
 .dashboard-main-row {
-    background-color: #fff;
-    height: 100vh;
-    padding: 40px 0;
-    overflow: auto;
+  background-color: #fff;
+  height: 100vh;
+  padding: 25px 0;
+  overflow: auto;
 }
 
 .dashboard-title-name {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 22px;
-    line-height: 22px;
-    color: #000000;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 22px;
+  color: #000000;
 }
 
 .dashboard-exchange-title {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 20px;
-    color: #A8A8A8;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 20px;
+  color: #a8a8a8;
 }
 
 .dashboard-loan-intro-div {
-    border: 1px solid #C9C9C9;
-    border-radius: 20px;
-    padding: 20px 28px;
-    height: 191px;
+  border: 1px solid #c9c9c9;
+  border-radius: 20px;
+  padding: 20px 28px;
+  height: 191px;
 }
 
 .dashboard-loan-intro-title {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 15px;
-    line-height: 16px;
-    color: #000000;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 16px;
+  color: #000000;
 }
 
 .dashboard-loan-price-title-text {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 16px;
-    color: #8E8E8E;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #8e8e8e;
 }
 
 .dashboard-loan-price-text {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 40px;
-    line-height: 28px;
-    color: #39DA00;
-    padding-bottom: 20px;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 28px;
+  color: #39da00;
+  padding-bottom: 20px;
 }
 
 .dashboard-loan-price1-text {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 40px;
-    line-height: 28px;
-    color: #FF0000;
-    padding-bottom: 20px;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 28px;
+  color: #ff0000;
+  padding-bottom: 20px;
 }
 
 .dashboard-loan-finance-button {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 18px;
-    text-align: center;
-    color: #FFFFFF;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 11px;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: #ffffff;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  border-radius: 11px;
 }
 
 .dashboard-loan-son-number {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 44px;
-    line-height: 28px;
-    color: #0300B4;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 28px;
+  color: #0300b4;
 }
 
 .dashboard-bg-image {
-    background-image: url("/images/dashboard-loan-bg.png");
-    background-repeat: no-repeat;
-    width: 100%;
-    background-size: cover;
-    background-position: center;
-    border-radius: 15px;
-    height: 25vh;
+  background-image: url("/images/dashboard-loan-bg.png");
+  background-repeat: no-repeat;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  height: 25vh;
 }
 
 .dashboard-bg-image-button {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 10px;
-    line-height: 14px;
-    color: #FFFFFF;
-    height: 30px;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
-    margin: 0 14px 21px 0;
-    width: 127px;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 14px;
+  color: #ffffff;
+  height: 30px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  margin: 0 14px 21px 0;
+  width: 127px;
 }
 
 .dashboard-complete-order-title {
-    font-family: 'Raleway', sans-serif;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 22px;
-    color: #000000;
+  font-family: "Raleway", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 22px;
+  color: #000000;
 }
 
 .dashboard-list-item-text {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 20px;
-    color: #000000;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
 }
 
 .dashboard-list-item-type-1 {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 20px;
-    color: #FF0000;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 20px;
+  color: #ff0000;
 }
 
 .dashboard-list-item-type-2 {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 20px;
-    color: #39DA00;
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 20px;
+  color: #39da00;
 }

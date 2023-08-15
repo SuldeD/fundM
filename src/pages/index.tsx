@@ -64,7 +64,7 @@ export const Home = () => {
     return (
       <div>
         <div className="bg-black bg-[url('/images/about.png')] bg-cover bg-top bg-no-repeat py-[120px]">
-          <div className="container mx-auto flex justify-between">
+          <div className="container mx-auto flex justify-between px-[20px]">
             <div className="w-full md:m-[50px]  lg:w-[50%]">
               <div className="text-[2.375rem] font-bold text-white">
                 FundMe-тэй хамт бизнесийн илүү их амжилтанд хүрээрэй
@@ -96,7 +96,7 @@ export const Home = () => {
               <img src="/images/about-3.png" className="h-[453px] w-[254px]" />
             </div>
           </div>
-          <div className="absolute left-0 top-2/4">
+          <div className="lg: absolute left-0 top-2/4 hidden">
             <img src="/images/vector-6.png" />
           </div>
         </div>
@@ -125,11 +125,11 @@ export const Home = () => {
           ))}
         </div>
         <div className="relative">
-          <div className="absolute left-0 top-[-180px]">
+          {/* <div className=" absolute left-0 top-[-180px]">
             <img src="/images/medium-left-vector.png" />
-          </div>
+          </div> */}
           <div className=" bg-black bg-[url('/images/fundNow-bg.png')] bg-cover bg-top bg-no-repeat py-[100px]">
-            <div className="container mx-auto justify-between md:flex">
+            <div className="container mx-auto justify-between px-[20px] md:flex">
               <div className="max-w-3xl items-center text-[22px] font-bold leading-[27px] text-[#fff]">
                 ТА FUNDME-ЭЭС ХАМГИЙН БАГА ХҮҮТЭЙ 50,000₮ - 100,000,000₮ ЗЭЭЛЭХ
                 БОЛОМЖТОЙ.
@@ -142,9 +142,9 @@ export const Home = () => {
               </button>
             </div>
           </div>
-          <div className="absolute right-0 top-[100px]">
+          {/* <div className="absolute right-0 top-[100px]">
             <img src="/images/vector-4.png" />
-          </div>
+          </div> */}
         </div>
         <div className="py-[100px] pt-[60px]">
           <div className="text-center text-[22px] font-bold leading-[27px] text-[#1a2155]">
@@ -226,9 +226,9 @@ export const Home = () => {
               <img width="100%" src="/images/phone.png" />
             </div>
 
-            <div className="absolute left-0">
+            {/* <div className="absolute left-0">
               <img width="100%" src="/images/vector-5.png" />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
-import { Layout, Row, Col, Avatar, Badge, Popover, Modal } from "antd";
+import { Layout, Row, Col, Avatar, Badge, Popover, Modal, Empty } from "antd";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/protectedLayout.module.css";
+import style from "../styles/protectedLayout.module.css";
 import { CalculateComponent } from "../components/calculate";
 import { LoanReqComponent } from "../components/loanRequest";
 import Link from "next/link";
@@ -43,7 +44,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
 
   const items = [
     <div key={"1"}>
-      {notfication?.length > 0 &&
+      {notfication?.length > 0 ? (
         notfication.map((nt, idx) => (
           <div className="flex w-[400px] border-b p-[10px]" key={`${idx}`}>
             <div className="flex h-[40px] w-[40px] justify-center rounded-[50%] bg-bank pt-2">
@@ -58,7 +59,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
               />
             </div>
             <div className="ms-[10px] w-[90%]">
-              <p className=" font-lato text-[14px] font-medium leading-[18px] text-[#1A2155]">
+              <p className="font-lato text-[14px] font-medium leading-[18px] text-[#1A2155]">
                 {nt?.description}
               </p>
               <p className="font-lato text-[12px] font-medium text-sub">
@@ -66,37 +67,42 @@ export const SidebarRightComponent = ({ statusData }: any) => {
               </p>
             </div>
           </div>
-        ))}
-      <div
-        className="mx-auto w-[100px] cursor-pointer border-b border-[#1375ED] pt-[15px] text-center font-lato text-[14px] leading-[18px] text-[#1375ED]"
-        onClick={() => {
-          mutate(
-            {
-              order: "date",
-              order_up: "1",
-              page: "1",
-              page_size: "10",
-            },
-            {
-              onSuccess: (
-                /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-              ) => {
-                if (data?.success) {
-                  setNotfication(data.activity_list);
-                } else {
-                  signOut();
-                  error({
-                    title: "Амжилтгүй",
-                    content: <div>{data?.description || null}</div>,
-                  });
-                }
+        ))
+      ) : (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      )}
+      {notfication?.length > 0 && (
+        <div
+          className="mx-auto w-[100px] cursor-pointer border-b border-[#1375ED] pt-[15px] text-center font-lato text-[14px] leading-[18px] text-[#1375ED]"
+          onClick={() => {
+            mutate(
+              {
+                order: "date",
+                order_up: "1",
+                page: "1",
+                page_size: "10",
               },
-            }
-          );
-        }}
-      >
-        Бүгдийг харах
-      </div>
+              {
+                onSuccess: (
+                  /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+                ) => {
+                  if (data?.success) {
+                    setNotfication(data.activity_list);
+                  } else {
+                    signOut();
+                    error({
+                      title: "Амжилтгүй",
+                      content: <div>{data?.description || null}</div>,
+                    });
+                  }
+                },
+              }
+            );
+          }}
+        >
+          Бүгдийг харах
+        </div>
+      )}
     </div>,
   ];
 
@@ -130,12 +136,8 @@ export const SidebarRightComponent = ({ statusData }: any) => {
 
   return (
     <Sider
-      style={{
-        background: "#FFF",
-        borderInlineStart: "1px solid #D9D9D9",
-        height: "100vh",
-      }}
-      width="27%"
+      className={style["sidebar-left-main"]}
+      width="28%"
       breakpoint="lg"
       collapsedWidth="0"
     >
@@ -149,9 +151,9 @@ export const SidebarRightComponent = ({ statusData }: any) => {
                     <Row
                       align="middle"
                       gutter={10}
-                      className={styles["sidebar-right-profile-div"]}
+                      className="rounded-[20px] bg-bank p-[10px]"
                     >
-                      <Col flex="none">
+                      <Col className="lg:hidden xl:flex" flex="none">
                         <Avatar size={32} src={"/images/profile.png"} />
                       </Col>
                       <Col flex="none">

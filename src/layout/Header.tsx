@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Col, Drawer, Layout, Menu, Row } from "antd";
+import { Button, Col, Drawer, Layout, Menu, Popover, Row } from "antd";
 import style from "../styles/Header.module.css";
 import { MenuOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -17,6 +17,7 @@ export const HeaderComponent = () => {
       setKeys([router.asPath]);
     }
   }, [router]);
+
   const items = [
     {
       key: "/",
@@ -107,7 +108,7 @@ export const HeaderComponent = () => {
   };
 
   return (
-    <Header className="flex h-[100px] justify-between bg-[#fff] px-[50px] py-[22px]">
+    <Header className="flex h-[100px] justify-between bg-[#fff] px-[20px] py-[22px]">
       <Link href="/">
         <img src={"/logo.svg"} alt="Header Logo" className="w-[180px]" />
       </Link>
@@ -120,12 +121,34 @@ export const HeaderComponent = () => {
       />
       <div className="hidden gap-[24px] lg:flex">
         <p>
-          <Link
-            href="/signup"
-            className="border-b border-primary font-inter text-[14px] font-bold leading-[14px] text-primary"
+          <Popover
+            placement="top"
+            title={<div className="border-b pb-3 text-center">БҮРТГҮҮЛЭХ</div>}
+            content={
+              <div className="">
+                <Button
+                  className="mt-3 w-full"
+                  onClick={() => router.push("/signup?s=org")}
+                >
+                  Байгууллага
+                </Button>
+                <Button
+                  className="mt-3 w-full"
+                  onClick={() => router.push("/signup")}
+                >
+                  Хэрэглэгч
+                </Button>
+              </div>
+            }
+            trigger="click"
           >
-            БҮРТГҮҮЛЭХ
-          </Link>
+            <Button
+              type="text"
+              className="font-inter text-[14px] font-bold leading-[14px] text-primary"
+            >
+              БҮРТГҮҮЛЭХ
+            </Button>
+          </Popover>
         </p>
 
         <button
@@ -138,7 +161,7 @@ export const HeaderComponent = () => {
       <div>
         <MenuOutlined
           onClick={showDrawer}
-          className="flex text-[30px] text-primary active:text-sky-900 lg:hidden"
+          className="flex py-2 text-[30px] text-primary active:text-sky-900 lg:hidden"
         />
 
         <Drawer
@@ -162,14 +185,16 @@ export const HeaderComponent = () => {
                 onClick={onClose}
               >
                 <img width={30} src={el.image} className="w-[30px]" />
-
                 <Col flex="auto">
                   <div className={style["drawer-title-text"]}>{el.label}</div>
                 </Col>
               </Row>
             </Col>
           ))}
-          <Col span={24} className={style["drawer-account-pages-title"]}>
+          <Col
+            span={24}
+            className={`${style["drawer-account-pages-title"]} mb-[20px]`}
+          >
             Хэрэглэгчийн хуудсууд
           </Col>
           {accountPages.map((el, idx) => (
@@ -196,63 +221,6 @@ export const HeaderComponent = () => {
         </Drawer>
       </div>
     </Header>
-    // <Header className={style["home-header-style"]}>
-    //   <Row justify="center">
-    //     <Col xs={20} lg={22}>
-    //       <Row align="middle" wrap={false} justify="space-between">
-    //         <Col flex="auto">
-
-    //         </Col>
-    //         <Col xs={0} lg={12} xl={15} xxl={16}>
-    //           <Menu
-    //             selectedKeys={keys}
-    //             theme="light"
-    //             mode="horizontal"
-    //             items={items}
-    //             className={style["header-menu-item"]}
-    //             style={{
-    //               justifyContent: "center",
-    //               lineHeight: 3,
-    //               borderBottom: 0,
-    //             }}
-    //           />
-    //         </Col>
-    //         <Col xs={0} lg={7} xl={5} xxl={4}>
-    //           <Row wrap={false} justify="end" gutter={24}>
-    //             <Col flex="none">
-    //               <Link href="/signup">
-    //                 <Button type="text" className={style["sign-up-button"]}>
-    //                   <div>БҮРТГҮҮЛЭХ</div>
-    //                 </Button>
-    //               </Link>
-    //             </Col>
-    //             <Col flex="none">
-    //               <Button
-    //                 type="primary"
-    //                 className={style["login-button"]}
-    //                 onClick={() => void signIn()}
-    //               >
-    //                 НЭВТРЭХ
-    //               </Button>
-    //             </Col>
-    //           </Row>
-    //         </Col>
-    //         <Col lg={0}>
-    //           <Row align="middle">
-    //             <Button
-    //               type="text"
-    //               className={style["hamburger-button"]}
-    //               onClick={showDrawer}
-    //             >
-    //               <MenuOutlined style={{ fontSize: 30, color: "#0300B4" }} />
-    //             </Button>
-    //           </Row>
-    //         </Col>
-    //
-    //       </Row>
-    //     </Col>
-    //   </Row>
-    // </Header>
   );
 };
 

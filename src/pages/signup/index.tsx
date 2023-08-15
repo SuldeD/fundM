@@ -6,7 +6,9 @@ import { useSession } from "next-auth/react";
 import { Loaderr } from "app/components/Loader";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-const { error } = Modal;
+import { useSearchParams } from "next/navigation";
+
+const { error, warning } = Modal;
 
 interface RegisterType {
   phone: string;
@@ -21,14 +23,19 @@ interface RegisterType {
   register: string;
   last_name: string;
   first_name: string;
+  email: string;
 }
 
 export default function Signup() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("s");
 
   const { mutate } = api.loan.phoneSignUp.useMutation();
   const mutationPhoneVer = api.loan.phoneSignUpVerify.useMutation();
+  const orgSignUpVerify = api.loan.orgSignUpVerify.useMutation();
   const mutationSignUp = api.loan.signUp.useMutation();
+  const mutationSignUpOrg = api.loan.signUpOrg.useMutation();
 
   const [selectedQuestion, setSelectedQuestion] = useState<any>("");
   const { data: securityQuestion } = api.loan.helpQuestion.useQuery();
@@ -46,6 +53,7 @@ export default function Signup() {
     register: "",
     last_name: "",
     first_name: "",
+    email: "",
   });
 
   const onFinishPhone = async (values: any) => {
@@ -60,7 +68,6 @@ export default function Signup() {
       { phone: values.phone_number },
       {
         onSuccess: (data) => {
-          console.log(data);
           if (data.success) {
             message.success(data.test_pin_code);
             setRegisterData((prevData) => ({
@@ -81,49 +88,79 @@ export default function Signup() {
   };
 
   const onFinishPhoneVer = async (values: any) => {
-    mutationPhoneVer.mutate(
-      {
-        phone: registerData.phone,
-        pin_code: values.pin_code,
-        tmp_user_id: registerData.tmp_user_id,
-      },
-      {
-        onSuccess: (data) => {
-          if (data.success) {
-            setRegisterData((prevData) => ({
-              ...prevData,
-              pin_code: values.pin_code,
-            }));
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
+    search == "org"
+      ? orgSignUpVerify.mutate(
+          {
+            phone: registerData.phone,
+            pin_code: values.pin_code,
+            tmp_user_id: registerData.tmp_user_id,
+            user_type: "org",
+          },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                setRegisterData((prevData) => ({
+                  ...prevData,
+                  pin_code: values.pin_code,
+                }));
+              } else {
+                error({
+                  title: "Амжилтгүй",
+                  content: <div>{data?.description || null}</div>,
+                });
+              }
+            },
           }
-        },
-      }
-    );
+        )
+      : mutationPhoneVer.mutate(
+          {
+            phone: registerData.phone,
+            pin_code: values.pin_code,
+            tmp_user_id: registerData.tmp_user_id,
+          },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                setRegisterData((prevData) => ({
+                  ...prevData,
+                  pin_code: values.pin_code,
+                }));
+              } else {
+                error({
+                  title: "Амжилтгүй",
+                  content: <div>{data?.description || null}</div>,
+                });
+              }
+            },
+          }
+        );
   };
 
   const validateRegister = async (values: any) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (
-      values.last_name.length > 0 &&
-      values.last_name.length < 50 &&
-      values.first_name.length > 0 &&
-      values.first_name.length < 50 &&
-      values.register.length == 10
+      (values.last_name.length == 0 && values.last_name.length > 50) ||
+      (values.first_name.length == 0 && values.first_name.length > 50) ||
+      (search != "org" && values.register.length != 10)
     ) {
+      warning({
+        title: "Амжилтгүй",
+        content: <div>Мэдээллээ зөв оруулна уу!!!</div>,
+      });
+    } else if (emailRegex.test(values.email) == false) {
+      warning({
+        title: "Амжилтгүй",
+        content: <div>Зөв имэйл хаяг оруулана уу!!!</div>,
+      });
+    } else {
       setRegisterData((prevData) => ({
         ...prevData,
         register: values.register,
         first_name: values.first_name,
         last_name: values.last_name,
+        email: values.email,
       }));
-    } else {
-      error({
-        title: "Амжилтгүй",
-        content: <div>Мэдээллээ зөв оруулна уу!!!</div>,
-      });
     }
   };
 
@@ -171,10 +208,39 @@ export default function Signup() {
         content: <div>Гүйлгээний нууц үгийг адилхан оруулна уу !</div>,
       });
     } else {
-      setRegisterData((prevData) => ({
-        ...prevData,
-        transaction_password: code.join("").toString(),
-      }));
+      search == "org"
+        ? mutationSignUpOrg.mutate(
+            {
+              first_name: registerData.first_name,
+              last_name: registerData.last_name,
+              org_register: registerData.register,
+              password: registerData.password,
+              phone: registerData.phone,
+              pin_code: registerData.pin_code,
+              tmp_user_id: registerData.tmp_user_id,
+              transaction_password: code.join("").toString(),
+              user_type: "org",
+              username: registerData.register,
+              email: registerData.email,
+            },
+            {
+              onSuccess: (data) => {
+                if (data.success) {
+                  router.push("/login");
+                  message.success(data.description);
+                } else {
+                  error({
+                    title: "Амжилтгүй",
+                    content: <div>{data?.description || null}</div>,
+                  });
+                }
+              },
+            }
+          )
+        : setRegisterData((prevData) => ({
+            ...prevData,
+            transaction_password: code.join("").toString(),
+          }));
     }
   };
 
@@ -225,8 +291,6 @@ export default function Signup() {
   const length = 4;
   const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
   const [code2, setCode2] = useState<any>([...Array(length)].map(() => ""));
-
-  // console.log("code", code);
 
   const inputs = useRef<any>([]);
   const inputs2 = useRef<any>([]);
@@ -286,7 +350,9 @@ export default function Signup() {
           {registerData.phone == "" && (
             <Row justify="start" gutter={[0, 25]}>
               <Col span={24}>
-                <div className={styles["header-text"]}>Бүртгэл</div>
+                <div className={styles["header-text"]}>
+                  {search == "org" ? "Байгууллагаар Бүртгүүлэх" : "Бүртгэл"}
+                </div>
               </Col>
               <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
                 <Form
@@ -303,6 +369,69 @@ export default function Signup() {
                     <Col span={24}>
                       <div className={styles["phone-number-label"]}>
                         Гар утасны дугаар оруулах
+                      </div>
+                    </Col>
+                    <Col span={24}>
+                      <Form.Item
+                        name="phone_number"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Гар утасны дугаараа оруулна уу!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          className={styles["input-style"]}
+                          type="tel"
+                          pattern="[6789][0-9]{7}"
+                          title="Зөв дугаар oruulna uu"
+                          autoFocus
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Row gutter={25}>
+                        <Col span={24}>
+                          <Form.Item>
+                            <Button
+                              type="primary"
+                              htmlType="submit"
+                              className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                            >
+                              Нэг удаагын код авах
+                            </Button>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Form>
+              </Col>
+            </Row>
+          )}
+          {registerData.phone.length > 0 && registerData.username == "" && (
+            <Row justify="start" gutter={[0, 25]}>
+              <Col span={24}>
+                <div className={styles["header-text"]}>
+                  Байгууллагын мэдээлэл
+                </div>
+              </Col>
+              <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
+                <Form
+                  name="basic"
+                  initialValues={{
+                    remember: true,
+                  }}
+                  className="login-form"
+                  autoComplete="off"
+                  layout="vertical"
+                  onFinish={onFinishPhone}
+                >
+                  <Row gutter={[0, 13]}>
+                    <Col span={24}>
+                      <div className={styles["phone-number-label"]}>
+                        Байгууллагын дугаар
                       </div>
                     </Col>
                     <Col span={24}>
@@ -449,7 +578,9 @@ export default function Signup() {
                 <Row justify="start" gutter={[0, 25]}>
                   <Col span={24}>
                     <div className={styles["header-text"]}>
-                      Өөрийн мэдээллээ оруулах
+                      {search == "org"
+                        ? "Байгууллагын мэдээллээ оруулах"
+                        : "Өөрийн мэдээллээ оруулах"}
                     </div>
                   </Col>
                   <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
@@ -466,7 +597,9 @@ export default function Signup() {
                       <Row gutter={[0, 13]}>
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
-                            Өөрийн нэр
+                            {search == "org"
+                              ? "Байгууллагын нэр"
+                              : "Өөрийн нэр"}
                           </div>
                         </Col>
                         <Col span={24}>
@@ -475,7 +608,10 @@ export default function Signup() {
                             rules={[
                               {
                                 required: true,
-                                message: "Өөрийн нэр!",
+                                message:
+                                  search == "org"
+                                    ? "Байгууллагын нэр!"
+                                    : "Өөрийн нэр!",
                               },
                             ]}
                           >
@@ -487,7 +623,7 @@ export default function Signup() {
                         </Col>
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
-                            Овог
+                            {search == "org" ? "Захирлын нэр" : "Овог"}
                           </div>
                         </Col>
                         <Col span={24}>
@@ -496,7 +632,8 @@ export default function Signup() {
                             rules={[
                               {
                                 required: true,
-                                message: "Овог!",
+                                message:
+                                  search == "org" ? "Захирлын нэр!" : "Овог!",
                               },
                             ]}
                           >
@@ -505,7 +642,9 @@ export default function Signup() {
                         </Col>
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
-                            Регистрийн дугаар
+                            {search == "org"
+                              ? "Байгууллагын регистрийн дугаар"
+                              : "Регистрийн дугаар"}
                           </div>
                         </Col>
                         <Col span={24}>
@@ -514,7 +653,30 @@ export default function Signup() {
                             rules={[
                               {
                                 required: true,
-                                message: "Регистрийн дугаар!",
+                                message:
+                                  search == "org"
+                                    ? "Байгууллагын регистрийн дугаар!"
+                                    : "Регистрийн дугаар!",
+                              },
+                            ]}
+                          >
+                            <Input className={styles["input-style"]} />
+                          </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                          <div className={styles["phone-number-label"]}>
+                            {search == "org"
+                              ? " Байгууллагын имэйл хаяг"
+                              : "Имэйл хаяг"}
+                          </div>
+                        </Col>
+                        <Col span={24}>
+                          <Form.Item
+                            name="email"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Имэйл хаяг!",
                               },
                             ]}
                           >
@@ -672,6 +834,7 @@ export default function Signup() {
                 animate={{ x: "0", opacity: 1, scale: 1 }}
                 initial={{ x: "10%", opacity: 0, scale: 0.5 }}
                 transition={{ delay: 0.3 }}
+                className="mt-[10px]"
               >
                 <Row justify="start" gutter={[0, 25]}>
                   <Col span={24}>
@@ -697,7 +860,7 @@ export default function Signup() {
                             ПИН код оруулах
                           </div>
                         </Col>
-                        <Col span={24} className="flex gap-5">
+                        <Col span={19} className="flex justify-between">
                           {code.map(
                             (
                               num:
@@ -712,7 +875,7 @@ export default function Signup() {
                                   key={idx}
                                   type="text"
                                   inputMode="numeric"
-                                  className="h-[55px] w-[55px] rounded-[15px] border p-2 text-center text-[22px] font-bold"
+                                  className="h-[50px] w-[50px] rounded-[15px] border p-2 text-center text-[22px] font-bold"
                                   maxLength={1}
                                   value={num}
                                   autoFocus={!code[0].length && idx === 0}
@@ -730,7 +893,7 @@ export default function Signup() {
                             ПИН код дахин оруулах
                           </div>
                         </Col>
-                        <Col span={24} className="flex gap-5">
+                        <Col span={19} className="flex justify-between">
                           {code2.map(
                             (
                               num:
@@ -745,7 +908,7 @@ export default function Signup() {
                                   key={idx}
                                   type="text"
                                   inputMode="numeric"
-                                  className="h-[55px] w-[55px] rounded-[15px] border p-2 text-center text-[22px] font-bold"
+                                  className="h-[50px] w-[50px] rounded-[15px] border p-2 text-center text-[22px] font-bold"
                                   maxLength={1}
                                   value={num}
                                   autoFocus={!code2[0].length && idx === 0}
@@ -759,8 +922,8 @@ export default function Signup() {
                         </Col>
                         <Col span={24}>
                           <Row gutter={25}>
-                            <Col span={24}>
-                              <div className="flex w-full justify-between">
+                            <Col span={20}>
+                              <div className="mt-[30px] flex w-full justify-between">
                                 <Button
                                   type="default"
                                   onClick={() =>

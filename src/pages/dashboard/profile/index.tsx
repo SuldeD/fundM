@@ -394,6 +394,7 @@ export const Profile = () => {
     {
       key: "1",
       label: "Миний мэдээлэл",
+
       children: (
         <Col span={24}>
           <Row gutter={[0, 20]}>
@@ -405,7 +406,6 @@ export const Profile = () => {
                     listType="picture-circle"
                     className="avatar-uploader  overflow-hidden"
                     showUploadList={false}
-                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     beforeUpload={beforeUpload}
                     onChange={handleChange}
                   >
@@ -431,7 +431,9 @@ export const Profile = () => {
                   <Row gutter={[0, 4]}>
                     <Col span={24}>
                       <div className={styles["profile-bankaccount-title"]}>
-                        Овог
+                        {accountInfo?.account?.user_type == "org"
+                          ? "Захиралын нэр"
+                          : "Овог"}
                       </div>
                     </Col>
                     <Col span={24}>
@@ -447,7 +449,9 @@ export const Profile = () => {
                   <Row gutter={[0, 4]}>
                     <Col span={24}>
                       <div className={styles["profile-bankaccount-title"]}>
-                        Нэр
+                        {accountInfo?.account?.user_type == "org"
+                          ? "Байгууллагын нэр"
+                          : "Нэр"}
                       </div>
                     </Col>
                     <Col span={24}>
@@ -463,36 +467,50 @@ export const Profile = () => {
                   <Row gutter={[0, 4]}>
                     <Col span={24}>
                       <div className={styles["profile-bankaccount-title"]}>
-                        Регисирын дугаар
+                        {accountInfo?.account?.user_type == "org"
+                          ? "Байгууллагын регисирын дугаар"
+                          : "Регисирын дугаар"}
                       </div>
                     </Col>
-                    <Row gutter={5}>
-                      <Col flex="none">
-                        <div className={styles["profile-information-name"]}>
-                          {accountInfo?.account?.register
-                            ? accountInfo?.account?.register.slice(0, 2)
-                            : "."}
-                        </div>
-                      </Col>
-                      <Col flex="none">
-                        <div className={styles["profile-information-register"]}>
-                          {accountInfo?.account?.register
-                            ? accountInfo?.account?.register.slice(2, 10)
-                            : "."}
-                        </div>
-                      </Col>
-                    </Row>
+                    {accountInfo?.account?.user_type == "org" ? (
+                      <div className={styles["profile-information-register"]}>
+                        {accountInfo?.account?.register
+                          ? accountInfo?.account?.register
+                          : "."}
+                      </div>
+                    ) : (
+                      <Row gutter={5}>
+                        <Col flex="none">
+                          <div className={styles["profile-information-name"]}>
+                            {accountInfo?.account?.register
+                              ? accountInfo?.account?.register.slice(0, 2)
+                              : "."}
+                          </div>
+                        </Col>
+                        <Col flex="none">
+                          <div
+                            className={styles["profile-information-register"]}
+                          >
+                            {accountInfo?.account?.register
+                              ? accountInfo?.account?.register.slice(2, 10)
+                              : "."}
+                          </div>
+                        </Col>
+                      </Row>
+                    )}
                   </Row>
                 </Col>
               </Row>
             </Col>
             <Col span={20}>
-              <Row justify="space-between">
-                <Col span={8}>
+              <Row justify="space-between" wrap={true}>
+                <Col span={12}>
                   <Row gutter={[0, 20]}>
                     <Col span={24}>
                       <div className={styles["profile-typography-title"]}>
-                        Утасны дугаар
+                        {accountInfo?.account?.user_type == "org"
+                          ? "Байгууллагын утасны дугаар"
+                          : "Утасны дугаар"}
                       </div>
                     </Col>
                     <div className="relative bg-[#fff]">
@@ -511,11 +529,13 @@ export const Profile = () => {
                     </div>
                   </Row>
                 </Col>
-                <Col span={12}>
+                <Col md={12}>
                   <Row gutter={[0, 20]}>
                     <Col span={24}>
                       <div className={styles["profile-typography-title"]}>
-                        Имэйл хаяг
+                        {accountInfo?.account?.user_type == "org"
+                          ? "Байгууллагын имэйл хаяг"
+                          : "Имэйл хаяг"}
                       </div>
                     </Col>
                     <div className="relative bg-[#fff]">
@@ -569,7 +589,7 @@ export const Profile = () => {
                     justify="space-between"
                     className={styles["profile-bankaccount-div"]}
                   >
-                    <Col flex="none">
+                    <Col flex="none" className="my-1">
                       <Row gutter={10} align="middle">
                         <Col flex="none">
                           <div className={styles["profile-bankaccount-title"]}>
@@ -584,7 +604,7 @@ export const Profile = () => {
                         </Col>
                       </Row>
                     </Col>
-                    <Col flex="none">
+                    <Col flex="none" className="my-1">
                       <Row gutter={10} align="middle">
                         <Col flex="none">
                           <div className={styles["profile-bankaccount-title"]}>
@@ -599,7 +619,7 @@ export const Profile = () => {
                         </Col>
                       </Row>
                     </Col>
-                    <Col flex="none">
+                    <Col flex="none" className="my-1">
                       <Row gutter={10} align="middle">
                         <Col flex="none">
                           <div className={styles["profile-bankaccount-title"]}>
@@ -669,23 +689,6 @@ export const Profile = () => {
               </svg>
             </button>
           </div>
-          <Collapse
-            onChange={onChange}
-            bordered={false}
-            expandIconPosition="end"
-          >
-            <Panel
-              className=""
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Fund Me нууцлалын горим
-                </div>
-              }
-              key="4"
-            >
-              <p>asdasd</p>
-            </Panel>
-          </Collapse>
         </Col>
       ),
     },

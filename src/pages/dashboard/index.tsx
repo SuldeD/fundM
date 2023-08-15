@@ -176,7 +176,7 @@ export const Dashboard = () => {
                     </Col>
                   </Row>
                 </Col>
-                <Col xs={24} lg={12}>
+                <Col xs={24} lg={12} className="mt-[20px] lg:mt-0">
                   <Row className={styles["dashboard-loan-intro-div"]}>
                     <Col span={10}>
                       <Row gutter={[0, 42]}>

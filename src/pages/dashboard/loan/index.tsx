@@ -288,7 +288,7 @@ export const Loan = () => {
     }
   }
 
-  if (!data) {
+  if (!data || accountInfo?.account?.menu_close == "0") {
     return <Loaderr />;
   } else {
     return (
@@ -312,7 +312,7 @@ export const Loan = () => {
               gutter={[0, 20]}
               className={styles[activeClass ? "" : "dloan-change-div"]}
             >
-              <Col span={22}>
+              <Col md={22}>
                 <Row gutter={[22, 10]} justify="space-between" align="middle">
                   <Col span={24}>
                     <div className={styles["dloan-slider-input-title"]}>
@@ -354,7 +354,7 @@ export const Loan = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col span={22}>
+              <Col md={22}>
                 <Row
                   // @ts-ignore
                   gutter={[22]}
@@ -388,10 +388,14 @@ export const Loan = () => {
                       </Col>
 
                       <Col span={24}>
-                        <Row wrap={false} gutter={30} align="middle">
+                        <Row wrap={true} gutter={30} align="middle">
                           {dataTable &&
                             dataTable?.map((el: any, idx: any) => (
-                              <Col flex="none" key={`data-${idx}`}>
+                              <Col
+                                flex="none"
+                                key={`data-${idx}`}
+                                className="mb-[15px]"
+                              >
                                 <Button
                                   onClick={() => setActiveDuration(idx)}
                                   className={
@@ -433,7 +437,34 @@ export const Loan = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col span={22}>
+              <Col md={22}>
+                <Row gutter={[0, 10]}>
+                  <Col span={24}>
+                    <div
+                      className={`${styles["dloan-slider-input-title"]} wrap flex`}
+                    >
+                      <p className="me-1 text-primary">
+                        {dataTable && dataTable[activeDuration].duration}
+                      </p>{" "}
+                      хоногоор авах боломжит идэвхтэй зээлийн хэмжээ
+                    </div>
+                  </Col>
+                  <Col span={24}>
+                    <Row
+                      className={`${styles["dloan-rate-div"]} w-[32%]`}
+                      align="middle"
+                      justify="center"
+                    >
+                      <div
+                        className={`${styles["dloan-rate-text"]} text-primary`}
+                      >
+                        {numberToCurrency(inputValue)}
+                      </div>
+                    </Row>
+                  </Col>
+                </Row>
+              </Col>
+              <Col md={22}>
                 <Row className={styles["dloan-detail"]} gutter={[0, 22]}>
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
@@ -772,7 +803,7 @@ export const Loan = () => {
             </Row>
           </Row>
         </Col>
-        <Col span={22}>
+        <Col span={24}>
           <Row
             justify={"center"}
             align="bottom"
@@ -796,7 +827,7 @@ export const Loan = () => {
                     </Row>
                   </Button>
                 </Col>
-                <Col flex="none">
+                <Col flex="none" className="mt-[10px]">
                   <Button
                     type="primary"
                     className={`${styles["dloan-button-contiune"]} bg-primary`}
@@ -823,7 +854,7 @@ export const Loan = () => {
               <Modal
                 centered
                 closable={false}
-                width="50%"
+                width="90%"
                 title={
                   <div className={styles["dloan-modal-title"]}>
                     ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
@@ -880,7 +911,7 @@ export const Loan = () => {
                                 </div>
                               </Button>
                             </Col>
-                            <Col flex="none">
+                            <Col flex="none" className="mt-[10px]">
                               <Form.Item>
                                 <Button
                                   type="primary"
