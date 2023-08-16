@@ -136,7 +136,7 @@ export default function Bank() {
 
   if (!data) {
     return <Loaderr />;
-  } else if (!accountInfo?.bank_account?.bank_name) {
+  } else
     return (
       <div className="h-full w-full bg-[#fff] px-[30px] py-[40px]">
         <HeaderDashboard
@@ -304,7 +304,10 @@ export default function Bank() {
         />
       </div>
     );
-  } else {
-    router.push("/dashboard/profile");
-  }
 }
+// if (!accountInfo?.bank_account?.bank_name) {
+
+// else {
+//   router.push("/dashboard/profile");
+// }
+// }
