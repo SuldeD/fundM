@@ -142,6 +142,28 @@ export const FoundationReq = () => {
                                   {el.rate_month}
                                 </div>
                               </Col>
+                              <Col span={12}>
+                                <Row justify="center">
+                                  <Col span={24}>
+                                    <div
+                                      className={
+                                        styles["loanReq-list-rate-title-2"]
+                                      }
+                                    >
+                                      Хоног
+                                    </div>
+                                  </Col>
+                                  <Col span={24}>
+                                    <div
+                                      className={
+                                        styles["loanReq-list-currency-2"]
+                                      }
+                                    >
+                                      {el.duration}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
                               <Col flex="none">
                                 <Button
                                   type="primary"
@@ -206,7 +228,7 @@ export const FoundationReq = () => {
                               </Col>
                             </Row>
                           </Col>
-                          <Col span={12}>
+                          <Col span={5}>
                             <Row justify="center">
                               <Col span={24}>
                                 <div
@@ -222,6 +244,26 @@ export const FoundationReq = () => {
                                   className={styles["loanReq-list-currency-2"]}
                                 >
                                   {el.rate_month}
+                                </div>
+                              </Col>
+                            </Row>
+                          </Col>
+                          <Col span={5}>
+                            <Row justify="center">
+                              <Col span={24}>
+                                <div
+                                  className={
+                                    styles["loanReq-list-rate-title-2"]
+                                  }
+                                >
+                                  Хоног
+                                </div>
+                              </Col>
+                              <Col span={24}>
+                                <div
+                                  className={styles["loanReq-list-currency-2"]}
+                                >
+                                  {el.duration}
                                 </div>
                               </Col>
                             </Row>

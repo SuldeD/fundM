@@ -148,7 +148,7 @@ export const MyFund = () => {
       key: "create_date",
       width: "10%",
       align: "center",
-      render: (create_date: string) => (
+      render: (create_date: string, data: any) => (
         <Image
           width={25}
           src={"/images/info-icon.png"}
@@ -156,7 +156,7 @@ export const MyFund = () => {
           alt="Information"
           className="cursor-pointer"
           onClick={() => {
-            setSelectedId(create_date);
+            setSelectedId(data?.id);
             setOpen(true);
           }}
         />
@@ -197,7 +197,10 @@ export const MyFund = () => {
             <Col flex="none">
               <div className={styles["myfund-tabs-content-title"]}>Биелэлт</div>
               <div className={styles["myfund-tabs-content-rate"]}>
-                {myLoanOrdersSum} %
+                {myLoanOrders.length > 0
+                  ? myLoanOrdersSum / myLoanOrders.length
+                  : 0}{" "}
+                %
               </div>
             </Col>
             <Col flex="none">
@@ -205,7 +208,11 @@ export const MyFund = () => {
                 Биелээгүй мөнгөн дүн
               </div>
               <div className={styles["myfund-tabs-content-rate"]}>
-                {numberToCurrency(0)}
+                {myLoanOrders.length > 0
+                  ? numberToCurrency(
+                      sumMyLoan * (myLoanOrdersSum / myLoanOrders.length / 100)
+                    )
+                  : numberToCurrency(0)}
               </div>
             </Col>
             <Col span={24}>
@@ -259,7 +266,10 @@ export const MyFund = () => {
                   Нийт биелэлт
                 </div>
                 <div className={styles["myfund-tabs-content-rate"]}>
-                  {mySavingOrdersSum} %
+                  {mySavingOrders.length > 0
+                    ? mySavingOrdersSum / mySavingOrders.length
+                    : 0}{" "}
+                  %
                 </div>
               </Col>
               <Col flex="none">
@@ -267,7 +277,13 @@ export const MyFund = () => {
                   Биелээгүй мөнгөн дүн
                 </div>
                 <div className={styles["myfund-tabs-content-rate"]}>
-                  {numberToCurrency(0)}
+                  {mySavingOrders.length > 0
+                    ? numberToCurrency(
+                        sumMySaving -
+                          sumMySaving *
+                            (mySavingOrdersSum / mySavingOrders.length / 100)
+                      )
+                    : numberToCurrency(0)}
                 </div>
               </Col>
               <Col span={24}>
@@ -329,7 +345,7 @@ export const MyFund = () => {
               {activeClass &&
                 orders.map(
                   (o: any, idx: number) =>
-                    o.create_date == activeClass && (
+                    o.id == activeClass && (
                       <div key={`${idx}`}>
                         <Col
                           span={22}
@@ -390,7 +406,7 @@ export const MyFund = () => {
                                       >
                                         {numberToCurrency(
                                           Math.round(
-                                            Number(o.filled_amount / 100) *
+                                            Number(o.balance_amount / 100) *
                                               Number(o.rate_day) *
                                               Number(o.duration)
                                           )

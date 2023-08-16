@@ -4,7 +4,6 @@ import { numberToCurrency } from "../utils/number.helpers";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useAppContext } from "app/context/appContext";
 import { api } from "app/utils/api";
 import { signOut } from "next-auth/react";
@@ -153,6 +152,28 @@ export const LoanReqComponent = () => {
                                     {el.rate_month}
                                   </div>
                                 </Col>
+                                <Col span={12}>
+                                  <Row justify="center">
+                                    <Col span={24}>
+                                      <div
+                                        className={
+                                          styles["loanReq-list-rate-title-2"]
+                                        }
+                                      >
+                                        Хоног
+                                      </div>
+                                    </Col>
+                                    <Col span={24}>
+                                      <div
+                                        className={
+                                          styles["loanReq-list-currency-2"]
+                                        }
+                                      >
+                                        {el.duration}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
                                 <Col flex="none">
                                   <Button
                                     type="primary"
@@ -219,7 +240,7 @@ export const LoanReqComponent = () => {
                                 </Col>
                               </Row>
                             </Col>
-                            <Col span={12}>
+                            <Col span={5}>
                               <Row justify="center">
                                 <Col span={24}>
                                   <div
@@ -237,6 +258,28 @@ export const LoanReqComponent = () => {
                                     }
                                   >
                                     {el.rate_month}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </Col>
+                            <Col span={5}>
+                              <Row justify="center">
+                                <Col span={24}>
+                                  <div
+                                    className={
+                                      styles["loanReq-list-rate-title-2"]
+                                    }
+                                  >
+                                    Хоног
+                                  </div>
+                                </Col>
+                                <Col span={24}>
+                                  <div
+                                    className={
+                                      styles["loanReq-list-currency-2"]
+                                    }
+                                  >
+                                    {el.duration}
                                   </div>
                                 </Col>
                               </Row>

@@ -24,8 +24,14 @@ import { api } from "app/utils/api";
 import sanitizeHtml from "sanitize-html";
 
 export const Loan = () => {
-  const { loan, data, loanReqMutate, loanReqConfirmMut, accountInfo } =
-    useApiContext();
+  const {
+    loan,
+    data,
+    loanReqMutate,
+    loanReqConfirmMut,
+    accountInfo,
+    savingData,
+  } = useApiContext();
   useRequireAuth();
   const { error } = Modal;
   const { mutate: loanMutate } = api.loan.loanSearch.useMutation();
@@ -73,12 +79,22 @@ export const Loan = () => {
   const [pin_code, setPin_code] = useState<any>();
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
   const [dataTable, setTable] = useState<any[]>(loan?.duration);
-  const [activeDuration, setActiveDuration] = useState(0);
+  const [activeDuration, setActiveDuration] = useState<number>(0);
+  const [activeDurationSum, setActiveDurationSum] = useState<number>(0);
   const [html, setHtml] = useState<any>();
 
   const [form] = Form.useForm();
   const termsRef = useRef();
   const router = useRouter();
+
+  useEffect(() => {
+    setActiveDurationSum(0);
+    savingData?.forEach((sd: any) => {
+      dataTable &&
+        sd.duration == dataTable[activeDuration].duration &&
+        setActiveDurationSum((prev) => prev + Number(sd.balance_amount));
+    });
+  }, [activeDuration]);
 
   useEffect(() => {
     setTable(loan?.duration);
@@ -446,7 +462,7 @@ export const Loan = () => {
                       <p className="me-1 text-primary">
                         {dataTable && dataTable[activeDuration].duration}
                       </p>{" "}
-                      хоногоор авах боломжит идэвхтэй зээлийн хэмжээ
+                      хоногоор авах боломжит зээлийн хэмжээ
                     </div>
                   </Col>
                   <Col span={24}>
@@ -458,7 +474,7 @@ export const Loan = () => {
                       <div
                         className={`${styles["dloan-rate-text"]} text-primary`}
                       >
-                        {numberToCurrency(inputValue)}
+                        {numberToCurrency(activeDurationSum)}
                       </div>
                     </Row>
                   </Col>

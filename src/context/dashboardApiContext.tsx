@@ -24,6 +24,8 @@ interface AppContext {
 
   changePhoneConfirm: any;
   addEmail: any;
+
+  savingData: any;
 }
 
 const AppContext = createContext<AppContext>({} as AppContext);
@@ -80,6 +82,8 @@ export const ApiWrapper = ({ children }: any) => {
   const [sumLoan, setSumLoan] = useState(0);
   const [sumSaving, setSumSaving] = useState(0);
 
+  const [savingData, setSavingData] = useState<any[]>([]);
+
   useEffect(() => {
     setAccountInfo(accountInfoData);
   }, [accountInfoData]);
@@ -90,7 +94,7 @@ export const ApiWrapper = ({ children }: any) => {
         order: "date",
         order_up: "1",
         page: "1",
-        page_size: "1",
+        page_size: "30",
         filter_type: "active",
       },
       {
@@ -100,6 +104,12 @@ export const ApiWrapper = ({ children }: any) => {
           if (data?.success) {
             setSumSaving(data?.saving_request_amount);
             setSumLoan(data?.loan_request_amount);
+
+            data?.requests?.forEach(
+              (req: any) =>
+                req?.request_type == "saving" &&
+                setSavingData((prev) => [...prev, req])
+            );
           } else {
             signOut();
             error({
@@ -146,6 +156,8 @@ export const ApiWrapper = ({ children }: any) => {
 
     changePhoneConfirm,
     addEmail,
+
+    savingData,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
