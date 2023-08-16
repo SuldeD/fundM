@@ -183,7 +183,7 @@ export const Foundation = () => {
       <Row
         justify="center"
         className={styles["foundation-main-row"]}
-        gutter={[0, 30]}
+        gutter={[0, 3]}
       >
         <Col span={22}>
           <Row gutter={[0, 20]} justify="center">
@@ -574,288 +574,266 @@ export const Foundation = () => {
         <Col span={22}>
           <Row
             justify={"center"}
-            align="bottom"
+            align="top"
             style={{ height: "100%" }}
             className={styles[activeClass ? "" : "foundation-change-div"]}
           >
             <Col span={22}>
-              <Row justify="space-between" align="middle">
-                <Col flex="none">
-                  <Button
-                    className={styles["foundation-button-back"]}
-                    onClick={() => router.back()}
+              <Button
+                type="primary"
+                className={`${styles["foundation-button-contiune"]} bg-primary`}
+                onClick={() => {
+                  // @ts-ignore
+                  termsRef.current?.input.checked
+                    ? !accountInfo.bank_account
+                      ? error({
+                          title: "Амжилтгүй",
+                          content: (
+                            <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
+                          ),
+                        }) &&
+                        // @ts-ignore
+                        router.push("/dashboard/profile/bank")
+                      : submit()
+                    : setIsModalOpen(true);
+                }}
+              >
+                Үргэлжлүүлэх
+              </Button>
+            </Col>
+
+            <Modal
+              centered
+              closable={false}
+              width="90%"
+              title={
+                <div className={styles["foundation-modal-title"]}>
+                  САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ
+                </div>
+              }
+              open={isModalOpen}
+              footer={null}
+            >
+              <Row justify="center">
+                <Col>
+                  <Col
+                    span={24}
+                    className="my-5 rounded-[9px] bg-bank p-[50px]"
                   >
-                    <Row align="middle">
-                      <Col flex="none">{<LeftOutlined />}</Col>
-                      <Col flex={"auto"}>
-                        <div className={styles["foundation-button-back-text"]}>
-                          Буцах
-                        </div>
+                    <div dangerouslySetInnerHTML={{ __html: html }} />
+                  </Col>
+                  <Form form={form}>
+                    <Row justify="center" gutter={[0, 10]}>
+                      <Col span={24}>
+                        <Form.Item
+                          name="agreement"
+                          valuePropName="checked"
+                          rules={[
+                            {
+                              validator: (_, value) =>
+                                value
+                                  ? Promise.resolve()
+                                  : Promise.reject(
+                                      new Error(
+                                        "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
+                                      )
+                                    ),
+                            },
+                          ]}
+                        >
+                          <Checkbox>
+                            <div className={styles["foundation-checkbox-text"]}>
+                              Санхүүжилтын үйлчилгээний нөхцөл
+                            </div>
+                          </Checkbox>
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between">
+                          <Col flex="none">
+                            <Button
+                              className={styles["foundation-button-back"]}
+                              onClick={() => setIsModalOpen(false)}
+                            >
+                              <div
+                                className={
+                                  styles["foundation-button-back-text"]
+                                }
+                              >
+                                Буцах
+                              </div>
+                            </Button>
+                          </Col>
+                          <Col flex="none" className="mt-[10px]">
+                            <Form.Item>
+                              <Button
+                                type="primary"
+                                className={`${styles["foundation-button-contiune"]} bg-primary`}
+                                onClick={handleOk}
+                                htmlType="submit"
+                              >
+                                Үргэлжлүүлэх
+                              </Button>
+                            </Form.Item>
+                          </Col>
+                        </Row>
                       </Col>
                     </Row>
-                  </Button>
-                </Col>
-                <Col flex="none" className="mt-[10px]">
-                  <Button
-                    type="primary"
-                    className={`${styles["foundation-button-contiune"]} bg-primary`}
-                    onClick={() => {
-                      // @ts-ignore
-                      termsRef.current?.input.checked
-                        ? !accountInfo.bank_account
-                          ? error({
-                              title: "Амжилтгүй",
-                              content: (
-                                <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
-                              ),
-                            }) &&
-                            // @ts-ignore
-                            router.push("/dashboard/profile/bank")
-                          : submit()
-                        : setIsModalOpen(true);
-                    }}
-                  >
-                    Үргэлжлүүлэх
-                  </Button>
+                  </Form>
                 </Col>
               </Row>
-              <Modal
-                centered
-                closable={false}
-                width="90%"
-                title={
-                  <div className={styles["foundation-modal-title"]}>
-                    САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ
-                  </div>
-                }
-                open={isModalOpen}
-                footer={null}
-              >
-                <Row justify="center">
-                  <Col>
-                    <Col
-                      span={24}
-                      className="my-5 rounded-[9px] bg-bank p-[50px]"
-                    >
-                      <div dangerouslySetInnerHTML={{ __html: html }} />
-                    </Col>
-                    <Form form={form}>
-                      <Row justify="center" gutter={[0, 10]}>
-                        <Col span={24}>
-                          <Form.Item
-                            name="agreement"
-                            valuePropName="checked"
-                            rules={[
-                              {
-                                validator: (_, value) =>
-                                  value
-                                    ? Promise.resolve()
-                                    : Promise.reject(
-                                        new Error(
-                                          "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
-                                        )
-                                      ),
-                              },
-                            ]}
-                          >
-                            <Checkbox>
-                              <div
-                                className={styles["foundation-checkbox-text"]}
-                              >
-                                Санхүүжилтын үйлчилгээний нөхцөл
-                              </div>
-                            </Checkbox>
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between">
-                            <Col flex="none">
-                              <Button
-                                className={styles["foundation-button-back"]}
-                                onClick={() => setIsModalOpen(false)}
-                              >
-                                <div
-                                  className={
-                                    styles["foundation-button-back-text"]
-                                  }
-                                >
-                                  Буцах
-                                </div>
-                              </Button>
-                            </Col>
-                            <Col flex="none" className="mt-[10px]">
-                              <Form.Item>
-                                <Button
-                                  type="primary"
-                                  className={`${styles["foundation-button-contiune"]} bg-primary`}
-                                  onClick={handleOk}
-                                  htmlType="submit"
-                                >
-                                  Үргэлжлүүлэх
-                                </Button>
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Col>
-                </Row>
-              </Modal>
+            </Modal>
 
-              <InputCode
-                open={isVerifyOpen}
-                onFinish={verifyCompleteModal}
-                setOpen={setIsVerifyOpen}
-              />
+            <InputCode
+              open={isVerifyOpen}
+              onFinish={verifyCompleteModal}
+              setOpen={setIsVerifyOpen}
+            />
 
-              <Modal
-                centered
-                width={378}
-                title={null}
-                open={isCompleteOpen}
-                closeIcon={false}
-                footer={
-                  <Button
-                    className={`mt-[40px] flex h-[40px] w-[50%] justify-start rounded-[20px]`}
-                    onClick={() => setIsCompleteOpen(false)}
-                  >
-                    <p className="w-full p-[4px] text-center">Хаах</p>
-                  </Button>
-                }
-              >
-                <div className="text-center text-lg font-bold text-black">
-                  Санхүүжилт өгөх хүсэлт дансаар шилжүүлэх
+            <Modal
+              centered
+              width={378}
+              title={null}
+              open={isCompleteOpen}
+              closeIcon={false}
+              footer={
+                <Button
+                  className={`mt-[40px] flex h-[40px] w-[50%] justify-start rounded-[20px]`}
+                  onClick={() => setIsCompleteOpen(false)}
+                >
+                  <p className="w-full p-[4px] text-center">Хаах</p>
+                </Button>
+              }
+            >
+              <div className="text-center text-lg font-bold text-black">
+                Санхүүжилт өгөх хүсэлт дансаар шилжүүлэх
+              </div>
+              <div>
+                <div className="mt-[20px] ">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Банкны нэр
+                  </label>
+                  <input
+                    value={foundationBankData?.product?.bank_name}
+                    disabled
+                    className="mt-[8px] h-[44px] w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                  />
                 </div>
-                <div>
-                  <div className="mt-[20px] ">
-                    <label className="text-sm font-normal text-black text-opacity-50">
-                      Банкны нэр
-                    </label>
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Данс эзэмшигчийн нэр
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
                     <input
-                      value={foundationBankData?.product?.bank_name}
+                      value={foundationBankData?.product?.account_name}
                       disabled
-                      className="mt-[8px] h-[44px] w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        message.info("Copy to clipboard");
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.account_name
+                        );
+                      }}
                     />
                   </div>
-                  <div className="mt-[20px]">
-                    <label className="text-sm font-normal text-black text-opacity-50">
-                      Данс эзэмшигчийн нэр
-                    </label>
-                    <div className="mt-[8px] flex h-[44px] justify-between">
-                      <input
-                        value={foundationBankData?.product?.account_name}
-                        disabled
-                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                      />
-                      <img
-                        src="/images/iconamoon_copy.svg"
-                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                        alt=""
-                        onClick={() => {
-                          message.info("Copy to clipboard");
-                          navigator.clipboard.writeText(
-                            foundationBankData?.product?.account_name
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
+                </div>
 
-                  <div className="mt-[20px]">
-                    <label className="text-sm font-normal text-black text-opacity-50">
-                      Дансны дугаар
-                    </label>
-                    <div className="mt-[8px] flex h-[44px] justify-between">
-                      <input
-                        value={foundationBankData?.product?.account_num}
-                        disabled
-                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                      />
-                      <img
-                        src="/images/iconamoon_copy.svg"
-                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                        alt=""
-                        onClick={() => {
-                          message.info("Copy to clipboard");
-                          navigator.clipboard.writeText(
-                            foundationBankData?.product?.account_num
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-[20px]">
-                    <label className="text-sm font-normal text-black text-opacity-50">
-                      Гүйлгээний дүн
-                    </label>
-                    <div className="mt-[8px] flex h-[44px] justify-between">
-                      <input
-                        value={
-                          foundationBankData?.product?.now_month_pay_amount
-                        }
-                        disabled
-                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                      />
-                      <img
-                        src="/images/iconamoon_copy.svg"
-                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                        alt=""
-                        onClick={() => {
-                          message.info("Copy to clipboard");
-                          navigator.clipboard.writeText(
-                            foundationBankData?.product?.now_month_pay_amount
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-[20px]">
-                    <label className="text-sm font-normal text-black text-opacity-50">
-                      Гүйлгээний утга
-                    </label>
-                    <div className="mt-[8px] flex h-[44px] justify-between">
-                      <input
-                        value={
-                          foundationBankData?.product?.transaction_description
-                        }
-                        disabled
-                        className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                      />
-                      <img
-                        src="/images/iconamoon_copy.svg"
-                        className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                        alt=""
-                        onClick={() => {
-                          navigator.clipboard.writeText(
-                            foundationBankData?.product?.transaction_description
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-[30px] text-xs font-normal leading-[18px] text-red-600">
-                    <p>
-                      Дараах тохиолдлуудад таны данс цэнэглэлт амжилтгүй болох
-                      бөгөөд ажлын 2 хоногийн дотор анх шилжүүлсэн данс руу
-                      буцаан шилжүүлэхийг АНХААРНА УУ!
-                    </p>
-                    <ol className="list-disc ps-[35px] pt-[15px]">
-                      <li>Гүйлгээний утга буруу</li>
-                      <li>KYC баталгаажуулалт хийгдээгүй</li>
-                      <li>Бүртгэлгүй банкны данснаас шилжүүлэг хийсэн</li>
-                      <li>
-                        Бүртгэлтэй, гэхдээ баталгаажуулаагүй данснаас шилжүүлэг
-                        хийсэн
-                      </li>
-                    </ol>
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Дансны дугаар
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
+                    <input
+                      value={foundationBankData?.product?.account_num}
+                      disabled
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        message.info("Copy to clipboard");
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.account_num
+                        );
+                      }}
+                    />
                   </div>
                 </div>
-              </Modal>
-            </Col>
+
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Гүйлгээний дүн
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
+                    <input
+                      value={foundationBankData?.product?.now_month_pay_amount}
+                      disabled
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        message.info("Copy to clipboard");
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.now_month_pay_amount
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Гүйлгээний утга
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
+                    <input
+                      value={
+                        foundationBankData?.product?.transaction_description
+                      }
+                      disabled
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.transaction_description
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-[30px] text-xs font-normal leading-[18px] text-red-600">
+                  <p>
+                    Дараах тохиолдлуудад таны данс цэнэглэлт амжилтгүй болох
+                    бөгөөд ажлын 2 хоногийн дотор анх шилжүүлсэн данс руу буцаан
+                    шилжүүлэхийг АНХААРНА УУ!
+                  </p>
+                  <ol className="list-disc ps-[35px] pt-[15px]">
+                    <li>Гүйлгээний утга буруу</li>
+                    <li>KYC баталгаажуулалт хийгдээгүй</li>
+                    <li>Бүртгэлгүй банкны данснаас шилжүүлэг хийсэн</li>
+                    <li>
+                      Бүртгэлтэй, гэхдээ баталгаажуулаагүй данснаас шилжүүлэг
+                      хийсэн
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </Modal>
           </Row>
         </Col>
       </Row>

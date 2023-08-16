@@ -226,6 +226,8 @@ export const loanRouter = createTRPCRouter({
         last_name: z.string(),
         transaction_password: z.string(),
         email: z.string(),
+        user_type: z.string(),
+        
       })
     )
     .mutation(async ({ input }) => {
@@ -243,6 +245,7 @@ export const loanRouter = createTRPCRouter({
         first_name,
         last_name,
         email,
+        user_type,
       } = input;
 
       const body = encrypt(
@@ -260,7 +263,7 @@ export const loanRouter = createTRPCRouter({
           first_name,
           last_name,
           email,
-          user_type: "user",
+          user_type,
         })
       );
       const res2 = await fetch(`${process.env.BACKEND_URL}/account/new/user`, {

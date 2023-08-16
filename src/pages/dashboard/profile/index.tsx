@@ -428,7 +428,7 @@ export const Profile = () => {
                   </Upload>
                 </Col>
                 <Col flex="none">
-                  <Row gutter={[0, 4]}>
+                  <Row gutter={[32, 4]}>
                     <Col span={24}>
                       <div className={styles["profile-bankaccount-title"]}>
                         {accountInfo?.account?.user_type == "org"

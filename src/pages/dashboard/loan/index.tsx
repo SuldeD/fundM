@@ -467,7 +467,7 @@ export const Loan = () => {
                   </Col>
                   <Col span={24}>
                     <Row
-                      className={`${styles["dloan-rate-div"]} w-[32%]`}
+                      className={`${styles["dloan-rate-div"]} w-full lg:w-[32%]`}
                       align="middle"
                       justify="center"
                     >
@@ -822,190 +822,170 @@ export const Loan = () => {
         <Col span={24}>
           <Row
             justify={"center"}
-            align="bottom"
+            align="top"
             style={{ height: "100%" }}
             className={styles[activeClass ? "" : "dloan-change-div"]}
           >
-            <Col span={22}>
-              <Row justify="space-between" align="middle">
-                <Col flex="none">
-                  <Button
-                    className={styles["dloan-button-back"]}
-                    onClick={() => router.back()}
+            <Col span={20}>
+              <Button
+                type="primary"
+                className={`${styles["dloan-button-contiune"]}  bg-primary`}
+                onClick={() => {
+                  // @ts-ignore
+                  termsRef.current?.input.checked
+                    ? !accountInfo.bank_account
+                      ? error({
+                          title: "Амжилтгүй",
+                          content: (
+                            <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
+                          ),
+                        }) &&
+                        // @ts-ignore
+                        router.push("/dashboard/profile/bank")
+                      : submit()
+                    : setIsModalOpen(true);
+                }}
+              >
+                Үргэлжлүүлэх
+              </Button>
+            </Col>
+
+            <Modal
+              centered
+              closable={false}
+              width="90%"
+              title={
+                <div className={styles["dloan-modal-title"]}>
+                  ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
+                </div>
+              }
+              open={isModalOpen}
+              footer={null}
+            >
+              <Row justify="center">
+                <Col>
+                  <Col
+                    span={24}
+                    className="my-5 rounded-[9px] bg-bank p-[50px]"
                   >
-                    <Row align="middle">
-                      <Col flex="none">{<LeftOutlined />}</Col>
-                      <Col flex={"auto"}>
-                        <div className={styles["dloan-button-back-text"]}>
-                          Буцах
-                        </div>
+                    <div dangerouslySetInnerHTML={{ __html: html }} />
+                  </Col>
+                  <Form form={form}>
+                    <Row justify="center" gutter={[0, 10]}>
+                      <Col span={24}>
+                        <Form.Item
+                          name="agreement"
+                          valuePropName="checked"
+                          rules={[
+                            {
+                              validator: (_, value) =>
+                                value
+                                  ? Promise.resolve()
+                                  : Promise.reject(
+                                      new Error(
+                                        "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
+                                      )
+                                    ),
+                            },
+                          ]}
+                        >
+                          <Checkbox>
+                            <div className={styles["dloan-checkbox-text"]}>
+                              Зээлийн үйлчилгээний нөхцөл
+                            </div>
+                          </Checkbox>
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between">
+                          <Col flex="none">
+                            <Button
+                              className={styles["dloan-button-back"]}
+                              onClick={() => setIsModalOpen(false)}
+                            >
+                              <div className={styles["dloan-button-back-text"]}>
+                                Буцах
+                              </div>
+                            </Button>
+                          </Col>
+                          <Col flex="none" className="mt-[10px]">
+                            <Form.Item>
+                              <Button
+                                type="primary"
+                                className={`${styles["dloan-button-contiune"]} bg-primary`}
+                                onClick={() => {
+                                  form.validateFields();
+                                  setChecked(!checked);
+                                  setIsModalOpen(false);
+                                }}
+                                htmlType="submit"
+                              >
+                                Үргэлжлүүлэх
+                              </Button>
+                            </Form.Item>
+                          </Col>
+                        </Row>
                       </Col>
                     </Row>
-                  </Button>
-                </Col>
-                <Col flex="none" className="mt-[10px]">
-                  <Button
-                    type="primary"
-                    className={`${styles["dloan-button-contiune"]} bg-primary`}
-                    onClick={() => {
-                      // @ts-ignore
-                      termsRef.current?.input.checked
-                        ? !accountInfo.bank_account
-                          ? error({
-                              title: "Амжилтгүй",
-                              content: (
-                                <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
-                              ),
-                            }) &&
-                            // @ts-ignore
-                            router.push("/dashboard/profile/bank")
-                          : submit()
-                        : setIsModalOpen(true);
-                    }}
-                  >
-                    Үргэлжлүүлэх
-                  </Button>
+                  </Form>
                 </Col>
               </Row>
-              <Modal
-                centered
-                closable={false}
-                width="90%"
-                title={
-                  <div className={styles["dloan-modal-title"]}>
-                    ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
+            </Modal>
+
+            <InputCode
+              open={isVerifyOpen}
+              onFinish={verifyCompleteModal}
+              setOpen={setIsVerifyOpen}
+            />
+
+            <Modal
+              centered
+              width={378}
+              title={null}
+              onCancel={() => {
+                setIsCompleteOpen(false);
+                setActiveClass(!activeClass);
+              }}
+              open={isCompleteOpen}
+              footer={null}
+            >
+              <Row
+                justify="center"
+                gutter={[0, 30]}
+                style={{ padding: "50px 0" }}
+              >
+                <Col span={24}>
+                  <Row justify="center">
+                    <Image
+                      width={56}
+                      src={"/images/check.svg"}
+                      preview={false}
+                      alt="Header Logo"
+                    />
+                  </Row>
+                </Col>
+                <Col span={16}>
+                  <div className={styles["dloan-modal-complete-text"]}>
+                    Таны{" "}
+                    <span className={styles["dloan-rate-profit"]}>
+                      {numberToCurrency(inputValue)}
+                    </span>{" "}
+                    төгрөг{" "}
+                    <span className={styles["dloan-modal-complete-number"]}>
+                      {dataTable &&
+                        typeof activeDuration == "number" &&
+                        // @ts-ignore
+                        dataTable[activeDuration].duration}
+                    </span>{" "}
+                    хоногийн хугацаатай{" "}
+                    <span className={styles["dloan-modal-complete-number"]}>
+                      {rate}
+                    </span>{" "}
+                    хувийн өгөөжтэй зээл авах хүсэлт амжилттай бүртгэгдлээ.
                   </div>
-                }
-                open={isModalOpen}
-                footer={null}
-              >
-                <Row justify="center">
-                  <Col>
-                    <Col
-                      span={24}
-                      className="my-5 rounded-[9px] bg-bank p-[50px]"
-                    >
-                      <div dangerouslySetInnerHTML={{ __html: html }} />
-                    </Col>
-                    <Form form={form}>
-                      <Row justify="center" gutter={[0, 10]}>
-                        <Col span={24}>
-                          <Form.Item
-                            name="agreement"
-                            valuePropName="checked"
-                            rules={[
-                              {
-                                validator: (_, value) =>
-                                  value
-                                    ? Promise.resolve()
-                                    : Promise.reject(
-                                        new Error(
-                                          "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
-                                        )
-                                      ),
-                              },
-                            ]}
-                          >
-                            <Checkbox>
-                              <div className={styles["dloan-checkbox-text"]}>
-                                Зээлийн үйлчилгээний нөхцөл
-                              </div>
-                            </Checkbox>
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between">
-                            <Col flex="none">
-                              <Button
-                                className={styles["dloan-button-back"]}
-                                onClick={() => setIsModalOpen(false)}
-                              >
-                                <div
-                                  className={styles["dloan-button-back-text"]}
-                                >
-                                  Буцах
-                                </div>
-                              </Button>
-                            </Col>
-                            <Col flex="none" className="mt-[10px]">
-                              <Form.Item>
-                                <Button
-                                  type="primary"
-                                  className={`${styles["dloan-button-contiune"]} bg-primary`}
-                                  onClick={() => {
-                                    form.validateFields();
-                                    setChecked(!checked);
-                                    setIsModalOpen(false);
-                                  }}
-                                  htmlType="submit"
-                                >
-                                  Үргэлжлүүлэх
-                                </Button>
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Col>
-                </Row>
-              </Modal>
-
-              <InputCode
-                open={isVerifyOpen}
-                onFinish={verifyCompleteModal}
-                setOpen={setIsVerifyOpen}
-              />
-
-              <Modal
-                centered
-                width={378}
-                title={null}
-                onCancel={() => {
-                  setIsCompleteOpen(false);
-                  setActiveClass(!activeClass);
-                }}
-                open={isCompleteOpen}
-                footer={null}
-              >
-                <Row
-                  justify="center"
-                  gutter={[0, 30]}
-                  style={{ padding: "50px 0" }}
-                >
-                  <Col span={24}>
-                    <Row justify="center">
-                      <Image
-                        width={56}
-                        src={"/images/check.svg"}
-                        preview={false}
-                        alt="Header Logo"
-                      />
-                    </Row>
-                  </Col>
-                  <Col span={16}>
-                    <div className={styles["dloan-modal-complete-text"]}>
-                      Таны{" "}
-                      <span className={styles["dloan-rate-profit"]}>
-                        {numberToCurrency(inputValue)}
-                      </span>{" "}
-                      төгрөг{" "}
-                      <span className={styles["dloan-modal-complete-number"]}>
-                        {dataTable &&
-                          typeof activeDuration == "number" &&
-                          // @ts-ignore
-                          dataTable[activeDuration].duration}
-                      </span>{" "}
-                      хоногийн хугацаатай{" "}
-                      <span className={styles["dloan-modal-complete-number"]}>
-                        {rate}
-                      </span>{" "}
-                      хувийн өгөөжтэй зээл авах хүсэлт амжилттай бүртгэгдлээ.
-                    </div>
-                  </Col>
-                </Row>
-              </Modal>
-            </Col>
+                </Col>
+              </Row>
+            </Modal>
           </Row>
           <Row
             justify={"center"}

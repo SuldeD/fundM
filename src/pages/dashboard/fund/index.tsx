@@ -291,7 +291,6 @@ export const FundHistory = () => {
             onCancel={() => setOpen(false)}
             footer={null}
             closeIcon={null}
-            width={"50%"}
             title={
               <div className="text-center font-beau text-[16px] font-medium">
                 {myFundTabKey == "1"
@@ -360,6 +359,33 @@ export const FundHistory = () => {
                                         (o.filled_amount / 100) *
                                           Number(o.rate_day) *
                                           Number(o.duration)
+                                      )}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                            )}
+                            {myFundTabKey == "2" && (
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Татвар
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-rate-profit"]}
+                                    >
+                                      {numberToCurrency(
+                                        Math.round(
+                                          Number(o.filled_amount / 100) *
+                                            Number(o.rate_day) *
+                                            Number(o.duration) *
+                                            0.1
+                                        )
                                       )}
                                     </div>
                                   </Col>
@@ -537,7 +563,7 @@ export const FundHistory = () => {
                         </Col>
                       )}
 
-                      <Row className="mt-[20px]">
+                      <Col className="ms-[30px] mt-[20px]">
                         {activeClass && (
                           <Button
                             className={`${stylesDL["dloan-button-back"]} bg-primary text-[#fff]`}
@@ -556,7 +582,7 @@ export const FundHistory = () => {
                             </Col>
                           </Button>
                         )}
-                      </Row>
+                      </Col>
                     </div>
                   )
               )}

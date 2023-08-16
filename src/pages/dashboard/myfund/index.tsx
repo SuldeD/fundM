@@ -212,6 +212,8 @@ export const MyFund = () => {
                   ? numberToCurrency(
                       sumMyLoan * (myLoanOrdersSum / myLoanOrders.length / 100)
                     )
+                    ? numberToCurrency(sumMyLoan)
+                    : 0
                   : numberToCurrency(0)}
               </div>
             </Col>
@@ -283,7 +285,9 @@ export const MyFund = () => {
                           sumMySaving *
                             (mySavingOrdersSum / mySavingOrders.length / 100)
                       )
-                    : numberToCurrency(0)}
+                      ? numberToCurrency(sumMySaving)
+                      : 0
+                    : numberToCurrency(sumMySaving)}
                 </div>
               </Col>
               <Col span={24}>
@@ -333,7 +337,6 @@ export const MyFund = () => {
               onCancel={() => setOpen(false)}
               footer={null}
               closeIcon={null}
-              width={"50%"}
               title={
                 <div className="text-center font-beau text-[16px] font-medium">
                   {myFundTabKey == "1"
@@ -416,6 +419,37 @@ export const MyFund = () => {
                                   </Row>
                                 </Col>
                               )}
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Татвар
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            Number(o.balance_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration) *
+                                              0.1
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
                               <Col span={24}>
                                 <Row justify="space-between" align="middle">
                                   <Col flex="none">
@@ -458,11 +492,12 @@ export const MyFund = () => {
                                             : stylesDL["dloan-rate-profit"]
                                         }
                                       >
-                                        {Math.round(
-                                          (o.loan_amount / 100) *
-                                            Number(o.fee_percent)
+                                        {numberToCurrency(
+                                          Math.round(
+                                            (o.loan_amount / 100) *
+                                              Number(o.fee_percent)
+                                          )
                                         )}
-                                        %
                                       </div>
                                     </Col>
                                   </Row>

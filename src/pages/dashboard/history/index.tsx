@@ -225,7 +225,7 @@ const History = () => {
                           }}
                         />
                       </Col>
-                      <Col flex="none">
+                      <Col flex="none" className="hidden lg:flex">
                         <div className={styles["history-search-button-text"]}>
                           Хайх
                         </div>

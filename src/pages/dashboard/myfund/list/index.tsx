@@ -155,6 +155,20 @@ export const List = () => {
       ),
     },
     {
+      title: "Огноо",
+      dataIndex: "create_date",
+      key: "create_date",
+      width: "10%",
+      align: "center",
+      render: (create_date: string) => (
+        <div
+          className={`text-[#000] ${stylesList["myfund-tabs-content-table-number"]}`}
+        >
+          {create_date.slice(10, 19)}
+        </div>
+      ),
+    },
+    {
       title: " ",
       dataIndex: "create_date",
       key: "create_date",
@@ -322,6 +336,33 @@ export const List = () => {
                                         (o.filled_amount / 100) *
                                           Number(o.rate_day) *
                                           Number(o.duration)
+                                      )
+                                    )}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </Col>
+                          )}
+                          {myFundTabKey == "2" && (
+                            <Col span={24}>
+                              <Row justify="space-between" align="middle">
+                                <Col flex="none">
+                                  <div
+                                    className={stylesDL["dloan-detail-text"]}
+                                  >
+                                    Татвар
+                                  </div>
+                                </Col>
+                                <Col flex="none">
+                                  <div
+                                    className={stylesDL["dloan-rate-profit"]}
+                                  >
+                                    {numberToCurrency(
+                                      Math.round(
+                                        Number(o.balance_amount / 100) *
+                                          Number(o.rate_day) *
+                                          Number(o.duration) *
+                                          0.1
                                       )
                                     )}
                                   </div>

@@ -24,6 +24,7 @@ interface RegisterType {
   last_name: string;
   first_name: string;
   email: string;
+  user_type: string;
 }
 
 export default function Signup() {
@@ -54,6 +55,7 @@ export default function Signup() {
     last_name: "",
     first_name: "",
     email: "",
+    user_type: "user",
   });
 
   const onFinishPhone = async (values: any) => {

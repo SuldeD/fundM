@@ -117,7 +117,7 @@ export const ProtectedLayout = ({ children }: any) => {
     toggleChecked();
     setIsModalOpen(false);
     setOpen(true);
-    termConfirm();
+    // termConfirm();
   };
 
   useEffect(() => {

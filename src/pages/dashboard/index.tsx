@@ -62,8 +62,7 @@ export const Dashboard = () => {
     },
     {
       title: "Хугацаа",
-      dataIndex: "request_date",
-
+      dataIndex: "duration",
       key: "day",
       width: "20%",
       align: "center",
@@ -75,14 +74,13 @@ export const Dashboard = () => {
     {
       title: "Огноо",
       dataIndex: "create_date",
-
       align: "right",
       key: "date",
       width: "20%",
       // @ts-ignore
       render: (date) => (
         <div className={styles["dashboard-list-item-text"]}>
-          {date.slice(0, 10)}
+          {date.slice(10, 19)}
         </div>
       ),
     },
