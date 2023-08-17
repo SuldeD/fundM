@@ -71,7 +71,7 @@ export default function Signup() {
       {
         onSuccess: (data) => {
           if (data.success) {
-            message.success(data.test_pin_code);
+            message.success(data?.test_pin_code);
             setRegisterData((prevData) => ({
               ...prevData,
               phone: values.phone_number,
@@ -228,8 +228,8 @@ export default function Signup() {
             {
               onSuccess: (data) => {
                 if (data.success) {
-                  router.push("/login");
                   message.success(data.description);
+                  router.push("/login");
                 } else {
                   error({
                     title: "Амжилтгүй",
@@ -278,8 +278,8 @@ export default function Signup() {
     mutationSignUp.mutate(registerData, {
       onSuccess: (data) => {
         if (data.success) {
-          router.push("/login");
           message.success(data.description);
+          router.push("/login");
         } else {
           error({
             title: "Амжилтгүй",

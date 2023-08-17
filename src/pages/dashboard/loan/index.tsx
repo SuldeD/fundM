@@ -303,8 +303,8 @@ export const Loan = () => {
       });
     }
   }
-
-  if (!data || accountInfo?.account?.menu_close == "0") {
+  // || accountInfo?.account?.menu_close == "0"
+  if (!data) {
     return <Loaderr />;
   } else {
     return (

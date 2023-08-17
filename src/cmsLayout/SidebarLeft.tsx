@@ -76,7 +76,11 @@ export const SidebarLeftComponent = () => {
             label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
             icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
           },
-
+          {
+            key: "/dashboard/loan",
+            label: <Link href="/dashboard/loan">Зээл авах хүсэлт</Link>,
+            icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
+          },
           {
             key: "/dashboard/foundation",
             label: (
