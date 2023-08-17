@@ -136,7 +136,7 @@ export default function Bank() {
 
   if (!data) {
     return <Loaderr />;
-  } else
+  } else if (!accountInfo?.bank_account?.bank_name) {
     return (
       <div className="h-full w-full bg-[#fff] px-[30px] py-[40px]">
         <HeaderDashboard
@@ -267,11 +267,6 @@ export default function Bank() {
                     )}
                   </Upload>
                 </ImgCrop>
-                <div>
-                  Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж
-                  оруулна уу” , “ААН бол захиралын гарын үсэг болон байгууллагын
-                  тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!
-                </div>
                 <Col span={24}>
                   <button
                     type="submit"
@@ -304,10 +299,7 @@ export default function Bank() {
         />
       </div>
     );
+  } else {
+    router.push("/dashboard/profile");
+  }
 }
-// if (!accountInfo?.bank_account?.bank_name) {
-
-// else {
-//   router.push("/dashboard/profile");
-// }
-// }

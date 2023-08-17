@@ -35,13 +35,13 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
   };
 
   function submit() {
-    console.log(Number(code.join("")) > 1000);
+    console.log(Number(code.join("")) > 0);
     if (Number(code.join("")) > 1000) {
       onFinish(Number(code.join("")));
     } else {
       error({
         title: "Амжилтгүй",
-        content: <div>FundMe кодоо оруулна уу!!!</div>,
+        content: <div>FundMe кодоо оруулна уу!</div>,
       });
     }
   }
