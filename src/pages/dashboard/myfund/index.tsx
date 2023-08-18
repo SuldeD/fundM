@@ -212,8 +212,6 @@ export const MyFund = () => {
                   ? numberToCurrency(
                       sumMyLoan * (myLoanOrdersSum / myLoanOrders.length / 100)
                     )
-                    ? numberToCurrency(sumMyLoan)
-                    : 0
                   : numberToCurrency(0)}
               </div>
             </Col>
@@ -285,8 +283,6 @@ export const MyFund = () => {
                           sumMySaving *
                             (mySavingOrdersSum / mySavingOrders.length / 100)
                       )
-                      ? numberToCurrency(sumMySaving)
-                      : 0
                     : numberToCurrency(sumMySaving)}
                 </div>
               </Col>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Button, Col, Drawer, Layout, Menu, Popover, Row } from "antd";
+import { Button, Col, Drawer, Image, Layout, Menu, Popover, Row } from "antd";
 import style from "../styles/Header.module.css";
 import { MenuOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
+import { HashLink } from "react-router-hash-link";
 
 const { Header } = Layout;
 
@@ -41,7 +42,16 @@ export const HeaderComponent = () => {
     },
     {
       key: "/#contact",
-      label: <Link href="/#contact">Холбоо барих</Link>,
+      label: (
+        <Link
+          href="/#contact"
+          onClick={() => {
+            window.scrollTo(0, 0);
+          }}
+        >
+          Холбоо барих
+        </Link>
+      ),
     },
   ];
 
@@ -84,22 +94,10 @@ export const HeaderComponent = () => {
     },
   ];
 
-  const accountPages = [
-    {
-      image: "/images/signup.png",
-      key: "signup",
-      label: <Link href="/">БҮРТГҮҮЛЭХ</Link>,
-      link: "/signup",
-    },
-    {
-      image: "/images/sign-in.png",
-      key: "signin",
-      label: <Link href="/login">НЭВТРЭХ</Link>,
-      link: "/login",
-    },
-  ];
-
   const [open, setOpen] = useState(false);
+  const [openPhone, setOpenPhone] = useState(false);
+  const [openWeb, setOpenWeb] = useState(false);
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -108,118 +106,223 @@ export const HeaderComponent = () => {
   };
 
   return (
-    <Header className="flex h-[100px] justify-between bg-[#fff] px-[20px] py-[22px]">
-      <Link href="/">
-        <img src={"/logo.svg"} alt="Header Logo" className="w-[180px]" />
-      </Link>
-      <Menu
-        selectedKeys={keys}
-        theme="light"
-        mode="horizontal"
-        items={items}
-        className="text-[rgb(0, 0 ,0, 0.10)] hidden w-[50%] scroll-smooth border-0  font-lato text-[16px] font-normal lg:flex"
-      />
-      <div className="hidden gap-[24px] lg:flex">
-        <p>
-          <Popover
-            placement="top"
-            title={<div className="border-b pb-3 text-center">БҮРТГҮҮЛЭХ</div>}
-            content={
-              <div className="">
-                <Button
-                  className="mt-3 w-full"
-                  onClick={() => router.push("/signup?s=org")}
-                >
-                  Байгууллага
-                </Button>
-                <Button
-                  className="mt-3 w-full"
-                  onClick={() => router.push("/signup")}
-                >
-                  Хэрэглэгч
-                </Button>
-              </div>
-            }
-            trigger="click"
-          >
-            <Button
-              type="text"
-              className="font-inter text-[14px] font-bold leading-[14px] text-primary"
-            >
-              БҮРТГҮҮЛЭХ
-            </Button>
-          </Popover>
-        </p>
+    <Header className="h-[90px] bg-[#fff] pe-0 ps-0 pt-[20px] lg:pt-[13px]">
+      <Row justify="center" align="middle">
+        <Col xs={0} lg={22}>
+          <Row align="middle" justify="space-between" wrap={false}>
+            <Col flex="auto">
+              <Row>
+                <Image
+                  src={"/logo.svg"}
+                  preview={false}
+                  width="50%"
+                  onClick={() => router.push("/")}
+                  style={{ cursor: "pointer" }}
+                />
+              </Row>
+            </Col>
+            <Col flex="auto">
+              <Menu
+                selectedKeys={keys}
+                theme="light"
+                mode="horizontal"
+                items={items}
+                style={{
+                  lineHeight: 3,
+                  borderBottom: "none",
+                }}
+                // className="text-[rgb(0, 0 ,0, 0.10)] hidden w-[50%] scroll-smooth border-0  font-lato text-[16px] font-normal lg:flex"
+              />
+            </Col>
+            <Col flex="none">
+              <Row gutter={[20, 0]}>
+                <Col>
+                  <Popover
+                    placement="top"
+                    open={openWeb}
+                    title={
+                      <div className="border-b pb-3 text-center">
+                        БҮРТГҮҮЛЭХ
+                      </div>
+                    }
+                    content={
+                      <div className="">
+                        <Button
+                          className="mt-3 w-full"
+                          onClick={() => {
+                            router.push("/signup?s=org");
 
-        <button
-          onClick={() => void signIn()}
-          className=" w-[127px] rounded-[9px] bg-primary text-center text-[#fff]"
-        >
-          НЭВТРЭХ
-        </button>
-      </div>
-      <div>
-        <MenuOutlined
-          onClick={showDrawer}
-          className="flex py-2 text-[30px] text-primary active:text-sky-900 lg:hidden"
-        />
-
-        <Drawer
-          title={<img src={"/logo.svg"} className="h w-[180px]" />}
-          placement="right"
-          onClose={onClose}
-          open={open}
-          width="min(400px,100%)"
-        >
-          {phoneItems.map((el, idx) => (
-            <Col
-              span={24}
-              onClick={() => router.push(el.link)}
-              key={`phone-${idx}`}
-            >
-              <Row
-                justify="center"
-                gutter={10}
-                align="middle"
-                className={style["drawer-title-div"]}
-                onClick={onClose}
-              >
-                <img width={30} src={el.image} className="w-[30px]" />
-                <Col flex="auto">
-                  <div className={style["drawer-title-text"]}>{el.label}</div>
+                            setOpenWeb(false);
+                          }}
+                        >
+                          Байгууллага
+                        </Button>
+                        <Button
+                          className="mt-3 w-full"
+                          onClick={() => {
+                            router.push("/signup");
+                            setOpenWeb(false);
+                          }}
+                        >
+                          Хэрэглэгч
+                        </Button>
+                      </div>
+                    }
+                    trigger="click"
+                  >
+                    <Button
+                      type="text"
+                      onClick={() => setOpenWeb(true)}
+                      className="font-inter text-[14px] font-bold leading-[14px] text-primary"
+                    >
+                      БҮРТГҮҮЛЭХ
+                    </Button>
+                  </Popover>
+                </Col>
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => void signIn()}
+                    style={{ borderRadius: 9, height: 44 }}
+                  >
+                    НЭВТРЭХ
+                  </Button>
                 </Col>
               </Row>
             </Col>
-          ))}
-          <Col
-            span={24}
-            className={`${style["drawer-account-pages-title"]} mb-[20px]`}
-          >
-            Хэрэглэгчийн хуудсууд
-          </Col>
-          {accountPages.map((el, idx) => (
-            <Col
-              span={24}
-              onClick={() => router.push(el.link)}
-              key={`accpg-${idx}`}
-            >
-              <Row
-                justify="center"
-                gutter={10}
-                align="middle"
-                className={style["drawer-title-div"]}
-                onClick={onClose}
-              >
-                <img src={el.image} className="w-[30px]" />
-
-                <Col flex="auto">
-                  <div className={style["drawer-title-text"]}>{el.label}</div>
-                </Col>
+          </Row>
+        </Col>
+        <Col xs={22} lg={0}>
+          <Row align="middle" wrap={false} justify="space-between">
+            <Col>
+              <Row>
+                <Image
+                  src={"/logo.svg"}
+                  preview={false}
+                  width="80%"
+                  onClick={() => router.push("/")}
+                  style={{ cursor: "pointer" }}
+                />
               </Row>
             </Col>
-          ))}
-        </Drawer>
-      </div>
+            <Col>
+              <MenuOutlined
+                onClick={showDrawer}
+                className="flex py-2 text-[30px] text-primary active:text-sky-900 lg:hidden"
+              />
+              <Drawer
+                title={<img src={"/logo.svg"} className="h w-[180px]" />}
+                placement="right"
+                onClose={onClose}
+                open={open}
+                width="min(500px,100%)"
+              >
+                {phoneItems.map((el, idx) => (
+                  <Col span={24} key={`phone-${idx}`}>
+                    <Row
+                      justify="center"
+                      gutter={20}
+                      align="middle"
+                      className={style["drawer-title-div"]}
+                      onClick={onClose}
+                    >
+                      <img width={30} src={el.image} className="w-[30px]" />
+                      <Col flex="auto">
+                        <div className={style["drawer-title-text"]}>
+                          {el.label}
+                        </div>
+                      </Col>
+                    </Row>
+                  </Col>
+                ))}
+                <Col
+                  span={24}
+                  className={`${style["drawer-account-pages-title"]} mb-[20px]`}
+                >
+                  Хэрэглэгчийн хуудсууд
+                </Col>
+                <Col
+                  span={24}
+                  onClick={() => {
+                    router.push("/login");
+                    onClose();
+                  }}
+                >
+                  <Row
+                    justify="center"
+                    gutter={20}
+                    align="middle"
+                    className={style["drawer-title-div"]}
+                  >
+                    <img src="/images/signup.png" className="w-[30px]" />
+
+                    <Col flex="auto">
+                      <div className={style["drawer-title-text"]}>НЭВТРЭХ</div>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col span={24}>
+                  <Row
+                    justify="center"
+                    gutter={20}
+                    align="middle"
+                    className={style["drawer-title-div"]}
+                  >
+                    <img src="/images/signup.png" className="w-[30px]" />
+
+                    <Col flex="auto">
+                      <div className={style["drawer-title-text"]}>
+                        <Popover
+                          open={openPhone}
+                          placement="bottom"
+                          title={
+                            <div className="border-b pb-3 text-center">
+                              БҮРТГҮҮЛЭХ
+                            </div>
+                          }
+                          content={
+                            <div className="">
+                              <Button
+                                className="mt-3 w-full"
+                                onClick={() => {
+                                  router.push("/signup?s=org");
+                                  onClose();
+                                  setOpenPhone(false);
+                                }}
+                              >
+                                Байгууллага
+                              </Button>
+                              <Button
+                                className="mt-3 w-full"
+                                onClick={() => {
+                                  router.push("/signup");
+                                  onClose();
+                                  setOpenPhone(false);
+                                }}
+                              >
+                                Хэрэглэгч
+                              </Button>
+                            </div>
+                          }
+                          trigger="click"
+                        >
+                          <Button
+                            type="text"
+                            onClick={() => setOpenPhone(true)}
+                            className="p-0 font-inter text-[14px] font-bold leading-[14px] text-primary"
+                          >
+                            БҮРТГҮҮЛЭХ
+                          </Button>
+                        </Popover>
+                      </div>
+                    </Col>
+                  </Row>
+                </Col>
+              </Drawer>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
     </Header>
   );
 };

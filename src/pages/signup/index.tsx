@@ -1034,7 +1034,7 @@ export default function Signup() {
                               },
                             ]}
                           >
-                            <Input className={styles["input-style"]} />
+                            <Input.Password className={styles["input-style"]} />
                           </Form.Item>
                         </Col>
                         <Col span={24}>

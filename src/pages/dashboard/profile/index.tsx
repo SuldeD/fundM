@@ -393,7 +393,17 @@ export const Profile = () => {
   const items = [
     {
       key: "1",
-      label: "Миний мэдээлэл",
+      label: (
+        <div
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            textAlign: "center",
+          }}
+        >
+          Миний мэдээлэл
+        </div>
+      ),
 
       children: (
         <Col span={24}>

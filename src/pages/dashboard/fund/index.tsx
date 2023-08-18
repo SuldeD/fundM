@@ -52,7 +52,7 @@ export const FundHistory = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "product_type_code",
+      dataIndex: "request_type",
       key: "type",
       align: "center",
       width: "23%",
@@ -204,7 +204,7 @@ export const FundHistory = () => {
                 pageSize: 10,
                 position: ["bottomCenter"],
               }}
-              dataSource={mySavingOrders}
+              dataSource={mySavingOrders.reverse()}
               rowKey={"create_date"}
             />
           </Col>
@@ -258,7 +258,7 @@ export const FundHistory = () => {
                 pageSize: 10,
                 position: ["bottomCenter"],
               }}
-              dataSource={myLoanOrders}
+              dataSource={myLoanOrders.reverse()}
               rowKey={"create_date"}
             />
           </Col>
@@ -290,6 +290,7 @@ export const FundHistory = () => {
             open={open}
             onCancel={() => setOpen(false)}
             footer={null}
+            width={"0%"}
             closeIcon={null}
             title={
               <div className="text-center font-beau text-[16px] font-medium">

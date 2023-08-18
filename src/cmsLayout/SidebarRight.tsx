@@ -4,12 +4,12 @@ import {
   Col,
   Avatar,
   Badge,
-  Popover,
   Modal,
   Empty,
   message,
   Button,
 } from "antd";
+
 import React, { useEffect, useState } from "react";
 import styles from "../styles/protectedLayout.module.css";
 import style from "../styles/protectedLayout.module.css";
@@ -55,6 +55,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
   };
 
   const { mutate } = api.loan.notficationSearch.useMutation();
+  const notificationChange = api.loan.notificationChange.useMutation();
 
   useEffect(() => {
     mutate(
@@ -96,6 +97,29 @@ export const SidebarRightComponent = ({ statusData }: any) => {
         ) => {
           if (data?.success) {
             setNotfication(data);
+            // notificationChange.mutate(
+            //   {
+            //     notification_count: (
+            //       Number(statusData?.stat?.notification_count) -
+            //       Number(page_size)
+            //     ).toString(),
+            //   },
+            //   {
+            //     onSuccess: (
+            //       /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+            //     ) => {
+            //       if (data?.success) {
+            //         console.log(data);
+            //       } else {
+            //         error({
+            //           title: "Амжилтгүй",
+            //           content: <div>{data?.description || null}</div>,
+            //         });
+            //         signOut();
+            //       }
+            //     },
+            //   }
+            // );
           } else {
             error({
               title: "Амжилтгүй",
@@ -148,10 +172,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
                 },
                 idx: any
               ) => (
-                <div
-                  className="flex w-[400px] border-b p-[10px]"
-                  key={`${idx}`}
-                >
+                <div className="flex  border-b p-[10px]" key={`${idx}`}>
                   <div className="flex h-[40px] w-[40px] justify-center rounded-[50%] bg-bank pt-2">
                     <img
                       className="h-[22px] w-[22px] text-white"
@@ -168,7 +189,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
                       {nt?.description}
                     </p>
                     <p className="font-lato text-[12px] font-medium text-sub">
-                      {nt?.create_date.slice(0, 10)}
+                      {nt?.create_date}
                     </p>
                   </div>
                 </div>

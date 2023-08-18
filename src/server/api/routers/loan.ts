@@ -227,7 +227,6 @@ export const loanRouter = createTRPCRouter({
         transaction_password: z.string(),
         email: z.string(),
         user_type: z.string(),
-        
       })
     )
     .mutation(async ({ input }) => {
@@ -1110,6 +1109,40 @@ export const loanRouter = createTRPCRouter({
 
     return accountStatus;
   }),
+  notificationChange: publicProcedure
+    .input(
+      z.object({
+        notification_count: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { notification_count } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          notification_count,
+          mass_push_count: "0",
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/notification/change`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
 });
 
 const getAccountToken = async (ctx: {

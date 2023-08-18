@@ -25,7 +25,7 @@ export default function Bank() {
   const { helpBankList, addBankMutate, addBankVerMutate, data, accountInfo } =
     useApiContext();
   const [isOpen, setOpen] = useState<boolean>(false);
-  const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
+  const [isOpenVerify, setOpenVerify] = useState<boolean>(true);
   const [isOpenVerifyPass, setOpenVerifyPass] = useState<boolean>(false);
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [number, setNumber] = useState<string>("");
@@ -247,6 +247,13 @@ export default function Bank() {
         >
           <Row justify="center">
             <Col span={20}>
+              <Row>
+                <p>
+                  Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж
+                  оруулна уу” , “ААН бол захиралын гарын үсэг болон байгууллагын
+                  тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу
+                </p>
+              </Row>
               <Row justify="center" gutter={[0, 20]}>
                 <ImgCrop rotationSlider>
                   <Upload
@@ -267,6 +274,14 @@ export default function Bank() {
                     )}
                   </Upload>
                 </ImgCrop>
+                <Row>
+                  <p className="text-center">
+                    Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж
+                    оруулна уу” , “ААН бол захиралын гарын үсэг болон
+                    байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг
+                    дарж оруулна уу!
+                  </p>
+                </Row>
                 <Col span={24}>
                   <button
                     type="submit"

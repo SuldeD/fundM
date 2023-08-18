@@ -12,7 +12,6 @@ import {
 import styles from "../../../styles/dloan.module.css";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { LeftOutlined } from "@ant-design/icons";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { Loaderr } from "app/components/Loader";
@@ -31,7 +30,9 @@ export const Loan = () => {
     loanReqConfirmMut,
     accountInfo,
     savingData,
+    sumSaving,
   } = useApiContext();
+
   useRequireAuth();
   const { error } = Modal;
   const { mutate: loanMutate } = api.loan.loanSearch.useMutation();
@@ -335,7 +336,7 @@ export const Loan = () => {
                       Зээлийн хэмжээ
                     </div>
                   </Col>
-                  <Col span={8}>
+                  <Col xs={24} lg={24} xl={8}>
                     <InputNumber
                       size="large"
                       min={minValue}
@@ -347,7 +348,7 @@ export const Loan = () => {
                       className={styles["dloan-slider-input"]}
                     />
                   </Col>
-                  <Col span={16}>
+                  <Col xs={24} lg={24} xl={16} style={{ padding: "0 20px" }}>
                     <Row justify="space-between">
                       <Col flex="none">
                         <div className={styles["dloan-slider-price"]}>
@@ -373,9 +374,9 @@ export const Loan = () => {
               <Col md={22}>
                 <Row
                   // @ts-ignore
-                  gutter={[22]}
+                  gutter={[22, { xs: 20, lg: 10 }]}
                 >
-                  <Col span={8}>
+                  <Col xs={24} lg={8}>
                     <Row gutter={[0, 10]}>
                       <Col span={24}>
                         <div className={styles["dloan-slider-input-title"]}>
@@ -389,13 +390,13 @@ export const Loan = () => {
                           justify="center"
                         >
                           <div className={styles["dloan-rate-text"]}>
-                            {loan && loan?.loan_rate_month.slice(0, 4)}
+                            {loan && loan?.loan_rate_month.slice(0, 4)} %
                           </div>
                         </Row>
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={16}>
+                  <Col xs={24} lg={16}>
                     <Row gutter={[0, 10]}>
                       <Col span={24}>
                         <div className={styles["dloan-slider-input-title"]}>
@@ -453,28 +454,28 @@ export const Loan = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col md={22}>
+              <Col xs={24} lg={22}>
                 <Row gutter={[0, 10]}>
-                  <Col span={24}>
+                  <Col xs={24} span={24}>
                     <div
-                      className={`${styles["dloan-slider-input-title"]} wrap flex`}
+                      className={`${styles["dloan-slider-input-title"]} flex w-full`}
                     >
-                      <p className="me-1 text-primary">
-                        {dataTable && dataTable[activeDuration].duration}
-                      </p>{" "}
-                      хоногоор авах боломжит зээлийн хэмжээ
+                      <div className="text-primary">
+                        Авах боломжит нийт зээлийн хэмжээ
+                      </div>
                     </div>
                   </Col>
-                  <Col span={24}>
+                  <Col xs={24} lg={24}>
                     <Row
-                      className={`${styles["dloan-rate-div"]} w-full lg:w-[32%]`}
+                      className={`${styles["dloan-rate-div"]}`}
                       align="middle"
                       justify="center"
+                      style={{ width: "100%" }}
                     >
                       <div
                         className={`${styles["dloan-rate-text"]} text-primary`}
                       >
-                        {numberToCurrency(activeDurationSum)}
+                        {numberToCurrency(sumSaving)}
                       </div>
                     </Row>
                   </Col>
@@ -897,8 +898,8 @@ export const Loan = () => {
                         </Form.Item>
                       </Col>
                       <Col span={24}>
-                        <Row justify="space-between">
-                          <Col flex="none">
+                        <Row justify="space-between" gutter={10} wrap={false}>
+                          <Col xs={12}>
                             <Button
                               className={styles["dloan-button-back"]}
                               onClick={() => setIsModalOpen(false)}
@@ -908,21 +909,23 @@ export const Loan = () => {
                               </div>
                             </Button>
                           </Col>
-                          <Col flex="none" className="mt-[10px]">
-                            <Form.Item>
-                              <Button
-                                type="primary"
-                                className={`${styles["dloan-button-contiune"]} bg-primary`}
-                                onClick={() => {
-                                  form.validateFields();
-                                  setChecked(!checked);
-                                  setIsModalOpen(false);
-                                }}
-                                htmlType="submit"
-                              >
-                                Үргэлжлүүлэх
-                              </Button>
-                            </Form.Item>
+                          <Col xs={12} style={{ alignItems: "end" }}>
+                            <Row justify="end">
+                              <Form.Item>
+                                <Button
+                                  type="primary"
+                                  className={styles["dloan-button-contiune"]}
+                                  onClick={() => {
+                                    form.validateFields();
+                                    setChecked(!checked);
+                                    setIsModalOpen(false);
+                                  }}
+                                  htmlType="submit"
+                                >
+                                  Үргэлжлүүлэх
+                                </Button>
+                              </Form.Item>
+                            </Row>
                           </Col>
                         </Row>
                       </Col>

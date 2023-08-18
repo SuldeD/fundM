@@ -20,6 +20,24 @@ export const Dashboard = () => {
 
   const columns = [
     {
+      title: "№",
+      dataIndex: "id",
+      key: "request_id",
+      align: "center",
+      width: "6%",
+      render: (id: string, data: any) => (
+        <div className={styles["dashboard-list-item-text"]}>
+          {data?.is_my_request == "1" ? (
+            <div className={styles["loanReq-start"]}>
+              <Image width={23} src="/images/star.svg" preview={false} />
+            </div>
+          ) : (
+            id
+          )}
+        </div>
+      ),
+    },
+    {
       title: "Зээлийн хэмжээ",
       dataIndex: "filled_amount",
       key: "filled_amount",

@@ -207,7 +207,7 @@ export const Foundation = () => {
                       Санхүүжилт өгөх хэмжээ
                     </div>
                   </Col>
-                  <Col span={8}>
+                  <Col xs={24} lg={24} xl={8}>
                     <InputNumber
                       size="large"
                       min={minValue}
@@ -219,7 +219,7 @@ export const Foundation = () => {
                       className={styles["foundation-slider-input"]}
                     />
                   </Col>
-                  <Col span={16}>
+                  <Col xs={24} lg={24} xl={16} style={{ padding: "0 20px" }}>
                     <Row justify="space-between">
                       <Col flex="none">
                         <div className={styles["foundation-slider-price"]}>
@@ -245,9 +245,9 @@ export const Foundation = () => {
               <Col md={22}>
                 <Row
                   // @ts-ignore
-                  gutter={[22]}
+                  gutter={[22, { xs: 20, lg: 10 }]}
                 >
-                  <Col span={8}>
+                  <Col xs={24} lg={8}>
                     <Row gutter={[0, 10]}>
                       <Col span={24}>
                         <div
@@ -269,7 +269,7 @@ export const Foundation = () => {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={16}>
+                  <Col xs={24} lg={16}>
                     <Row gutter={[0, 10]}>
                       <Col span={24}>
                         <div
@@ -325,7 +325,7 @@ export const Foundation = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col md={22}>
+              <Col xs={24} lg={22}>
                 <Row className={styles["foundation-detail"]} gutter={[0, 22]}>
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
@@ -571,17 +571,17 @@ export const Foundation = () => {
             </Row>
           </Row>
         </Col>
-        <Col span={22}>
+        <Col span={24}>
           <Row
             justify={"center"}
             align="top"
-            style={{ height: "100%" }}
+            style={{ minHeight: "100%", marginTop: "20px" }}
             className={styles[activeClass ? "" : "foundation-change-div"]}
           >
             <Col span={22}>
               <Button
                 type="primary"
-                className={`${styles["foundation-button-contiune"]} bg-primary`}
+                className={styles["foundation-button-contiune"]}
                 onClick={() => {
                   // @ts-ignore
                   termsRef.current?.input.checked

@@ -10,6 +10,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.ant-btn-primary {
+  background-color: #0300b4;
+}
+
 .ant-btn-text:not(:disabled):hover {
   color: #0300b4;
   background-color: #fff;
@@ -122,6 +126,10 @@
   font-size: 14px;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.5);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  text-align: center;
 }
 
 .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
@@ -131,6 +139,17 @@
   font-size: 14px;
   line-height: 18px;
   color: #0300b4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+.ant-tabs .ant-tabs-tab {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
 }
 
 .ant-tabs-top > .ant-tabs-nav .ant-tabs-ink-bar {
@@ -187,5 +206,3 @@
 .ant-checkbox-disabled .ant-checkbox-inner:after {
   border-color: white;
 } */
-
-

@@ -219,7 +219,7 @@ export const List = () => {
                     pageSize: 8,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={myLoanOrders.reverse()}
+                  dataSource={myLoanOrders}
                   rowKey={"create_date"}
                 />
               </Col>
@@ -242,7 +242,7 @@ export const List = () => {
                     pageSize: 8,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={mySavingOrders.reverse()}
+                  dataSource={mySavingOrders}
                   rowKey={"create_date"}
                 />
               </Col>
