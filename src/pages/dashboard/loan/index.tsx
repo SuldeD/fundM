@@ -11,7 +11,7 @@ import {
 } from "antd";
 import styles from "../../../styles/dloan.module.css";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { Loaderr } from "app/components/Loader";
@@ -21,17 +21,12 @@ import { useRequireAuth } from "app/utils/auth";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
 import sanitizeHtml from "sanitize-html";
+import { useSession } from "next-auth/react";
 
 export const Loan = () => {
-  const {
-    loan,
-    data,
-    loanReqMutate,
-    loanReqConfirmMut,
-    accountInfo,
-    savingData,
-    sumSaving,
-  } = useApiContext();
+  const { data, loanReqMutate, loanReqConfirmMut } = useApiContext();
+  const { data: session } = useSession();
+  const accountInfo = session?.user;
 
   useRequireAuth();
   const { error } = Modal;
@@ -39,9 +34,9 @@ export const Loan = () => {
   const { mutate: walletToBank } = api.loan.walletToBank.useMutation();
   const { mutate: walletToBankConfirm } =
     api.loan.walletToBankConfirm.useMutation();
-  const { mutate: getContent } = api.loan.getContent.useMutation();
+  const { mutate: getContent } = api.term.getContent.useMutation();
   const { data: statusData, refetch: requestStatus } =
-    api.loan.accountStatus.useQuery(undefined, {
+    api.account.accountStatus.useQuery(undefined, {
       enabled: false,
     });
 
@@ -57,50 +52,50 @@ export const Loan = () => {
     }
   });
 
-  const minValue =
-    status == 1
-      ? Number(statusData?.stat?.wallet_min_amount)
-      : Number(loan?.loan_min_amount);
-
-  const maxValue =
-    status == 1
-      ? Number(statusData?.stat?.wallet_amount)
-      : Number(loan?.loan_max_amount);
-
-  const rate = loan?.loan_rate_day.slice(0, 4);
-
   const [checked, setChecked] = useState<boolean>(false);
   const [loadings, setLoadings] = useState<boolean>(false);
   const [requestId, setRequestId] = useState();
   const [activeClass, setActiveClass] = useState(true);
-  const [inputValue, setInputValue] = useState(minValue);
+  const [inputValue, setInputValue] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
   const [transaction_id, setTransaction_id] = useState<any>();
   const [form_token, setForm_token] = useState<any>();
   const [pin_code, setPin_code] = useState<any>();
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
-  const [dataTable, setTable] = useState<any[]>(loan?.duration);
   const [activeDuration, setActiveDuration] = useState<number>(0);
-  const [activeDurationSum, setActiveDurationSum] = useState<number>(0);
+
   const [html, setHtml] = useState<any>();
 
   const [form] = Form.useForm();
   const termsRef = useRef();
   const router = useRouter();
 
-  useEffect(() => {
-    setActiveDurationSum(0);
-    savingData?.forEach((sd: any) => {
-      dataTable &&
-        sd.duration == dataTable[activeDuration].duration &&
-        setActiveDurationSum((prev) => prev + Number(sd.balance_amount));
-    });
-  }, [activeDuration]);
+  const { data: savingData } = api.loan.loanList.useQuery();
 
-  useEffect(() => {
-    setTable(loan?.duration);
+  const loan = useMemo(() => {
+    return savingData?.product_list?.find(
+      (it: any) => it.product_code !== "saving"
+    );
+  }, [savingData]);
+
+  const minValue = useMemo(() => {
+    return status == 1
+      ? Number(statusData?.stat?.wallet_min_amount)
+      : Number(loan?.loan_min_amount);
+  }, [loan]);
+
+  const maxValue = useMemo(() => {
+    return status == 1
+      ? Number(statusData?.stat?.wallet_amount)
+      : Number(loan?.loan_max_amount);
   }, []);
+
+  const rate = useMemo(() => {
+    return loan?.loan_rate_day.slice(0, 4);
+  }, [loan]);
+
+  const dataTable = loan?.duration;
 
   useEffect(() => {
     loanMutate(
@@ -165,7 +160,7 @@ export const Loan = () => {
             // @ts-ignore
             loan_duration_day:
               dataTable &&
-              Number(dataTable[activeDuration].duration).toString(),
+              Number(dataTable[activeDuration]?.duration).toString(),
             loan_duration_month: "day",
             pay_day: "0",
             account_num: accountInfo?.bank_account?.account_num,
@@ -203,12 +198,12 @@ export const Loan = () => {
             product_id: (loan?.product_id).toString(),
             loan_amount: inputValue.toString(),
             repayment_amount: (
-              Number(dataTable[activeDuration].duration) *
+              Number(dataTable[activeDuration]?.duration) *
                 rate *
                 (inputValue / 100) +
               inputValue +
-              Number(dataTable[activeDuration].duration) *
-                Number(dataTable[activeDuration].fee_percent) *
+              Number(dataTable[activeDuration]?.duration) *
+                Number(dataTable[activeDuration]?.fee_percent) *
                 (inputValue / 100)
             ).toString(),
             loan_month: dataTable[activeDuration].duration,
@@ -468,7 +463,7 @@ export const Loan = () => {
                       </div>
                     </div>
                   </Col>
-                  <Col xs={24} lg={24}>
+                  {/* <Col xs={24} lg={24}>
                     <Row
                       className={`${styles["dloan-rate-div"]}`}
                       align="middle"
@@ -481,7 +476,7 @@ export const Loan = () => {
                         {numberToCurrency(sumSaving)}
                       </div>
                     </Row>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Col>
               <Col md={22}>
@@ -515,7 +510,7 @@ export const Loan = () => {
                               Math.round(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration)
+                                  Number(dataTable[activeDuration]?.duration)
                               )
                             )}
                         </div>
@@ -536,7 +531,7 @@ export const Loan = () => {
                             numberToCurrency(
                               Math.ceil(
                                 (inputValue / 100) *
-                                  Number(dataTable[activeDuration].fee_percent)
+                                  Number(dataTable[activeDuration]?.fee_percent)
                               )
                             )}
                         </div>
@@ -558,11 +553,11 @@ export const Loan = () => {
                               Math.ceil(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration) +
+                                  Number(dataTable[activeDuration]?.duration) +
                                   inputValue +
                                   (inputValue / 100) *
                                     Number(
-                                      dataTable[activeDuration].fee_percent
+                                      dataTable[activeDuration]?.fee_percent
                                     )
                               )
                             )}
@@ -595,7 +590,7 @@ export const Loan = () => {
                         <div className={styles["dloan-detail-maxValue"]}>
                           {dataTable &&
                             typeof activeDuration == "number" &&
-                            dataTable[activeDuration].duration}{" "}
+                            dataTable[activeDuration]?.duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -613,7 +608,7 @@ export const Loan = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             moment()
-                              .add(dataTable[activeDuration].duration, "days")
+                              .add(dataTable[activeDuration]?.duration, "days")
                               .calendar()}
                         </div>
                       </Col>
@@ -678,7 +673,7 @@ export const Loan = () => {
                               Math.round(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration)
+                                  Number(dataTable[activeDuration]?.duration)
                               )
                             )}
                         </div>
@@ -699,7 +694,7 @@ export const Loan = () => {
                             numberToCurrency(
                               Math.round(
                                 (inputValue / 100) *
-                                  Number(dataTable[activeDuration].fee_percent)
+                                  Number(dataTable[activeDuration]?.fee_percent)
                               )
                             )}
                         </div>
@@ -721,11 +716,11 @@ export const Loan = () => {
                               Math.ceil(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration) +
+                                  Number(dataTable[activeDuration]?.duration) +
                                   inputValue +
                                   (inputValue / 100) *
                                     Number(
-                                      dataTable[activeDuration].fee_percent
+                                      dataTable[activeDuration]?.fee_percent
                                     )
                               )
                             )}
@@ -758,7 +753,7 @@ export const Loan = () => {
                         <div className={styles["dloan-detail-maxValue"]}>
                           {dataTable &&
                             typeof activeDuration == "number" &&
-                            dataTable[activeDuration].duration}{" "}
+                            dataTable[activeDuration]?.duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -776,7 +771,7 @@ export const Loan = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             moment()
-                              .add(dataTable[activeDuration].duration, "days")
+                              .add(dataTable[activeDuration]?.duration, "days")
                               .calendar()}
                         </div>
                       </Col>
@@ -838,7 +833,7 @@ export const Loan = () => {
                 onClick={() => {
                   // @ts-ignore
                   termsRef.current?.input.checked
-                    ? !accountInfo.bank_account
+                    ? !accountInfo?.bank_account
                       ? error({
                           title: "Амжилтгүй",
                           content: (
@@ -982,7 +977,7 @@ export const Loan = () => {
                       {dataTable &&
                         typeof activeDuration == "number" &&
                         // @ts-ignore
-                        dataTable[activeDuration].duration}
+                        dataTable[activeDuration]?.duration}
                     </span>{" "}
                     хоногийн хугацаатай{" "}
                     <span className={styles["dloan-modal-complete-number"]}>

@@ -11,7 +11,7 @@ import {
 } from "antd";
 import styles from "../../../styles/foundation.module.css";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { LeftOutlined } from "@ant-design/icons";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
@@ -22,23 +22,34 @@ import moment from "moment";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
 import sanitizeHtml from "sanitize-html";
+import { useSession } from "next-auth/react";
 
 export const Foundation = () => {
   const [checked, setChecked] = useState(false);
   const [form] = Form.useForm();
+  const { data: session } = useSession();
   const termsRef = useRef();
   const router = useRouter();
 
-  const { data, saving, loanReqMutate, loanReqConfirmMut, accountInfo } =
-    useApiContext();
+  const { data, loanReqMutate, loanReqConfirmMut } = useApiContext();
   useRequireAuth();
+
+  const { data: loanData } = api.loan.loanList.useQuery();
+
+  const saving = useMemo(() => {
+    return loanData?.product_list?.find(
+      (it: any) => it.product_code === "saving"
+    );
+  }, [loanData]);
+  console.log("test 111", loanData);
+
   const { error } = Modal;
 
   const minValue = Number(saving && saving?.loan_min_amount);
   const maxValue = Number(saving && saving?.loan_max_amount);
   const rate = saving?.loan_rate_month.slice(0, 4);
 
-  const { mutate: getContent } = api.loan.getContent.useMutation();
+  const { mutate: getContent } = api.term.getContent.useMutation();
   const { mutate: repayment } = api.loan.repayment.useMutation();
 
   const [activeClass, setActiveClass] = useState(true);
@@ -585,7 +596,7 @@ export const Foundation = () => {
                 onClick={() => {
                   // @ts-ignore
                   termsRef.current?.input.checked
-                    ? !accountInfo.bank_account
+                    ? !session?.user?.bank_account
                       ? error({
                           title: "Амжилтгүй",
                           content: (

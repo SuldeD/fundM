@@ -116,7 +116,10 @@ export const FundHistory = () => {
 
   const { mutate } = api.loan.reguestSearch.useMutation();
 
+  console.log("this is rendering");
+
   useEffect(() => {
+    console.log("REQUEST MY");
     mutate(
       {
         order: "date",
@@ -129,27 +132,27 @@ export const FundHistory = () => {
         onSuccess: (
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
         ) => {
-          if (data?.success) {
-            data?.requests?.forEach((el: any) => {
-              setOrders((prev) => [...prev, el]);
-              if (el.filled_percent.slice(0, 3) == "100") {
-                if (el.request_type == "wallet") {
-                  setMyDoneLoanOrders((prev) => [...prev, el]);
-                  setSumMyLoan((prev) => prev + Number(el.loan_amount));
-                } else if (el.request_type == "saving") {
-                  setMyDoneSavingOrders((prev) => [...prev, el]);
-                  setSumMySaving((prev) => prev + Number(el.loan_amount));
-                }
-              } else {
-              }
-            });
-          } else {
-            signOut();
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
+          // if (data?.success) {
+          //   data?.requests?.forEach((el: any) => {
+          //     setOrders((prev) => [...prev, el]);
+          //     if (el.filled_percent.slice(0, 3) == "100") {
+          //       if (el.request_type == "wallet") {
+          //         setMyDoneLoanOrders((prev) => [...prev, el]);
+          //         setSumMyLoan((prev) => prev + Number(el.loan_amount));
+          //       } else if (el.request_type == "saving") {
+          //         setMyDoneSavingOrders((prev) => [...prev, el]);
+          //         setSumMySaving((prev) => prev + Number(el.loan_amount));
+          //       }
+          //     } else {
+          //     }
+          //   });
+          // } else {
+          //   signOut();
+          //   error({
+          //     title: "Амжилтгүй",
+          //     content: <div>{data?.description || null}</div>,
+          //   });
+          // }
         },
       }
     );

@@ -14,6 +14,7 @@ import InputCode from "app/components/input";
 import { Loaderr } from "app/components/Loader";
 import { UploadChangeParam } from "antd/lib/upload/interface";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { api } from "app/utils/api";
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
   const reader = new FileReader();
@@ -22,8 +23,7 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
 };
 
 export default function Bank() {
-  const { helpBankList, addBankMutate, addBankVerMutate, data, accountInfo } =
-    useApiContext();
+  const { addBankMutate, addBankVerMutate, data } = useApiContext();
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
   const [isOpenVerifyPass, setOpenVerifyPass] = useState<boolean>(false);
@@ -39,6 +39,11 @@ export default function Bank() {
   const [check, setCheck] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>("");
+
+  const { data: accountInfo } = api.account.accountInfo.useQuery();
+
+  const { data: helpBankList, refetch: requestHelpBankList } =
+    api.loan.helpBankList.useQuery();
 
   function submit(code: any) {
     setPassword(code.toString());

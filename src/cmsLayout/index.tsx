@@ -42,34 +42,32 @@ export const ProtectedLayout = ({ children }: any) => {
   const [notfication, setNotfication] = useState<any>();
   const [html, setHtml] = useState<any>();
   const { error } = Modal;
-  const { mutate } = api.loan.notficationSearch.useMutation();
+  const { mutate } = api.other.notficationSearch.useMutation();
 
   const [form] = Form.useForm();
   const { status } = useSession();
 
   const { data: statusData, refetch: requestStatus } =
-    api.loan.accountStatus.useQuery(undefined, {
+    api.account.accountStatus.useQuery(undefined, {
       enabled: false,
     });
 
   const { data: accountInfo, refetch: requestInfo } =
-    api.loan.accountInfo.useQuery(undefined, {
+    api.account.accountInfo.useQuery(undefined, {
       enabled: false,
     });
 
-  const { data: dan, refetch: requestDan } = api.loan.accountStatusDan.useQuery(
-    undefined,
-    {
+  const { data: dan, refetch: requestDan } =
+    api.account.accountStatusDan.useQuery(undefined, {
       enabled: false,
-    }
-  );
+    });
 
   const { data: termConfirm, refetch: requestTermOfServiceConfirm } =
-    api.loan.termOfServiceConfirm.useQuery(undefined, {
+    api.term.termOfServiceConfirm.useQuery(undefined, {
       enabled: false,
     });
 
-  const { mutate: getContent } = api.loan.getContent.useMutation();
+  const { mutate: getContent } = api.term.getContent.useMutation();
 
   useEffect(() => {
     requestStatus();

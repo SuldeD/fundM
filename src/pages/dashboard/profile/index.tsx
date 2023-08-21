@@ -42,13 +42,13 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
 };
 
 export const Profile = () => {
-  const { accountInfo, data, addEmail, changePhone, changePhoneConfirm } =
-    useApiContext();
-  const { mutate } = api.loan.changePass.useMutation();
-  const { mutate: fundMutate } = api.loan.changePassFund.useMutation();
-  const { mutate: forgotTransPass } = api.loan.forgotTransPass.useMutation();
+  const { data, addEmail, changePhone, changePhoneConfirm } = useApiContext();
+  const { mutate } = api.profile.changePass.useMutation();
+  const { mutate: fundMutate } = api.profile.changePassFund.useMutation();
+  const { mutate: forgotTransPass } = api.profile.forgotTransPass.useMutation();
   const { mutate: forgotTransPassConfirm } =
-    api.loan.forgotTransPassConfirm.useMutation();
+    api.profile.forgotTransPassConfirm.useMutation();
+  const { data: accountInfo } = api.account.accountInfo.useQuery();
 
   const router = useRouter();
   const { error, warning } = Modal;

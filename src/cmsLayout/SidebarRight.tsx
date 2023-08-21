@@ -21,15 +21,15 @@ import { LoanTakeReqComponent } from "../components/loanTakeRequest";
 import { FoundationReq } from "../components/foundationReq";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useAppContext } from "app/context/appContext";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { api } from "app/utils/api";
 
 const { Sider } = Layout;
 
 export const SidebarRightComponent = ({ statusData }: any) => {
-  const { accountInfo: data } = useApiContext();
   const { myFundTabKey } = useAppContext();
   const router = useRouter();
+  const { data: session } = useSession();
   const { error } = Modal;
 
   const [notfication, setNotfication] = useState<any>();
@@ -54,10 +54,10 @@ export const SidebarRightComponent = ({ statusData }: any) => {
     return <Comp />;
   };
 
-  const { mutate } = api.loan.notficationSearch.useMutation();
-  const notificationChange = api.loan.notificationChange.useMutation();
+  const { mutate } = api.other.notficationSearch.useMutation();
 
   useEffect(() => {
+    console.log("this is spaming");
     mutate(
       {
         order: "date",
@@ -238,9 +238,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["sidebar-right-profile-name"]}>
-                          {data?.account?.first_name
-                            ? data?.account?.first_name
-                            : "."}
+                          {session?.user?.name}
                         </div>
                       </Col>
                     </Row>
