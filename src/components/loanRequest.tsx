@@ -18,40 +18,42 @@ export const LoanReqComponent = () => {
   const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
 
   const data = activeSavingOrders;
-  const { mutate } = api.loan.reguestSearch.useMutation();
+  // const { mutate } = api.loan.reguestSearch.useMutation();
 
-  useEffect(() => {
-    mutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "30",
-        filter_type: "active",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            data?.requests?.forEach((el: any) => {
-              if (el.filled_percent.slice(0, 3) != "100") {
-                if (el.request_type == "saving") {
-                  setActiveSavingOrders((prev) => [...prev, el]);
-                }
-              }
-            });
-          } else {
-            signOut();
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
+  // console.log("TESTING LoanReqComponent");
+
+  // useEffect(() => {
+  //   mutate(
+  //     {
+  //       order: "date",
+  //       order_up: "1",
+  //       page: "1",
+  //       page_size: "30",
+  //       filter_type: "active",
+  //     },
+  //     {
+  //       onSuccess: (
+  //         /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+  //       ) => {
+  //         if (data?.success) {
+  //           data?.requests?.forEach((el: any) => {
+  //             if (el.filled_percent.slice(0, 3) != "100") {
+  //               if (el.request_type == "saving") {
+  //                 setActiveSavingOrders((prev) => [...prev, el]);
+  //               }
+  //             }
+  //           });
+  //         } else {
+  //           signOut();
+  //           error({
+  //             title: "Амжилтгүй",
+  //             content: <div>{data?.description || null}</div>,
+  //           });
+  //         }
+  //       },
+  //     }
+  //   );
+  // }, []);
 
   return (
     <Row gutter={[0, 25]} justify="center">

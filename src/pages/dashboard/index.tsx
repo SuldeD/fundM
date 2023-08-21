@@ -14,7 +14,13 @@ export const Dashboard = () => {
   const router = useRouter();
   useRequireAuth();
   const { loan, data, sumLoan, sumSaving } = useApiContext();
-  const { mutate } = api.loan.reguestSearch.useMutation();
+  const { data: loans } = api.loan.reguestSearch.useQuery({
+    order: "date",
+    order_up: "1",
+    page: "1",
+    page_size: "30",
+    filter_type: "done",
+  });
   const { error } = Modal;
   const [doneOrders, setDoneOrders] = useState<any[]>([]);
 
@@ -105,33 +111,34 @@ export const Dashboard = () => {
   ];
 
   useEffect(() => {
-    mutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "30",
-        filter_type: "done",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            console.log(data);
-            data?.requests?.forEach((el: any) => {
-              setDoneOrders((prev) => [...prev, el]);
-            });
-          } else {
-            signOut();
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
+    console.log("TEST!");
+    // mutate(
+    //   {
+    //     order: "date",
+    //     order_up: "1",
+    //     page: "1",
+    //     page_size: "30",
+    //     filter_type: "done",
+    //   },
+    //   {
+    //     onSuccess: (
+    //       /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+    //     ) => {
+    //       if (data?.success) {
+    //         console.log(data);
+    //         data?.requests?.forEach((el: any) => {
+    //           setDoneOrders((prev) => [...prev, el]);
+    //         });
+    //       } else {
+    //         signOut();
+    //         error({
+    //           title: "Амжилтгүй",
+    //           content: <div>{data?.description || null}</div>,
+    //         });
+    //       }
+    //     },
+    //   }
+    // );
   }, []);
 
   const dataTable = doneOrders?.reverse();

@@ -22,7 +22,7 @@ import style from "../styles/Header.module.css";
 import { signOut, useSession } from "next-auth/react";
 import { ApiWrapper } from "app/context/dashboardApiContext";
 import { api } from "app/utils/api";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import sanitizeHtml from "sanitize-html";
 import { MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
@@ -34,6 +34,7 @@ const { Content } = Layout;
 export const ProtectedLayout = ({ children }: any) => {
   useRequireAuth();
   const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [openNotf, setOpenNotf] = useState(false);
   const [openDra, setOpenDra] = useState(false);
@@ -41,11 +42,11 @@ export const ProtectedLayout = ({ children }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [notfication, setNotfication] = useState<any>();
   const [html, setHtml] = useState<any>();
+
   const { error } = Modal;
   const { mutate } = api.other.notficationSearch.useMutation();
 
   const [form] = Form.useForm();
-  const { status } = useSession();
 
   const { data: statusData, refetch: requestStatus } =
     api.account.accountStatus.useQuery(undefined, {
@@ -70,38 +71,38 @@ export const ProtectedLayout = ({ children }: any) => {
   const { mutate: getContent } = api.term.getContent.useMutation();
 
   useEffect(() => {
-    requestStatus();
-    requestDan();
+    // requestStatus();
+    // requestDan();
     // requestTermOfServiceConfirm()
   }, []);
 
   useEffect(() => {
-    mutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "3",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            setNotfication(data);
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-            signOut();
-          }
-        },
-      }
-    );
+    // mutate(
+    //   {
+    //     order: "date",
+    //     order_up: "1",
+    //     page: "1",
+    //     page_size: "3",
+    //   },
+    //   {
+    //     onSuccess: (
+    //       /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+    //     ) => {
+    //       if (data?.success) {
+    //         setNotfication(data);
+    //       } else {
+    //         error({
+    //           title: "Амжилтгүй",
+    //           content: <div>{data?.description || null}</div>,
+    //         });
+    //         signOut();
+    //       }
+    //     },
+    //   }
+    // );
   }, [statusData?.stat?.notification_count]);
 
-  function allData(page_size: string) {
+  const allData = useCallback((page_size: string) => {
     mutate(
       {
         order: "date",
@@ -125,7 +126,7 @@ export const ProtectedLayout = ({ children }: any) => {
         },
       }
     );
-  }
+  }, []);
 
   function buttonClick() {
     window.open(dan?.https_redirect, "_blank");
@@ -144,33 +145,28 @@ export const ProtectedLayout = ({ children }: any) => {
   };
 
   useEffect(() => {
-    getContent(
-      {
-        code: "term_of_services",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            setHtml(sanitizeHtml(data?.page_html));
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
+    // getContent(
+    //   {
+    //     code: "term_of_services",
+    //   },
+    //   {
+    //     onSuccess: (
+    //       /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+    //     ) => {
+    //       if (data?.success) {
+    //         setHtml(sanitizeHtml(data?.page_html));
+    //       } else {
+    //         error({
+    //           title: "Амжилтгүй",
+    //           content: <div>{data?.description || null}</div>,
+    //         });
+    //       }
+    //     },
+    //   }
+    // );
   }, []);
 
-  const [keys, setKeys] = useState("");
-  useEffect(() => {
-    if (router.isReady) {
-      setKeys(router.asPath);
-    }
-  }, [router]);
+  const keys = router?.asPath;
 
   const phoneItems = [
     {
@@ -209,10 +205,7 @@ export const ProtectedLayout = ({ children }: any) => {
     setOpenDra(false);
   };
 
-  if (status == "loading") {
-    return <Loaderr />;
-  }
-
+  console.log("test1 TEST!");
   return (
     <Layout>
       <ApiWrapper>

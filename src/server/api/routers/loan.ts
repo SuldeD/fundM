@@ -7,6 +7,7 @@ import {
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import z from "zod";
 import { getAccountToken } from "./account";
+import { TRPCError } from "@trpc/server";
 
 export const loanRouter = createTRPCRouter({
   loanContract: publicProcedure.query(async ({ ctx }) => {
@@ -71,7 +72,7 @@ export const loanRouter = createTRPCRouter({
         filter_type: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
       const { order, order_up, page, page_size, filter_type } = input;
 
@@ -99,6 +100,10 @@ export const loanRouter = createTRPCRouter({
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);
+
+      if (!accountStatus.success) {
+        throw new TRPCError(accountStatus.message);
+      }
       return accountStatus;
     }),
 

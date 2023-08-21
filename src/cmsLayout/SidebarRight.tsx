@@ -10,19 +10,17 @@ import {
   Button,
 } from "antd";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "../styles/protectedLayout.module.css";
-import style from "../styles/protectedLayout.module.css";
-import { CalculateComponent } from "../components/calculate";
 import { LoanReqComponent } from "../components/loanRequest";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LoanTakeReqComponent } from "../components/loanTakeRequest";
 import { FoundationReq } from "../components/foundationReq";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useAppContext } from "app/context/appContext";
 import { signOut, useSession } from "next-auth/react";
 import { api } from "app/utils/api";
+import { root } from "postcss";
 
 const { Sider } = Layout;
 
@@ -33,7 +31,12 @@ export const SidebarRightComponent = ({ statusData }: any) => {
   const { error } = Modal;
 
   const [notfication, setNotfication] = useState<any>();
+
   const [open, setOpen] = useState<boolean>(false);
+
+  const { mutate: requestLoan } = api.loan.reguestSearch.useMutation();
+
+  const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
 
   const NavBars = {
     // CalculateComponent
@@ -47,12 +50,57 @@ export const SidebarRightComponent = ({ statusData }: any) => {
       myFundTabKey === "2" ? LoanTakeReqComponent : FoundationReq,
   };
 
-  const renderNavbar = (pathname: string) => {
+  const renderNavbar = useMemo(() => {
     // @ts-ignore
-    const Comp = NavBars[pathname] ?? NavBars["/dashboard/profile"];
+    const Comp = NavBars[router.pathname] ?? NavBars["/dashboard/profile"];
 
-    return <Comp />;
-  };
+    console.log("RENDERING ");
+
+    return <Comp activeSavingOrders={activeSavingOrders} />;
+  }, [router.pathname]);
+
+  console.log("sidebar", router.pathname);
+
+  useEffect(() => {
+    if (
+      router.pathname === "/dashboard" ||
+      router.pathname === "/dashboard/foundation" ||
+      (router.pathname === "/dashboard/myfund" && myFundTabKey === "1") ||
+      (router.pathname === "/dashboard/myfund/list" && myFundTabKey === "2")
+    ) {
+      console.log("test1");
+      requestLoan(
+        {
+          order: "date",
+          order_up: "1",
+          page: "1",
+          page_size: "30",
+          filter_type: "active",
+        },
+        {
+          onSuccess: (
+            /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+          ) => {
+            if (data?.success) {
+              data?.requests?.forEach((el: any) => {
+                if (el.filled_percent.slice(0, 3) != "100") {
+                  if (el.request_type == "wallet") {
+                    setActiveSavingOrders((prev) => [...prev, el]);
+                  }
+                }
+              });
+            } else {
+              signOut();
+              error({
+                title: "Амжилтгүй",
+                content: <div>{data?.description || null}</div>,
+              });
+            }
+          },
+        }
+      );
+    }
+  }, [router.pathname]);
 
   const { mutate } = api.other.notficationSearch.useMutation();
 
@@ -134,7 +182,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
 
   return (
     <Sider
-      className={style["sidebar-left-main"]}
+      className={styles["sidebar-left-main"]}
       width="28%"
       breakpoint="lg"
       collapsedWidth="0"
@@ -258,7 +306,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
                 </Col>
               </Row>
             </Col>
-            <Col span={24}>{renderNavbar(router.pathname)}</Col>
+            <Col span={24}>{renderNavbar}</Col>
           </Row>
         </Col>
       </Row>
