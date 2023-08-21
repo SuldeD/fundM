@@ -290,7 +290,6 @@ export const FundHistory = () => {
             open={open}
             onCancel={() => setOpen(false)}
             footer={null}
-            width={"0%"}
             closeIcon={null}
             title={
               <div className="text-center font-beau text-[16px] font-medium">
