@@ -70,6 +70,7 @@ export const Loan = () => {
   const rate = loan?.loan_rate_day.slice(0, 4);
 
   const [checked, setChecked] = useState<boolean>(false);
+  const [loadings, setLoadings] = useState<boolean>(false);
   const [requestId, setRequestId] = useState();
   const [activeClass, setActiveClass] = useState(true);
   const [inputValue, setInputValue] = useState(minValue);
@@ -153,6 +154,7 @@ export const Loan = () => {
   }, []);
 
   function submit() {
+    setLoadings(true);
     try {
       if (status == 1) {
         walletToBank(
@@ -185,6 +187,7 @@ export const Loan = () => {
                 setForm_token(data?.form_token);
                 setIsVerifyOpen(true);
                 setPin_code(data?.pin_code);
+                setLoadings(false);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -830,6 +833,7 @@ export const Loan = () => {
             <Col span={20}>
               <Button
                 type="primary"
+                loading={loadings}
                 className={`${styles["dloan-button-contiune"]}  bg-primary`}
                 onClick={() => {
                   // @ts-ignore

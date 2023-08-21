@@ -5,17 +5,18 @@ import style from "../styles/Header.module.css";
 import { MenuOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
-import { HashLink } from "react-router-hash-link";
 
 const { Header } = Layout;
 
 export const HeaderComponent = () => {
   const router = useRouter();
   const [keys, setKeys] = useState(["/"]);
+  const [loadings, setLoadings] = useState<boolean>(false);
 
   useEffect(() => {
     if (router.isReady) {
       setKeys([router.asPath]);
+      setLoadings(false);
     }
   }, [router]);
 
@@ -131,7 +132,6 @@ export const HeaderComponent = () => {
                   lineHeight: 3,
                   borderBottom: "none",
                 }}
-                // className="text-[rgb(0, 0 ,0, 0.10)] hidden w-[50%] scroll-smooth border-0  font-lato text-[16px] font-normal lg:flex"
               />
             </Col>
             <Col flex="none">
@@ -182,7 +182,13 @@ export const HeaderComponent = () => {
                 <Col>
                   <Button
                     type="primary"
-                    onClick={() => void signIn()}
+                    loading={loadings}
+                    onClick={() => {
+                      router.push("/login");
+                      setLoadings(true);
+
+                      // void signIn();
+                    }}
                     style={{ borderRadius: 9, height: 44 }}
                   >
                     НЭВТРЭХ

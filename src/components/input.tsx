@@ -6,9 +6,9 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
   const length = 4;
   const { error } = Modal;
   const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
+  const [loadings, setLoadings] = useState<boolean>(false);
 
   const inputs = useRef<any>([]);
-  // Typescript
   useRef<(HTMLInputElement | null)[]>([]);
 
   const processInput = (e: React.ChangeEvent<HTMLInputElement>, slot: any) => {
@@ -35,9 +35,10 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
   };
 
   function submit() {
-    console.log(Number(code.join("")) > 0);
+    setLoadings(true);
     if (Number(code.join("")) > 1000) {
       onFinish(Number(code.join("")));
+      setLoadings(false);
     } else {
       error({
         title: "Амжилтгүй",
@@ -105,6 +106,7 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
                 <Col span={20}>
                   <Button
                     type="primary"
+                    loading={loadings}
                     className={styles["dloan-modal-verify-button"]}
                     onClick={submit}
                   >
