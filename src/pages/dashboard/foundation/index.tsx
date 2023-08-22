@@ -11,58 +11,69 @@ import {
 } from "antd";
 import styles from "../../../styles/foundation.module.css";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import { LeftOutlined } from "@ant-design/icons";
+import { useMemo, useRef, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { Loaderr } from "app/components/Loader";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import moment from "moment";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
-import sanitizeHtml from "sanitize-html";
+import { useSession } from "next-auth/react";
 
 export const Foundation = () => {
-  const [checked, setChecked] = useState(false);
-  const [form] = Form.useForm();
+  const { data } = useSession();
   const termsRef = useRef();
   const router = useRouter();
-
-  const { data, saving, loanReqMutate, loanReqConfirmMut, accountInfo } =
-    useApiContext();
-  useRequireAuth();
+  const [form] = Form.useForm();
   const { error } = Modal;
+  useRequireAuth();
 
+  //mutates
+  const { mutate: repayment } = api.loan.repayment.useMutation();
+
+  //queries
+  const { mutate: loanReqMutate } = api.loan.loanRequest.useMutation();
+  const { mutate: loanReqConfirmMut } =
+    api.loan.loanRequestConfirm.useMutation();
+  const { data: loanData } = api.loan.loanList.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: getContent } = api.term.getContent.useQuery(
+    {
+      code: "saving",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  //states
+  const [inputValue, setInputValue] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
+  const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
+  const [activeDuration, setActiveDuration] = useState<number>(0);
+  const [requestId, setRequestId] = useState<string>("");
+  const [foundationBankData, setFoundationBankData] = useState<any>();
+  const [checked, setChecked] = useState<boolean>(false);
+
+  //constants
+  const saving = useMemo(() => {
+    return loanData?.product_list?.find(
+      (it: any) => it.product_code === "saving"
+    );
+  }, [loanData]);
+  const dataTable = saving?.duration;
+  const html = useMemo(() => {
+    return getContent?.page_html;
+  }, [getContent]);
   const minValue = Number(saving && saving?.loan_min_amount);
   const maxValue = Number(saving && saving?.loan_max_amount);
   const rate = saving?.loan_rate_month.slice(0, 4);
 
-  const { mutate: getContent } = api.loan.getContent.useMutation();
-  const { mutate: repayment } = api.loan.repayment.useMutation();
-
-  const [activeClass, setActiveClass] = useState(true);
-  const [inputValue, setInputValue] = useState(minValue);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
-  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
-  const [dataTable, setTable] = useState<any[]>(saving?.duration);
-  const [activeDuration, setActiveDuration] = useState(0);
-  const [requestId, setRequestId] = useState<string>("");
-  const [foundationBankData, setFoundationBankData] = useState<any>("");
-
-  const [html, setHtml] = useState<any>();
-
-  const handleOk = async () => {
-    await form.validateFields();
-    setChecked(!checked);
-    setIsModalOpen(false);
-  };
-
-  useEffect(() => {
-    setTable(saving?.duration);
-  }, []);
-
+  //functions
   function submit() {
     loanReqMutate(
       {
@@ -96,7 +107,6 @@ export const Foundation = () => {
       }
     );
   }
-
   function verifyCompleteModal(code: any) {
     if (code) {
       loanReqConfirmMut(
@@ -153,28 +163,11 @@ export const Foundation = () => {
       });
     }
   }
-
-  useEffect(() => {
-    getContent(
-      {
-        code: "saving",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            setHtml(sanitizeHtml(data?.page_html));
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
+  const handleOk = async () => {
+    await form.validateFields();
+    setChecked(!checked);
+    setIsModalOpen(false);
+  };
 
   if (!data) {
     <Loaderr />;
@@ -190,16 +183,10 @@ export const Foundation = () => {
             <HeaderDashboard
               title={"Санхүүжилт өгөх хүсэлт"}
               subTitle={
-                activeClass
-                  ? "Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах салбар нэгжид хандан нээлгэнэ үү."
-                  : "Харилцагч та миний санхүүжилт цэсээс нийт жагсаалтаа харах боломжтой."
+                "Харилцагч та миний санхүүжилт цэсээс нийт жагсаалтаа харах боломжтой."
               }
             />
-            <Row
-              justify="center"
-              gutter={[0, 20]}
-              className={styles[activeClass ? "" : "foundation-change-div"]}
-            >
+            <Row justify="center" gutter={[0, 20]}>
               <Col md={22}>
                 <Row gutter={[22, 10]} justify="space-between" align="middle">
                   <Col span={24}>
@@ -438,7 +425,7 @@ export const Foundation = () => {
             <Row
               justify="center"
               gutter={[0, 25]}
-              className={styles[activeClass ? "foundation-change-div" : ""]}
+              className={styles["foundation-change-div"]}
             >
               <Col span={22}>
                 <Row className={styles["foundation-detail"]} gutter={[0, 22]}>
@@ -576,7 +563,6 @@ export const Foundation = () => {
             justify={"center"}
             align="top"
             style={{ minHeight: "100%", marginTop: "20px" }}
-            className={styles[activeClass ? "" : "foundation-change-div"]}
           >
             <Col span={22}>
               <Button
@@ -585,7 +571,7 @@ export const Foundation = () => {
                 onClick={() => {
                   // @ts-ignore
                   termsRef.current?.input.checked
-                    ? !accountInfo.bank_account
+                    ? !accountInfo?.bank_account
                       ? error({
                           title: "Амжилтгүй",
                           content: (

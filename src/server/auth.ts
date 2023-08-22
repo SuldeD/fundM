@@ -16,6 +16,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      bank_account: any;
     } & DefaultSession["user"];
   }
 }
@@ -182,6 +183,7 @@ export const authOptions: NextAuthOptions = {
               id: account.account.user_id,
               name: account.account.first_name,
               email: account.account.phone,
+              bank_account: account?.bank_account,
               id_token: cookie,
               access_token: token,
             };

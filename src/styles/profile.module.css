@@ -1,101 +1,101 @@
 .profile-main-row {
-    background-color: #fff;
-    height: 100vh;
-    padding: 40px 0;
-    overflow: auto;
+  background-color: #fff;
+  min-height: 100vh;
+  padding: 40px 0;
+  overflow: auto;
 }
 
 .profile-information-name {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 18px;
-    color: #000000;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 18px;
+  color: #000000;
 }
 
 .profile-information-register {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 18px;
-    color: #0300B4;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 18px;
+  color: #0300b4;
 }
 
 .profile-bankaccount-div {
-    border: 0.5px solid #000000;
-    border-radius: 10px;
-    padding: 14px 20px;
+  border: 0.5px solid #000000;
+  border-radius: 10px;
+  padding: 14px 20px;
 }
 
 .profile-bankaccount-title {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 18px;
-    color: rgba(0, 0, 0, 0.5);
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .profile-backaccount-value {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 18px;
-    color: #000000;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 18px;
+  color: #000000;
 }
 
 .profile-tabs-2-collapse-title {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    color: #000000;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
 }
 
 .profile-collapse-content-text {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 20px;
-    text-decoration-line: underline;
-    color: #0300B4;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  text-decoration-line: underline;
+  color: #0300b4;
 }
 
 .profile-collapse-content-border {
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
-    width: 100%;
-    padding: 8px 0px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
+  width: 100%;
+  padding: 8px 0px;
 }
 
 .profile-typography-phone-number {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 19px;
-    color: #000000;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  color: #000000;
 }
 
 .profile-typography-email {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 19px;
-    text-decoration-line: underline;
-    color: #000000;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  text-decoration-line: underline;
+  color: #000000;
 }
 
 .profile-typography-title {
-    font-family: 'Lato';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
-    color: rgba(0, 0, 0, 0.5);
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: rgba(0, 0, 0, 0.5);
 }

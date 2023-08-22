@@ -32,14 +32,15 @@ export default function Signup() {
   const searchParams = useSearchParams();
   const search = searchParams.get("s");
 
-  const { mutate } = api.loan.phoneSignUp.useMutation();
-  const mutationPhoneVer = api.loan.phoneSignUpVerify.useMutation();
-  const orgSignUpVerify = api.loan.orgSignUpVerify.useMutation();
-  const mutationSignUp = api.loan.signUp.useMutation();
-  const mutationSignUpOrg = api.loan.signUpOrg.useMutation();
+  const { mutate } = api.register.phoneSignUp.useMutation();
+
+  const mutationPhoneVer = api.register.phoneSignUpVerify.useMutation();
+  const orgSignUpVerify = api.register.orgSignUpVerify.useMutation();
+  const mutationSignUp = api.register.signUp.useMutation();
+  const mutationSignUpOrg = api.register.signUpOrg.useMutation();
 
   const [selectedQuestion, setSelectedQuestion] = useState<any>("");
-  const { data: securityQuestion } = api.loan.helpQuestion.useQuery();
+  const { data: securityQuestion } = api.register.helpQuestion.useQuery();
 
   const [registerData, setRegisterData] = useState<RegisterType>({
     phone: "",

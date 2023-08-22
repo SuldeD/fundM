@@ -7,76 +7,124 @@ import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { useAppContext } from "../../../context/appContext";
 import { useRequireAuth } from "app/utils/auth";
-import { useApiContext } from "app/context/dashboardApiContext";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Loaderr } from "app/components/Loader";
 import { api } from "app/utils/api";
-import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export const MyFund = () => {
   const { myFundTabKey, setMyFundTabKey } = useAppContext();
-  const { data } = useApiContext();
+  const { data } = useSession();
   useRequireAuth();
-  const { mutate } = api.loan.reguestSearch.useMutation();
-  const { error } = Modal;
 
+  //queries
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "30",
+      filter_type: "my",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  //states
   const [activeClass, setSelectedId] = useState<any>();
   const [open, setOpen] = useState<boolean>(false);
 
-  const [myLoanOrders, setMyActiveLoanOrders] = useState<any[]>([]);
-  const [mySavingOrders, setMyActiveSavingOrders] = useState<any[]>([]);
+  //constants
+  const orders = useMemo(() => {
+    return requestSearch?.requests;
+  }, [requestSearch]);
 
-  const [myLoanOrdersSum, setMyActiveLoanOrdersSum] = useState<number>(0);
-  const [mySavingOrdersSum, setMyActiveSavingOrdersSum] = useState<number>(0);
+  const mySavingOrders = useMemo(() => {
+    return requestSearch?.requests?.filter(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) != "100" && el.request_type == "saving"
+    )
+      ? requestSearch?.requests?.filter(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) != "100" &&
+            el.request_type == "saving"
+        )
+      : [];
+  }, [requestSearch]);
 
-  const [sumMySaving, setSumMySaving] = useState<number>(0);
-  const [sumMyLoan, setSumMyLoan] = useState<number>(0);
+  const myLoanOrders = useMemo(() => {
+    return requestSearch?.requests?.filter(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) != "100" && el.request_type == "wallet"
+    )
+      ? requestSearch?.requests?.filter(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) != "100" &&
+            el.request_type == "wallet"
+        )
+      : [];
+  }, [requestSearch]);
 
-  const [orders, setOrders] = useState<any[]>([]);
+  let num = 0;
+  const sumMyLoan = useMemo(() => {
+    let a = 0;
+    requestSearch?.requests?.forEach((el: any) => {
+      el.filled_percent.slice(0, 3) != "100" &&
+        el.request_type == "wallet" &&
+        a + el.loan_amount;
+    });
+    return num;
+  }, [requestSearch]);
 
-  useEffect(() => {
-    mutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "30",
-        filter_type: "my",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            data?.requests?.forEach((el: any) => {
-              setOrders((prev) => [...prev, el]);
-              if (el.filled_percent.slice(0, 3) != "100") {
-                if (el.request_type == "wallet") {
-                  setMyActiveLoanOrders((prev) => [...prev, el]);
-                  setMyActiveLoanOrdersSum(
-                    (prev) => prev + Number(el.filled_percent.slice(0, 3))
-                  );
-                  setSumMyLoan((prev) => prev + Number(el.loan_amount));
-                } else if (el.request_type == "saving") {
-                  setMyActiveSavingOrders((prev) => [...prev, el]);
-                  setMyActiveSavingOrdersSum(
-                    (prev) => prev + Number(el.filled_percent.slice(0, 3))
-                  );
-                  setSumMySaving((prev) => prev + Number(el.loan_amount));
-                }
-              }
-            });
-          } else {
-            signOut();
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
+  const sumMySaving = useMemo(() => {
+    let num = 0;
+    return requestSearch?.requests?.filter(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) != "100" &&
+        el.request_type == "saving" &&
+        num + el.loan_amount
+    ) > 0
+      ? requestSearch?.requests?.filter(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) != "100" &&
+            el.request_type == "saving" &&
+            num + el.loan_amount
+        )
+      : num;
+  }, [requestSearch]);
+
+  const myLoanOrdersSum = useMemo(() => {
+    let num = 0;
+    return requestSearch?.requests?.filter(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) != "100" &&
+        el.request_type == "wallet" &&
+        num + el.filled_percent.slice(0, 3)
+    ) > 0
+      ? requestSearch?.requests?.filter(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) != "100" &&
+            el.request_type == "wallet" &&
+            num + el.filled_percent.slice(0, 3)
+        )
+      : num;
+  }, [requestSearch]);
+
+  const mySavingOrdersSum = useMemo(() => {
+    let num = 0;
+    return requestSearch?.requests?.filter(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) != "100" &&
+        el.request_type == "saving" &&
+        num + el.filled_percent.slice(0, 3)
+    ) > 0
+      ? requestSearch?.requests?.filter(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) != "100" &&
+            el.request_type == "saving" &&
+            num + el.filled_percent.slice(0, 3)
+        )
+      : num;
+  }, [requestSearch]);
 
   const columns: any[] = [
     {
@@ -223,7 +271,7 @@ export const MyFund = () => {
                   pageSize: 10,
                   position: ["bottomCenter"],
                 }}
-                dataSource={myLoanOrders.reverse()}
+                dataSource={myLoanOrders}
                 rowKey={"create_date"}
               />
             </Col>

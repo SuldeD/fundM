@@ -1,7 +1,6 @@
 import { Col, Modal, Row, Input, message } from "antd";
 import { HeaderDashboard } from "app/components/header";
-import { useApiContext } from "app/context/dashboardApiContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../../styles/profile.module.css";
 import stylesL from "../../../styles/dloan.module.css";
 import { useRequireAuth } from "app/utils/auth";
@@ -10,10 +9,12 @@ import ImgCrop from "antd-img-crop";
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
 import { useRouter } from "next/router";
 import PopupModal from "app/components/modal";
-import InputCode from "app/components/input";
 import { Loaderr } from "app/components/Loader";
 import { UploadChangeParam } from "antd/lib/upload/interface";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { api } from "app/utils/api";
+import { useSession } from "next-auth/react";
+import Select from "react-select";
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
   const reader = new FileReader();
@@ -22,28 +23,35 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
 };
 
 export default function Bank() {
-  const { helpBankList, addBankMutate, addBankVerMutate, data, accountInfo } =
-    useApiContext();
-  const [isOpen, setOpen] = useState<boolean>(false);
+  const router = useRouter();
+  const { error } = Modal;
+  const { data } = useSession();
+  useRequireAuth();
+
+  //mutates
+  const { mutate: addBankMutate } = api.profile.addBank.useMutation();
+  const { mutate: addBankVerMutate } = api.profile.addBankVerify.useMutation();
+
+  //queries
+  const { data: accountInfo } = api.account.accountInfo.useQuery();
+  const { data: helpBankList } = api.loan.helpBankList.useQuery();
+
+  //states
   const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
   const [isOpenVerifyPass, setOpenVerifyPass] = useState<boolean>(false);
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [number, setNumber] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [requestId, setReqId] = useState<string>("");
   const [confirmCode, setConfirmCode] = useState<string>("");
-  const { error } = Modal;
-  const router = useRouter();
-  useRequireAuth();
-
   const [check, setCheck] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [option, setOption] = useState<any[]>([]);
 
-  function submit(code: any) {
-    setPassword(code.toString());
+  //functions
+  function submit() {
     addBankMutate(
-      { password: code.toString(), account_num: number, bank_id: selectedBank },
+      { account_num: number, bank_id: selectedBank },
       {
         onSuccess: (
           /** @type {{ request_id: any; success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: {
@@ -56,8 +64,9 @@ export default function Bank() {
         ) => {
           if (data.success) {
             setReqId(data?.request_id);
+
             setOpenVerifyPass(true);
-            setOpen(false);
+
             message.success(data.description);
             message.success(data.confirm_code);
           } else {
@@ -65,7 +74,6 @@ export default function Bank() {
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
             });
-            setOpen(false);
           }
         },
       }
@@ -73,15 +81,9 @@ export default function Bank() {
   }
 
   function submitVerify() {
-    if (
-      imageUrl.length > 0 &&
-      password.length > 0 &&
-      requestId.length > 0 &&
-      confirmCode.length > 0
-    ) {
+    if (imageUrl.length > 0 && requestId.length > 0 && confirmCode.length > 0) {
       addBankVerMutate(
         {
-          password,
           confirm_code: confirmCode,
           photo: imageUrl,
           request_id: requestId,
@@ -95,8 +97,7 @@ export default function Bank() {
             }
           ) => {
             if (data.success) {
-              setOpenVerifyPass(true);
-              setOpen(false);
+              setOpenVerify(false);
               setCheck(true);
             } else {
               error({
@@ -134,9 +135,21 @@ export default function Bank() {
     </div>
   );
 
+  useEffect(() => {
+    setOption([]);
+    helpBankList?.bank_list?.forEach((list: any) =>
+      setOption((prev: any) => [
+        ...prev,
+        { value: list.bank_id, label: list.bank_name },
+      ])
+    );
+  }, []);
+
+  // if (!accountInfo?.bank_account?.bank_name) {
+
   if (!data) {
     return <Loaderr />;
-  } else if (!accountInfo?.bank_account?.bank_name) {
+  } else
     return (
       <div className="h-full w-full bg-[#fff] px-[30px] py-[40px]">
         <HeaderDashboard
@@ -146,21 +159,16 @@ export default function Bank() {
           }
         />
 
-        <div className={`${styles["profile-bankaccount-title"]} pb-[8px]`}>
+        <div className={`${styles["profile-bankaccount-title"]} mt-3 pb-[8px]`}>
           Банк сонгох
         </div>
-        <select
-          className={`w-full rounded-[12px] border-black bg-bank p-[16px]`}
-          name="bank_id"
-          onChange={(e) => setSelectedBank(e.target.value)}
-        >
-          <option value={""}>Банк сонгон уу!</option>
-          {helpBankList?.bank_list.map((list: any, idx: any) => (
-            <option key={`option ${idx}`} value={`${list.bank_id}`}>
-              {list.bank_name}
-            </option>
-          ))}
-        </select>
+
+        <Select
+          defaultValue={option[0]}
+          onChange={(e: any) => setSelectedBank(e.value.toString())}
+          options={option}
+        />
+
         <div
           className={`${styles["profile-bankaccount-title"]} pb-[8px] pt-[16px]`}
         >
@@ -170,20 +178,18 @@ export default function Bank() {
           onChange={(e) => setNumber(e.target.value)}
           name="bank_number"
           type="number"
-          className="w-full rounded-[12px] border-black bg-bank p-[16px]"
+          className="w-full rounded-[4px] border border-[#ccc] bg-white px-[10px] py-[8px] font-[14px]"
         />
         <div className="mt-[40px] text-right">
           <input
             className="w-[100%] max-w-[195px] cursor-pointer rounded-[10px] bg-primary p-[8px] px-[8px] text-[14px] font-normal text-white"
             type="button"
             onClick={() => {
-              selectedBank.length > 0 && number.length > 0 && setOpen(true);
+              selectedBank.length > 0 && number.length > 0 && submit();
             }}
             value={"Баталгаажуулах код авах"}
           />
         </div>
-
-        <InputCode open={isOpen} onFinish={submit} setOpen={setOpen} />
 
         <Modal
           centered
@@ -193,7 +199,8 @@ export default function Bank() {
               Баталгаажуулах код оруулах
             </div>
           }
-          closable={false}
+          closable={true}
+          onCancel={() => setOpenVerifyPass(false)}
           open={isOpenVerifyPass}
           footer={null}
         >
@@ -203,7 +210,7 @@ export default function Bank() {
                 <Col span={24}>
                   <Input.Password
                     className={stylesL["dloan-modal-verify-input"]}
-                    placeholder="Гүйлгээний нууц үг оруулна уу!!!"
+                    placeholder=" Баталгаажуулах код оруулна уу!!!"
                     name="password"
                     maxLength={4}
                     onChange={(e: any) => setConfirmCode(e.target.value)}
@@ -221,8 +228,8 @@ export default function Bank() {
                     type="submit"
                     className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
                     onClick={() => {
-                      confirmCode.length > 0 && setOpenVerify(true);
                       confirmCode.length > 0 && setOpenVerifyPass(false);
+                      confirmCode.length > 0 && setOpenVerify(true);
                     }}
                   >
                     Баталгаажуулах
@@ -241,7 +248,8 @@ export default function Bank() {
               Гарын үсгийн зураг оруулах
             </div>
           }
-          closable={false}
+          closable={true}
+          onCancel={() => setOpenVerify(false)}
           open={isOpenVerify}
           footer={null}
         >
@@ -307,7 +315,9 @@ export default function Bank() {
         />
       </div>
     );
-  } else {
-    router.push("/dashboard/profile");
-  }
 }
+
+//   else {
+//     router.back();
+//   }
+// }

@@ -11,44 +11,82 @@ import {
 } from "antd";
 import styles from "../../../styles/dloan.module.css";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { Loaderr } from "app/components/Loader";
-import { useApiContext } from "app/context/dashboardApiContext";
 import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
-import sanitizeHtml from "sanitize-html";
+import { useSession } from "next-auth/react";
 
 export const Loan = () => {
-  const {
-    loan,
-    data,
-    loanReqMutate,
-    loanReqConfirmMut,
-    accountInfo,
-    savingData,
-    sumSaving,
-  } = useApiContext();
-
-  useRequireAuth();
+  const termsRef = useRef();
+  const router = useRouter();
+  const { data } = useSession();
   const { error } = Modal;
-  const { mutate: loanMutate } = api.loan.loanSearch.useMutation();
+  useRequireAuth();
+
+  //mutate
   const { mutate: walletToBank } = api.loan.walletToBank.useMutation();
   const { mutate: walletToBankConfirm } =
     api.loan.walletToBankConfirm.useMutation();
-  const { mutate: getContent } = api.loan.getContent.useMutation();
-  const { data: statusData, refetch: requestStatus } =
-    api.loan.accountStatus.useQuery(undefined, {
-      enabled: false,
-    });
+  const { mutate: loanReqMutate } = api.loan.loanRequest.useMutation();
+  const { mutate: loanReqConfirmMut } =
+    api.loan.loanRequestConfirm.useMutation();
 
-  useEffect(() => {
-    requestStatus();
-  }, []);
-  const [loanReq, setLoanReq] = useState<any[]>([]);
+  //query
+  const { data: getContent } = api.term.getContent.useQuery(
+    {
+      code: "loan",
+    },
+    { refetchOnWindowFocus: false }
+  );
+  const { data: statusData } = api.account.accountStatus.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: savingData } = api.loan.loanList.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: loanSearch } = api.loan.loanSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "50",
+      filter_type: "dp",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  //state
+  const [checked, setChecked] = useState<boolean>(false);
+  const [loadings, setLoadings] = useState<boolean>(false);
+  const [requestId, setRequestId] = useState<string>("");
+  const [activeClass, setActiveClass] = useState(true);
+  const [inputValue, setInputValue] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
+  const [transaction_id, setTransaction_id] = useState<any>();
+  const [form_token, setForm_token] = useState<any>();
+  const [pin_code, setPin_code] = useState<any>();
+  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const [activeDuration, setActiveDuration] = useState<number>(0);
+  const [form] = Form.useForm();
+
+  const loan = useMemo(() => {
+    return savingData?.product_list?.find(
+      (it: any) => it.product_code !== "saving"
+    );
+  }, [savingData]);
+
+  const loanReq = useMemo(() => {
+    return loanSearch?.loan_requests;
+  }, [loanSearch]);
 
   let status = 0;
   loanReq?.forEach((ln: any) => {
@@ -57,102 +95,29 @@ export const Loan = () => {
     }
   });
 
-  const minValue =
-    status == 1
+  const minValue = useMemo(() => {
+    return status == 1
       ? Number(statusData?.stat?.wallet_min_amount)
       : Number(loan?.loan_min_amount);
+  }, [loan]);
 
-  const maxValue =
-    status == 1
+  const maxValue = useMemo(() => {
+    return status == 1
       ? Number(statusData?.stat?.wallet_amount)
       : Number(loan?.loan_max_amount);
-
-  const rate = loan?.loan_rate_day.slice(0, 4);
-
-  const [checked, setChecked] = useState<boolean>(false);
-  const [loadings, setLoadings] = useState<boolean>(false);
-  const [requestId, setRequestId] = useState();
-  const [activeClass, setActiveClass] = useState(true);
-  const [inputValue, setInputValue] = useState(minValue);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
-  const [transaction_id, setTransaction_id] = useState<any>();
-  const [form_token, setForm_token] = useState<any>();
-  const [pin_code, setPin_code] = useState<any>();
-  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
-  const [dataTable, setTable] = useState<any[]>(loan?.duration);
-  const [activeDuration, setActiveDuration] = useState<number>(0);
-  const [activeDurationSum, setActiveDurationSum] = useState<number>(0);
-  const [html, setHtml] = useState<any>();
-
-  const [form] = Form.useForm();
-  const termsRef = useRef();
-  const router = useRouter();
-
-  useEffect(() => {
-    setActiveDurationSum(0);
-    savingData?.forEach((sd: any) => {
-      dataTable &&
-        sd.duration == dataTable[activeDuration].duration &&
-        setActiveDurationSum((prev) => prev + Number(sd.balance_amount));
-    });
-  }, [activeDuration]);
-
-  useEffect(() => {
-    setTable(loan?.duration);
   }, []);
 
-  useEffect(() => {
-    loanMutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "50",
-        filter_type: "dp",
-      },
-      {
-        onSuccess: (data: {
-          success: any;
-          request_id: any;
-          loan_requests: import("react").SetStateAction<any[]>;
-          description: any;
-        }) => {
-          if (data.success) {
-            setLoanReq(data?.loan_requests);
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
+  const rate = useMemo(() => {
+    return loan?.loan_rate_day.slice(0, 4);
+  }, [loan]);
 
-  useEffect(() => {
-    getContent(
-      {
-        code: "loan",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            setHtml(sanitizeHtml(data?.page_html));
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
+  const dataTable = loan?.duration;
 
+  const html = useMemo(() => {
+    return getContent?.page_html;
+  }, [getContent]);
+
+  //function
   function submit() {
     setLoadings(true);
     try {
@@ -162,10 +127,9 @@ export const Loan = () => {
             account_name: accountInfo?.bank_account?.account_name,
             amount: inputValue.toString(),
             description: "test loan",
-            // @ts-ignore
             loan_duration_day:
               dataTable &&
-              Number(dataTable[activeDuration].duration).toString(),
+              Number(dataTable[activeDuration]?.duration).toString(),
             loan_duration_month: "day",
             pay_day: "0",
             account_num: accountInfo?.bank_account?.account_num,
@@ -203,12 +167,12 @@ export const Loan = () => {
             product_id: (loan?.product_id).toString(),
             loan_amount: inputValue.toString(),
             repayment_amount: (
-              Number(dataTable[activeDuration].duration) *
+              Number(dataTable[activeDuration]?.duration) *
                 rate *
                 (inputValue / 100) +
               inputValue +
-              Number(dataTable[activeDuration].duration) *
-                Number(dataTable[activeDuration].fee_percent) *
+              Number(dataTable[activeDuration]?.duration) *
+                Number(dataTable[activeDuration]?.fee_percent) *
                 (inputValue / 100)
             ).toString(),
             loan_month: dataTable[activeDuration].duration,
@@ -234,7 +198,6 @@ export const Loan = () => {
           }
         );
       }
-      console.log(status);
     } catch (error) {
       console.error("An error occurred:", error);
     }
@@ -307,7 +270,7 @@ export const Loan = () => {
       });
     }
   }
-  // || accountInfo?.account?.menu_close == "0"
+
   if (!data) {
     return <Loaderr />;
   } else {
@@ -457,33 +420,7 @@ export const Loan = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col xs={24} lg={22}>
-                <Row gutter={[0, 10]}>
-                  <Col xs={24} span={24}>
-                    <div
-                      className={`${styles["dloan-slider-input-title"]} flex w-full`}
-                    >
-                      <div className="text-primary">
-                        Авах боломжит нийт зээлийн хэмжээ
-                      </div>
-                    </div>
-                  </Col>
-                  <Col xs={24} lg={24}>
-                    <Row
-                      className={`${styles["dloan-rate-div"]}`}
-                      align="middle"
-                      justify="center"
-                      style={{ width: "100%" }}
-                    >
-                      <div
-                        className={`${styles["dloan-rate-text"]} text-primary`}
-                      >
-                        {numberToCurrency(sumSaving)}
-                      </div>
-                    </Row>
-                  </Col>
-                </Row>
-              </Col>
+
               <Col md={22}>
                 <Row className={styles["dloan-detail"]} gutter={[0, 22]}>
                   <Col span={24}>
@@ -515,7 +452,7 @@ export const Loan = () => {
                               Math.round(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration)
+                                  Number(dataTable[activeDuration]?.duration)
                               )
                             )}
                         </div>
@@ -536,7 +473,7 @@ export const Loan = () => {
                             numberToCurrency(
                               Math.ceil(
                                 (inputValue / 100) *
-                                  Number(dataTable[activeDuration].fee_percent)
+                                  Number(dataTable[activeDuration]?.fee_percent)
                               )
                             )}
                         </div>
@@ -558,11 +495,11 @@ export const Loan = () => {
                               Math.ceil(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration) +
+                                  Number(dataTable[activeDuration]?.duration) +
                                   inputValue +
                                   (inputValue / 100) *
                                     Number(
-                                      dataTable[activeDuration].fee_percent
+                                      dataTable[activeDuration]?.fee_percent
                                     )
                               )
                             )}
@@ -595,7 +532,7 @@ export const Loan = () => {
                         <div className={styles["dloan-detail-maxValue"]}>
                           {dataTable &&
                             typeof activeDuration == "number" &&
-                            dataTable[activeDuration].duration}{" "}
+                            dataTable[activeDuration]?.duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -613,7 +550,7 @@ export const Loan = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             moment()
-                              .add(dataTable[activeDuration].duration, "days")
+                              .add(dataTable[activeDuration]?.duration, "days")
                               .calendar()}
                         </div>
                       </Col>
@@ -678,7 +615,7 @@ export const Loan = () => {
                               Math.round(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration)
+                                  Number(dataTable[activeDuration]?.duration)
                               )
                             )}
                         </div>
@@ -699,7 +636,7 @@ export const Loan = () => {
                             numberToCurrency(
                               Math.round(
                                 (inputValue / 100) *
-                                  Number(dataTable[activeDuration].fee_percent)
+                                  Number(dataTable[activeDuration]?.fee_percent)
                               )
                             )}
                         </div>
@@ -721,11 +658,11 @@ export const Loan = () => {
                               Math.ceil(
                                 (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration) +
+                                  Number(dataTable[activeDuration]?.duration) +
                                   inputValue +
                                   (inputValue / 100) *
                                     Number(
-                                      dataTable[activeDuration].fee_percent
+                                      dataTable[activeDuration]?.fee_percent
                                     )
                               )
                             )}
@@ -758,7 +695,7 @@ export const Loan = () => {
                         <div className={styles["dloan-detail-maxValue"]}>
                           {dataTable &&
                             typeof activeDuration == "number" &&
-                            dataTable[activeDuration].duration}{" "}
+                            dataTable[activeDuration]?.duration}{" "}
                           хоног
                         </div>
                       </Col>
@@ -776,7 +713,7 @@ export const Loan = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             moment()
-                              .add(dataTable[activeDuration].duration, "days")
+                              .add(dataTable[activeDuration]?.duration, "days")
                               .calendar()}
                         </div>
                       </Col>
@@ -838,7 +775,7 @@ export const Loan = () => {
                 onClick={() => {
                   // @ts-ignore
                   termsRef.current?.input.checked
-                    ? !accountInfo.bank_account
+                    ? !accountInfo?.bank_account
                       ? error({
                           title: "Амжилтгүй",
                           content: (
@@ -982,7 +919,7 @@ export const Loan = () => {
                       {dataTable &&
                         typeof activeDuration == "number" &&
                         // @ts-ignore
-                        dataTable[activeDuration].duration}
+                        dataTable[activeDuration]?.duration}
                     </span>{" "}
                     хоногийн хугацаатай{" "}
                     <span className={styles["dloan-modal-complete-number"]}>

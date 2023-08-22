@@ -22,10 +22,10 @@ interface RegisterType {
 
 export default function Forgot() {
   const router = useRouter();
-  const mutationForgot = api.loan.forgotPass.useMutation();
+  const mutationForgot = api.profile.forgotPass.useMutation();
 
   const [selectedQuestion, setSelectedQuestion] = useState<any>("");
-  const { data: securityQuestion } = api.loan.helpQuestion.useQuery();
+  const { data: securityQuestion } = api.register.helpQuestion.useQuery();
 
   const [registerData, setRegisterData] = useState<RegisterType>({
     phone: "",
