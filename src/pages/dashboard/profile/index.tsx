@@ -62,6 +62,12 @@ export const Profile = () => {
   const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
+  const { data: dan } = api.account.accountStatusDan.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: statusData } = api.account.accountStatus.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   //states
   const [open, setOpen] = useState<boolean>(false);
@@ -567,6 +573,25 @@ export const Profile = () => {
               </Row>
             </Col>
             <Col span={24}>
+              {statusData?.stat?.valid_dan == 0 && (
+                <Row gutter={[0, 13]} className="mb-[10px]">
+                  <Col flex="auto">
+                    <div className={styles["profile-bankaccount-title"]}>
+                      E-mongolia холбох
+                    </div>
+                  </Col>
+                  <Col flex="right">
+                    <div
+                      className="cursor-pointer font-lato text-[12px] font-normal text-primary hover:text-[#524ffd]"
+                      onClick={() => {
+                        window.open(dan?.https_redirect, "_blank");
+                      }}
+                    >
+                      E-mongolia холбох +
+                    </div>
+                  </Col>
+                </Row>
+              )}
               <Row gutter={[0, 13]}>
                 <Col flex="auto">
                   <div className={styles["profile-bankaccount-title"]}>
