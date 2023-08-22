@@ -17,6 +17,7 @@ export const MyFund = () => {
   const { data } = useApiContext();
   useRequireAuth();
 
+  console.log("THIS MY FUND");
   const { data: requestSearch } = api.loan.reguestSearch.useQuery({
     order: "date",
     order_up: "1",

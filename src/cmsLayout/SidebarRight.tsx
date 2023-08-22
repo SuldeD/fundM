@@ -33,10 +33,34 @@ export const SidebarRightComponent = ({ statusData }: any) => {
   const [notfication, setNotfication] = useState<any>();
 
   const [open, setOpen] = useState<boolean>(false);
+  const filterType = useMemo(() => {
+    if (
+      router.pathname === "/dashboard" ||
+      router.pathname === "/dashboard/foundation" ||
+      (router.pathname === "/dashboard/myfund" && myFundTabKey === "1") ||
+      (router.pathname === "/dashboard/myfund/list" && myFundTabKey === "2")
+    ) {
+      return "active";
+    } else {
+      return "done";
+    }
+  }, []);
+  console.log("this is filter type", filterType);
 
-  const { mutate: requestLoan } = api.loan.reguestSearch.useMutation();
+  const { data, refetch: requestLoan } = api.loan.reguestSearch.useQuery({
+    order: "date",
+    order_up: "1",
+    page: "1",
+    page_size: "30",
+    filter_type: filterType,
+  });
 
-  const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
+  const activeSavingOrders = useMemo(() => {
+    return data?.filter(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) != "100" && el.request_type == "wallet"
+    );
+  }, []);
 
   const NavBars = {
     // CalculateComponent
@@ -60,47 +84,6 @@ export const SidebarRightComponent = ({ statusData }: any) => {
   }, [router.pathname]);
 
   console.log("sidebar", router.pathname);
-
-  useEffect(() => {
-    if (
-      router.pathname === "/dashboard" ||
-      router.pathname === "/dashboard/foundation" ||
-      (router.pathname === "/dashboard/myfund" && myFundTabKey === "1") ||
-      (router.pathname === "/dashboard/myfund/list" && myFundTabKey === "2")
-    ) {
-      console.log("test1");
-      requestLoan(
-        {
-          order: "date",
-          order_up: "1",
-          page: "1",
-          page_size: "30",
-          filter_type: "active",
-        },
-        {
-          onSuccess: (
-            /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-          ) => {
-            if (data?.success) {
-              data?.requests?.forEach((el: any) => {
-                if (el.filled_percent.slice(0, 3) != "100") {
-                  if (el.request_type == "wallet") {
-                    setActiveSavingOrders((prev) => [...prev, el]);
-                  }
-                }
-              });
-            } else {
-              signOut();
-              error({
-                title: "Амжилтгүй",
-                content: <div>{data?.description || null}</div>,
-              });
-            }
-          },
-        }
-      );
-    }
-  }, [router.pathname]);
 
   const { mutate } = api.other.notficationSearch.useMutation();
 

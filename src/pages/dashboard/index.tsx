@@ -15,7 +15,9 @@ export const Dashboard = () => {
   useRequireAuth();
   const { data } = useApiContext();
 
-  const { data: loan } = api.loan.loanList.useQuery();
+  const { data: loan } = api.loan.loanList.useQuery(undefined, {
+    enabled: false,
+  });
 
   const { data: loans } = api.loan.reguestSearch.useQuery({
     order: "date",
@@ -200,7 +202,7 @@ export const Dashboard = () => {
                           <div
                             className={`${styles["dashboard-loan-son-number"]} flex`}
                           >
-                            {loan?.product_list[0]?.loan_rate_month}{" "}
+                            {/* {loan?.product_list[0]?.loan_rate_month}{" "} */}
                             <p className="h-[15px] w-[15px]">%</p>
                           </div>
                         </Col>
