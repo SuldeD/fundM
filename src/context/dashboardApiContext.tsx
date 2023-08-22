@@ -1,6 +1,5 @@
-import { Modal } from "antd";
 import { api } from "app/utils/api";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AppContext {
@@ -22,11 +21,8 @@ interface AppContext {
 const AppContext = createContext<AppContext>({} as AppContext);
 
 export const ApiWrapper = ({ children }: any) => {
-  const { error } = Modal;
-
   const { data } = useSession();
 
-  const { mutate } = api.loan.reguestSearch.useMutation();
   const { mutate: loanReqMutate } = api.loan.loanRequest.useMutation();
   const { mutate: loanReqConfirmMut } =
     api.loan.loanRequestConfirm.useMutation();

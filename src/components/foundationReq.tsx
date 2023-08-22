@@ -1,57 +1,36 @@
-import { Col, Row, Image, Button, Modal } from "antd";
+import { Col, Row, Image, Button } from "antd";
 import styles from "../styles/foundation-req.module.css";
 import { numberToCurrency } from "../utils/number.helpers";
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useMemo } from "react";
 import { useAppContext } from "app/context/appContext";
 import { api } from "app/utils/api";
-import { signOut } from "next-auth/react";
 
 export const FoundationReq = () => {
   const router = useRouter();
   const { setMyFundTabKey } = useAppContext();
 
-  const { error } = Modal;
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery({
+    order: "date",
+    order_up: "1",
+    page: "1",
+    page_size: "30",
+    filter_type: "active",
+  });
 
-  const [activeSavingOrders, setActiveSavingOrders] = useState<any[]>([]);
-
-  const { mutate } = api.loan.reguestSearch.useMutation();
-
-  useEffect(() => {
-    mutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "30",
-        filter_type: "active",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            data?.requests?.forEach((el: any) => {
-              if (el.filled_percent.slice(0, 3) != "100") {
-                if (el.request_type == "saving") {
-                  setActiveSavingOrders((prev) => [...prev, el]);
-                }
-              }
-            });
-          } else {
-            signOut();
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
-
-  const data = activeSavingOrders;
+  const data = useMemo(() => {
+    return requestSearch?.requests?.find(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) != "100" && el.request_type == "saving"
+    )
+      ? requestSearch?.requests?.find(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) != "100" &&
+            el.request_type == "saving"
+        )
+      : [];
+  }, [requestSearch]);
 
   return (
     <Row gutter={[0, 25]} justify="center">

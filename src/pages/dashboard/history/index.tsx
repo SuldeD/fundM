@@ -3,7 +3,7 @@ import styles from "../../../styles/history.module.css";
 import stylesList from "../../../styles/dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../../components/header";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
@@ -16,47 +16,52 @@ const History = () => {
   const { data } = useApiContext();
   useRequireAuth();
 
-  const { error } = Modal;
-
   const [filterData, setFilterData] = useState<any>();
 
   const [type, setType] = useState<any>(null);
   const [dates, setDates] = useState<any>(null);
   const [value, setValue] = useState<any>(null);
 
-  const [doneOrders, setDoneOrders] = useState<any[]>([]);
-  const dataTable = doneOrders;
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery({
+    order: "date",
+    order_up: "1",
+    page: "1",
+    page_size: "30",
+    filter_type: "done",
+  });
 
-  const { mutate } = api.loan.reguestSearch.useMutation();
+  const dataTable = useMemo(() => {
+    return requestSearch?.requests;
+  }, [requestSearch]);
 
-  useEffect(() => {
-    mutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "30",
-        filter_type: "done",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            data?.requests?.forEach((el: any) => {
-              setDoneOrders((prev) => [...prev, el]);
-            });
-          } else {
-            signOut();
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
+  // useEffect(() => {
+  //   mutate(
+  //     {
+  //       order: "date",
+  //       order_up: "1",
+  //       page: "1",
+  //       page_size: "30",
+  //       filter_type: "done",
+  //     },
+  //     {
+  //       onSuccess: (
+  //         /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+  //       ) => {
+  //         if (data?.success) {
+  //           data?.requests?.forEach((el: any) => {
+  //             setDoneOrders((prev) => [...prev, el]);
+  //           });
+  //         } else {
+  //           signOut();
+  //           error({
+  //             title: "Амжилтгүй",
+  //             content: <div>{data?.description || null}</div>,
+  //           });
+  //         }
+  //       },
+  //     }
+  //   );
+  // }, []);
 
   const onOpenChange = (open: any) => {
     if (open) {

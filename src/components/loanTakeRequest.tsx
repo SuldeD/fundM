@@ -5,8 +5,6 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { useAppContext } from "app/context/appContext";
-import { signOut } from "next-auth/react";
-import { api } from "app/utils/api";
 
 export const LoanTakeReqComponent = (props: any) => {
   const router = useRouter();

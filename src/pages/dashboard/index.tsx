@@ -7,13 +7,16 @@ import { useRouter } from "next/router";
 import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import { api } from "app/utils/api";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { signOut } from "next-auth/react";
 
 export const Dashboard = () => {
   const router = useRouter();
   useRequireAuth();
-  const { loan, data, sumLoan, sumSaving } = useApiContext();
+  const { data } = useApiContext();
+
+  const { data: loan } = api.loan.loanList.useQuery();
+
   const { data: loans } = api.loan.reguestSearch.useQuery({
     order: "date",
     order_up: "1",
@@ -21,8 +24,26 @@ export const Dashboard = () => {
     page_size: "30",
     filter_type: "done",
   });
-  const { error } = Modal;
-  const [doneOrders, setDoneOrders] = useState<any[]>([]);
+
+  const { data: loanActive } = api.loan.reguestSearch.useQuery({
+    order: "date",
+    order_up: "1",
+    page: "1",
+    page_size: "30",
+    filter_type: "active",
+  });
+
+  const dataTable = useMemo(() => {
+    return loans?.requests?.reverse();
+  }, [loans]);
+
+  const sumLoan = useMemo(() => {
+    return loanActive?.loan_request_amount;
+  }, [loanActive]);
+
+  const sumSaving = useMemo(() => {
+    return loanActive?.saving_request_amount;
+  }, [loanActive]);
 
   const columns = [
     {
@@ -110,39 +131,6 @@ export const Dashboard = () => {
     },
   ];
 
-  useEffect(() => {
-    console.log("TEST!");
-    // mutate(
-    //   {
-    //     order: "date",
-    //     order_up: "1",
-    //     page: "1",
-    //     page_size: "30",
-    //     filter_type: "done",
-    //   },
-    //   {
-    //     onSuccess: (
-    //       /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-    //     ) => {
-    //       if (data?.success) {
-    //         console.log(data);
-    //         data?.requests?.forEach((el: any) => {
-    //           setDoneOrders((prev) => [...prev, el]);
-    //         });
-    //       } else {
-    //         signOut();
-    //         error({
-    //           title: "Амжилтгүй",
-    //           content: <div>{data?.description || null}</div>,
-    //         });
-    //       }
-    //     },
-    //   }
-    // );
-  }, []);
-
-  const dataTable = doneOrders?.reverse();
-
   if (!data) {
   } else {
     return (
@@ -212,7 +200,7 @@ export const Dashboard = () => {
                           <div
                             className={`${styles["dashboard-loan-son-number"]} flex`}
                           >
-                            {loan?.loan_rate_month}{" "}
+                            {loan?.product_list[0]?.loan_rate_month}{" "}
                             <p className="h-[15px] w-[15px]">%</p>
                           </div>
                         </Col>

@@ -8,22 +8,14 @@ import { HeaderDashboard } from "../../../components/header";
 import { useRequireAuth } from "app/utils/auth";
 import { Loaderr } from "app/components/Loader";
 import { useApiContext } from "app/context/dashboardApiContext";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { api } from "app/utils/api";
-import { signOut } from "next-auth/react";
 
 export const FundHistory = () => {
   const { data } = useApiContext();
   useRequireAuth();
-  const { error } = Modal;
 
   const [activeClass, setSelectedId] = useState<any>();
-  const [mySavingOrders, setMyDoneSavingOrders] = useState<any[]>([]);
-  const [myLoanOrders, setMyDoneLoanOrders] = useState<any[]>([]);
-
-  const [sumMySaving, setSumMySaving] = useState<number>(0);
-  const [sumMyLoan, setSumMyLoan] = useState<number>(0);
-  const [orders, setOrders] = useState<any[]>([]);
 
   const [open, setOpen] = useState<boolean>(false);
   const [myFundTabKey, setMyFundTabKey] = useState<string>("1");
@@ -114,49 +106,65 @@ export const FundHistory = () => {
     },
   ];
 
-  const { mutate } = api.loan.reguestSearch.useMutation();
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery({
+    order: "date",
+    order_up: "1",
+    page: "1",
+    page_size: "30",
+    filter_type: "my",
+  });
 
-  console.log("this is rendering");
+  const orders = useMemo(() => {
+    return requestSearch?.requests;
+  }, [requestSearch]);
 
-  useEffect(() => {
-    console.log("REQUEST MY");
-    mutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "30",
-        filter_type: "my",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          // if (data?.success) {
-          //   data?.requests?.forEach((el: any) => {
-          //     setOrders((prev) => [...prev, el]);
-          //     if (el.filled_percent.slice(0, 3) == "100") {
-          //       if (el.request_type == "wallet") {
-          //         setMyDoneLoanOrders((prev) => [...prev, el]);
-          //         setSumMyLoan((prev) => prev + Number(el.loan_amount));
-          //       } else if (el.request_type == "saving") {
-          //         setMyDoneSavingOrders((prev) => [...prev, el]);
-          //         setSumMySaving((prev) => prev + Number(el.loan_amount));
-          //       }
-          //     } else {
-          //     }
-          //   });
-          // } else {
-          //   signOut();
-          //   error({
-          //     title: "Амжилтгүй",
-          //     content: <div>{data?.description || null}</div>,
-          //   });
-          // }
-        },
-      }
+  const mySavingOrders = useMemo(() => {
+    return requestSearch?.requests?.find(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) == "100" && el.request_type == "wallet"
     );
-  }, []);
+  }, [requestSearch]);
+
+  const myLoanOrders = useMemo(() => {
+    return requestSearch?.requests?.find(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) == "100" && el.request_type == "saving"
+    );
+  }, [requestSearch]);
+
+  const sumMyLoan = useMemo(() => {
+    let num = 0;
+    return requestSearch?.requests?.find(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) == "100" &&
+        el.request_type == "saving" &&
+        num + el.loan_amount
+    ) > 0
+      ? requestSearch?.requests?.find(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) == "100" &&
+            el.request_type == "saving" &&
+            num + el.loan_amount
+        )
+      : num;
+  }, [requestSearch]);
+
+  const sumMySaving = useMemo(() => {
+    let num = 0;
+    return requestSearch?.requests?.find(
+      (el: any) =>
+        el.filled_percent.slice(0, 3) == "100" &&
+        el.request_type == "saving" &&
+        num + el.loan_amount
+    ) > 0
+      ? requestSearch?.requests?.find(
+          (el: any) =>
+            el.filled_percent.slice(0, 3) == "100" &&
+            el.request_type == "saving" &&
+            num + el.loan_amount
+        )
+      : num;
+  }, [requestSearch]);
 
   const items = [
     {
@@ -194,7 +202,7 @@ export const FundHistory = () => {
                   Санхүүжилтын тоо
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {mySavingOrders && mySavingOrders.length}
+                  {mySavingOrders ? mySavingOrders.length : 0}
                 </div>
               </Col>
             </Row>
@@ -207,7 +215,7 @@ export const FundHistory = () => {
                 pageSize: 10,
                 position: ["bottomCenter"],
               }}
-              dataSource={mySavingOrders.reverse()}
+              dataSource={mySavingOrders}
               rowKey={"create_date"}
             />
           </Col>
@@ -248,7 +256,7 @@ export const FundHistory = () => {
                   Зээлийн тоо
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {myLoanOrders && myLoanOrders.length}
+                  {myLoanOrders ? myLoanOrders.length : 0}
                 </div>
               </Col>
             </Row>
@@ -261,7 +269,7 @@ export const FundHistory = () => {
                 pageSize: 10,
                 position: ["bottomCenter"],
               }}
-              dataSource={myLoanOrders.reverse()}
+              dataSource={myLoanOrders}
               rowKey={"create_date"}
             />
           </Col>

@@ -41,7 +41,6 @@ export const Foundation = () => {
       (it: any) => it.product_code === "saving"
     );
   }, [loanData]);
-  console.log("test 111", loanData);
 
   const { error } = Modal;
 
