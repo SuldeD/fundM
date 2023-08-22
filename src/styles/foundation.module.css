@@ -1,6 +1,6 @@
 .foundation-main-row {
   background-color: #fff;
-  height: 100vh;
+  min-height: 100vh;
   padding: 25px 0;
   overflow: auto;
 }

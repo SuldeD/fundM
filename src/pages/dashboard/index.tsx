@@ -1,23 +1,20 @@
-import { Col, Row, Button, Image, Table, Modal } from "antd";
+import { Col, Row, Button, Image, Table } from "antd";
 import styles from "../../styles/dashboard.module.css";
 import { RightOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../components/header";
 import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import { api } from "app/utils/api";
-import { useEffect, useMemo, useState } from "react";
-import { signOut } from "next-auth/react";
+import { useMemo } from "react";
+import { useSession } from "next-auth/react";
 
 export const Dashboard = () => {
+  const { data } = useSession();
   const router = useRouter();
   useRequireAuth();
-  const { data } = useApiContext();
 
-  const { data: loan } = api.loan.loanList.useQuery(undefined, {
-    enabled: false,
-  });
+  const { data: loan } = api.loan.loanList.useQuery();
 
   const { data: loans } = api.loan.reguestSearch.useQuery({
     order: "date",
@@ -202,7 +199,7 @@ export const Dashboard = () => {
                           <div
                             className={`${styles["dashboard-loan-son-number"]} flex`}
                           >
-                            {/* {loan?.product_list[0]?.loan_rate_month}{" "} */}
+                            {loan?.product_list[0]?.loan_rate_month}{" "}
                             <p className="h-[15px] w-[15px]">%</p>
                           </div>
                         </Col>

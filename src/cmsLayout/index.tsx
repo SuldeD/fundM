@@ -16,90 +16,134 @@ import SidebarRightComponent from "./SidebarRight";
 import SidebarLeftComponent from "./SidebarLeft";
 import PopupModal from "../components/modal";
 import { useRequireAuth } from "app/utils/auth";
-import { Loaderr } from "app/components/Loader";
 import styles from "../styles/foundation.module.css";
 import style from "../styles/Header.module.css";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { ApiWrapper } from "app/context/dashboardApiContext";
 import { api } from "app/utils/api";
-import { useCallback, useEffect, useState } from "react";
-import sanitizeHtml from "sanitize-html";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useApiContext } from "src/context/dashboardApiContext";
 const { Header } = Layout;
 const { Content } = Layout;
 
 export const ProtectedLayout = ({ children }: any) => {
   useRequireAuth();
   const router = useRouter();
+  const { error } = Modal;
+  const [form] = Form.useForm();
 
+  //queries
+  const { data: statusData, refetch: requestStatus } =
+    api.account.accountStatus.useQuery(undefined, {
+      enabled: false,
+      refetchOnWindowFocus: false,
+    });
+  const { data: accountInfo, refetch: requestInfo } =
+    api.account.accountInfo.useQuery(undefined, {
+      enabled: false,
+      refetchOnWindowFocus: false,
+    });
+  const { data: dan, refetch: requestDan } =
+    api.account.accountStatusDan.useQuery(undefined, {
+      enabled: false,
+      refetchOnWindowFocus: false,
+    });
+
+  // const { data: termConfirm, refetch: requestTermOfServiceConfirm } =
+  //   api.term.termOfServiceConfirm.useQuery(undefined, {
+  //     enabled: false,
+  //   });
+
+  const { data: getContent } = api.term.getContent.useQuery(
+    { code: "term_of_services" },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  //mutates
+  const { mutate } = api.other.notficationSearch.useMutation();
+
+  //states
   const [open, setOpen] = useState(false);
   const [openNotf, setOpenNotf] = useState(false);
   const [openDra, setOpenDra] = useState(false);
   const [checked, setChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [notfication, setNotfication] = useState<any>();
-  const [html, setHtml] = useState<any>();
 
-  const { error } = Modal;
-  const { mutate } = api.other.notficationSearch.useMutation();
+  //constants
+  const html = useMemo(() => {
+    return getContent?.page_html;
+  }, [getContent]);
+  const keys = router?.asPath;
+  const phoneItems = [
+    {
+      key: "/dashboard",
+      label: <Link href="/dashboard">Дашбоард</Link>,
+      icon: <img src="/images/menu.png" style={{ width: 22 }} />,
+    },
+    {
+      key: "/dashboard/fund",
+      label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
+      icon: <img src="/images/stats.png" style={{ width: 22 }} />,
+    },
+    {
+      key: "/dashboard/myfund",
+      label: <Link href="/dashboard/myfund">Миний хүсэлтүүд</Link>,
+      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
+    },
+    {
+      key: "/dashboard/history",
+      label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
+      icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
+    },
+    {
+      key: "/dashboard/loan",
+      label: <Link href="/dashboard/loan">Зээл авах хүсэлт</Link>,
+      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
+    },
+    {
+      key: "/dashboard/foundation",
+      label: <Link href="/dashboard/foundation">Санхүүжилт өгөх хүсэлт</Link>,
+      icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
+    },
+  ];
 
-  const [form] = Form.useForm();
-
-  const { data: statusData, refetch: requestStatus } =
-    api.account.accountStatus.useQuery(undefined, {
-      enabled: false,
-    });
-
-  const { data: accountInfo, refetch: requestInfo } =
-    api.account.accountInfo.useQuery(undefined, {
-      enabled: false,
-    });
-
-  const { data: dan, refetch: requestDan } =
-    api.account.accountStatusDan.useQuery(undefined, {
-      enabled: false,
-    });
-
-  const { data: termConfirm, refetch: requestTermOfServiceConfirm } =
-    api.term.termOfServiceConfirm.useQuery(undefined, {
-      enabled: false,
-    });
-
-  const { mutate: getContent } = api.term.getContent.useMutation();
-
+  //functions
   useEffect(() => {
-    // requestStatus();
-    // requestDan();
+    requestStatus();
+    requestDan();
+    requestInfo();
     // requestTermOfServiceConfirm()
   }, []);
 
   useEffect(() => {
-    // mutate(
-    //   {
-    //     order: "date",
-    //     order_up: "1",
-    //     page: "1",
-    //     page_size: "3",
-    //   },
-    //   {
-    //     onSuccess: (
-    //       /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-    //     ) => {
-    //       if (data?.success) {
-    //         setNotfication(data);
-    //       } else {
-    //         error({
-    //           title: "Амжилтгүй",
-    //           content: <div>{data?.description || null}</div>,
-    //         });
-    //         signOut();
-    //       }
-    //     },
-    //   }
-    // );
+    mutate(
+      {
+        order: "date",
+        order_up: "1",
+        page: "1",
+        page_size: "3",
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            setNotfication(data);
+          } else {
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+            signOut();
+          }
+        },
+      }
+    );
   }, [statusData?.stat?.notification_count]);
 
   const allData = useCallback((page_size: string) => {
@@ -144,68 +188,10 @@ export const ProtectedLayout = ({ children }: any) => {
     // termConfirm();
   };
 
-  useEffect(() => {
-    // getContent(
-    //   {
-    //     code: "term_of_services",
-    //   },
-    //   {
-    //     onSuccess: (
-    //       /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-    //     ) => {
-    //       if (data?.success) {
-    //         setHtml(sanitizeHtml(data?.page_html));
-    //       } else {
-    //         error({
-    //           title: "Амжилтгүй",
-    //           content: <div>{data?.description || null}</div>,
-    //         });
-    //       }
-    //     },
-    //   }
-    // );
-  }, []);
-
-  const keys = router?.asPath;
-
-  const phoneItems = [
-    {
-      key: "/dashboard",
-      label: <Link href="/dashboard">Дашбоард</Link>,
-      icon: <img src="/images/menu.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/fund",
-      label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
-      icon: <img src="/images/stats.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/myfund",
-      label: <Link href="/dashboard/myfund">Миний хүсэлтүүд</Link>,
-      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/history",
-      label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
-      icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/loan",
-      label: <Link href="/dashboard/loan">Зээл авах хүсэлт</Link>,
-      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/foundation",
-      label: <Link href="/dashboard/foundation">Санхүүжилт өгөх хүсэлт</Link>,
-      icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
-    },
-  ];
-
   const close = () => {
     setOpenDra(false);
   };
 
-  console.log("test1 TEST!");
   return (
     <Layout>
       <ApiWrapper>
@@ -226,7 +212,9 @@ export const ProtectedLayout = ({ children }: any) => {
           buttonClick={null}
           text={
             <>
-              {html && html}
+              <Col span={24} className="my-5 rounded-[9px] bg-bank p-[50px] ">
+                <div dangerouslySetInnerHTML={{ __html: html }} />
+              </Col>
               <Form form={form}>
                 <Row justify="center">
                   <Col span={24}>

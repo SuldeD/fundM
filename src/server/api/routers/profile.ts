@@ -9,18 +9,16 @@ export const profileRouter = createTRPCRouter({
     .input(
       z.object({
         account_num: z.string(),
-        password: z.string(),
         bank_id: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
-      const { account_num, password, bank_id } = input;
+      const { account_num, bank_id } = input;
 
       const body = encrypt(
         JSON.stringify({
           account_num,
-          password,
           bank_id,
         })
       );
@@ -47,19 +45,17 @@ export const profileRouter = createTRPCRouter({
     .input(
       z.object({
         confirm_code: z.string(),
-        password: z.string(),
         photo: z.string(),
         request_id: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
-      const { confirm_code, password, photo, request_id } = input;
+      const { confirm_code, photo, request_id } = input;
 
       const body = encrypt(
         JSON.stringify({
           confirm_code,
-          password,
           photo,
           request_id,
         })
@@ -77,6 +73,7 @@ export const profileRouter = createTRPCRouter({
           },
         }
       );
+      console.log("res2", res2);
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);

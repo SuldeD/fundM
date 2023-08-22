@@ -1,67 +1,41 @@
-import { Row, Col, Select, DatePicker, Button, Table, Modal } from "antd";
+import { Row, Col, Select, DatePicker, Button, Table } from "antd";
 import styles from "../../../styles/history.module.css";
 import stylesList from "../../../styles/dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
 import { HeaderDashboard } from "../../../components/header";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { Loaderr } from "app/components/Loader";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import { api } from "app/utils/api";
-import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 const { RangePicker } = DatePicker;
 
 const History = () => {
-  const { data } = useApiContext();
+  const { data } = useSession();
   useRequireAuth();
 
-  const [filterData, setFilterData] = useState<any>();
+  //query
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "30",
+      filter_type: "done",
+    },
+    { refetchOnWindowFocus: false }
+  );
 
+  //state
+  const [filterData, setFilterData] = useState<any>();
   const [type, setType] = useState<any>(null);
   const [dates, setDates] = useState<any>(null);
   const [value, setValue] = useState<any>(null);
 
-  const { data: requestSearch } = api.loan.reguestSearch.useQuery({
-    order: "date",
-    order_up: "1",
-    page: "1",
-    page_size: "30",
-    filter_type: "done",
-  });
-
   const dataTable = useMemo(() => {
     return requestSearch?.requests;
   }, [requestSearch]);
-
-  // useEffect(() => {
-  //   mutate(
-  //     {
-  //       order: "date",
-  //       order_up: "1",
-  //       page: "1",
-  //       page_size: "30",
-  //       filter_type: "done",
-  //     },
-  //     {
-  //       onSuccess: (
-  //         /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-  //       ) => {
-  //         if (data?.success) {
-  //           data?.requests?.forEach((el: any) => {
-  //             setDoneOrders((prev) => [...prev, el]);
-  //           });
-  //         } else {
-  //           signOut();
-  //           error({
-  //             title: "Амжилтгүй",
-  //             content: <div>{data?.description || null}</div>,
-  //           });
-  //         }
-  //       },
-  //     }
-  //   );
-  // }, []);
 
   const onOpenChange = (open: any) => {
     if (open) {

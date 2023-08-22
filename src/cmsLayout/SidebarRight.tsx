@@ -1,15 +1,4 @@
-import {
-  Layout,
-  Row,
-  Col,
-  Avatar,
-  Badge,
-  Modal,
-  Empty,
-  message,
-  Button,
-} from "antd";
-
+import { Layout, Row, Col, Avatar, Badge, Modal, Empty, Button } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "../styles/protectedLayout.module.css";
 import { LoanReqComponent } from "../components/loanRequest";
@@ -18,49 +7,60 @@ import { useRouter } from "next/router";
 import { LoanTakeReqComponent } from "../components/loanTakeRequest";
 import { FoundationReq } from "../components/foundationReq";
 import { useAppContext } from "app/context/appContext";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { api } from "app/utils/api";
-import { root } from "postcss";
 
 const { Sider } = Layout;
 
 export const SidebarRightComponent = ({ statusData }: any) => {
-  const { myFundTabKey } = useAppContext();
   const router = useRouter();
-  const { data: session } = useSession();
   const { error } = Modal;
 
+  //mutates
+  const { mutate } = api.other.notficationSearch.useMutation();
+
+  //queries
+  const { data: accountInfo, refetch: requestInfo } =
+    api.account.accountInfo.useQuery(undefined, {
+      enabled: false,
+      refetchOnWindowFocus: false,
+    });
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "30",
+      filter_type: "active",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  //states
+  const { myFundTabKey } = useAppContext();
   const [notfication, setNotfication] = useState<any>();
-
   const [open, setOpen] = useState<boolean>(false);
-  const filterType = useMemo(() => {
-    if (
-      router.pathname === "/dashboard" ||
-      router.pathname === "/dashboard/foundation" ||
-      (router.pathname === "/dashboard/myfund" && myFundTabKey === "1") ||
-      (router.pathname === "/dashboard/myfund/list" && myFundTabKey === "2")
-    ) {
-      return "active";
-    } else {
-      return "done";
-    }
-  }, []);
-  console.log("this is filter type", filterType);
 
-  const { data, refetch: requestLoan } = api.loan.reguestSearch.useQuery({
-    order: "date",
-    order_up: "1",
-    page: "1",
-    page_size: "30",
-    filter_type: filterType,
-  });
-
+  //constants
   const activeSavingOrders = useMemo(() => {
-    return data?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" && el.request_type == "wallet"
-    );
-  }, []);
+    return requestSearch?.requests?.filter(
+      (el: any) => el.request_type == "saving"
+    ).length > 0
+      ? requestSearch?.requests?.filter(
+          (el: any) => el.request_type == "saving"
+        )
+      : [];
+  }, [requestSearch]);
+
+  const activeLoanOrders = useMemo(() => {
+    return requestSearch?.requests?.filter(
+      (el: any) => el?.request_type == "wallet"
+    ).length > 0
+      ? requestSearch?.requests?.filter(
+          (el: any) => el?.request_type == "wallet"
+        )
+      : [];
+  }, [requestSearch]);
 
   const NavBars = {
     // CalculateComponent
@@ -78,17 +78,15 @@ export const SidebarRightComponent = ({ statusData }: any) => {
     // @ts-ignore
     const Comp = NavBars[router.pathname] ?? NavBars["/dashboard/profile"];
 
-    console.log("RENDERING ");
-
-    return <Comp activeSavingOrders={activeSavingOrders} />;
-  }, [router.pathname]);
-
-  console.log("sidebar", router.pathname);
-
-  const { mutate } = api.other.notficationSearch.useMutation();
+    return (
+      <Comp
+        activeSavingOrders={activeSavingOrders.length > 0 && activeSavingOrders}
+        activeLoanOrders={activeLoanOrders.length > 0 && activeLoanOrders}
+      />
+    );
+  }, [router.pathname, myFundTabKey]);
 
   useEffect(() => {
-    console.log("this is spaming");
     mutate(
       {
         order: "date",
@@ -114,6 +112,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
     );
   }, [statusData?.stat?.notification_count]);
 
+  //functions
   function allData(page_size: string) {
     mutate(
       {
@@ -269,7 +268,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["sidebar-right-profile-name"]}>
-                          {session?.user?.name}
+                          {accountInfo?.account?.first_name}
                         </div>
                       </Col>
                     </Row>

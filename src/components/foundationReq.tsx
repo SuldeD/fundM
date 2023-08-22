@@ -7,30 +7,9 @@ import { Fragment, useMemo } from "react";
 import { useAppContext } from "app/context/appContext";
 import { api } from "app/utils/api";
 
-export const FoundationReq = () => {
+export const FoundationReq = ({ activeSavingOrders: data }: any) => {
   const router = useRouter();
   const { setMyFundTabKey } = useAppContext();
-
-  const { data: requestSearch } = api.loan.reguestSearch.useQuery({
-    order: "date",
-    order_up: "1",
-    page: "1",
-    page_size: "30",
-    filter_type: "active",
-  });
-
-  const data = useMemo(() => {
-    return requestSearch?.requests?.find(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" && el.request_type == "saving"
-    )
-      ? requestSearch?.requests?.find(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "saving"
-        )
-      : [];
-  }, [requestSearch]);
 
   return (
     <Row gutter={[0, 25]} justify="center">

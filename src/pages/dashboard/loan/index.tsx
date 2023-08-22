@@ -11,50 +11,62 @@ import {
 } from "antd";
 import styles from "../../../styles/dloan.module.css";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { Loaderr } from "app/components/Loader";
-import { useApiContext } from "app/context/dashboardApiContext";
 import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
-import sanitizeHtml from "sanitize-html";
 import { useSession } from "next-auth/react";
 
 export const Loan = () => {
-  const { data, loanReqMutate, loanReqConfirmMut } = useApiContext();
-  const { data: session } = useSession();
-  const accountInfo = session?.user;
-
-  useRequireAuth();
+  const termsRef = useRef();
+  const router = useRouter();
+  const { data } = useSession();
   const { error } = Modal;
-  const { mutate: loanMutate } = api.loan.loanSearch.useMutation();
+  useRequireAuth();
+
+  //mutate
   const { mutate: walletToBank } = api.loan.walletToBank.useMutation();
   const { mutate: walletToBankConfirm } =
     api.loan.walletToBankConfirm.useMutation();
-  const { mutate: getContent } = api.term.getContent.useMutation();
-  const { data: statusData, refetch: requestStatus } =
-    api.account.accountStatus.useQuery(undefined, {
-      enabled: false,
-    });
+  const { mutate: loanReqMutate } = api.loan.loanRequest.useMutation();
+  const { mutate: loanReqConfirmMut } =
+    api.loan.loanRequestConfirm.useMutation();
 
-  useEffect(() => {
-    requestStatus();
-  }, []);
-  const [loanReq, setLoanReq] = useState<any[]>([]);
-
-  let status = 0;
-  loanReq?.forEach((ln: any) => {
-    if (ln?.is_status == "5" && ln?.product_type_code == "loan") {
-      return (status = 1);
-    }
+  //query
+  const { data: getContent } = api.term.getContent.useQuery(
+    {
+      code: "loan",
+    },
+    { refetchOnWindowFocus: false }
+  );
+  const { data: statusData } = api.account.accountStatus.useQuery(undefined, {
+    refetchOnWindowFocus: false,
   });
+  const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: savingData } = api.loan.loanList.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: loanSearch } = api.loan.loanSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "50",
+      filter_type: "dp",
+    },
+    { refetchOnWindowFocus: false }
+  );
 
+  //state
   const [checked, setChecked] = useState<boolean>(false);
   const [loadings, setLoadings] = useState<boolean>(false);
-  const [requestId, setRequestId] = useState();
+  const [requestId, setRequestId] = useState<string>("");
   const [activeClass, setActiveClass] = useState(true);
   const [inputValue, setInputValue] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,20 +76,24 @@ export const Loan = () => {
   const [pin_code, setPin_code] = useState<any>();
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
   const [activeDuration, setActiveDuration] = useState<number>(0);
-
-  const [html, setHtml] = useState<any>();
-
   const [form] = Form.useForm();
-  const termsRef = useRef();
-  const router = useRouter();
-
-  const { data: savingData } = api.loan.loanList.useQuery();
 
   const loan = useMemo(() => {
     return savingData?.product_list?.find(
       (it: any) => it.product_code !== "saving"
     );
   }, [savingData]);
+
+  const loanReq = useMemo(() => {
+    return loanSearch?.loan_requests;
+  }, [loanSearch]);
+
+  let status = 0;
+  loanReq?.forEach((ln: any) => {
+    if (ln?.is_status == "5" && ln?.product_type_code == "loan") {
+      return (status = 1);
+    }
+  });
 
   const minValue = useMemo(() => {
     return status == 1
@@ -97,57 +113,11 @@ export const Loan = () => {
 
   const dataTable = loan?.duration;
 
-  useEffect(() => {
-    loanMutate(
-      {
-        order: "date",
-        order_up: "1",
-        page: "1",
-        page_size: "50",
-        filter_type: "dp",
-      },
-      {
-        onSuccess: (data: {
-          success: any;
-          request_id: any;
-          loan_requests: import("react").SetStateAction<any[]>;
-          description: any;
-        }) => {
-          if (data.success) {
-            setLoanReq(data?.loan_requests);
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
+  const html = useMemo(() => {
+    return getContent?.page_html;
+  }, [getContent]);
 
-  useEffect(() => {
-    getContent(
-      {
-        code: "loan",
-      },
-      {
-        onSuccess: (
-          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-        ) => {
-          if (data?.success) {
-            setHtml(sanitizeHtml(data?.page_html));
-          } else {
-            error({
-              title: "Амжилтгүй",
-              content: <div>{data?.description || null}</div>,
-            });
-          }
-        },
-      }
-    );
-  }, []);
-
+  //function
   function submit() {
     setLoadings(true);
     try {
@@ -157,7 +127,6 @@ export const Loan = () => {
             account_name: accountInfo?.bank_account?.account_name,
             amount: inputValue.toString(),
             description: "test loan",
-            // @ts-ignore
             loan_duration_day:
               dataTable &&
               Number(dataTable[activeDuration]?.duration).toString(),
@@ -229,7 +198,6 @@ export const Loan = () => {
           }
         );
       }
-      console.log(status);
     } catch (error) {
       console.error("An error occurred:", error);
     }
@@ -302,7 +270,7 @@ export const Loan = () => {
       });
     }
   }
-  // || accountInfo?.account?.menu_close == "0"
+
   if (!data) {
     return <Loaderr />;
   } else {
@@ -452,33 +420,7 @@ export const Loan = () => {
                   </Col>
                 </Row>
               </Col>
-              <Col xs={24} lg={22}>
-                <Row gutter={[0, 10]}>
-                  <Col xs={24} span={24}>
-                    <div
-                      className={`${styles["dloan-slider-input-title"]} flex w-full`}
-                    >
-                      <div className="text-primary">
-                        Авах боломжит нийт зээлийн хэмжээ
-                      </div>
-                    </div>
-                  </Col>
-                  {/* <Col xs={24} lg={24}>
-                    <Row
-                      className={`${styles["dloan-rate-div"]}`}
-                      align="middle"
-                      justify="center"
-                      style={{ width: "100%" }}
-                    >
-                      <div
-                        className={`${styles["dloan-rate-text"]} text-primary`}
-                      >
-                        {numberToCurrency(sumSaving)}
-                      </div>
-                    </Row>
-                  </Col> */}
-                </Row>
-              </Col>
+
               <Col md={22}>
                 <Row className={styles["dloan-detail"]} gutter={[0, 22]}>
                   <Col span={24}>

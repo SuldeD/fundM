@@ -27,7 +27,7 @@ export const termRouter = createTRPCRouter({
   }),
   getContent: protectedProcedure
     .input(z.object({ code: z.string() }))
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
       const { code } = input;
       const body = encrypt(

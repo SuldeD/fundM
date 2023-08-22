@@ -117,7 +117,7 @@ export const loanRouter = createTRPCRouter({
         filter_type: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
       const { order, order_up, page, page_size, filter_type } = input;
 

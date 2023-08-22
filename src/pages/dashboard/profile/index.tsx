@@ -14,13 +14,13 @@ import styles from "../../../styles/profile.module.css";
 import { HeaderDashboard } from "../../../components/header";
 import { useState } from "react";
 import { Loaderr } from "app/components/Loader";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useRequireAuth } from "app/utils/auth";
 import { useRouter } from "next/router";
 import stylesL from "../../../styles/dloan.module.css";
 import { api } from "app/utils/api";
 import InputCode from "app/components/input";
 import type { RcFile } from "antd/es/upload/interface";
+import { useSession } from "next-auth/react";
 const { Panel } = Collapse;
 
 const beforeUpload = (file: any) => {
@@ -42,25 +42,32 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
 };
 
 export const Profile = () => {
-  const { data, addEmail, changePhone, changePhoneConfirm } = useApiContext();
+  const { data } = useSession();
+  const router = useRouter();
+  const { error, warning } = Modal;
+  useRequireAuth();
+
+  //mutates
+  const { mutate: addEmail } = api.profile.addEmail.useMutation();
+  const { mutate: changePhone } = api.profile.changePhone.useMutation();
+  const { mutate: changePhoneConfirm } =
+    api.profile.changePhoneConfirm.useMutation();
   const { mutate } = api.profile.changePass.useMutation();
   const { mutate: fundMutate } = api.profile.changePassFund.useMutation();
   const { mutate: forgotTransPass } = api.profile.forgotTransPass.useMutation();
   const { mutate: forgotTransPassConfirm } =
     api.profile.forgotTransPassConfirm.useMutation();
-  const { data: accountInfo } = api.account.accountInfo.useQuery();
 
-  const router = useRouter();
-  const { error, warning } = Modal;
-  useRequireAuth();
+  //queries
+  const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
+  //states
   const [open, setOpen] = useState<boolean>(false);
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenVerifyPass, setIsOpenVerifyPass] = useState<boolean>(false);
-
   const [forgotId, setForgotId] = useState<string>("");
-
   const [editNumber, setEditNumber] = useState<string>(
     accountInfo?.account?.phone
   );
@@ -70,22 +77,17 @@ export const Profile = () => {
   const [loginPassPrev, setLoginPassPrev] = useState<string>("");
   const [loginPassNew, setLoginPassNew] = useState<string>("");
   const [loginPassNewVer, setLoginPassNewVer] = useState<string>("");
-
   const [fundPassPrev, setFundPassPrev] = useState<string>("");
   const [fundPassNew, setFundPassNew] = useState<string>("");
   const [fundPassNewVer, setFundPassNewVer] = useState<string>("");
-
-  const [confirmCode, setConfirmCode] = useState<any>("");
-  const [clickedEdit, setClickedEdit] = useState<any>();
-  const [changeId, setChangeId] = useState<any>("");
+  const [confirmCode, setConfirmCode] = useState<string>("");
+  const [clickedEdit, setClickedEdit] = useState<number>(0);
+  const [changeId, setChangeId] = useState<string>("");
   const [formToken, setFormToken] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
 
-  // @ts-ignore
-  const onChange = (key) => {};
-
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState();
-
+  const onChange = (key: any) => {};
   const handleChange = (info: any) => {
     if (info.file.status === "uploading") {
       setLoading(true);
@@ -98,8 +100,6 @@ export const Profile = () => {
       });
     }
   };
-
-  // console.log("imageUrl", imageUrl);
 
   const uploadButton = (
     <div>

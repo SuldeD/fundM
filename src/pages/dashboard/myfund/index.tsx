@@ -7,38 +7,43 @@ import { numberToCurrency } from "../../../utils/number.helpers";
 import { HeaderDashboard } from "../../../components/header";
 import { useAppContext } from "../../../context/appContext";
 import { useRequireAuth } from "app/utils/auth";
-import { useApiContext } from "app/context/dashboardApiContext";
 import { useMemo, useState } from "react";
 import { Loaderr } from "app/components/Loader";
 import { api } from "app/utils/api";
+import { useSession } from "next-auth/react";
 
 export const MyFund = () => {
   const { myFundTabKey, setMyFundTabKey } = useAppContext();
-  const { data } = useApiContext();
+  const { data } = useSession();
   useRequireAuth();
 
-  console.log("THIS MY FUND");
-  const { data: requestSearch } = api.loan.reguestSearch.useQuery({
-    order: "date",
-    order_up: "1",
-    page: "1",
-    page_size: "30",
-    filter_type: "my",
-  });
+  //queries
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "30",
+      filter_type: "my",
+    },
+    { refetchOnWindowFocus: false }
+  );
 
+  //states
   const [activeClass, setSelectedId] = useState<any>();
   const [open, setOpen] = useState<boolean>(false);
 
+  //constants
   const orders = useMemo(() => {
     return requestSearch?.requests;
   }, [requestSearch]);
 
   const mySavingOrders = useMemo(() => {
-    return requestSearch?.requests?.find(
+    return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" && el.request_type == "saving"
     )
-      ? requestSearch?.requests?.find(
+      ? requestSearch?.requests?.filter(
           (el: any) =>
             el.filled_percent.slice(0, 3) != "100" &&
             el.request_type == "saving"
@@ -47,11 +52,11 @@ export const MyFund = () => {
   }, [requestSearch]);
 
   const myLoanOrders = useMemo(() => {
-    return requestSearch?.requests?.find(
+    return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" && el.request_type == "wallet"
     )
-      ? requestSearch?.requests?.find(
+      ? requestSearch?.requests?.filter(
           (el: any) =>
             el.filled_percent.slice(0, 3) != "100" &&
             el.request_type == "wallet"
@@ -59,32 +64,26 @@ export const MyFund = () => {
       : [];
   }, [requestSearch]);
 
+  let num = 0;
   const sumMyLoan = useMemo(() => {
-    let num = 0;
-    return requestSearch?.requests?.find(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" &&
+    let a = 0;
+    requestSearch?.requests?.forEach((el: any) => {
+      el.filled_percent.slice(0, 3) != "100" &&
         el.request_type == "wallet" &&
-        num + el.loan_amount
-    ) > 0
-      ? requestSearch?.requests?.find(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "wallet" &&
-            num + el.loan_amount
-        )
-      : num;
+        a + el.loan_amount;
+    });
+    return num;
   }, [requestSearch]);
 
   const sumMySaving = useMemo(() => {
     let num = 0;
-    return requestSearch?.requests?.find(
+    return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" &&
         el.request_type == "saving" &&
         num + el.loan_amount
     ) > 0
-      ? requestSearch?.requests?.find(
+      ? requestSearch?.requests?.filter(
           (el: any) =>
             el.filled_percent.slice(0, 3) != "100" &&
             el.request_type == "saving" &&
@@ -95,13 +94,13 @@ export const MyFund = () => {
 
   const myLoanOrdersSum = useMemo(() => {
     let num = 0;
-    return requestSearch?.requests?.find(
+    return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" &&
         el.request_type == "wallet" &&
         num + el.filled_percent.slice(0, 3)
     ) > 0
-      ? requestSearch?.requests?.find(
+      ? requestSearch?.requests?.filter(
           (el: any) =>
             el.filled_percent.slice(0, 3) != "100" &&
             el.request_type == "wallet" &&
@@ -112,13 +111,13 @@ export const MyFund = () => {
 
   const mySavingOrdersSum = useMemo(() => {
     let num = 0;
-    return requestSearch?.requests?.find(
+    return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" &&
         el.request_type == "saving" &&
         num + el.filled_percent.slice(0, 3)
     ) > 0
-      ? requestSearch?.requests?.find(
+      ? requestSearch?.requests?.filter(
           (el: any) =>
             el.filled_percent.slice(0, 3) != "100" &&
             el.request_type == "saving" &&
@@ -272,7 +271,7 @@ export const MyFund = () => {
                   pageSize: 10,
                   position: ["bottomCenter"],
                 }}
-                dataSource={myLoanOrders.reverse()}
+                dataSource={myLoanOrders}
                 rowKey={"create_date"}
               />
             </Col>

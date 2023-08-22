@@ -4,7 +4,6 @@ import { Button, Col, Drawer, Image, Layout, Menu, Popover, Row } from "antd";
 import style from "../styles/Header.module.css";
 import { MenuOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
 
 const { Header } = Layout;
 
@@ -113,12 +112,11 @@ export const HeaderComponent = () => {
           <Row align="middle" justify="space-between" wrap={false}>
             <Col flex="auto">
               <Row>
-                <Image
-                  src={"/logo.svg"}
-                  preview={false}
-                  width="50%"
+                <img
+                  src="/logo.svg"
                   onClick={() => router.push("/")}
                   style={{ cursor: "pointer" }}
+                  alt=""
                 />
               </Row>
             </Col>
@@ -186,8 +184,6 @@ export const HeaderComponent = () => {
                     onClick={() => {
                       router.push("/login");
                       setLoadings(true);
-
-                      // void signIn();
                     }}
                     style={{ borderRadius: 9, height: 44 }}
                   >

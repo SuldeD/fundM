@@ -8,39 +8,44 @@ import { HeaderDashboard } from "../../../../components/header";
 import { useAppContext } from "../../../../context/appContext";
 import { useRouter } from "next/router";
 import { useRequireAuth } from "app/utils/auth";
-import { useApiContext } from "app/context/dashboardApiContext";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Loaderr } from "app/components/Loader";
 import { api } from "app/utils/api";
-import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export const List = () => {
   const router = useRouter();
   const { myFundTabKey } = useAppContext();
-  const { data } = useApiContext();
+  const { data } = useSession();
   useRequireAuth();
 
+  //queries
+  const { data: requestSearch } = api.loan.reguestSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "30",
+      filter_type: "active",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  //states
   const [activeClass, setSelectedId] = useState<string>();
   const [open, setOpen] = useState<boolean>(false);
 
-  const { data: requestSearch } = api.loan.reguestSearch.useQuery({
-    order: "date",
-    order_up: "1",
-    page: "1",
-    page_size: "30",
-    filter_type: "active",
-  });
-
+  //constants
   const orders = useMemo(() => {
     return requestSearch?.requests;
   }, [requestSearch]);
 
-  const activeSavingOrders = useMemo(() => {
-    return requestSearch?.requests?.find(
+  const mySavingOrders = useMemo(() => {
+    return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" && el.request_type == "saving"
     )
-      ? requestSearch?.requests?.find(
+      ? requestSearch?.requests?.filter(
           (el: any) =>
             el.filled_percent.slice(0, 3) != "100" &&
             el.request_type == "saving"
@@ -48,55 +53,18 @@ export const List = () => {
       : [];
   }, [requestSearch]);
 
-  const activeLoanOrders = useMemo(() => {
-    return requestSearch?.requests?.find(
+  const myLoanOrders = useMemo(() => {
+    return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" && el.request_type == "wallet"
     )
-      ? requestSearch?.requests?.find(
+      ? requestSearch?.requests?.filter(
           (el: any) =>
             el.filled_percent.slice(0, 3) != "100" &&
             el.request_type == "wallet"
         )
       : [];
   }, [requestSearch]);
-
-  //   mutate(
-  //     {
-  //       order: "date",
-  //       order_up: "1",
-  //       page: "1",
-  //       page_size: "30",
-  //       filter_type: "active",
-  //     },
-  //     {
-  //       onSuccess: (
-  //         /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
-  //       ) => {
-  //         if (data?.success) {
-  //           console.log(data);
-  //           data?.requests?.forEach((el: any) => {
-  //             setOrders((prev) => [...prev, el]);
-  //             if (el.request_type == "wallet") {
-  //               setActiveLoanOrders((prev) => [...prev, el]);
-  //             } else if (el.request_type == "saving") {
-  //               setActiveSavingOrders((prev) => [...prev, el]);
-  //             }
-  //           });
-  //         } else {
-  //           signOut();
-  //           error({
-  //             title: "Амжилтгүй",
-  //             content: <div>{data?.description || null}</div>,
-  //           });
-  //         }
-  //       },
-  //     }
-  //   );
-  // }, []);
-
-  const myLoanOrders = activeLoanOrders?.reverse();
-  const mySavingOrders = activeSavingOrders?.reverse();
 
   const columns: any[] = [
     {
