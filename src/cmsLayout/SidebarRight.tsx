@@ -12,7 +12,7 @@ import { api } from "app/utils/api";
 
 const { Sider } = Layout;
 
-export const SidebarRightComponent = ({ statusData }: any) => {
+export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
   const router = useRouter();
   const { error } = Modal;
 
@@ -40,7 +40,6 @@ export const SidebarRightComponent = ({ statusData }: any) => {
   //states
   const { myFundTabKey } = useAppContext();
   const [notfication, setNotfication] = useState<any>();
-  const [open, setOpen] = useState<boolean>(false);
 
   //constants
   const activeSavingOrders = useMemo(() => {
@@ -93,7 +92,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
         order: "date",
         order_up: "1",
         page: "1",
-        page_size: "3",
+        page_size: "10",
       },
       {
         onSuccess: (
@@ -170,17 +169,11 @@ export const SidebarRightComponent = ({ statusData }: any) => {
       breakpoint="lg"
       collapsedWidth="0"
     >
-      <Modal
-        title={
-          <div className="text-center font-lato text-[18px] font-medium leading-[18px]">
+      {open && (
+        <div className="absolute right-[5%] top-[12%] z-50 max-h-[85vh] overflow-auto rounded-[8px] border bg-white p-[10px] drop-shadow-2xl ">
+          <div className="my-2 text-center font-lato text-[18px] font-medium leading-[18px]">
             Мэдэгдэл
           </div>
-        }
-        footer={null}
-        open={open}
-        onCancel={() => setOpen(false)}
-      >
-        <div key={"1"}>
           {notfication?.activity_list?.length > 0 ? (
             notfication?.activity_list?.map(
               (
@@ -251,7 +244,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
             </Button>
           )}
         </div>
-      </Modal>
+      )}
       <Row justify="center" className={styles["sidebar-right-main"]}>
         <Col span={20}>
           <Row justify="center" gutter={[0, 30]}>
@@ -279,7 +272,7 @@ export const SidebarRightComponent = ({ statusData }: any) => {
                   <Row
                     align="middle"
                     justify="center"
-                    onClick={() => setOpen(true)}
+                    onClick={() => setOpen(!open)}
                     className={`${styles["sidebar-right-notification-div"]} cursor-pointer`}
                   >
                     <Badge count={statusData?.stat?.notification_count}>

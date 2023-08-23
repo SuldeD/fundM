@@ -86,7 +86,6 @@ export const Profile = () => {
   const [fundPassPrev, setFundPassPrev] = useState<string>("");
   const [fundPassNew, setFundPassNew] = useState<string>("");
   const [fundPassNewVer, setFundPassNewVer] = useState<string>("");
-  const [confirmCode, setConfirmCode] = useState<string>("");
   const [clickedEdit, setClickedEdit] = useState<number>(0);
   const [changeId, setChangeId] = useState<string>("");
   const [formToken, setFormToken] = useState<any>();
@@ -923,7 +922,17 @@ export const Profile = () => {
             <div className="flex justify-between">
               <Button
                 className="w-[158px] cursor-pointer rounded-[20px] border bg-[#fff] text-center text-[#000]"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  setCode([...Array(length)].map(() => ""));
+                  setEditEmail("");
+                  setLoginPassPrev("");
+                  setLoginPassNew("");
+                  setFundPassPrev("");
+                  setFundPassNewVer("");
+                  setLoginPassNewVer("");
+                  setFundPassNew("");
+                }}
               >
                 Хаах
               </Button>
@@ -951,7 +960,17 @@ export const Profile = () => {
               </Button>
             </div>,
           ]}
-          onCancel={() => setOpen(false)}
+          onCancel={() => {
+            setOpen(false);
+            setCode([...Array(length)].map(() => ""));
+            setEditEmail("");
+            setLoginPassPrev("");
+            setLoginPassNew("");
+            setFundPassPrev("");
+            setFundPassNewVer("");
+            setLoginPassNewVer("");
+            setFundPassNew("");
+          }}
         >
           {clickedEdit == 2 && (
             <div className="mt-5">

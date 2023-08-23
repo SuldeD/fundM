@@ -324,12 +324,12 @@ export const FundHistory = () => {
     <Row justify="center" className={styles["fund-main-row"]}>
       <Col span={22}>
         <Row gutter={[0, 20]}>
-          {/* <HeaderDashboard
+          <HeaderDashboard
             title={"Миний санхүүжилт"}
             subTitle={
               " Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
             }
-          /> */}
+          />
 
           <Col span={24}>
             <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />

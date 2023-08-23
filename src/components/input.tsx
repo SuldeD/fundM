@@ -67,7 +67,10 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
           closable={true}
           open={open}
           footer={null}
-          onCancel={() => setOpen(false)}
+          onCancel={() => {
+            setOpen(false);
+            setCode([...Array(length)].map(() => ""));
+          }}
         >
           <Row justify="center">
             <Col span={20}>

@@ -22,7 +22,7 @@ import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
 
 export const Loan = () => {
-  const termsRef = useRef();
+  const termsRef: any = useRef();
   const router = useRouter();
   const { data } = useSession();
   const { error } = Modal;
@@ -67,14 +67,14 @@ export const Loan = () => {
   const [checked, setChecked] = useState<boolean>(false);
   const [loadings, setLoadings] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>("");
-  const [activeClass, setActiveClass] = useState(true);
-  const [inputValue, setInputValue] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeClass, setActiveClass] = useState<any>(true);
+  const [inputValue, setInputValue] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
   const [transaction_id, setTransaction_id] = useState<any>();
   const [form_token, setForm_token] = useState<any>();
   const [pin_code, setPin_code] = useState<any>();
-  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
   const [activeDuration, setActiveDuration] = useState<number>(0);
   const [form] = Form.useForm();
 
@@ -562,11 +562,12 @@ export const Loan = () => {
                 <Row gutter={12} align="middle">
                   <Col flex="none">
                     <Checkbox
-                      // @ts-ignore
                       ref={termsRef}
                       onChange={(e) => setChecked(e.target.checked)}
                       checked={checked}
                       disabled
+                      style={{ color: " #39DA00 !imporatant" }}
+                      // className="bg-[#39DA00]"
                     />
                   </Col>
                   <Col flex="none">
@@ -771,7 +772,7 @@ export const Loan = () => {
               <Button
                 type="primary"
                 loading={loadings}
-                className={`${styles["dloan-button-contiune"]}  bg-primary`}
+                className={styles["dloan-button-contiune"]}
                 onClick={() => {
                   // @ts-ignore
                   termsRef.current?.input.checked
@@ -814,7 +815,7 @@ export const Loan = () => {
                   </Col>
                   <Form form={form}>
                     <Row justify="center" gutter={[0, 10]}>
-                      <Col span={24}>
+                      <Col xs={24} lg={20}>
                         <Form.Item
                           name="agreement"
                           valuePropName="checked"
@@ -831,43 +832,41 @@ export const Loan = () => {
                             },
                           ]}
                         >
-                          <Checkbox>
+                          <Checkbox style={{ color: "green" }}>
                             <div className={styles["dloan-checkbox-text"]}>
                               Зээлийн үйлчилгээний нөхцөл
                             </div>
                           </Checkbox>
                         </Form.Item>
                       </Col>
-                      <Col span={24}>
-                        <Row justify="space-between" gutter={10} wrap={false}>
-                          <Col xs={12}>
-                            <Button
-                              className={styles["dloan-button-back"]}
-                              onClick={() => setIsModalOpen(false)}
-                            >
-                              <div className={styles["dloan-button-back-text"]}>
-                                Буцах
-                              </div>
-                            </Button>
-                          </Col>
-                          <Col xs={12} style={{ alignItems: "end" }}>
-                            <Row justify="end">
-                              <Form.Item>
-                                <Button
-                                  type="primary"
-                                  className={styles["dloan-button-contiune"]}
-                                  onClick={() => {
-                                    form.validateFields();
-                                    setChecked(!checked);
-                                    setIsModalOpen(false);
-                                  }}
-                                  htmlType="submit"
-                                >
-                                  Үргэлжлүүлэх
-                                </Button>
-                              </Form.Item>
-                            </Row>
-                          </Col>
+                      <Col xs={24} lg={20}>
+                        <Row
+                          justify="space-between"
+                          className="gap-3"
+                          gutter={10}
+                          wrap={false}
+                        >
+                          <Button
+                            className={styles["dloan-button-back"]}
+                            onClick={() => setIsModalOpen(false)}
+                          >
+                            <div className={styles["dloan-button-back-text"]}>
+                              Буцах
+                            </div>
+                          </Button>
+
+                          <Button
+                            type="primary"
+                            className={styles["dloan-button-contiune"]}
+                            onClick={() => {
+                              form.validateFields();
+                              setChecked(!checked);
+                              setIsModalOpen(false);
+                            }}
+                            htmlType="submit"
+                          >
+                            Үргэлжлүүлэх
+                          </Button>
                         </Row>
                       </Col>
                     </Row>

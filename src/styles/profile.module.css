@@ -1,8 +1,8 @@
 .profile-main-row {
   background-color: #fff;
-  min-height: 100vh;
+  height: 100vh;
   padding: 40px 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .profile-information-name {

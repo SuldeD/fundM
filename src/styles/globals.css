@@ -206,3 +206,10 @@
 .ant-checkbox-disabled .ant-checkbox-inner:after {
   border-color: white;
 } */
+
+.ant-checkbox-disabled .ant-checkbox-inner:after {
+  border-color: #39da00;
+  margin-left: 2.5px;
+  margin-top: 3px;
+  scale: 2.5;
+}

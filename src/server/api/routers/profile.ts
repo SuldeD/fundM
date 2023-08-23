@@ -1,5 +1,9 @@
 import { loanServiceHeaders } from "app/contants";
-import { createTRPCRouter, protectedProcedure } from "app/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "app/server/api/trpc";
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import z from "zod";
 import { getAccountToken } from "./account";
@@ -187,7 +191,7 @@ export const profileRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  forgotPass: protectedProcedure
+  forgotPass: publicProcedure
     .input(
       z.object({
         phone: z.string(),
@@ -197,8 +201,7 @@ export const profileRouter = createTRPCRouter({
         register: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const token = await getAccountToken(ctx);
+    .mutation(async ({ input }) => {
       const { phone, username, answer, security_question_id, register } = input;
 
       const body = encrypt(
@@ -218,8 +221,57 @@ export const profileRouter = createTRPCRouter({
           body: body,
           headers: {
             ...loanServiceHeaders,
-            Cookie: token!.id_token!,
-            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+  forgotPassConfirm: publicProcedure
+    .input(
+      z.object({
+        pin_code: z.string(),
+        username: z.string(),
+        answer: z.string(),
+        security_question_id: z.string(),
+        register: z.string(),
+        forgot_id: z.string(),
+        new_password: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const {
+        pin_code,
+        username,
+        answer,
+        security_question_id,
+        register,
+        new_password,
+        forgot_id,
+      } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          pin_code,
+          username,
+          answer,
+          security_question_id,
+          register,
+          new_password,
+          forgot_id,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/forgot/password/confirm`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
           },
         }
       );
