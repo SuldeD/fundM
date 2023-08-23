@@ -146,7 +146,7 @@ export const List = () => {
         <div
           className={`text-[#000] ${stylesList["myfund-tabs-content-table-number"]}`}
         >
-          {completion.slice(0, 3)} %
+          {Math.round(Number(completion))} %
         </div>
       ),
     },
@@ -166,7 +166,7 @@ export const List = () => {
     },
     {
       title: " ",
-      dataIndex: "create_date",
+      dataIndex: "id",
       key: "create_date",
       width: "10%",
       align: "center",
@@ -238,7 +238,7 @@ export const List = () => {
                     pageSize: 8,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={mySavingOrders}
+                  dataSource={mySavingOrders?.reverse()}
                   rowKey={"create_date"}
                 />
               </Col>
@@ -276,7 +276,7 @@ export const List = () => {
           {activeClass &&
             orders.map(
               (o: any, idx: number) =>
-                o.create_date == activeClass && (
+                o.id == activeClass && (
                   <div key={`${idx}`}>
                     <Col span={22} key={`${idx}`} className="mx-auto w-full">
                       <Col className="mt-[20px]">
@@ -533,11 +533,11 @@ export const List = () => {
                       </Col>
                     )}
 
-                    <Row className="mt-[20px]">
+                    <Col className="mx-auto mt-[20px]" span={22}>
                       {activeClass && (
                         <Button
-                          type="primary"
-                          className={`${stylesDL["dloan-button-back"]} bg-primary text-[#fff]`}
+                          type="default"
+                          className={stylesDL["dloan-button-back"]}
                           onClick={() => {
                             setSelectedId("");
                             setOpen(false);
@@ -550,7 +550,7 @@ export const List = () => {
                           </Col>
                         </Button>
                       )}
-                    </Row>
+                    </Col>
                   </div>
                 )
             )}

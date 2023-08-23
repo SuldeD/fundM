@@ -36,10 +36,11 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
 
   function submit() {
     setLoadings(true);
-    if (Number(code.join("")) > 1000) {
-      onFinish(Number(code.join("")));
+    if (code.join("").length == 4) {
+      onFinish(code.join(""));
       setLoadings(false);
     } else {
+      setLoadings(false);
       error({
         title: "Амжилтгүй",
         content: <div>FundMe кодоо оруулна уу!</div>,

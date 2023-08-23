@@ -3,6 +3,8 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import { Loaderr } from "app/components/Loader";
 import { Col, Input, Row } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
 export default function Login({
   csrfToken,
@@ -10,6 +12,9 @@ export default function Login({
   const router = useRouter();
   const { error } = router.query;
   const { data } = useSession();
+
+  console.log(data);
+  const [status, setStatus] = useState<string>("");
 
   if (data) {
     return <Loaderr />;
@@ -40,8 +45,8 @@ export default function Login({
                   <input
                     className="w-full rounded-[21px] border border-white bg-[#fff] px-5 py-3 text-[14px] focus:outline-none"
                     name="username"
-                    // type="tel"
-                    // pattern="[6789][0-9]{7}"
+                    type="tel"
+                    pattern="[6789][0-9]{7}"
                     title="Утасны дугаар oruulna uu"
                     autoFocus
                   />
@@ -70,10 +75,15 @@ export default function Login({
                     className="bg-currentColor h-[44px] w-[190px] cursor-pointer rounded-[9px] border-[2px] text-center font-inter text-[#fff]"
                   />
                   <button
-                    onClick={() => data && router.push("/dashboard")}
                     type="submit"
-                    className="h-[44px] w-[190px] rounded-[9px] bg-primary text-center font-inter text-[#fff] "
+                    onClick={() => {
+                      data ? router.push("/dashboard") : setStatus("loading");
+                    }}
+                    className="h-[44px] w-[190px] rounded-[9px] bg-primary text-center font-inter text-[#fff]"
                   >
+                    {status == "loading" && (
+                      <LoadingOutlined className="me-[20px]" />
+                    )}
                     Нэвтрэх
                   </button>
                 </div>
