@@ -20,11 +20,12 @@ export const SidebarRightComponent = ({ statusData }: any) => {
   const { mutate } = api.other.notficationSearch.useMutation();
 
   //queries
-  const { data: accountInfo, refetch: requestInfo } =
-    api.account.accountInfo.useQuery(undefined, {
-      enabled: false,
+  const { data: accountInfo, refetch: re } = api.account.accountInfo.useQuery(
+    undefined,
+    {
       refetchOnWindowFocus: false,
-    });
+    }
+  );
   const { data: requestSearch } = api.loan.reguestSearch.useQuery(
     {
       order: "date",

@@ -89,7 +89,8 @@ export const SidebarLeftComponent = () => {
                 <Col span={18}>
                   <Button
                     onClick={() => {
-                      void signOut(), router.push("/");
+                      router.push("/");
+                      void signOut();
                     }}
                     className={style["sidebar-left-exit-button"]}
                   >

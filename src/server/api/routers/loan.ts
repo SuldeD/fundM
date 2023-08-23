@@ -8,9 +8,11 @@ import { decrypt, encrypt } from "app/utils/aes.helper";
 import z from "zod";
 import { getAccountToken } from "./account";
 import { TRPCError } from "@trpc/server";
+import { Modal } from "antd";
+const { error } = Modal;
 
 export const loanRouter = createTRPCRouter({
-  loanContract: publicProcedure.query(async ({ ctx }) => {
+  loanContract: protectedProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
     const res2 = await fetch(`${process.env.BACKEND_URL}/help/loan/contract`, {
       method: "GET",
@@ -28,7 +30,7 @@ export const loanRouter = createTRPCRouter({
     return accountStatus;
   }),
 
-  loanList: publicProcedure.query(async ({ ctx }) => {
+  loanList: protectedProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
     const res2 = await fetch(`${process.env.BACKEND_URL}/product/list`, {
       method: "GET",
@@ -46,7 +48,7 @@ export const loanRouter = createTRPCRouter({
     return accountStatus;
   }),
 
-  helpBankList: publicProcedure.query(async ({ ctx }) => {
+  helpBankList: protectedProcedure.query(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
     const res2 = await fetch(`${process.env.BACKEND_URL}/help/bank/list`, {
       method: "GET",
@@ -62,7 +64,7 @@ export const loanRouter = createTRPCRouter({
     return accountStatus;
   }),
 
-  reguestSearch: publicProcedure
+  reguestSearch: protectedProcedure
     .input(
       z.object({
         order: z.string(),
@@ -101,13 +103,13 @@ export const loanRouter = createTRPCRouter({
       const accountStatus = decrypt(raw2);
       console.log(accountStatus);
 
-      if (!accountStatus.success) {
+      if (!accountStatus) {
         throw new TRPCError(accountStatus.message);
       }
       return accountStatus;
     }),
 
-  loanSearch: publicProcedure
+  loanSearch: protectedProcedure
     .input(
       z.object({
         order: z.string(),
@@ -146,7 +148,7 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  loanRequestConfirm: publicProcedure
+  loanRequestConfirm: protectedProcedure
     .input(
       z.object({
         request_id: z.string(),
@@ -183,7 +185,7 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  loanRequest: publicProcedure
+  loanRequest: protectedProcedure
     .input(
       z.object({
         product_id: z.string(),
@@ -220,7 +222,7 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  walletToBank: publicProcedure
+  walletToBank: protectedProcedure
     .input(
       z.object({
         account_num: z.string(),
@@ -277,7 +279,7 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  walletToBankConfirm: publicProcedure
+  walletToBankConfirm: protectedProcedure
     .input(
       z.object({
         transaction_id: z.string(),
@@ -317,7 +319,7 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  repayment: publicProcedure
+  repayment: protectedProcedure
     .input(
       z.object({
         request_id: z.string(),

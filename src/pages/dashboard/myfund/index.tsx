@@ -1,4 +1,4 @@
-import { Row, Col, Tabs, Table, Image, Button, Modal } from "antd";
+import { Row, Col, Tabs, Table, Image, Button, Modal, Progress } from "antd";
 import styles from "../../../styles/my-fund.module.css";
 import stylesList from "../../../styles/dashboard.module.css";
 import stylesDL from "../../../styles/dloan.module.css";
@@ -30,7 +30,7 @@ export const MyFund = () => {
   );
 
   //states
-  const [activeClass, setSelectedId] = useState<any>();
+  const [activeClass, setSelectedId] = useState<string>();
   const [open, setOpen] = useState<boolean>(false);
 
   //constants
@@ -64,66 +64,82 @@ export const MyFund = () => {
       : [];
   }, [requestSearch]);
 
-  let num = 0;
   const sumMyLoan = useMemo(() => {
-    let a = 0;
-    requestSearch?.requests?.forEach((el: any) => {
-      el.filled_percent.slice(0, 3) != "100" &&
-        el.request_type == "wallet" &&
-        a + el.loan_amount;
-    });
-    return num;
-  }, [requestSearch]);
-
-  const sumMySaving = useMemo(() => {
+    if (!requestSearch || !requestSearch.requests) {
+      return 0;
+    }
     let num = 0;
-    return requestSearch?.requests?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" &&
-        el.request_type == "saving" &&
-        num + el.loan_amount
-    ) > 0
-      ? requestSearch?.requests?.filter(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "saving" &&
-            num + el.loan_amount
-        )
-      : num;
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "wallet"
+      ) {
+        num += Number(el.loan_amount);
+        return true;
+      }
+      return false;
+    });
+    return Math.round(num);
+  }, [requestSearch]);
+  const sumMySaving = useMemo(() => {
+    if (!requestSearch || !requestSearch.requests) {
+      return 0;
+    }
+    let num = 0;
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "saving"
+      ) {
+        num += Number(el.loan_amount);
+        return true;
+      }
+      return false;
+    });
+
+    return Math.round(num);
   }, [requestSearch]);
 
   const myLoanOrdersSum = useMemo(() => {
+    if (!requestSearch || !requestSearch.requests) {
+      return 0; // Return 0 if the data is not available
+    }
+
     let num = 0;
-    return requestSearch?.requests?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" &&
-        el.request_type == "wallet" &&
-        num + el.filled_percent.slice(0, 3)
-    ) > 0
-      ? requestSearch?.requests?.filter(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "wallet" &&
-            num + el.filled_percent.slice(0, 3)
-        )
-      : num;
+
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "wallet"
+      ) {
+        num += parseFloat(el.filled_percent); // Accumulate filled_percent
+        return true; // Include this request in the filtered list
+      }
+      return false; // Exclude this request from the filtered list
+    });
+
+    return num; // Return the accumulated sum of filled_percent values
   }, [requestSearch]);
 
   const mySavingOrdersSum = useMemo(() => {
+    if (!requestSearch || !requestSearch.requests) {
+      return 0; // Return 0 if the data is not available
+    }
+
     let num = 0;
-    return requestSearch?.requests?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" &&
-        el.request_type == "saving" &&
-        num + el.filled_percent.slice(0, 3)
-    ) > 0
-      ? requestSearch?.requests?.filter(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "saving" &&
-            num + el.filled_percent.slice(0, 3)
-        )
-      : num;
+
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "saving"
+      ) {
+        num += parseFloat(el.filled_percent); // Accumulate filled_percent
+        return true; // Include this request in the filtered list
+      }
+      return false; // Exclude this request from the filtered list
+    });
+
+    return num; // Return the accumulated sum of filled_percent values
   }, [requestSearch]);
 
   const columns: any[] = [
@@ -186,17 +202,17 @@ export const MyFund = () => {
       width: "23%",
       render: (completion: string) => (
         <div className={styles["myfund-tabs-content-table-number"]}>
-          {completion.slice(0, 3)} %
+          {Math.round(Number(completion))} %
         </div>
       ),
     },
     {
       title: " ",
-      dataIndex: "create_date",
+      dataIndex: "id",
       key: "create_date",
       width: "10%",
       align: "center",
-      render: (create_date: string, data: any) => (
+      render: (id: string) => (
         <Image
           width={25}
           src={"/images/info-icon.png"}
@@ -204,7 +220,7 @@ export const MyFund = () => {
           alt="Information"
           className="cursor-pointer"
           onClick={() => {
-            setSelectedId(data?.id);
+            setSelectedId(id);
             setOpen(true);
           }}
         />
@@ -218,6 +234,15 @@ export const MyFund = () => {
       label: "Зээл авах хүсэлт",
       children: (
         <Col span={24}>
+          <Row>
+            <Progress
+              percent={
+                myLoanOrders.length > 0
+                  ? Math.round(myLoanOrdersSum / myLoanOrders.length)
+                  : 0
+              }
+            />
+          </Row>
           <Row
             gutter={[0, 30]}
             justify="space-between"
@@ -246,7 +271,7 @@ export const MyFund = () => {
               <div className={styles["myfund-tabs-content-title"]}>Биелэлт</div>
               <div className={styles["myfund-tabs-content-rate"]}>
                 {myLoanOrders.length > 0
-                  ? myLoanOrdersSum / myLoanOrders.length
+                  ? Math.round(myLoanOrdersSum / myLoanOrders.length)
                   : 0}{" "}
                 %
               </div>
@@ -258,7 +283,12 @@ export const MyFund = () => {
               <div className={styles["myfund-tabs-content-rate"]}>
                 {myLoanOrders.length > 0
                   ? numberToCurrency(
-                      sumMyLoan * (myLoanOrdersSum / myLoanOrders.length / 100)
+                      Math.round(
+                        myLoanOrders -
+                          (sumMyLoan * myLoanOrdersSum) /
+                            myLoanOrders.length /
+                            100
+                      )
                     )
                   : numberToCurrency(0)}
               </div>
@@ -271,7 +301,7 @@ export const MyFund = () => {
                   pageSize: 10,
                   position: ["bottomCenter"],
                 }}
-                dataSource={myLoanOrders}
+                dataSource={myLoanOrders?.reverse()}
                 rowKey={"create_date"}
               />
             </Col>
@@ -285,6 +315,15 @@ export const MyFund = () => {
       children: (
         <Row gutter={[0, 30]} justify="center">
           <Col span={24}>
+            <Row>
+              <Progress
+                percent={
+                  mySavingOrders.length > 0
+                    ? Math.round(mySavingOrdersSum / mySavingOrders.length)
+                    : 0
+                }
+              />
+            </Row>
             <Row
               justify="space-between"
               gutter={[0, 30]}
@@ -315,7 +354,7 @@ export const MyFund = () => {
                 </div>
                 <div className={styles["myfund-tabs-content-rate"]}>
                   {mySavingOrders.length > 0
-                    ? mySavingOrdersSum / mySavingOrders.length
+                    ? Math.round(mySavingOrdersSum / mySavingOrders.length)
                     : 0}{" "}
                   %
                 </div>
@@ -327,9 +366,11 @@ export const MyFund = () => {
                 <div className={styles["myfund-tabs-content-rate"]}>
                   {mySavingOrders.length > 0
                     ? numberToCurrency(
-                        sumMySaving -
-                          sumMySaving *
-                            (mySavingOrdersSum / mySavingOrders.length / 100)
+                        Math.round(
+                          sumMySaving -
+                            sumMySaving *
+                              (mySavingOrdersSum / mySavingOrders.length / 100)
+                        )
                       )
                     : numberToCurrency(sumMySaving)}
                 </div>
@@ -342,7 +383,7 @@ export const MyFund = () => {
                     pageSize: 10,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={mySavingOrders.reverse()}
+                  dataSource={mySavingOrders?.reverse()}
                   rowKey={"create_date"}
                 />
               </Col>
@@ -675,11 +716,11 @@ export const MyFund = () => {
                           </Col>
                         )}
 
-                        <Row className="mt-[20px]">
+                        <Col className="mx-auto mt-[20px]" span={22}>
                           {activeClass && (
                             <Button
-                              type="primary"
-                              className={`${stylesDL["dloan-button-back"]} bg-primary text-[#fff]`}
+                              type="default"
+                              className={stylesDL["dloan-button-back"]}
                               onClick={() => {
                                 setSelectedId("");
                                 setOpen(false);
@@ -694,7 +735,7 @@ export const MyFund = () => {
                               </Col>
                             </Button>
                           )}
-                        </Row>
+                        </Col>
                       </div>
                     )
                 )}

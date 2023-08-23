@@ -1,6 +1,6 @@
 import { Col, Modal, Row, Input, message } from "antd";
 import { HeaderDashboard } from "app/components/header";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "../../../styles/profile.module.css";
 import stylesL from "../../../styles/dloan.module.css";
 import { useRequireAuth } from "app/utils/auth";
@@ -33,8 +33,12 @@ export default function Bank() {
   const { mutate: addBankVerMutate } = api.profile.addBankVerify.useMutation();
 
   //queries
-  const { data: accountInfo } = api.account.accountInfo.useQuery();
-  const { data: helpBankList } = api.loan.helpBankList.useQuery();
+  const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: helpBankList } = api.loan.helpBankList.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   //states
   const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
@@ -42,13 +46,36 @@ export default function Bank() {
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [number, setNumber] = useState<string>("");
   const [requestId, setReqId] = useState<string>("");
-  const [confirmCode, setConfirmCode] = useState<string>("");
   const [check, setCheck] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [option, setOption] = useState<any[]>([]);
+  const inputs = useRef<any>([]);
+  useRef<(HTMLInputElement | null)[]>([]);
+  const length = 4;
+  const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
 
   //functions
+  const processInput = (e: React.ChangeEvent<HTMLInputElement>, slot: any) => {
+    const num = e.target.value;
+    if (/[^0-9]/.test(num)) return;
+    const newCode = [...code];
+    newCode[slot] = num;
+    setCode(newCode);
+    if (slot !== length - 1) {
+      inputs.current[slot + 1].focus();
+    }
+  };
+
+  const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>, slot: any) => {
+    if (e.keyCode === 8 && !code[slot] && slot !== 0) {
+      const newCode = [...code];
+      newCode[slot - 1] = "";
+      setCode(newCode);
+      inputs.current[slot - 1].focus();
+    }
+  };
+
   function submit() {
     addBankMutate(
       { account_num: number, bank_id: selectedBank },
@@ -81,10 +108,14 @@ export default function Bank() {
   }
 
   function submitVerify() {
-    if (imageUrl.length > 0 && requestId.length > 0 && confirmCode.length > 0) {
+    if (
+      imageUrl.length > 0 &&
+      requestId.length > 0 &&
+      code.join("").length == 4
+    ) {
       addBankVerMutate(
         {
-          confirm_code: confirmCode,
+          confirm_code: code.join(""),
           photo: imageUrl,
           request_id: requestId,
         },
@@ -207,15 +238,28 @@ export default function Bank() {
           <Row justify="center">
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
-                <Col span={24}>
-                  <Input.Password
-                    className={stylesL["dloan-modal-verify-input"]}
-                    placeholder=" Баталгаажуулах код оруулна уу!!!"
-                    name="password"
-                    maxLength={4}
-                    onChange={(e: any) => setConfirmCode(e.target.value)}
-                    autoFocus
-                  />
+                <Col span={20} className="my-3 flex justify-between">
+                  {code.map(
+                    (
+                      num: string | number | readonly string[] | undefined,
+                      idx: React.Key | null | undefined
+                    ) => {
+                      return (
+                        <input
+                          key={idx}
+                          type="text"
+                          inputMode="numeric"
+                          className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
+                          maxLength={1}
+                          value={num}
+                          autoFocus={!code[0].length && idx === 0}
+                          onChange={(e) => processInput(e, idx)}
+                          onKeyUp={(e) => onKeyUp(e, idx)}
+                          ref={(ref) => inputs.current.push(ref)}
+                        />
+                      );
+                    }
+                  )}
                 </Col>
                 <Col span={20}>
                   <div className="text-center font-raleway text-[12px] font-normal text-sub">
@@ -228,8 +272,8 @@ export default function Bank() {
                     type="submit"
                     className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
                     onClick={() => {
-                      confirmCode.length > 0 && setOpenVerifyPass(false);
-                      confirmCode.length > 0 && setOpenVerify(true);
+                      code.join("").length > 0 && setOpenVerifyPass(false);
+                      code.join("").length > 0 && setOpenVerify(true);
                     }}
                   >
                     Баталгаажуулах

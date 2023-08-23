@@ -12,7 +12,7 @@ import {
 } from "antd";
 import styles from "../../../styles/profile.module.css";
 import { HeaderDashboard } from "../../../components/header";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Loaderr } from "app/components/Loader";
 import { useRequireAuth } from "app/utils/auth";
 import { useRouter } from "next/router";
@@ -92,6 +92,31 @@ export const Profile = () => {
   const [formToken, setFormToken] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const inputs = useRef<any>([]);
+  useRef<(HTMLInputElement | null)[]>([]);
+  const length = 4;
+  const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
+
+  //functions
+  const processInput = (e: React.ChangeEvent<HTMLInputElement>, slot: any) => {
+    const num = e.target.value;
+    if (/[^0-9]/.test(num)) return;
+    const newCode = [...code];
+    newCode[slot] = num;
+    setCode(newCode);
+    if (slot !== length - 1) {
+      inputs.current[slot + 1].focus();
+    }
+  };
+
+  const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>, slot: any) => {
+    if (e.keyCode === 8 && !code[slot] && slot !== 0) {
+      const newCode = [...code];
+      newCode[slot - 1] = "";
+      setCode(newCode);
+      inputs.current[slot - 1].focus();
+    }
+  };
 
   const onChange = (key: any) => {};
   const handleChange = (info: any) => {
@@ -201,7 +226,7 @@ export const Profile = () => {
       {
         form_token: formToken,
         change_phone_id: changeId,
-        pin_code: confirmCode,
+        pin_code: code.join(""),
       },
       {
         onSuccess: async (
@@ -212,7 +237,7 @@ export const Profile = () => {
             setIsOpenVerifyPass(false);
             setChangeId("");
             setFormToken("");
-            setConfirmCode("");
+            setCode("");
             message.success(data?.description);
           } else {
             error({
@@ -373,7 +398,7 @@ export const Profile = () => {
         username: accountInfo?.account?.first_name,
         forgot_id: forgotId,
         new_password: fundPassNewVer,
-        pin_code: confirmCode,
+        pin_code: code.join(""),
       },
       {
         onSuccess: (
@@ -1073,15 +1098,28 @@ export const Profile = () => {
           <Row justify="center">
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
-                <Col span={24}>
-                  <Input.Password
-                    className={stylesL["dloan-modal-verify-input"]}
-                    placeholder="Гүйлгээний нууц үг оруулна уу!!!"
-                    name="password"
-                    maxLength={4}
-                    onChange={(e) => setConfirmCode(e.target.value)}
-                    autoFocus
-                  />
+                <Col span={20} className="my-3 flex justify-between">
+                  {code.map(
+                    (
+                      num: string | number | readonly string[] | undefined,
+                      idx: React.Key | null | undefined
+                    ) => {
+                      return (
+                        <input
+                          key={idx}
+                          type="text"
+                          inputMode="numeric"
+                          className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
+                          maxLength={1}
+                          value={num}
+                          autoFocus={!code[0].length && idx === 0}
+                          onChange={(e) => processInput(e, idx)}
+                          onKeyUp={(e) => onKeyUp(e, idx)}
+                          ref={(ref) => inputs.current.push(ref)}
+                        />
+                      );
+                    }
+                  )}
                 </Col>
                 <Col span={20}>
                   <div className="text-center font-raleway text-[12px] font-normal text-sub">
@@ -1094,7 +1132,7 @@ export const Profile = () => {
                     type="submit"
                     className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
                     onClick={() =>
-                      confirmCode.length > 0
+                      code.join("").length == 4
                         ? clickedEdit == 0
                           ? verifyPass()
                           : verifyTransPass()

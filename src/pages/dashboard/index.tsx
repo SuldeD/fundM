@@ -14,26 +14,34 @@ export const Dashboard = () => {
   const router = useRouter();
   useRequireAuth();
 
-  const { data: loan } = api.loan.loanList.useQuery();
-
-  const { data: loans } = api.loan.reguestSearch.useQuery({
-    order: "date",
-    order_up: "1",
-    page: "1",
-    page_size: "30",
-    filter_type: "done",
+  const { data: loan } = api.loan.loanList.useQuery(undefined, {
+    refetchOnWindowFocus: false,
   });
 
-  const { data: loanActive } = api.loan.reguestSearch.useQuery({
-    order: "date",
-    order_up: "1",
-    page: "1",
-    page_size: "30",
-    filter_type: "active",
-  });
+  const { data: loans } = api.loan.reguestSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "30",
+      filter_type: "done",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  const { data: loanActive } = api.loan.reguestSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "30",
+      filter_type: "active",
+    },
+    { refetchOnWindowFocus: false }
+  );
 
   const dataTable = useMemo(() => {
-    return loans?.requests?.reverse();
+    return loans?.requests;
   }, [loans]);
 
   const sumLoan = useMemo(() => {
@@ -199,7 +207,8 @@ export const Dashboard = () => {
                           <div
                             className={`${styles["dashboard-loan-son-number"]} flex`}
                           >
-                            {loan?.product_list[0]?.loan_rate_month}{" "}
+                            {data?.user &&
+                              loan?.product_list[0]?.loan_rate_month}
                             <p className="h-[15px] w-[15px]">%</p>
                           </div>
                         </Col>
@@ -245,7 +254,7 @@ export const Dashboard = () => {
                           pageSize: 8,
                           position: ["bottomCenter"],
                         }}
-                        dataSource={dataTable}
+                        dataSource={dataTable?.reverse()}
                         rowKey={"create_date"}
                       />
                     </Col>
