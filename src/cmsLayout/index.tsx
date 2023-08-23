@@ -21,7 +21,7 @@ import style from "../styles/Header.module.css";
 import { signOut } from "next-auth/react";
 import { api } from "app/utils/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 const { Header } = Layout;
@@ -66,12 +66,13 @@ export const ProtectedLayout = ({ children }: any) => {
   const { mutate } = api.other.notficationSearch.useMutation();
 
   //states
-  const [open, setOpen] = useState(false);
-  const [openNotf, setOpenNotf] = useState(false);
-  const [openDra, setOpenDra] = useState(false);
-  const [checked, setChecked] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openNotf, setOpenNotf] = useState<boolean>(false);
+  const [openDra, setOpenDra] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
   const [notfication, setNotfication] = useState<any>();
+  const [openNot, setOpenNot] = useState<boolean>(false);
 
   //constants
   const html = useMemo(() => {
@@ -125,7 +126,7 @@ export const ProtectedLayout = ({ children }: any) => {
         order: "date",
         order_up: "1",
         page: "1",
-        page_size: "3",
+        page_size: "10",
       },
       {
         onSuccess: (
@@ -287,109 +288,33 @@ export const ProtectedLayout = ({ children }: any) => {
           }
         />
       )}
-      <SidebarLeftComponent />
+      <SidebarLeftComponent setOpen={setOpenNot} />
 
-      <Layout>
-        <Header className="flex w-full justify-between bg-[#fff] p-[20px] lg:hidden">
-          <MenuOutlined
-            onClick={() => setOpenDra(true)}
-            className="flex h-[45px] w-[45px] rounded-[10px] bg-[#F4F6FA] p-[10px] text-[30px] text-black active:text-sky-900 lg:hidden"
-          />
-          <Col flex="none">
-            <Modal
-              title={
-                <div className="text-center font-lato text-[18px] font-medium leading-[18px]">
-                  Мэдэгдэл
-                </div>
-              }
-              footer={null}
-              open={openNotf}
-              onCancel={() => setOpenNotf(false)}
-            >
-              <div key={"1"}>
-                {notfication?.activity_list?.length > 0 ? (
-                  notfication?.activity_list?.map(
-                    (
-                      nt: {
-                        activity_code: string;
-                        description:
-                          | string
-                          | number
-                          | boolean
-                          | React.ReactElement<
-                              any,
-                              string | React.JSXElementConstructor<any>
-                            >
-                          | Iterable<React.ReactNode>
-                          | React.ReactPortal
-                          | React.PromiseLikeOfReactNode
-                          | null
-                          | undefined;
-                        create_date: string | any[];
-                      },
-                      idx: any
-                    ) => (
-                      <div className="flex  border-b p-[10px]" key={`${idx}`}>
-                        <div className="flex h-[40px] w-[40px] justify-center rounded-[50%] bg-bank pt-2">
-                          <img
-                            className="h-[22px] w-[22px] text-white"
-                            src={
-                              nt.activity_code == "wallet_bank"
-                                ? "/images/notfication2.svg"
-                                : "/images/notficationIcon.svg"
-                            }
-                            alt="notfication"
-                          />
-                        </div>
-                        <div className="ms-[10px] w-[90%]">
-                          <p className="font-lato text-[14px] font-medium leading-[18px] text-[#1A2155]">
-                            {nt?.description}
-                          </p>
-                          <p className="font-lato text-[12px] font-medium text-sub">
-                            {nt?.create_date}
-                          </p>
-                        </div>
-                      </div>
-                    )
-                  )
-                ) : (
-                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                )}
-                {notfication?.activity_list?.length > 0 &&
-                notfication?.activity_list_more ? (
-                  <Button
-                    type="primary"
-                    className="mx-auto mt-[20px] flex bg-primary text-center font-lato text-[14px] leading-[18px]"
-                    onClick={() => {
-                      notfication?.activity_list?.length &&
-                        allData(`${notfication?.activity_list?.length + 10}`);
-                    }}
-                  >
-                    Бүгдийг харах
-                  </Button>
-                ) : (
-                  <Button
-                    type="default"
-                    disabled
-                    className="mx-auto mt-[20px] flex text-center font-lato text-[14px] leading-[18px]"
-                  >
-                    Бүгдийг харах
-                  </Button>
-                )}
-              </div>
-            </Modal>
-            <Row
-              align="middle"
-              justify="center"
-              onClick={() => setOpenNotf(true)}
-              className={`${styles["sidebar-right-notification-div"]} cursor-pointer`}
-            >
-              <Badge count={statusData?.stat?.notification_count}>
-                <Avatar
-                  src={"/images/notification.svg"}
-                  className="h-[45px] w-[45px] rounded-[10px] bg-[#F4F6FA] p-[11px]"
+      <Layout onClick={() => setOpenNot(false)}>
+        <Header className="sticky flex w-full items-center justify-between bg-[#fff] pe-0 ps-0 lg:hidden">
+          <Col span={22} className="mx-auto">
+            <Row justify="space-between" align="middle">
+              <Col flex="none">
+                <MenuOutlined
+                  onClick={() => setOpenDra(true)}
+                  className="flex h-[45px] w-[45px] rounded-[10px] bg-[#F4F6FA] p-[10px] text-[30px] text-black active:text-sky-900 lg:hidden"
                 />
-              </Badge>
+              </Col>
+              <Col flex="none">
+                <Row
+                  align="middle"
+                  justify="center"
+                  onClick={() => setOpenNotf(!openNotf)}
+                  className={`${styles["sidebar-right-notification-div"]} cursor-pointer`}
+                >
+                  <Badge count={statusData?.stat?.notification_count}>
+                    <Avatar
+                      src={"/images/notification.svg"}
+                      className="h-[45px] w-[45px] rounded-[10px] bg-[#F4F6FA] p-[11px]"
+                    />
+                  </Badge>
+                </Row>
+              </Col>
             </Row>
           </Col>
         </Header>
@@ -471,7 +396,94 @@ export const ProtectedLayout = ({ children }: any) => {
 
         <Content>{children}</Content>
       </Layout>
-      <SidebarRightComponent statusData={statusData} />
+      {openNotf && (
+        <div className="absolute right-[2%] top-[8%] z-50 max-h-[95vh] overflow-auto rounded-[8px] border bg-white p-[10px] drop-shadow-2xl lg:hidden ">
+          <div className="flex justify-between">
+            <div className="my-2 w-[60%] text-end font-lato text-[18px] font-medium leading-[18px]">
+              Мэдэгдэл
+            </div>
+            <CloseOutlined
+              className="me-2 scale-125"
+              onClick={() => setOpenNotf(false)}
+            />
+          </div>
+
+          {notfication?.activity_list?.length > 0 ? (
+            notfication?.activity_list?.map(
+              (
+                nt: {
+                  activity_code: string;
+                  description:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | React.PromiseLikeOfReactNode
+                    | null
+                    | undefined;
+                  create_date: string | any[];
+                },
+                idx: any
+              ) => (
+                <div className="flex  border-b p-[10px]" key={`${idx}`}>
+                  <div className="flex h-[40px] w-[40px] justify-center rounded-[50%] bg-bank pt-2">
+                    <img
+                      className="h-[22px] w-[22px] text-white"
+                      src={
+                        nt.activity_code == "wallet_bank"
+                          ? "/images/notfication2.svg"
+                          : "/images/notficationIcon.svg"
+                      }
+                      alt="notfication"
+                    />
+                  </div>
+                  <div className="ms-[10px] w-[90%]">
+                    <p className="font-lato text-[14px] font-medium leading-[18px] text-[#1A2155]">
+                      {nt?.description}
+                    </p>
+                    <p className="font-lato text-[12px] font-medium text-sub">
+                      {nt?.create_date}
+                    </p>
+                  </div>
+                </div>
+              )
+            )
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
+          {notfication?.activity_list?.length > 0 &&
+          notfication?.activity_list_more ? (
+            <Button
+              type="primary"
+              className="mx-auto mt-[20px] flex bg-primary text-center font-lato text-[14px] leading-[18px]"
+              onClick={() => {
+                notfication?.activity_list?.length &&
+                  allData(`${notfication?.activity_list?.length + 10}`);
+              }}
+            >
+              Бүгдийг харах
+            </Button>
+          ) : (
+            <Button
+              type="default"
+              disabled
+              className="mx-auto mt-[20px] flex text-center font-lato text-[14px] leading-[18px]"
+            >
+              Бүгдийг харах
+            </Button>
+          )}
+        </div>
+      )}
+      <SidebarRightComponent
+        setOpen={setOpenNot}
+        open={openNot}
+        statusData={statusData}
+      />
     </Layout>
   );
 };

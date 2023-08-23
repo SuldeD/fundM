@@ -176,7 +176,7 @@ export const Foundation = () => {
       <Row
         justify="center"
         className={styles["foundation-main-row"]}
-        gutter={[0, 3]}
+        gutter={[0, 30]}
       >
         <Col span={22}>
           <Row gutter={[0, 20]} justify="center">
@@ -559,12 +559,8 @@ export const Foundation = () => {
           </Row>
         </Col>
         <Col span={24}>
-          <Row
-            justify={"center"}
-            align="top"
-            style={{ minHeight: "100%", marginTop: "20px" }}
-          >
-            <Col span={22}>
+          <Row justify={"center"} align="top" style={{ height: "100%" }}>
+            <Col xs={22} lg={20}>
               <Button
                 type="primary"
                 className={styles["foundation-button-contiune"]}
@@ -610,7 +606,7 @@ export const Foundation = () => {
                   </Col>
                   <Form form={form}>
                     <Row justify="center" gutter={[0, 10]}>
-                      <Col span={24}>
+                      <Col xs={24} lg={20}>
                         <Form.Item
                           name="agreement"
                           valuePropName="checked"
@@ -634,34 +630,31 @@ export const Foundation = () => {
                           </Checkbox>
                         </Form.Item>
                       </Col>
-                      <Col span={24}>
-                        <Row justify="space-between">
-                          <Col flex="none">
-                            <Button
-                              className={styles["foundation-button-back"]}
-                              onClick={() => setIsModalOpen(false)}
+                      <Col xs={24} lg={20}>
+                        <Row
+                          justify="space-between"
+                          wrap={false}
+                          className="gap-3"
+                        >
+                          <Button
+                            className={styles["foundation-button-back"]}
+                            onClick={() => setIsModalOpen(false)}
+                          >
+                            <div
+                              className={styles["foundation-button-back-text"]}
                             >
-                              <div
-                                className={
-                                  styles["foundation-button-back-text"]
-                                }
-                              >
-                                Буцах
-                              </div>
-                            </Button>
-                          </Col>
-                          <Col flex="none" className="mt-[10px]">
-                            <Form.Item>
-                              <Button
-                                type="primary"
-                                className={`${styles["foundation-button-contiune"]} bg-primary`}
-                                onClick={handleOk}
-                                htmlType="submit"
-                              >
-                                Үргэлжлүүлэх
-                              </Button>
-                            </Form.Item>
-                          </Col>
+                              Буцах
+                            </div>
+                          </Button>
+
+                          <Button
+                            type="primary"
+                            className={styles["foundation-button-contiune"]}
+                            onClick={handleOk}
+                            htmlType="submit"
+                          >
+                            Үргэлжлүүлэх
+                          </Button>
                         </Row>
                       </Col>
                     </Row>

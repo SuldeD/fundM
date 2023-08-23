@@ -272,8 +272,8 @@ export default function Bank() {
                     type="submit"
                     className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
                     onClick={() => {
-                      code.join("").length > 0 && setOpenVerifyPass(false);
-                      code.join("").length > 0 && setOpenVerify(true);
+                      code.join("").length == 4 && setOpenVerifyPass(false);
+                      code.join("").length == 4 && setOpenVerify(true);
                     }}
                   >
                     Баталгаажуулах

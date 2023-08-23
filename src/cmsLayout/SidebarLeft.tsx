@@ -7,7 +7,7 @@ import { signOut } from "next-auth/react";
 
 const { Sider } = Layout;
 
-export const SidebarLeftComponent = () => {
+export const SidebarLeftComponent = ({ setOpen }: any) => {
   const router = useRouter();
   const [keys, setKeys] = useState(["/"]);
 
@@ -56,6 +56,7 @@ export const SidebarLeftComponent = () => {
       width="18%"
       breakpoint="lg"
       collapsedWidth="0"
+      onClick={() => setOpen(false)}
     >
       <Row style={{ padding: "25px 0", height: "100%" }}>
         <Col span={24}>

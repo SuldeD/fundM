@@ -1,4 +1,4 @@
-import { Col, Row, Image, Button } from "antd";
+import { Col, Row, Image, Button, Empty } from "antd";
 import styles from "../styles/loan-req-com.module.css";
 import { numberToCurrency } from "../utils/number.helpers";
 import clsx from "clsx";
@@ -23,7 +23,7 @@ export const LoanReqComponent = ({ activeSavingOrders: data }: any) => {
         </div>
       </Col>
       <Col span={24}>
-        {data &&
+        {data ? (
           data.map((el: any, indx: number) => (
             <Fragment key={`id-${indx}`}>
               {indx === 0 ? (
@@ -232,7 +232,10 @@ export const LoanReqComponent = ({ activeSavingOrders: data }: any) => {
                 </Row>
               )}
             </Fragment>
-          ))}
+          ))
+        ) : (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        )}
       </Col>
       <Col span={24}>
         <Button
