@@ -73,7 +73,6 @@ export default function Signup() {
       {
         onSuccess: (data) => {
           if (data.success) {
-            message.success(data?.test_pin_code);
             setRegisterData((prevData) => ({
               ...prevData,
               phone: values.phone_number,

@@ -108,7 +108,6 @@ export default function Bank() {
             setOpenVerifyPass(true);
 
             message.success(data.description);
-            message.success(data.confirm_code);
           } else {
             error({
               title: "Амжилтгүй",

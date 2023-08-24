@@ -197,9 +197,8 @@ export default function Forgot() {
           },
           {
             onSuccess: (data: any) => {
-              console.log(data);
               if (data?.success) {
-                message.success(data.test_pin_code);
+                message.success(data.description);
                 setRegisterData((prevData) => ({
                   ...prevData,
                   forgot_id: data?.forgot_id,
@@ -238,8 +237,8 @@ export default function Forgot() {
         },
         {
           onSuccess: (data: any) => {
-            console.log(data);
             if (data.success) {
+              message.success(data.description);
               setOpenVerifyPass(false);
               router.push("/login");
               setRegisterData({
@@ -264,6 +263,8 @@ export default function Forgot() {
       );
     }
   };
+
+  console.log(code.join("").length == 4);
 
   const { data } = useSession();
   if (data) {
@@ -678,7 +679,7 @@ export default function Forgot() {
                     type="submit"
                     className={stylesL["dloan-modal-verify-button"]}
                     onClick={() => {
-                      registerData.pin_code.length == 4 && signupConfirm;
+                      signupConfirm();
                     }}
                   >
                     Баталгаажуулах
