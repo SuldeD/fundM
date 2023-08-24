@@ -47,7 +47,7 @@ export default function Forgot() {
     register: "",
   });
   const [selectedQuestion, setSelectedQuestion] = useState<any>("");
-  const [loading, setLoading] = useState<string>("loading");
+  const [loading, setLoading] = useState<string>("");
   const [isOpenVerifyPass, setOpenVerifyPass] = useState<boolean>(false);
   const inputs = useRef<any>([]);
   useRef<(HTMLInputElement | null)[]>([]);
