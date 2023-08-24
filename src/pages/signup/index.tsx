@@ -58,10 +58,11 @@ export default function Signup() {
     email: "",
     user_type: "user",
   });
+  const [loading, setLoading] = useState<string>("");
 
   const onFinishPhone = async (values: any) => {
     if (values.phone_number.length !== 8) {
-      return error({
+      return warning({
         title: "Амжилтгүй",
         content: <div>Хүчинтэй утасны дугаар оруулна уу !</div>,
       });
@@ -142,6 +143,34 @@ export default function Signup() {
   const validateRegister = async (values: any) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    // Validate length
+    if (values.register.length !== 10) {
+      return warning({
+        title: "Амжилтгүй",
+        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
+      });
+    }
+
+    // Validate that the first two characters are Cyrillic letters
+    const firstTwoCharacters = values.register.substring(0, 2);
+    const cyrillicPattern = /^[А-ЯЁ]+$/i; // Cyrillic letter pattern
+    if (!cyrillicPattern.test(firstTwoCharacters)) {
+      return warning({
+        title: "Амжилтгүй",
+        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
+      });
+    }
+
+    // Validate the rest of the ID number (in this case, skipping the first two characters)
+    const remainingDigits = values.register.substring(2);
+    const numericPattern = /^[0-9]+$/; // Numeric digits pattern
+    if (!numericPattern.test(remainingDigits)) {
+      return warning({
+        title: "Амжилтгүй",
+        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
+      });
+    }
+
     if (
       (values.last_name.length == 0 && values.last_name.length > 50) ||
       (values.first_name.length == 0 && values.first_name.length > 50) ||
@@ -169,14 +198,14 @@ export default function Signup() {
 
   const validatePassword = async (values: any) => {
     if (values.prev_password !== values.password) {
-      return error({
+      return warning({
         title: "Амжилтгүй",
         content: <div>Нэвтрэх нууц үгийг адилхан оруулна уу !</div>,
       });
     }
 
     if (values.password.length < 8) {
-      return error({
+      return warning({
         title: "Амжилтгүй",
         content: <div>Нууц үг хамгийн багадаа 8 тэмдэгтээс бүрдэх ёстой.</div>,
       });
@@ -187,7 +216,7 @@ export default function Signup() {
     const hasNumber = /[0-9]/.test(values.password);
 
     if (!hasUppercase || !hasLowercase || !hasNumber) {
-      return error({
+      return warning({
         title: "Амжилтгүй",
         content: (
           <div>
@@ -206,7 +235,7 @@ export default function Signup() {
 
   const validateTransactionPassword = async (values: any) => {
     if (code.join("") !== code2.join("")) {
-      return error({
+      return warning({
         title: "Амжилтгүй",
         content: <div>Гүйлгээний нууц үгийг адилхан оруулна уу !</div>,
       });
@@ -249,7 +278,7 @@ export default function Signup() {
 
   const onFinishQuestion = (values: any) => {
     selectedQuestion == ""
-      ? error({
+      ? warning({
           title: "Амжилтгүй",
           content: <div>Нууц асуулт сонгон уу!</div>,
         })
@@ -261,9 +290,14 @@ export default function Signup() {
         }));
 
     if (values.answer.length < 8) {
-      error({
+      warning({
         title: "Амжилтгүй",
-        content: <div>Нууц үг хамгийн багадаа 8 тэмдэгтээс бүрдэх ёстой.</div>,
+        content: (
+          <div>
+            Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
+            тэмдэгтээс бүрдэх ёстой.
+          </div>
+        ),
       });
     } else {
       signup({
@@ -276,10 +310,12 @@ export default function Signup() {
   };
 
   const signup = (registerData: RegisterType) => {
+    setLoading("loading");
     mutationSignUp.mutate(registerData, {
       onSuccess: (data) => {
         if (data.success) {
           message.success(data.description);
+          setLoading("");
           router.push("/login");
         } else {
           error({
@@ -1057,6 +1093,7 @@ export default function Signup() {
 
                                 <Form.Item className="w-[45%]">
                                   <Button
+                                    loading={loading == "loading"}
                                     type="primary"
                                     htmlType="submit"
                                     className={`h-[40px] w-full rounded-[9px] bg-primary`}

@@ -75,6 +75,7 @@ export const Loan = () => {
   const [form_token, setForm_token] = useState<any>();
   const [pin_code, setPin_code] = useState<any>();
   const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
+  const [isCompleteOpenLoan, setIsCompleteOpenLoan] = useState<boolean>(false);
   const [activeDuration, setActiveDuration] = useState<number>(0);
   const [form] = Form.useForm();
 
@@ -99,13 +100,24 @@ export const Loan = () => {
     return status == 1
       ? Number(statusData?.stat?.wallet_min_amount)
       : Number(loan?.loan_min_amount);
-  }, [loan]);
+  }, [loan, statusData, status]);
 
   const maxValue = useMemo(() => {
-    return status == 1
-      ? Number(statusData?.stat?.wallet_amount)
-      : Number(loan?.loan_max_amount);
-  }, []);
+    if (status === 1) {
+      if (Number(statusData?.stat?.blocked_wallet_amount) > 0) {
+        const availableAmount =
+          Number(statusData?.stat?.wallet_amount) -
+          Number(statusData?.stat?.blocked_wallet_amount);
+        return availableAmount > Number(loan?.loan_max_amount)
+          ? Number(loan?.loan_max_amount)
+          : availableAmount;
+      } else {
+        return Number(statusData?.stat?.wallet_amount);
+      }
+    } else {
+      return Number(loan?.loan_max_amount);
+    }
+  }, [status, statusData, loan]);
 
   const rate = useMemo(() => {
     return loan?.loan_rate_day.slice(0, 4);
@@ -185,9 +197,9 @@ export const Loan = () => {
               description: any;
             }) => {
               if (data.success) {
-                console.log(data);
                 setRequestId(data?.request_id);
                 setIsVerifyOpen(true);
+                setLoadings(false);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -247,9 +259,8 @@ export const Loan = () => {
                 description: any;
               }) => {
                 if (data.success) {
-                  console.log(data);
                   setIsVerifyOpen(false);
-                  setIsCompleteOpen(true);
+                  setIsCompleteOpenLoan(true);
                 } else {
                   error({
                     title: "Амжилтгүй",
@@ -886,6 +897,41 @@ export const Loan = () => {
               width={378}
               title={null}
               onCancel={() => {
+                setIsCompleteOpenLoan(false);
+                setChecked(false);
+              }}
+              open={isCompleteOpenLoan}
+              footer={null}
+            >
+              <Row
+                justify="center"
+                gutter={[0, 30]}
+                style={{ padding: "50px 0" }}
+              >
+                <Col span={24}>
+                  <Row justify="center">
+                    <Image
+                      width={56}
+                      src={"/images/check.svg"}
+                      preview={false}
+                      alt="Header Logo"
+                    />
+                  </Row>
+                </Col>
+                <Col span={16}>
+                  <div className={styles["dloan-modal-complete-text"]}>
+                    Таны зээлийн эрх үүсгэх хүсэлт амжилттай бүртгэгдлээ. ФандМи
+                    биржээс таны зээлийн эрхийн хэмжээг нээж өгөх болно.
+                  </div>
+                </Col>
+              </Row>
+            </Modal>
+
+            <Modal
+              centered
+              width={378}
+              title={null}
+              onCancel={() => {
                 setIsCompleteOpen(false);
                 setActiveClass(!activeClass);
               }}
@@ -940,6 +986,7 @@ export const Loan = () => {
               <Row align="middle">
                 <Col flex="none">
                   <Button
+                    type="default"
                     className={styles["dloan-button-back"]}
                     onClick={() => router.push("/dashboard/myfund")}
                   >

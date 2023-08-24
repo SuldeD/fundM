@@ -284,7 +284,7 @@ export const MyFund = () => {
                 {myLoanOrders.length > 0
                   ? numberToCurrency(
                       Math.round(
-                        myLoanOrders -
+                        sumMyLoan -
                           (sumMyLoan * myLoanOrdersSum) /
                             myLoanOrders.length /
                             100
