@@ -117,32 +117,32 @@ export default function Forgot() {
 
   const validateRegister = async (values: any) => {
     // Validate length
-    if (values.register.length !== 10) {
+    if (values.register.length <= 0) {
       return warning({
         title: "Амжилтгүй",
         content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
       });
     }
 
-    // Validate that the first two characters are Cyrillic letters
-    const firstTwoCharacters = values.register.substring(0, 2);
-    const cyrillicPattern = /^[А-ЯЁ]+$/i; // Cyrillic letter pattern
-    if (!cyrillicPattern.test(firstTwoCharacters)) {
-      return warning({
-        title: "Амжилтгүй",
-        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
-      });
-    }
+    // // Validate that the first two characters are Cyrillic letters
+    // const firstTwoCharacters = values.register.substring(0, 2);
+    // const cyrillicPattern = /^[А-ЯЁ]+$/i; // Cyrillic letter pattern
+    // if (!cyrillicPattern.test(firstTwoCharacters)) {
+    //   return warning({
+    //     title: "Амжилтгүй",
+    //     content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
+    //   });
+    // }
 
-    // Validate the rest of the ID number (in this case, skipping the first two characters)
-    const remainingDigits = values.register.substring(2);
-    const numericPattern = /^[0-9]+$/; // Numeric digits pattern
-    if (!numericPattern.test(remainingDigits)) {
-      return warning({
-        title: "Амжилтгүй",
-        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
-      });
-    }
+    // // Validate the rest of the ID number (in this case, skipping the first two characters)
+    // const remainingDigits = values.register.substring(2);
+    // const numericPattern = /^[0-9]+$/; // Numeric digits pattern
+    // if (!numericPattern.test(remainingDigits)) {
+    //   return warning({
+    //     title: "Амжилтгүй",
+    //     content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
+    //   });
+    // }
 
     return setRegisterData((prevData) => ({
       ...prevData,
