@@ -183,6 +183,7 @@ export default function Forgot() {
       setRegisterData((prevData) => ({
         ...prevData,
         password: values.password,
+        pin_code: code.join(""),
       }));
       setLoading("loading");
       try {
