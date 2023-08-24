@@ -23,7 +23,7 @@ import { useSession } from "next-auth/react";
 
 export const Foundation = () => {
   const { data } = useSession();
-  const termsRef = useRef();
+  const termsRef: any = useRef();
   const router = useRouter();
   const [form] = Form.useForm();
   const { error } = Modal;
@@ -71,7 +71,7 @@ export const Foundation = () => {
   }, [getContent]);
   const minValue = Number(saving && saving?.loan_min_amount);
   const maxValue = Number(saving && saving?.loan_max_amount);
-  const rate = saving?.loan_rate_month.slice(0, 4);
+  const rate = Number(saving?.loan_rate_day);
 
   //functions
   function submit() {
@@ -250,7 +250,7 @@ export const Foundation = () => {
                           justify="center"
                         >
                           <div className={styles["foundation-rate-text"]}>
-                            {rate} %
+                            {saving?.loan_rate_month} %
                           </div>
                         </Row>
                       </Col>
@@ -350,7 +350,7 @@ export const Foundation = () => {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={24}>
+                  {/* <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["foundation-detail-text"]}>
@@ -363,7 +363,7 @@ export const Foundation = () => {
                         </div>
                       </Col>
                     </Row>
-                  </Col>
+                  </Col> */}
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
@@ -405,11 +405,11 @@ export const Foundation = () => {
                 <Row gutter={12} align="middle">
                   <Col flex="none">
                     <Checkbox
-                      // @ts-ignore
                       ref={termsRef}
-                      onChange={(e) => setChecked(e.target.checked)}
+                      onChange={(e) =>
+                        checked ? setChecked(true) : setChecked(false)
+                      }
                       checked={checked}
-                      disabled
                     />
                   </Col>
                   <Col flex="none">
@@ -467,7 +467,7 @@ export const Foundation = () => {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={24}>
+                  {/* <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["foundation-detail-text"]}>
@@ -480,7 +480,7 @@ export const Foundation = () => {
                         </div>
                       </Col>
                     </Row>
-                  </Col>
+                  </Col> */}
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">

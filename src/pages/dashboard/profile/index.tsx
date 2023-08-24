@@ -232,7 +232,6 @@ export const Profile = () => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
         ) => {
           if (data.success) {
-            console.log(data);
             setIsOpenVerifyPass(false);
             setChangeId("");
             setFormToken("");

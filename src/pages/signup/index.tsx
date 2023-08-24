@@ -637,6 +637,25 @@ export default function Signup() {
                       <Row gutter={[0, 13]}>
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
+                            {search == "org" ? "Захирлын нэр" : "Овог"}
+                          </div>
+                        </Col>
+                        <Col span={24}>
+                          <Form.Item
+                            name="last_name"
+                            rules={[
+                              {
+                                required: true,
+                                message:
+                                  search == "org" ? "Захирлын нэр!" : "Овог!",
+                              },
+                            ]}
+                          >
+                            <Input className={styles["input-style"]} />
+                          </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                          <div className={styles["phone-number-label"]}>
                             {search == "org"
                               ? "Байгууллагын нэр"
                               : "Өөрийн нэр"}
@@ -661,25 +680,7 @@ export default function Signup() {
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={24}>
-                          <div className={styles["phone-number-label"]}>
-                            {search == "org" ? "Захирлын нэр" : "Овог"}
-                          </div>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="last_name"
-                            rules={[
-                              {
-                                required: true,
-                                message:
-                                  search == "org" ? "Захирлын нэр!" : "Овог!",
-                              },
-                            ]}
-                          >
-                            <Input className={styles["input-style"]} />
-                          </Form.Item>
-                        </Col>
+
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
                             {search == "org"

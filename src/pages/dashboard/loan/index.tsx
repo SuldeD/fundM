@@ -120,7 +120,7 @@ export const Loan = () => {
   }, [status, statusData, loan]);
 
   const rate = useMemo(() => {
-    return loan?.loan_rate_day.slice(0, 4);
+    return Number(loan?.loan_rate_day);
   }, [loan]);
 
   const dataTable = loan?.duration;
@@ -158,7 +158,6 @@ export const Loan = () => {
               description: any;
             }) => {
               if (data.success) {
-                console.log(data);
                 setTransaction_id(data?.transaction_id);
                 setForm_token(data?.form_token);
                 setIsVerifyOpen(true);
@@ -495,7 +494,7 @@ export const Loan = () => {
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["dloan-detail-text"]}>
-                          Нийт төлөх зээлийн хэмжээ
+                          Нийт зээлийн төлбөр
                         </div>
                       </Col>
                       <Col flex="none">
@@ -518,20 +517,7 @@ export const Loan = () => {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={24}>
-                    <Row justify="space-between" align="middle">
-                      <Col flex="none">
-                        <div className={styles["dloan-detail-text"]}>
-                          Хүүгийн хэмжээ (хоногоор)
-                        </div>
-                      </Col>
-                      <Col flex="none">
-                        <div className={styles["dloan-detail-maxValue"]}>
-                          {loan && rate} %
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
+
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
@@ -574,11 +560,10 @@ export const Loan = () => {
                   <Col flex="none">
                     <Checkbox
                       ref={termsRef}
-                      onChange={(e) => setChecked(e.target.checked)}
+                      onChange={(e) =>
+                        checked ? setChecked(true) : setChecked(false)
+                      }
                       checked={checked}
-                      disabled
-                      style={{ color: " #39DA00 !imporatant" }}
-                      // className="bg-[#39DA00]"
                     />
                   </Col>
                   <Col flex="none">
@@ -659,7 +644,7 @@ export const Loan = () => {
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["dloan-detail-text"]}>
-                          Нийт төлөх зээлийн хэмжээ
+                          Нийт зээлийн төлбөр
                         </div>
                       </Col>
                       <Col flex="none">
@@ -682,7 +667,7 @@ export const Loan = () => {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={24}>
+                  {/* <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["dloan-detail-text"]}>
@@ -695,7 +680,7 @@ export const Loan = () => {
                         </div>
                       </Col>
                     </Row>
-                  </Col>
+                  </Col> */}
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
@@ -968,9 +953,9 @@ export const Loan = () => {
                     </span>{" "}
                     хоногийн хугацаатай{" "}
                     <span className={styles["dloan-modal-complete-number"]}>
-                      {rate}
+                      {loan?.loan_rate_month} %
                     </span>{" "}
-                    хувийн өгөөжтэй зээл авах хүсэлт амжилттай бүртгэгдлээ.
+                    хувийн хүүтэй зээл авах хүсэлт амжилттай бүртгэгдлээ.
                   </div>
                 </Col>
               </Row>
@@ -982,9 +967,9 @@ export const Loan = () => {
             style={{ height: "100%" }}
             className={styles[activeClass ? "dloan-change-div" : ""]}
           >
-            <Col span={22}>
+            <Col span={20}>
               <Row align="middle">
-                <Col flex="none">
+                <Col flex="auto">
                   <Button
                     type="default"
                     className={styles["dloan-button-back"]}
