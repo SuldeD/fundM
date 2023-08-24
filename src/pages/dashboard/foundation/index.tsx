@@ -713,7 +713,7 @@ export const Foundation = () => {
                       className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
                       alt=""
                       onClick={() => {
-                        message.info("Copy to clipboard");
+                        message.success("Copy to clipboard");
                         navigator.clipboard.writeText(
                           foundationBankData?.product?.account_name
                         );
@@ -737,7 +737,7 @@ export const Foundation = () => {
                       className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
                       alt=""
                       onClick={() => {
-                        message.info("Copy to clipboard");
+                        message.success("Copy to clipboard");
                         navigator.clipboard.writeText(
                           foundationBankData?.product?.account_num
                         );
@@ -761,7 +761,7 @@ export const Foundation = () => {
                       className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
                       alt=""
                       onClick={() => {
-                        message.info("Copy to clipboard");
+                        message.success("Copy to clipboard");
                         navigator.clipboard.writeText(
                           foundationBankData?.product?.now_month_pay_amount
                         );
@@ -787,6 +787,7 @@ export const Foundation = () => {
                       className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
                       alt=""
                       onClick={() => {
+                        message.success("Copy to clipboard");
                         navigator.clipboard.writeText(
                           foundationBankData?.product?.transaction_description
                         );

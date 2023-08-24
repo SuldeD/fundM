@@ -47,6 +47,7 @@ export default function Forgot() {
     register: "",
   });
   const [selectedQuestion, setSelectedQuestion] = useState<any>("");
+  const [loading, setLoading] = useState<string>("loading");
   const [isOpenVerifyPass, setOpenVerifyPass] = useState<boolean>(false);
   const inputs = useRef<any>([]);
   useRef<(HTMLInputElement | null)[]>([]);
@@ -97,7 +98,12 @@ export default function Forgot() {
     if (values.answer.length < 8) {
       error({
         title: "Амжилтгүй",
-        content: <div>Нууц үг хамгийн багадаа 8 тэмдэгтээс бүрдэх ёстой.</div>,
+        content: (
+          <div>
+            Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
+            тэмдэгтээс бүрдэх ёстой.
+          </div>
+        ),
       });
     } else {
       setRegisterData((prevData) => ({
@@ -110,17 +116,38 @@ export default function Forgot() {
   };
 
   const validateRegister = async (values: any) => {
-    if (values.register.length != 10) {
-      warning({
+    // Validate length
+    if (values.register.length !== 10) {
+      return warning({
         title: "Амжилтгүй",
-        content: <div>Зөв имэйл хаяг оруулана уу!!!</div>,
+        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
       });
-    } else {
-      setRegisterData((prevData) => ({
-        ...prevData,
-        register: values.register,
-      }));
     }
+
+    // Validate that the first two characters are Cyrillic letters
+    const firstTwoCharacters = values.register.substring(0, 2);
+    const cyrillicPattern = /^[А-ЯЁ]+$/i; // Cyrillic letter pattern
+    if (!cyrillicPattern.test(firstTwoCharacters)) {
+      return warning({
+        title: "Амжилтгүй",
+        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
+      });
+    }
+
+    // Validate the rest of the ID number (in this case, skipping the first two characters)
+    const remainingDigits = values.register.substring(2);
+    const numericPattern = /^[0-9]+$/; // Numeric digits pattern
+    if (!numericPattern.test(remainingDigits)) {
+      return warning({
+        title: "Амжилтгүй",
+        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
+      });
+    }
+
+    return setRegisterData((prevData) => ({
+      ...prevData,
+      register: values.register,
+    }));
   };
 
   const validatePassword = async (values: any) => {
@@ -157,7 +184,7 @@ export default function Forgot() {
         ...prevData,
         password: values.password,
       }));
-
+      setLoading("loading");
       try {
         mutationForgot.mutate(
           {
@@ -174,10 +201,10 @@ export default function Forgot() {
                 message.success(data.test_pin_code);
                 setRegisterData((prevData) => ({
                   ...prevData,
-                  register: values.register,
                   forgot_id: data?.forgot_id,
                 }));
                 setOpenVerifyPass(true);
+                setLoading("");
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -212,6 +239,8 @@ export default function Forgot() {
           onSuccess: (data: any) => {
             console.log(data);
             if (data.success) {
+              setOpenVerifyPass(false);
+              router.push("/login");
               setRegisterData({
                 phone: "",
                 username: "",
@@ -223,7 +252,6 @@ export default function Forgot() {
                 forgot_id: "",
                 register: "",
               });
-              router.push("/login");
             } else {
               error({
                 title: "Амжилтгүй",
@@ -569,7 +597,7 @@ export default function Forgot() {
                                   onClick={() =>
                                     setRegisterData((prevData) => ({
                                       ...prevData,
-                                      password: "",
+                                      register: "",
                                     }))
                                   }
                                   className="h-[40px] w-[45%] rounded-[9px] text-white"
@@ -580,8 +608,9 @@ export default function Forgot() {
                                 <Form.Item className="w-[45%]">
                                   <Button
                                     type="primary"
+                                    loading={loading == "loading"}
                                     htmlType="submit"
-                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                    className={`h-[40px] w-full overflow-hidden rounded-[9px] bg-primary`}
                                   >
                                     Нэг удаагын код авах
                                   </Button>
@@ -648,8 +677,7 @@ export default function Forgot() {
                     type="submit"
                     className={stylesL["dloan-modal-verify-button"]}
                     onClick={() => {
-                      code.join("").length == 4 && signupConfirm;
-                      code.join("").length == 4 && setOpenVerifyPass(false);
+                      registerData.pin_code.length == 4 && signupConfirm;
                     }}
                   >
                     Баталгаажуулах

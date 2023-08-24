@@ -1,4 +1,4 @@
-import { Col, Modal, Row, Input, message } from "antd";
+import { Col, Modal, Row, Input, message, Button } from "antd";
 import { HeaderDashboard } from "app/components/header";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../../../styles/profile.module.css";
@@ -20,6 +20,18 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result as string));
   reader.readAsDataURL(img);
+};
+
+const beforeUpload = (file: any) => {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+  if (!isJpgOrPng) {
+    message.error("You can only upload JPG/PNG file!");
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error("Image must smaller than 2MB!");
+  }
+  return isJpgOrPng && isLt2M;
 };
 
 export default function Bank() {
@@ -48,6 +60,7 @@ export default function Bank() {
   const [requestId, setReqId] = useState<string>("");
   const [check, setCheck] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [option, setOption] = useState<any[]>([]);
   const inputs = useRef<any>([]);
@@ -113,6 +126,7 @@ export default function Bank() {
       requestId.length > 0 &&
       code.join("").length == 4
     ) {
+      setLoadingBtn(true);
       addBankVerMutate(
         {
           confirm_code: code.join(""),
@@ -128,6 +142,7 @@ export default function Bank() {
             }
           ) => {
             if (data.success) {
+              setLoadingBtn(false);
               setOpenVerify(false);
               setCheck(true);
             } else {
@@ -302,7 +317,8 @@ export default function Bank() {
               <Row justify="center" gutter={[0, 20]}>
                 <ImgCrop rotationSlider>
                   <Upload
-                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={beforeUpload}
+                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     listType="picture"
                     showUploadList={false}
                     onChange={handleChange}
@@ -321,20 +337,20 @@ export default function Bank() {
                 </ImgCrop>
                 <Row>
                   <p className="text-center">
-                    Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж
-                    оруулна уу” , “ААН бол захиралын гарын үсэг болон
-                    байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг
-                    дарж оруулна уу!
+                    {accountInfo?.account?.user_type == "org"
+                      ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
+                      : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
                   </p>
                 </Row>
                 <Col span={24}>
-                  <button
-                    type="submit"
+                  <Button
+                    type="primary"
+                    loading={loadingBtn}
                     onClick={imageUrl.length > 0 ? submitVerify : undefined}
-                    className={`${stylesL["dloan-modal-verify-button"]} mt-[20px] bg-primary text-white`}
+                    className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
                   >
                     Баталгаажуулах
-                  </button>
+                  </Button>
                 </Col>
               </Row>
             </Col>
