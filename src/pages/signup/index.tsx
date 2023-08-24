@@ -143,7 +143,7 @@ export default function Signup() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Validate length
-    if (values.register.length !== 10) {
+    if (search != "org" && values.register.length !== 10) {
       return warning({
         title: "Амжилтгүй",
         content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
@@ -153,7 +153,7 @@ export default function Signup() {
     // Validate that the first two characters are Cyrillic letters
     const firstTwoCharacters = values.register.substring(0, 2);
     const cyrillicPattern = /^[А-ЯЁ]+$/i; // Cyrillic letter pattern
-    if (!cyrillicPattern.test(firstTwoCharacters)) {
+    if (search != "org" && !cyrillicPattern.test(firstTwoCharacters)) {
       return warning({
         title: "Амжилтгүй",
         content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
@@ -163,7 +163,7 @@ export default function Signup() {
     // Validate the rest of the ID number (in this case, skipping the first two characters)
     const remainingDigits = values.register.substring(2);
     const numericPattern = /^[0-9]+$/; // Numeric digits pattern
-    if (!numericPattern.test(remainingDigits)) {
+    if (search != "org" && !numericPattern.test(remainingDigits)) {
       return warning({
         title: "Амжилтгүй",
         content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
@@ -173,7 +173,9 @@ export default function Signup() {
     if (
       (values.last_name.length == 0 && values.last_name.length > 50) ||
       (values.first_name.length == 0 && values.first_name.length > 50) ||
-      (search != "org" && values.register.length != 10)
+      (search != "org"
+        ? values.register.length != 10
+        : values.register.length != 6)
     ) {
       warning({
         title: "Амжилтгүй",
