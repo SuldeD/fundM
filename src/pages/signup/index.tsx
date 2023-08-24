@@ -806,9 +806,6 @@ export default function Signup() {
                           >
                             <Input.Password
                               className={styles["input-style"]}
-                              onChange={(e: any) =>
-                                onChangeValidatePass(e.target.value)
-                              }
                               autoFocus
                             />
                             <p className="ps-2 text-red-500">
