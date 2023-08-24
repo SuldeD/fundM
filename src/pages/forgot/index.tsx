@@ -264,8 +264,6 @@ export default function Forgot() {
     }
   };
 
-  console.log(code.join("").length == 4);
-
   const { data } = useSession();
   if (data) {
     return <Loaderr />;
