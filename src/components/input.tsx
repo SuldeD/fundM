@@ -110,7 +110,7 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
                 <Col span={20}>
                   <Button
                     type="primary"
-                    loading={loadings}
+                    loading={loadings == true}
                     className={styles["dloan-modal-verify-button"]}
                     onClick={submit}
                   >

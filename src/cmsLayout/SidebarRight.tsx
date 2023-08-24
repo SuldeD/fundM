@@ -80,8 +80,12 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
 
     return (
       <Comp
-        activeSavingOrders={activeSavingOrders.length > 0 && activeSavingOrders}
-        activeLoanOrders={activeLoanOrders.length > 0 && activeLoanOrders}
+        activeSavingOrders={
+          activeSavingOrders.length > 0 && activeSavingOrders.reverse()
+        }
+        activeLoanOrders={
+          activeLoanOrders.length > 0 && activeLoanOrders.reverse()
+        }
       />
     );
   }, [router.pathname, myFundTabKey]);

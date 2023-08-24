@@ -1,8 +1,12 @@
 import { Col, Statistic, Row } from "antd";
+import { api } from "app/utils/api";
 import styles from "../styles/dashboard-header.module.css";
 
 export const HeaderDashboard = ({ title, subTitle }: any) => {
   const { Countdown } = Statistic;
+  const { data } = api.account.accountInfo.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   // function generateTimeSlots(startDate: any, endDate: any) {
   //   const hourInMillis = 60 * 60 * 1000;
@@ -27,7 +31,14 @@ export const HeaderDashboard = ({ title, subTitle }: any) => {
   // endingDate.setDate(endingDate.getDate() + 5);
   // generateTimeSlots(startingDate, endingDate);
   const targetDate: any = new Date();
-  targetDate.setHours(14, 0, 0, 0);
+  targetDate.setHours(
+    data?.market_close_time.slice(0, 2)
+      ? data?.market_close_time.slice(0, 2)
+      : 14,
+    0,
+    0,
+    0
+  );
 
   return (
     <Col span={24}>
