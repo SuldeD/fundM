@@ -745,7 +745,7 @@ export default function Signup() {
                                   <Button
                                     type="primary"
                                     htmlType="submit"
-                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
                                   >
                                     Үргэлжлүүлэх
                                   </Button>
@@ -853,7 +853,7 @@ export default function Signup() {
                                   <Button
                                     type="primary"
                                     htmlType="submit"
-                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
                                   >
                                     Үргэлжлүүлэх
                                   </Button>
@@ -986,7 +986,7 @@ export default function Signup() {
                                   <Button
                                     type="primary"
                                     htmlType="submit"
-                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
                                   >
                                     Үргэлжлүүлэх
                                   </Button>
@@ -1102,7 +1102,7 @@ export default function Signup() {
                                     loading={loading == "loading"}
                                     type="primary"
                                     htmlType="submit"
-                                    className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                                    className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
                                   >
                                     Үргэлжлүүлэх
                                   </Button>

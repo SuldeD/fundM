@@ -256,7 +256,7 @@ export const ProtectedLayout = ({ children }: any) => {
                       <Form.Item>
                         <Button
                           type="primary"
-                          className={`${styles["foundation-button-contiune"]} bg-primary`}
+                          className={styles["foundation-button-contiune"]}
                           onClick={handleOk}
                           htmlType="submit"
                         >
@@ -460,7 +460,7 @@ export const ProtectedLayout = ({ children }: any) => {
           notfication?.activity_list_more ? (
             <Button
               type="primary"
-              className="mx-auto mt-[20px] flex bg-primary text-center font-lato text-[14px] leading-[18px]"
+              className="mx-auto mt-[20px] flex bg-primary text-center font-raleway text-[14px] leading-[18px]"
               onClick={() => {
                 notfication?.activity_list?.length &&
                   allData(`${notfication?.activity_list?.length + 10}`);
@@ -472,7 +472,7 @@ export const ProtectedLayout = ({ children }: any) => {
             <Button
               type="default"
               disabled
-              className="mx-auto mt-[20px] flex text-center font-lato text-[14px] leading-[18px]"
+              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
             >
               Бүгдийг харах
             </Button>

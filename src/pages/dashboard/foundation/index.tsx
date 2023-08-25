@@ -350,20 +350,29 @@ export const Foundation = () => {
                       </Col>
                     </Row>
                   </Col>
-                  {/* <Col span={24}>
+                  <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["foundation-detail-text"]}>
-                          Хүүгийн хэмжээ (хоногоор)
+                          Татвар
                         </div>
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {saving?.loan_rate_day.slice(0, 4)} %
+                          {dataTable &&
+                            typeof activeDuration == "number" &&
+                            numberToCurrency(
+                              Math.floor(
+                                (inputValue / 100) *
+                                  rate *
+                                  Number(dataTable[activeDuration].duration) *
+                                  0.1
+                              )
+                            )}
                         </div>
                       </Col>
                     </Row>
-                  </Col> */}
+                  </Col>
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">

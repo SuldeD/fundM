@@ -230,7 +230,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           notfication?.activity_list_more ? (
             <Button
               type="primary"
-              className="mx-auto mt-[20px] flex bg-primary text-center font-lato text-[14px] leading-[18px]"
+              className="mx-auto mt-[20px] flex bg-primary text-center font-raleway text-[14px] leading-[18px]"
               onClick={() => {
                 notfication?.activity_list?.length &&
                   allData(`${notfication?.activity_list?.length + 10}`);
@@ -242,7 +242,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             <Button
               type="default"
               disabled
-              className="mx-auto mt-[20px] flex text-center font-lato text-[14px] leading-[18px]"
+              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
             >
               Бүгдийг харах
             </Button>

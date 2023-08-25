@@ -293,8 +293,7 @@ export const FundHistory = () => {
   function verifyCompleteModal(code: number) {
     repayment(
       {
-        request_id:
-          selectedData?.main_request_id && selectedData?.main_request_id,
+        request_id: selectedData?.id && selectedData?.id,
         password: code.toString(),
       },
       {
