@@ -605,7 +605,7 @@ export const Profile = () => {
                   </Col>
                   <Col flex="right">
                     <div
-                      className="cursor-pointer font-lato text-[12px] font-normal text-primary hover:text-[#524ffd]"
+                      className="cursor-pointer font-raleway text-[12px] font-normal text-primary hover:text-[#524ffd]"
                       onClick={() => {
                         window.open(dan?.https_redirect, "_blank");
                       }}
@@ -623,7 +623,7 @@ export const Profile = () => {
                 </Col>
                 <Col flex="right">
                   <div
-                    className="cursor-pointer font-lato text-[12px] font-normal text-primary hover:text-[#524ffd]"
+                    className="cursor-pointer font-raleway text-[12px] font-normal text-primary hover:text-[#524ffd]"
                     onClick={() => {
                       !accountInfo.bank_account
                         ? router.push("/dashboard/profile/bank")
@@ -937,7 +937,7 @@ export const Profile = () => {
               </Button>
 
               <Button
-                className="w-[168px] rounded-[20px] bg-primary text-[#fff]"
+                className="w-[168px] rounded-[20px] bg-primary font-raleway text-[#fff]"
                 type="primary"
                 onClick={
                   clickedEdit == 0
