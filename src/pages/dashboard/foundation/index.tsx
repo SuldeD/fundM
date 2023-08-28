@@ -50,7 +50,7 @@ export const Foundation = () => {
   );
 
   //states
-  const [inputValue, setInputValue] = useState<number>(0);
+  const [inputValue, setInputValue] = useState<number>(50000);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
@@ -270,7 +270,11 @@ export const Foundation = () => {
                         <Row wrap={true} gutter={30} align="middle">
                           {dataTable &&
                             dataTable?.map((el: any, idx: any) => (
-                              <Col flex="none" key={`data-${idx}`}>
+                              <Col
+                                flex="none"
+                                key={`data-${idx}`}
+                                className="mb-[15px]"
+                              >
                                 <Button
                                   onClick={() => setActiveDuration(idx)}
                                   className={

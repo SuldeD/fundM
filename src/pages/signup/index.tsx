@@ -800,7 +800,8 @@ export default function Signup() {
                             rules={[
                               {
                                 required: true,
-                                message: "Нэвтрэх нууц үг оруулна уу!",
+                                message:
+                                  "таны нууц үг багадаа 8 оронтой 1 том үсэг 1 тэмдэгт орсон байна!",
                               },
                             ]}
                           >
@@ -808,10 +809,6 @@ export default function Signup() {
                               className={styles["input-style"]}
                               autoFocus
                             />
-                            <p className="ps-2 text-red-500">
-                              таны нууц үг багадаа 8 оронтой 1 том үсэг 1
-                              тэмдэгт орсон байна
-                            </p>
                           </Form.Item>
                         </Col>
                         <Col span={24}>

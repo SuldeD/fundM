@@ -1,6 +1,6 @@
-import { Col, Modal, Row, Input, message, Button } from "antd";
+import { Col, Modal, Row, message, Button } from "antd";
 import { HeaderDashboard } from "app/components/header";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import styles from "../../../styles/profile.module.css";
 import stylesL from "../../../styles/dloan.module.css";
 import { useRequireAuth } from "app/utils/auth";
@@ -62,7 +62,6 @@ export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [option, setOption] = useState<any[]>([]);
   const inputs = useRef<any>([]);
   useRef<(HTMLInputElement | null)[]>([]);
   const length = 4;
@@ -104,7 +103,6 @@ export default function Bank() {
         ) => {
           if (data.success) {
             setReqId(data?.request_id);
-
             setOpenVerifyPass(true);
 
             message.success(data.description);
@@ -180,17 +178,16 @@ export default function Bank() {
     </div>
   );
 
-  useEffect(() => {
-    setOption([]);
-    helpBankList?.bank_list?.forEach((list: any) =>
-      setOption((prev: any) => [
-        ...prev,
-        { value: list.bank_id, label: list.bank_name },
-      ])
-    );
-  }, []);
-
-  // if (!accountInfo?.bank_account?.bank_name) {
+  const option = useMemo(() => {
+    if (helpBankList?.bank_list?.length > 0) {
+      return helpBankList.bank_list.map((list: any) => ({
+        value: list.bank_id,
+        label: list.bank_name,
+      }));
+    } else {
+      return [];
+    }
+  }, [helpBankList]);
 
   if (!data) {
     return <Loaderr />;
