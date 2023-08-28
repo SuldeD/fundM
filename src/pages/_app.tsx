@@ -6,7 +6,7 @@ import "app/styles/globals.css";
 import Head from "next/head";
 import mnMN from "antd/locale/mn_MN";
 import { ConfigProvider, App as AntdApp } from "antd";
-import MainLayout from "./mainLayout";
+import MainLayout from "./layout";
 import { AppWrapper } from "app/context/appContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
