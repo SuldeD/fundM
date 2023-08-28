@@ -578,7 +578,6 @@ export const Foundation = () => {
                 type="primary"
                 className={styles["foundation-button-contiune"]}
                 onClick={() => {
-                  // @ts-ignore
                   termsRef.current?.input.checked
                     ? !accountInfo?.bank_account
                       ? error({
@@ -586,9 +585,12 @@ export const Foundation = () => {
                           content: (
                             <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
                           ),
-                        }) &&
-                        // @ts-ignore
-                        router.push("/dashboard/profile/bank")
+                        }) && router.push("/dashboard/profile/bank")
+                      : accountInfo?.bank_account?.is_verify == 0
+                      ? error({
+                          title: "Амжилтгүй",
+                          content: <div>Та дансаа баталгаажуулна уу</div>,
+                        }) && router.push("/dashboard/profile/bank")
                       : submit()
                     : setIsModalOpen(true);
                 }}
