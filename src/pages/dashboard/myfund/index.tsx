@@ -234,15 +234,6 @@ export const MyFund = () => {
       label: "Зээл авах хүсэлт",
       children: (
         <Col span={24}>
-          <Row>
-            <Progress
-              percent={
-                myLoanOrders.length > 0
-                  ? Math.round(myLoanOrdersSum / myLoanOrders.length)
-                  : 0
-              }
-            />
-          </Row>
           <Row
             gutter={[0, 30]}
             justify="space-between"
@@ -315,15 +306,6 @@ export const MyFund = () => {
       children: (
         <Row gutter={[0, 30]} justify="center">
           <Col span={24}>
-            <Row>
-              <Progress
-                percent={
-                  mySavingOrders.length > 0
-                    ? Math.round(mySavingOrdersSum / mySavingOrders.length)
-                    : 0
-                }
-              />
-            </Row>
             <Row
               justify="space-between"
               gutter={[0, 30]}

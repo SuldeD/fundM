@@ -11,8 +11,9 @@ import {
   message,
 } from "antd";
 import styles from "../../../styles/profile.module.css";
+import ImgCrop from "antd-img-crop";
 import { HeaderDashboard } from "../../../components/header";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Loaderr } from "app/components/Loader";
 import { useRequireAuth } from "app/utils/auth";
 import { useRouter } from "next/router";
@@ -21,6 +22,7 @@ import { api } from "app/utils/api";
 import InputCode from "app/components/input";
 import type { RcFile } from "antd/es/upload/interface";
 import { useSession } from "next-auth/react";
+import PopupModal from "app/components/modal";
 const { Panel } = Collapse;
 
 const beforeUpload = (file: any) => {
@@ -57,6 +59,7 @@ export const Profile = () => {
   const { mutate: forgotTransPass } = api.profile.forgotTransPass.useMutation();
   const { mutate: forgotTransPassConfirm } =
     api.profile.forgotTransPassConfirm.useMutation();
+  const { mutate: addBankVerMutate } = api.profile.addBankVerify.useMutation();
 
   //queries
   const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
@@ -67,6 +70,27 @@ export const Profile = () => {
   });
   const { data: statusData } = api.account.accountStatus.useQuery(undefined, {
     refetchOnWindowFocus: false,
+  });
+  const { data: loanSearch } = api.loan.loanSearch.useQuery(
+    {
+      order: "date",
+      order_up: "1",
+      page: "1",
+      page_size: "1",
+      filter_type: "contract",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  const loanReq = useMemo(() => {
+    return loanSearch?.loan_requests;
+  }, [loanSearch]);
+
+  let request_id = -1;
+  loanReq?.forEach((ln: any) => {
+    if (ln?.is_status == "3" && ln?.IsActive == "-7") {
+      return (request_id = ln?.request_id);
+    }
   });
 
   //states
@@ -86,10 +110,13 @@ export const Profile = () => {
   const [fundPassPrev, setFundPassPrev] = useState<string>("");
   const [fundPassNew, setFundPassNew] = useState<string>("");
   const [fundPassNewVer, setFundPassNewVer] = useState<string>("");
-  const [clickedEdit, setClickedEdit] = useState<number>(0);
+  const [clickedEdit, setClickedEdit] = useState<number>();
   const [changeId, setChangeId] = useState<string>("");
   const [formToken, setFormToken] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
+  const [check, setCheck] = useState<boolean>(false);
+  const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
   const inputs = useRef<any>([]);
   useRef<(HTMLInputElement | null)[]>([]);
@@ -419,6 +446,40 @@ export const Profile = () => {
     );
   }
 
+  function submitVerify() {
+    if (imageUrl.length > 0 && request_id > -1 && code.join("").length == 4) {
+      setLoadingBtn(true);
+      addBankVerMutate(
+        {
+          confirm_code: code.join(""),
+          photo: imageUrl,
+          request_id: request_id.toString(),
+        },
+        {
+          onSuccess: (
+            /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: {
+              success: any;
+              loan_requests: import("react").SetStateAction<undefined>;
+              description: any;
+            }
+          ) => {
+            if (data.success) {
+              setLoadingBtn(false);
+              setOpenVerify(false);
+              setCheck(true);
+            } else {
+              setLoadingBtn(false);
+              error({
+                title: "Амжилтгүй",
+                content: <div>{data?.description || null}</div>,
+              });
+            }
+          },
+        }
+      );
+    }
+  }
+
   const items = [
     {
       key: "1",
@@ -625,9 +686,10 @@ export const Profile = () => {
                   <div
                     className="cursor-pointer font-raleway text-[12px] font-normal text-primary hover:text-[#524ffd]"
                     onClick={() => {
-                      !accountInfo.bank_account
+                      !accountInfo?.bank_account
                         ? router.push("/dashboard/profile/bank")
-                        : warning({
+                        : accountInfo?.bank_account?.is_verify == 1
+                        ? warning({
                             title: "Амжилтгүй",
                             content: (
                               <div>
@@ -636,10 +698,13 @@ export const Profile = () => {
                               </div>
                             ),
                             onOk() {},
-                          });
+                          })
+                        : setIsOpenVerifyPass(true);
                     }}
                   >
-                    Данс холбох +
+                    {accountInfo?.bank_account?.is_verify == 0
+                      ? "Данс баталгаажуулах +"
+                      : "Данс холбох +"}
                   </div>
                 </Col>
                 <Col span={24}>
@@ -1151,9 +1216,11 @@ export const Profile = () => {
                     className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
                     onClick={() =>
                       code.join("").length == 4
-                        ? clickedEdit == 0
-                          ? verifyPass()
-                          : verifyTransPass()
+                        ? clickedEdit
+                          ? clickedEdit == 0
+                            ? verifyPass()
+                            : verifyTransPass()
+                          : setOpenVerify(true)
                         : error({
                             title: "Амжилтгүй",
                             content: (
@@ -1169,6 +1236,81 @@ export const Profile = () => {
             </Col>
           </Row>
         </Modal>
+
+        <Modal
+          centered
+          width={478}
+          title={
+            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
+              Гарын үсгийн зураг оруулах
+            </div>
+          }
+          closable={true}
+          onCancel={() => setOpenVerify(false)}
+          open={isOpenVerify}
+          footer={null}
+        >
+          <Row justify="center">
+            <Col span={20}>
+              <Row justify="center" gutter={[0, 20]}>
+                <ImgCrop rotationSlider>
+                  <Upload
+                    beforeUpload={beforeUpload}
+                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    listType="picture"
+                    showUploadList={false}
+                    onChange={handleChange}
+                    className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
+                  >
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="avatar"
+                        className="h-[60px] w-[60px]"
+                      />
+                    ) : (
+                      uploadButton
+                    )}
+                  </Upload>
+                </ImgCrop>
+                <Row>
+                  <p className="text-center">
+                    {accountInfo?.account?.user_type == "org"
+                      ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
+                      : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
+                  </p>
+                </Row>
+                <Col span={24}>
+                  <Button
+                    type="primary"
+                    loading={loadingBtn}
+                    onClick={imageUrl.length > 0 ? submitVerify : undefined}
+                    className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
+                  >
+                    Баталгаажуулах
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Modal>
+
+        <PopupModal
+          buttonClick={() => {
+            setCheck(false);
+            setIsOpenVerifyPass(false);
+          }}
+          buttonText={"Хаах"}
+          closableM={null}
+          closeModal={null}
+          customDiv={null}
+          customIconWidth={null}
+          iconPath={"/images/check"}
+          modalWidth={null}
+          open={check}
+          text={<p>Таны данс амжилттай холбогдлоо.</p>}
+          textAlign={"center"}
+        />
 
         <Col span={22}>
           <Row gutter={[0, 20]}>

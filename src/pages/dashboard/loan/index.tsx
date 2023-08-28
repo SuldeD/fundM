@@ -68,7 +68,7 @@ export const Loan = () => {
   const [loadings, setLoadings] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>("");
   const [activeClass, setActiveClass] = useState<any>(true);
-  const [inputValue, setInputValue] = useState<number>(0);
+  const [inputValue, setInputValue] = useState<number>(50000);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
   const [transaction_id, setTransaction_id] = useState<any>();
