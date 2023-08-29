@@ -72,7 +72,7 @@ export const Dashboard = () => {
       ),
     },
     {
-      title: "Зээлийн хэмжээ",
+      title: "Захиалгын хэмжээ",
       dataIndex: "filled_amount",
       key: "filled_amount",
 

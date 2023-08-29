@@ -16,6 +16,7 @@ export const FundHistory = () => {
 
   //mutates
   const { mutate: repayment } = api.loan.repayment.useMutation();
+  const { mutate: downloadPdf } = api.loan.downloadPdf.useMutation();
 
   //queries
   const { data: requestSearch } = api.loan.reguestSearch.useQuery(
@@ -32,6 +33,7 @@ export const FundHistory = () => {
   //states
   const [activeClass, setSelectedId] = useState<any>();
   const [open, setOpen] = useState<boolean>(false);
+  const [openPdf, setOpenPdf] = useState<boolean>(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
   const [foundationBankData, setFoundationBankData] = useState<any>();
   const [selectedData, setSelectedData] = useState<any>();
@@ -42,12 +44,14 @@ export const FundHistory = () => {
   const orders = useMemo(() => {
     return requestSearch?.requests;
   }, [requestSearch]);
+
   const mySavingOrders = useMemo(() => {
     return requestSearch?.requests?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) == "100" && el.request_type == "saving"
     );
   }, [requestSearch]);
+
   const myLoanOrders = useMemo(() => {
     return requestSearch?.requests?.filter(
       (el: any) =>
@@ -72,6 +76,7 @@ export const FundHistory = () => {
     });
     return num;
   }, [requestSearch]);
+
   const sumMySaving = useMemo(() => {
     if (!requestSearch || !requestSearch.requests) {
       return 0;
@@ -103,6 +108,92 @@ export const FundHistory = () => {
     },
     {
       title: "Зээлийн хэмжээ",
+      dataIndex: "loan_amount",
+      key: "loan_amount",
+      align: "center",
+      width: "23%",
+      render: (loan_amount: string) => (
+        <div className={styles["fund-tabs-content-table-number"]}>
+          {numberToCurrency(loan_amount)}
+        </div>
+      ),
+    },
+    {
+      title: "Төрөл",
+      dataIndex: "request_type",
+      key: "type",
+      align: "center",
+      width: "23%",
+      render: (type: string) =>
+        type == "saving" ? (
+          <div className={stylesList["dashboard-list-item-type-2"]}>
+            Өгөх хүсэлт
+          </div>
+        ) : (
+          <div className={stylesList["dashboard-list-item-type-1"]}>
+            Авах хүсэлт
+          </div>
+        ),
+    },
+    {
+      title: "Хүү",
+      dataIndex: "rate_month",
+      key: "rate",
+      align: "center",
+      width: "15%",
+      render: (rate: string) => (
+        <div className={styles["fund-tabs-content-table-number"]}>{rate} %</div>
+      ),
+    },
+    {
+      title: "Эхэлсэн өдөр",
+      dataIndex: "create_date",
+      key: "day",
+      align: "center",
+      width: "23%",
+      render: (day: string) => (
+        <div className={styles["fund-tabs-content-table-number"]}>
+          {day.slice(0, 10)}
+        </div>
+      ),
+    },
+    {
+      title: " ",
+      dataIndex: "id",
+      key: "main_request_id",
+      width: "10%",
+      align: "center",
+      render: (main_request_id: string, data: any) => (
+        <Image
+          width={25}
+          onClick={() => {
+            setSelectedId(main_request_id);
+            setSelectedData(data);
+            data?.request_type == "saving"
+              ? setMyFundTabKey("2")
+              : setMyFundTabKey("1");
+            setOpen(true);
+          }}
+          src={"/images/info-icon.png"}
+          preview={false}
+          className="cursor-pointer"
+          alt="Information"
+        />
+      ),
+    },
+  ];
+  const columns1: any[] = [
+    {
+      title: "№",
+      dataIndex: "id",
+      key: "is_status",
+      width: "6%",
+      render: (id: string) => (
+        <div className={styles["fund-tabs-content-table-number"]}>{id}</div>
+      ),
+    },
+    {
+      title: "Санхүүжилтийн хэмжээ",
       dataIndex: "loan_amount",
       key: "loan_amount",
       align: "center",
@@ -221,7 +312,7 @@ export const FundHistory = () => {
           <Col span={24}>
             <Table
               scroll={{ x: 430 }}
-              columns={columns}
+              columns={columns1}
               pagination={{
                 pageSize: 10,
                 position: ["bottomCenter"],
@@ -290,11 +381,11 @@ export const FundHistory = () => {
   ];
 
   //functions
-  function verifyCompleteModal(code: number) {
+  const verifyCompleteModal = (code: string) => {
     repayment(
       {
         request_id: selectedData?.id && selectedData?.id,
-        password: code.toString(),
+        password: code,
       },
       {
         onSuccess: (data: {
@@ -317,7 +408,43 @@ export const FundHistory = () => {
         },
       }
     );
-  }
+  };
+
+  const downloadPdfBtn = (code: string) => {
+    downloadPdf(
+      {
+        request_id: selectedData?.request_id && selectedData?.request_id,
+        password: code.toString(),
+        contract_type: selectedData?.request_type,
+      },
+      {
+        onSuccess: (data: {
+          success: any;
+          request_id: any;
+          loan_requests: import("react").SetStateAction<undefined>;
+          description: any;
+          file_info: any;
+        }) => {
+          if (data.success) {
+            setOpenPdf(false);
+
+            const linkSource = `data:application/pdf;base64,${data?.file_info?.data}`;
+            const downloadLink = document.createElement("a");
+            const fileName = "file.pdf";
+
+            downloadLink.href = linkSource;
+            downloadLink.download = fileName;
+            downloadLink.click();
+          } else {
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  };
 
   return (
     <Row justify="center" className={styles["fund-main-row"]}>
@@ -339,7 +466,6 @@ export const FundHistory = () => {
           open={open}
           onCancel={() => setOpen(false)}
           footer={null}
-          // width={"80%"}
           closeIcon={null}
           title={
             <div className="text-center font-beau text-[16px] font-medium">
@@ -404,9 +530,11 @@ export const FundHistory = () => {
                                     }
                                   >
                                     {numberToCurrency(
-                                      (o.filled_amount / 100) *
-                                        Number(o.rate_day) *
-                                        Number(o.duration)
+                                      Math.floor(
+                                        (o.filled_amount / 100) *
+                                          Number(o.rate_day) *
+                                          Number(o.duration)
+                                      )
                                     )}
                                   </div>
                                 </Col>
@@ -549,7 +677,6 @@ export const FundHistory = () => {
                                     }
                                   >
                                     {o.expire_date.slice(0, 10)}
-                                    {/* + o.duration */}
                                   </div>
                                 </Col>
                               </Row>
@@ -561,43 +688,18 @@ export const FundHistory = () => {
                     {o.is_my_request == "1" && (
                       <Col span={22} className="mx-auto w-full">
                         <Col className="mt-[20px]">
-                          <Row
-                            className={stylesDL["dloan-detail"]}
-                            gutter={[0, 22]}
-                          >
-                            <Col span={24}>
-                              <p className="font-tahoma text-[12px] font-normal text-[#0300B4]">
-                                {myFundTabKey == "2"
-                                  ? "САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ"
-                                  : "ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ"}
-                              </p>
-                              <p className="pt-[5px] font-lato text-[10px] font-light">
-                                Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны
-                                хөрөнгийг итгэлцлийн үндсэн дээр гэрээ байгуулан
-                                авч зах зээлийн эрсдэл үнэгүйдлээс хамгаалж
-                                өндөр үр шим /ашиг/ олж өгөх зорилгоор харилцан
-                                ашигтай хамтран ажиллах үйлчилгээ юм. Итгэлцлийн
-                                хөрөнгө нь ямар ч төрөл, хэлбэр, үнэлгээтэй байж
-                                болох ба түүний үр шимийг хоёр тал өөрсдийн
-                                хэрэгцээнд тулгуурлан харилцан ашигтай ажиллах
-                                боломжийг олгодог санхүүгийн хэрэгсэл юм.
-                                <br />
-                                Итгэлцлийн үйлчилгээний оролцогч талууд
-                                <br />
-                                Итгэмжлэгч – Хөрөнгөө удирдах, захиран зарцуулах
-                                эрхээ гэрээний үндсэн дээр бусдад шилжүүлж
-                                түүнээс үүсэх үр шимийг хүртэгч.
-                                <br /> Хувь хүртэгч – Итгэмжлэгчтэй байгуулсан
-                                гэрээний дагуу итгэмжлэгдсэн хөрөнгийн үр шимийг
-                                хүртэгч. Гэхдээ энэ нь итгэмжлэгдсэн хөрөнгийн
-                                эзэмшигч, захиран зарцуулах эрх бүхий этгээд биш
-                                юм.
-                                <br /> Итгэмжлэгдэгч – Хувь хүн, Бизнес эрхлэгч,
-                                Аж ахуй нэгжийн аль нь ч байж болох ба
-                                итгэмжлэгчтэй байгуулсан хөрөнгө удирдах
-                                гэрээний дагуу хөрөнгийн үнэ цэнийг өсгөх,
-                                хадгалах, үр өгөөж бий болгогч.
-                              </p>
+                          <Row gutter={[0, 22]}>
+                            <Col span={24} className="flex">
+                              <Button
+                                type="link"
+                                className="flex  p-0"
+                                onClick={() => setOpenPdf(true)}
+                              >
+                                <img src="/images/pdf.svg" alt="pdf" />
+                                <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
+                                  Богино хугацааны санхүүжилтын гэрээ
+                                </p>
+                              </Button>
                             </Col>
                           </Row>
                         </Col>
@@ -673,6 +775,12 @@ export const FundHistory = () => {
           open={isVerifyOpen}
           onFinish={verifyCompleteModal}
           setOpen={setIsVerifyOpen}
+        />
+
+        <InputCode
+          open={openPdf}
+          onFinish={downloadPdfBtn}
+          setOpen={setOpenPdf}
         />
 
         <Modal

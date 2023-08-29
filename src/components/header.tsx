@@ -8,32 +8,10 @@ export const HeaderDashboard = ({ title, subTitle }: any) => {
     refetchOnWindowFocus: false,
   });
 
-  // function generateTimeSlots(startDate: any, endDate: any) {
-  //   const hourInMillis = 60 * 60 * 1000;
-  //   const startHour = 9;
-  //   const endHour = 14;
-
-  //   let currentDate = new Date(startDate);
-
-  //   while (currentDate <= endDate) {
-  //     currentDate.setHours(startHour, 0, 0, 0);
-
-  //     while (currentDate.getHours() < endHour) {
-  //       currentDate.setTime(currentDate.getTime() + hourInMillis);
-  //     }
-
-  //     currentDate.setDate(currentDate.getDate() + 1);
-  //   }
-  // }
-
-  // const startingDate = new Date();
-  // const endingDate = new Date(startingDate);
-  // endingDate.setDate(endingDate.getDate() + 5);
-  // generateTimeSlots(startingDate, endingDate);
   const targetDate: any = new Date();
   targetDate.setHours(
-    data?.market_close_time.slice(0, 2)
-      ? data?.market_close_time.slice(0, 2)
+    data?.market_close_time?.slice(0, 2)
+      ? data?.market_close_time?.slice(0, 2)
       : 14,
     0,
     0,

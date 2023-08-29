@@ -355,4 +355,46 @@ export const loanRouter = createTRPCRouter({
       console.log(accountStatus);
       return accountStatus;
     }),
+
+
+    downloadPdf: protectedProcedure
+    .input(
+      z.object({
+        request_id: z.string(),
+        password: z.string(),
+        contract_type: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { request_id, password, contract_type} = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          request_id,
+          password,
+          contract_type,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/loan/contract/photo`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+
+    
 });

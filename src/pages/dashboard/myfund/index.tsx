@@ -228,6 +228,92 @@ export const MyFund = () => {
     },
   ];
 
+  const columns1: any[] = [
+    {
+      title: "Дараалал",
+      dataIndex: "id",
+      key: "IsActive",
+      align: "center",
+      width: "6%",
+      render: (id: string) => (
+        <div className={styles["myfund-tabs-content-table-id"]}>{id}</div>
+      ),
+    },
+    {
+      title: "Санхүүжилтийн хэмжээ",
+      dataIndex: "loan_amount",
+      key: "loan_amount",
+      align: "center",
+      width: "23%",
+      render: (loanTotal: string) => (
+        <div className={styles["myfund-tabs-content-table-number"]}>
+          {numberToCurrency(loanTotal)}
+        </div>
+      ),
+    },
+    {
+      title: "Төрөл",
+      dataIndex: "request_type",
+      key: "product_type_code",
+      align: "center",
+      width: "23%",
+      render: (product_type_code: string) =>
+        product_type_code == "saving" ? (
+          <div className={stylesList["dashboard-list-item-type-2"]}>
+            Өгөх хүсэлт
+          </div>
+        ) : (
+          <div className={stylesList["dashboard-list-item-type-1"]}>
+            Авах хүсэлт
+          </div>
+        ),
+    },
+    {
+      title: "Хүү",
+      dataIndex: "rate_month",
+      key: "rate_month",
+      align: "center",
+      width: "15%",
+      render: (rate: string) => (
+        <div className={styles["myfund-tabs-content-table-number"]}>
+          {rate} %
+        </div>
+      ),
+    },
+    {
+      title: "Биелэлт",
+      dataIndex: "filled_percent",
+      key: "completion",
+      align: "center",
+      width: "23%",
+      render: (completion: string) => (
+        <div className={styles["myfund-tabs-content-table-number"]}>
+          {Math.round(Number(completion))} %
+        </div>
+      ),
+    },
+    {
+      title: " ",
+      dataIndex: "id",
+      key: "create_date",
+      width: "10%",
+      align: "center",
+      render: (id: string) => (
+        <Image
+          width={25}
+          src={"/images/info-icon.png"}
+          preview={false}
+          alt="Information"
+          className="cursor-pointer"
+          onClick={() => {
+            setSelectedId(id);
+            setOpen(true);
+          }}
+        />
+      ),
+    },
+  ];
+
   const items = [
     {
       key: "1",
@@ -360,7 +446,7 @@ export const MyFund = () => {
               <Col span={24}>
                 <Table
                   scroll={{ x: 430 }}
-                  columns={columns}
+                  columns={columns1}
                   pagination={{
                     pageSize: 10,
                     position: ["bottomCenter"],

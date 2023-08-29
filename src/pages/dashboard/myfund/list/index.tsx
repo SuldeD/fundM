@@ -186,6 +186,125 @@ export const List = () => {
     },
   ];
 
+  const columns1: any[] = [
+    {
+      title: "Дараалал",
+      dataIndex: "id",
+      key: "request_id",
+      align: "center",
+      width: "6%",
+      render: (id: string, data: any) => (
+        <div className={stylesList["myfund-tabs-content-table-number"]}>
+          {data?.is_my_request == "1" ? (
+            <div className={styles["loanReq-start"]}>
+              <Image width={23} src="/images/star.svg" preview={false} />
+            </div>
+          ) : (
+            id
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Санхүүжилтийн хэмжээ",
+      dataIndex: "loan_amount",
+      key: "loan_amount",
+      align: "center",
+      width: "23%",
+      render: (loanTotal: string, data: any) => (
+        <div
+          className={
+            data?.is_my_request == "1"
+              ? data?.request_type == "wallet"
+                ? `text-[#FF0000] ${stylesList["myfund-tabs-content-table-number"]}`
+                : `text-[#39DA00] ${stylesList["myfund-tabs-content-table-number"]}`
+              : `text-[#000] ${stylesList["myfund-tabs-content-table-number"]}`
+          }
+        >
+          {numberToCurrency(loanTotal)}
+        </div>
+      ),
+    },
+    {
+      title: "Төрөл",
+      dataIndex: "request_type",
+      key: "request_type",
+      align: "center",
+      width: "23%",
+      render: (request_type: string) =>
+        request_type == "saving" ? (
+          <div className={stylesList["myfund-tabs-content-table-number"]}>
+            Санхүүжилт өгөх
+          </div>
+        ) : (
+          <div className={stylesList["myfund-tabs-content-table-number"]}>
+            Зээлийн хүсэлт
+          </div>
+        ),
+    },
+    {
+      title: "Хүү",
+      dataIndex: "rate_month",
+      key: "rate_month",
+      align: "center",
+      width: "15%",
+      render: (rate: string) => (
+        <div
+          className={`text-[#000] ${stylesList["myfund-tabs-content-table-number"]}`}
+        >
+          {rate} %
+        </div>
+      ),
+    },
+    {
+      title: "Биелэлт",
+      dataIndex: "filled_percent",
+      key: "completion",
+      align: "center",
+      width: "23%",
+      render: (completion: string) => (
+        <div
+          className={`text-[#000] ${stylesList["myfund-tabs-content-table-number"]}`}
+        >
+          {Math.round(Number(completion))} %
+        </div>
+      ),
+    },
+    {
+      title: "Огноо",
+      dataIndex: "create_date",
+      key: "create_date",
+      width: "10%",
+      align: "center",
+      render: (create_date: string) => (
+        <div
+          className={`text-[#000] ${stylesList["myfund-tabs-content-table-number"]}`}
+        >
+          {create_date.slice(10, 19)}
+        </div>
+      ),
+    },
+    {
+      title: " ",
+      dataIndex: "id",
+      key: "create_date",
+      width: "10%",
+      align: "center",
+      render: (create_date: string) => (
+        <Image
+          width={25}
+          onClick={() => {
+            setSelectedId(create_date);
+            setOpen(true);
+          }}
+          src={"/images/info-icon.png"}
+          preview={false}
+          className="cursor-pointer"
+          alt="Information"
+        />
+      ),
+    },
+  ];
   if (!data) {
     <Loaderr />;
   } else {
@@ -233,7 +352,7 @@ export const List = () => {
               <Col span={24}>
                 <Table
                   scroll={{ x: 430 }}
-                  columns={columns}
+                  columns={columns1}
                   pagination={{
                     pageSize: 8,
                     position: ["bottomCenter"],

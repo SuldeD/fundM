@@ -39,6 +39,7 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
     if (code.join("").length == 4) {
       onFinish(code.join(""));
       setLoadings(false);
+      setCode([...Array(length)].map(() => ""));
     } else {
       setLoadings(false);
       error({

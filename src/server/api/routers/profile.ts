@@ -429,7 +429,7 @@ export const profileRouter = createTRPCRouter({
         })
       );
       const res2 = await fetch(
-        `${process.env.BACKEND_URL}/account/forgot/trans/password`,
+        `${process.env.BACKEND_URL}/account/forgot/trans/password/confirm`,
         {
           method: "POST",
           credentials: "same-origin",

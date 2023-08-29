@@ -85,7 +85,7 @@ const History = () => {
       ),
     },
     {
-      title: "Зээлийн хэмжээ",
+      title: "Захиалгын хэмжээ",
       dataIndex: "loan_amount",
       key: "loanTotal",
       align: "center",
