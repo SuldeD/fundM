@@ -115,7 +115,7 @@ export const Profile = () => {
   const [changeId, setChangeId] = useState<string>("");
   const [formToken, setFormToken] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [isOpenVerify, setOpenVerify] = useState<boolean>(true);
+  const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
   const [check, setCheck] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
