@@ -39,9 +39,6 @@ export default function Signup() {
   const mutationSignUp = api.register.signUp.useMutation();
   const mutationSignUpOrg = api.register.signUpOrg.useMutation();
 
-  const [selectedQuestion, setSelectedQuestion] = useState<any>("");
-  const { data: securityQuestion } = api.register.helpQuestion.useQuery();
-
   const [registerData, setRegisterData] = useState<RegisterType>({
     phone: "",
     username: "",
@@ -175,7 +172,7 @@ export default function Signup() {
       (values.first_name.length == 0 && values.first_name.length > 50) ||
       (search != "org"
         ? values.register.length != 10
-        : values.register.length > 6)
+        : values.register.length < 6)
     ) {
       warning({
         title: "Амжилтгүй",
