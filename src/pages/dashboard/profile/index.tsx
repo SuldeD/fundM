@@ -34,6 +34,7 @@ const beforeUpload = (file: any) => {
   if (!isLt2M) {
     message.error("Image must smaller than 2MB!");
   }
+
   return isJpgOrPng && isLt2M;
 };
 
@@ -114,7 +115,7 @@ export const Profile = () => {
   const [changeId, setChangeId] = useState<string>("");
   const [formToken, setFormToken] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
+  const [isOpenVerify, setOpenVerify] = useState<boolean>(true);
   const [check, setCheck] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -1252,7 +1253,7 @@ export const Profile = () => {
                 <ImgCrop rotationSlider>
                   <Upload
                     beforeUpload={beforeUpload}
-                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     listType="picture"
                     showUploadList={false}
                     onChange={handleChange}

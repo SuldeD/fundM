@@ -314,7 +314,7 @@ export default function Bank() {
                 <ImgCrop rotationSlider>
                   <Upload
                     beforeUpload={beforeUpload}
-                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     listType="picture"
                     showUploadList={false}
                     onChange={handleChange}
