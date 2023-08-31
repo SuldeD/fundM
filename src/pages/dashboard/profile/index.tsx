@@ -387,9 +387,7 @@ export const Profile = () => {
       } else {
         forgotTransPass(
           {
-            answer: accountInfo?.answer,
             register: accountInfo?.account?.register,
-            security_question_id: accountInfo?.security_question_id,
             username: accountInfo?.account?.first_name,
           },
           {
@@ -417,9 +415,7 @@ export const Profile = () => {
   function verifyTransPass() {
     forgotTransPassConfirm(
       {
-        answer: accountInfo?.answer,
         register: accountInfo?.account?.register,
-        security_question_id: accountInfo?.security_question_id,
         username: accountInfo?.account?.first_name,
         forgot_id: forgotId,
         new_password: fundPassNewVer,

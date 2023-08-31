@@ -16,9 +16,9 @@ interface RegisterType {
   tmp_user_id: string;
   password: string;
   pin_code: string;
-  security_question_id: string;
-  question: string;
-  answer: string;
+  // security_question_id: string;
+  // question: string;
+  // answer: string;
   transaction_password: string;
   register: string;
   last_name: string;
@@ -48,9 +48,9 @@ export default function Signup() {
     tmp_user_id: "",
     password: "",
     pin_code: "",
-    security_question_id: "",
-    question: "",
-    answer: "",
+    // security_question_id: "",
+    // question: "",
+    // answer: "",
     transaction_password: "",
     register: "",
     last_name: "",
@@ -241,74 +241,80 @@ export default function Signup() {
         content: <div>Гүйлгээний нууц үгийг адилхан оруулна уу !</div>,
       });
     } else {
-      search == "org"
-        ? mutationSignUpOrg.mutate(
-            {
-              first_name: registerData.first_name,
-              last_name: registerData.last_name,
-              org_register: registerData.register,
-              password: registerData.password,
-              phone: registerData.phone,
-              pin_code: registerData.pin_code,
-              tmp_user_id: registerData.tmp_user_id,
-              transaction_password: code.join("").toString(),
-              user_type: "org",
-              username: registerData.register,
-              email: registerData.email,
-            },
-            {
-              onSuccess: (data) => {
-                if (data.success) {
-                  message.success(data.description);
-                  router.push("/login");
-                } else {
-                  error({
-                    title: "Амжилтгүй",
-                    content: <div>{data?.description || null}</div>,
-                  });
-                }
-              },
-            }
-          )
-        : setRegisterData((prevData) => ({
-            ...prevData,
+      if (search == "org") {
+        mutationSignUpOrg.mutate(
+          {
+            first_name: registerData.first_name,
+            last_name: registerData.last_name,
+            org_register: registerData.register,
+            password: registerData.password,
+            phone: registerData.phone,
+            pin_code: registerData.pin_code,
+            tmp_user_id: registerData.tmp_user_id,
             transaction_password: code.join("").toString(),
-          }));
-    }
-  };
-
-  const onFinishQuestion = (values: any) => {
-    selectedQuestion == ""
-      ? warning({
-          title: "Амжилтгүй",
-          content: <div>Нууц асуулт сонгон уу!</div>,
-        })
-      : setRegisterData((prevData) => ({
+            user_type: "org",
+            username: registerData.register,
+            email: registerData.email,
+          },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                message.success(data.description);
+                router.push("/login");
+              } else {
+                error({
+                  title: "Амжилтгүй",
+                  content: <div>{data?.description || null}</div>,
+                });
+              }
+            },
+          }
+        );
+      } else {
+        setRegisterData((prevData) => ({
           ...prevData,
-          answer: values.answer,
-          question: selectedQuestion.slice(1),
-          security_question_id: selectedQuestion.slice(0, 1),
+          transaction_password: code.join("").toString(),
         }));
-
-    if (values.answer.length < 8) {
-      warning({
-        title: "Амжилтгүй",
-        content: (
-          <div>
-            Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
-            тэмдэгтээс бүрдэх ёстой.
-          </div>
-        ),
-      });
-    } else {
-      signup({
-        ...registerData,
-        answer: values.answer,
-        question: selectedQuestion.slice(1),
-        security_question_id: selectedQuestion.slice(0, 1),
-      });
+        signup({
+          ...registerData,
+          transaction_password: code.join("").toString(),
+        });
+      }
     }
   };
+
+  // const onFinishQuestion = (values: any) => {
+  //   selectedQuestion == ""
+  //     ? warning({
+  //         title: "Амжилтгүй",
+  //         content: <div>Нууц асуулт сонгон уу!</div>,
+  //       })
+  //     : setRegisterData((prevData) => ({
+  //         ...prevData,
+  //         answer: values.answer,
+  //         question: selectedQuestion.slice(1),
+  //         security_question_id: selectedQuestion.slice(0, 1),
+  //       }));
+
+  //   if (values.answer.length < 8) {
+  //     warning({
+  //       title: "Амжилтгүй",
+  //       content: (
+  //         <div>
+  //           Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
+  //           тэмдэгтээс бүрдэх ёстой.
+  //         </div>
+  //       ),
+  //     });
+  //   } else {
+  //     signup({
+  //       ...registerData,
+  //       answer: values.answer,
+  //       question: selectedQuestion.slice(1),
+  //       security_question_id: selectedQuestion.slice(0, 1),
+  //     });
+  //   }
+  // };
 
   const signup = (registerData: RegisterType) => {
     setLoading("loading");
@@ -998,7 +1004,7 @@ export default function Signup() {
                 </Row>
               </motion.div>
             )}
-          {registerData.phone.length > 0 &&
+          {/* {registerData.phone.length > 0 &&
             registerData.tmp_user_id.length > 0 &&
             registerData.username.length > 0 &&
             registerData.pin_code.length > 0 &&
@@ -1113,7 +1119,7 @@ export default function Signup() {
                   </Col>
                 </Row>
               </motion.div>
-            )}
+            )} */}
         </Col>
       </Row>
     );

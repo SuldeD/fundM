@@ -14,9 +14,6 @@ interface RegisterType {
   username: string;
   password: string;
   pin_code: string;
-  security_question_id: string;
-  question: string;
-  answer: string;
   forgot_id: string;
   register: string;
 }
@@ -28,21 +25,12 @@ export default function Forgot() {
   const mutationForgot = api.profile.forgotPass.useMutation();
   const mutationForgotCon = api.profile.forgotPassConfirm.useMutation();
 
-  //queries
-  const { data: securityQuestion } = api.register.helpQuestion.useQuery(
-    undefined,
-    { refetchOnWindowFocus: false }
-  );
-
   //states
   const [registerData, setRegisterData] = useState<RegisterType>({
     phone: "",
     username: "",
     password: "",
     pin_code: "",
-    security_question_id: "",
-    question: "",
-    answer: "",
     forgot_id: "",
     register: "",
   });
@@ -88,35 +76,34 @@ export default function Forgot() {
     }));
   };
 
-  const onFinishQuestion = (values: any) => {
-    selectedQuestion == "" &&
-      error({
-        title: "Амжилтгүй",
-        content: <div>Нууц асуулт сонгон уу!</div>,
-      });
+  // const onFinishQuestion = (values: any) => {
+  //   selectedQuestion == "" &&
+  //     error({
+  //       title: "Амжилтгүй",
+  //       content: <div>Нууц асуулт сонгон уу!</div>,
+  //     });
 
-    if (values.answer.length < 8) {
-      error({
-        title: "Амжилтгүй",
-        content: (
-          <div>
-            Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
-            тэмдэгтээс бүрдэх ёстой.
-          </div>
-        ),
-      });
-    } else {
-      setRegisterData((prevData) => ({
-        ...prevData,
-        answer: values.answer,
-        question: selectedQuestion.slice(1),
-        security_question_id: selectedQuestion.slice(0, 1),
-      }));
-    }
-  };
+  //   if (values.answer.length < 8) {
+  //     error({
+  //       title: "Амжилтгүй",
+  //       content: (
+  //         <div>
+  //           Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
+  //           тэмдэгтээс бүрдэх ёстой.
+  //         </div>
+  //       ),
+  //     });
+  //   } else {
+  //     setRegisterData((prevData) => ({
+  //       ...prevData,
+  //       answer: values.answer,
+  //       question: selectedQuestion.slice(1),
+  //       security_question_id: selectedQuestion.slice(0, 1),
+  //     }));
+  //   }
+  // };
 
   const validateRegister = async (values: any) => {
-    // Validate length
     if (values.register.length <= 0) {
       return warning({
         title: "Амжилтгүй",
@@ -191,8 +178,6 @@ export default function Forgot() {
           {
             phone: registerData.phone,
             username: registerData.phone,
-            answer: registerData.answer,
-            security_question_id: registerData.security_question_id,
             register: registerData.register,
           },
           {
@@ -229,8 +214,6 @@ export default function Forgot() {
         {
           pin_code: code.join(""),
           username: registerData.phone,
-          answer: registerData.answer,
-          security_question_id: registerData.security_question_id,
           register: registerData.register,
           forgot_id: registerData.forgot_id,
           new_password: registerData.password,
@@ -246,9 +229,6 @@ export default function Forgot() {
                 username: "",
                 password: "",
                 pin_code: "",
-                security_question_id: "",
-                question: "",
-                answer: "",
                 forgot_id: "",
                 register: "",
               });
@@ -338,7 +318,7 @@ export default function Forgot() {
               </Col>
             </Row>
           )}
-          {registerData.phone.length > 0 && registerData.answer == "" && (
+          {/* {registerData.phone.length > 0 && registerData.answer == "" && (
             <motion.div
               animate={{ x: "0", opacity: 1, scale: 1 }}
               initial={{ x: "10%", opacity: 0, scale: 0.5 }}
@@ -446,85 +426,82 @@ export default function Forgot() {
                 </Col>
               </Row>
             </motion.div>
-          )}
-          {registerData.phone.length > 0 &&
-            registerData.answer.length > 0 &&
-            registerData.register == "" && (
-              <Row justify="start" gutter={[0, 25]}>
-                <Col span={24}>
-                  <div className={styles["header-text"]}>
-                    Регистрийн дугаар оруулах хэсэг
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
-                  <Form
-                    name="basic"
-                    initialValues={{
-                      remember: true,
-                    }}
-                    className="login-form"
-                    autoComplete="off"
-                    layout="vertical"
-                    onFinish={validateRegister}
-                  >
-                    <Row gutter={[0, 13]}>
-                      <Col span={24}>
-                        <div className={styles["phone-number-label"]}>
-                          Регистрийн дугаар аа оруулна уу!
-                        </div>
-                      </Col>
-                      <Col span={24}>
-                        <Form.Item
-                          name="register"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Регистрийн дугаар аа оруулна уу!",
-                            },
-                          ]}
-                        >
-                          <Input className={styles["input-style"]} />
-                        </Form.Item>
-                      </Col>
+          )} */}
+          {registerData.phone.length > 0 && registerData.register == "" && (
+            <Row justify="start" gutter={[0, 25]}>
+              <Col span={24}>
+                <div className={styles["header-text"]}>
+                  Регистрийн дугаар оруулах хэсэг
+                </div>
+              </Col>
+              <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
+                <Form
+                  name="basic"
+                  initialValues={{
+                    remember: true,
+                  }}
+                  className="login-form"
+                  autoComplete="off"
+                  layout="vertical"
+                  onFinish={validateRegister}
+                >
+                  <Row gutter={[0, 13]}>
+                    <Col span={24}>
+                      <div className={styles["phone-number-label"]}>
+                        Регистрийн дугаар аа оруулна уу!
+                      </div>
+                    </Col>
+                    <Col span={24}>
+                      <Form.Item
+                        name="register"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Регистрийн дугаар аа оруулна уу!",
+                          },
+                        ]}
+                      >
+                        <Input className={styles["input-style"]} />
+                      </Form.Item>
+                    </Col>
 
-                      <Col span={24}>
-                        <Row gutter={25}>
-                          <Col span={24}>
-                            <div className="flex w-full justify-between">
+                    <Col span={24}>
+                      <Row gutter={25}>
+                        <Col span={24}>
+                          <div className="flex w-full justify-between">
+                            <Button
+                              type="default"
+                              onClick={() =>
+                                setRegisterData((prevData) => ({
+                                  ...prevData,
+                                  answer: "",
+                                }))
+                              }
+                              className="h-[40px] w-[45%] rounded-[9px] text-white"
+                            >
+                              Буцах
+                            </Button>
+
+                            <Form.Item className="w-[45%]">
                               <Button
-                                type="default"
-                                onClick={() =>
-                                  setRegisterData((prevData) => ({
-                                    ...prevData,
-                                    answer: "",
-                                  }))
-                                }
-                                className="h-[40px] w-[45%] rounded-[9px] text-white"
+                                type="primary"
+                                htmlType="submit"
+                                className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
                               >
-                                Буцах
+                                Үргэлжлүүлэх
                               </Button>
-
-                              <Form.Item className="w-[45%]">
-                                <Button
-                                  type="primary"
-                                  htmlType="submit"
-                                  className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
-                                >
-                                  Үргэлжлүүлэх
-                                </Button>
-                              </Form.Item>
-                            </div>
-                          </Col>
-                        </Row>
-                      </Col>
-                    </Row>
-                  </Form>
-                </Col>
-              </Row>
-            )}
+                            </Form.Item>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Form>
+              </Col>
+            </Row>
+          )}
 
           {registerData.phone.length > 0 &&
-            registerData.answer.length > 0 &&
             registerData.register.length > 0 && (
               <motion.div
                 animate={{ x: "0", opacity: 1, scale: 1 }}
