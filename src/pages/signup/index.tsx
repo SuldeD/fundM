@@ -70,6 +70,7 @@ export default function Signup() {
       {
         onSuccess: (data) => {
           if (data.success) {
+            message.success(data?.description);
             setRegisterData((prevData) => ({
               ...prevData,
               phone: values.phone_number,
@@ -149,7 +150,7 @@ export default function Signup() {
 
     // Validate that the first two characters are Cyrillic letters
     const firstTwoCharacters = values.register.substring(0, 2);
-    const cyrillicPattern = /^[А-ЯЁ]+$/i; // Cyrillic letter pattern
+    const cyrillicPattern = /^[а-яөүА-ЯӨҮ]+$/; // Cyrillic letter pattern
     if (search != "org" && !cyrillicPattern.test(firstTwoCharacters)) {
       return warning({
         title: "Амжилтгүй",
@@ -160,6 +161,7 @@ export default function Signup() {
     // Validate the rest of the ID number (in this case, skipping the first two characters)
     const remainingDigits = values.register.substring(2);
     const numericPattern = /^[0-9]+$/; // Numeric digits pattern
+
     if (search != "org" && !numericPattern.test(remainingDigits)) {
       return warning({
         title: "Амжилтгүй",
@@ -177,6 +179,28 @@ export default function Signup() {
       warning({
         title: "Амжилтгүй",
         content: <div>Мэдээллээ зөв оруулна уу!!!</div>,
+      });
+    } else if (!cyrillicPattern.test(values.last_name)) {
+      warning({
+        title: "Амжилтгүй",
+        content: (
+          <div>
+            {search == "org"
+              ? "Та Захирлын нэрийг кирилл үсэгээр оруулана уу!"
+              : "Та Овогоо кирилл үсэгээр оруулана уу!"}
+          </div>
+        ),
+      });
+    } else if (!cyrillicPattern.test(values.first_name)) {
+      warning({
+        title: "Амжилтгүй",
+        content: (
+          <div>
+            {search == "org"
+              ? "Та Байгууллагын нэрээ кирилл үсэгээр оруулана уу!"
+              : "Та Өөрийн нэрээ кирилл үсэгээр оруулана уу!"}
+          </div>
+        ),
       });
     } else if (emailRegex.test(values.email) == false) {
       warning({

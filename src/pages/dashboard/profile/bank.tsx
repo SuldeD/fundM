@@ -311,7 +311,7 @@ export default function Bank() {
           <Row justify="center">
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
-                <ImgCrop rotationSlider>
+                {/* <ImgCrop rotationSlider> */}
                   <Upload
                     beforeUpload={beforeUpload}
                     // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -330,7 +330,7 @@ export default function Bank() {
                       uploadButton
                     )}
                   </Upload>
-                </ImgCrop>
+                {/* </ImgCrop> */}
                 <Row>
                   <p className="text-center">
                     {accountInfo?.account?.user_type == "org"

@@ -1250,26 +1250,26 @@ export const Profile = () => {
           <Row justify="center">
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
-                <ImgCrop rotationSlider>
-                  <Upload
-                    beforeUpload={beforeUpload}
-                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                    listType="picture"
-                    showUploadList={false}
-                    onChange={handleChange}
-                    className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
-                  >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        className="h-[60px] w-[60px]"
-                      />
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
-                </ImgCrop>
+                {/* <ImgCrop rotationSlider> */}
+                <Upload
+                  beforeUpload={beforeUpload}
+                  // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  listType="picture"
+                  showUploadList={false}
+                  onChange={handleChange}
+                  className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
+                >
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="avatar"
+                      className="h-[60px] w-[60px]"
+                    />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
+                {/* </ImgCrop> */}
                 <Row>
                   <p className="text-center">
                     {accountInfo?.account?.user_type == "org"
