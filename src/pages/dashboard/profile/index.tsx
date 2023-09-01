@@ -1256,7 +1256,7 @@ export const Profile = () => {
                   customRequest={() => {}}
                   listType="picture-circle"
                   showUploadList={false}
-                  // onChange={handleChange}
+                  onChange={handleChange}
                   className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
                 >
                   {imageUrl ? (
