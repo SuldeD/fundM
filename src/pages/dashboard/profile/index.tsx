@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import stylesL from "../../../styles/dloan.module.css";
 import { api } from "app/utils/api";
 import InputCode from "app/components/input";
-import type { RcFile } from "antd/es/upload/interface";
+import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
 import { useSession } from "next-auth/react";
 import PopupModal from "app/components/modal";
 const { Panel } = Collapse;
@@ -120,9 +120,12 @@ export const Profile = () => {
 
   //functions
   function getBase64(file: any) {
-    var reader = new FileReader();
+    console.log(file, "filee");
+    let reader = new FileReader();
     reader.readAsDataURL(file);
+
     reader.onload = function () {
+      console.log(reader.result, "reader");
       setImageUrl(reader.result?.toString());
       setLoading(false);
     };
@@ -151,16 +154,8 @@ export const Profile = () => {
     }
   };
 
-  const onChange = (key: any) => {};
   const handleChange = (info: any) => {
-    if (info.file.status === "uploading") {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      getBase64(info.file.originFileObj);
-      return;
-    }
+    getBase64(info.file.originFileObj);
   };
 
   const uploadButton = (
@@ -504,6 +499,7 @@ export const Profile = () => {
                 <Col flex="none">
                   <Upload
                     name="avatar"
+                    customRequest={() => {}}
                     listType="picture-circle"
                     className="avatar-uploader  overflow-hidden"
                     showUploadList={false}
@@ -822,7 +818,7 @@ export const Profile = () => {
       children: (
         <Col span={24}>
           <Collapse
-            onChange={onChange}
+            onChange={() => {}}
             bordered={false}
             expandIconPosition="end"
           >
@@ -911,7 +907,7 @@ export const Profile = () => {
       children: (
         <Col span={24}>
           <Collapse
-            onChange={onChange}
+            onChange={() => {}}
             bordered={false}
             expandIconPosition="end"
             background-color="#FFF"
@@ -1257,10 +1253,10 @@ export const Profile = () => {
                 {/* <ImgCrop rotationSlider> */}
                 <Upload
                   beforeUpload={beforeUpload}
-                  // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  listType="picture"
+                  customRequest={() => {}}
+                  listType="picture-circle"
                   showUploadList={false}
-                  onChange={handleChange}
+                  // onChange={handleChange}
                   className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
                 >
                   {imageUrl ? (

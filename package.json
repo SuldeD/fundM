@@ -10,7 +10,7 @@
     "dev": "run-p dev:*",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "cross-env NODE_ENV=production node dist/server/prodServer.js"
+    "start": "next start"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^3.7.1",

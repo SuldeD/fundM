@@ -175,13 +175,7 @@ export default function Bank() {
   const handleChange: UploadProps["onChange"] = (
     info: UploadChangeParam<UploadFile>
   ) => {
-    if (info.file.status === "uploading") {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      getBase64(info.file.originFileObj);
-    }
+    getBase64(info.file.originFileObj);
   };
 
   const uploadButton = (
