@@ -162,26 +162,24 @@ export default function Signup() {
     const remainingDigits = values.register.substring(2);
     const numericPattern = /^[0-9]+$/; // Numeric digits pattern
 
-    if (search != "org" && !numericPattern.test(remainingDigits)) {
+    if (
+      search != "org" &&
+      !numericPattern.test(remainingDigits) &&
+      values.register.length != 10
+    ) {
       return warning({
         title: "Амжилтгүй",
         content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
       });
     }
 
-    if (
-      (values.last_name.length == 0 && values.last_name.length > 50) ||
-      (values.first_name.length == 0 && values.first_name.length > 50) ||
-      (search != "org"
-        ? values.register.length != 10
-        : values.register.length < 6)
-    ) {
-      warning({
+    if (search == "org" && values.register.length < 6) {
+      return warning({
         title: "Амжилтгүй",
-        content: <div>Мэдээллээ зөв оруулна уу!!!</div>,
+        content: <div>Байгууллагын регисирыг зөв оруулна уу!</div>,
       });
     } else if (!cyrillicPattern.test(values.last_name)) {
-      warning({
+      return warning({
         title: "Амжилтгүй",
         content: (
           <div>

@@ -164,6 +164,7 @@ export const Loan = () => {
                 setPin_code(data?.pin_code);
                 setLoadings(false);
               } else {
+                setLoadings(false);
                 error({
                   title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
@@ -200,6 +201,7 @@ export const Loan = () => {
                 setIsVerifyOpen(true);
                 setLoadings(false);
               } else {
+                setLoadings(false);
                 error({
                   title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,

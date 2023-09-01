@@ -1250,11 +1250,10 @@ export const Profile = () => {
           <Row justify="center">
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
-                {/* <ImgCrop rotationSlider> */}
                 <Upload
                   beforeUpload={beforeUpload}
                   customRequest={() => {}}
-                  listType="picture-circle"
+                  listType="picture"
                   showUploadList={false}
                   onChange={handleChange}
                   className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
@@ -1269,7 +1268,7 @@ export const Profile = () => {
                     uploadButton
                   )}
                 </Upload>
-                {/* </ImgCrop> */}
+
                 <Row>
                   <p className="text-center">
                     {accountInfo?.account?.user_type == "org"
