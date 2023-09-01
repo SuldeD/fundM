@@ -873,8 +873,7 @@ export default function Signup() {
             registerData.username.length > 0 &&
             registerData.pin_code.length > 0 &&
             registerData.register.length > 0 &&
-            registerData.password.length > 0 &&
-            registerData.transaction_password == "" && (
+            registerData.password.length > 0 && (
               <motion.div
                 animate={{ x: "0", opacity: 1, scale: 1 }}
                 initial={{ x: "10%", opacity: 0, scale: 0.5 }}
