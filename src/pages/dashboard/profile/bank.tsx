@@ -16,11 +16,14 @@ import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
 import Select from "react-select";
 
-const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(img);
-};
+// const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+//   const reader = new FileReader();
+//   reader.addEventListener("load", () => callback(reader.result as string));
+//   reader.readAsDataURL(img);
+// };
+
+// var file = document.querySelector('#files > input[type="file"]').files[0];
+// getBase64(file); // prints the base64 string
 
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -61,13 +64,25 @@ export default function Bank() {
   const [check, setCheck] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<any>("");
   const inputs = useRef<any>([]);
   useRef<(HTMLInputElement | null)[]>([]);
   const length = 4;
   const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
 
   //functions
+  function getBase64(file: any) {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      setImageUrl(reader.result?.toString());
+      setLoading(false);
+    };
+    reader.onerror = function (error) {
+      console.log(error);
+    };
+  }
+
   const processInput = (e: React.ChangeEvent<HTMLInputElement>, slot: any) => {
     const num = e.target.value;
     if (/[^0-9]/.test(num)) return;
@@ -89,6 +104,7 @@ export default function Bank() {
   };
 
   function submit() {
+    setLoadingBtn(true);
     addBankMutate(
       { account_num: number, bank_id: selectedBank },
       {
@@ -104,9 +120,10 @@ export default function Bank() {
           if (data.success) {
             setReqId(data?.request_id);
             setOpenVerifyPass(true);
-
+            setLoadingBtn(false);
             message.success(data.description);
           } else {
+            setLoadingBtn(false);
             error({
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
@@ -143,6 +160,7 @@ export default function Bank() {
               setOpenVerify(false);
               setCheck(true);
             } else {
+              setLoadingBtn(false);
               error({
                 title: "Амжилтгүй",
                 content: <div>{data?.description || null}</div>,
@@ -162,10 +180,7 @@ export default function Bank() {
       return;
     }
     if (info.file.status === "done") {
-      getBase64(info.file.originFileObj as RcFile, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
+      getBase64(info.file.originFileObj);
     }
   };
 
@@ -223,14 +238,24 @@ export default function Bank() {
           className="w-full rounded-[4px] border border-[#ccc] bg-white px-[10px] py-[8px] font-[14px]"
         />
         <div className="mt-[40px] text-right">
-          <input
+          <Button
+            type="primary"
+            loading={loadingBtn}
+            onClick={() => {
+              selectedBank.length > 0 && number.length > 0 && submit();
+            }}
+            className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
+          >
+            Баталгаажуулах код авах
+          </Button>
+          {/* <input
             className="w-[100%] max-w-[195px] cursor-pointer rounded-[10px] bg-primary p-[8px] px-[8px] text-[14px] font-normal text-white"
             type="button"
             onClick={() => {
               selectedBank.length > 0 && number.length > 0 && submit();
             }}
             value={"Баталгаажуулах код авах"}
-          />
+          /> */}
         </div>
 
         <Modal
@@ -312,24 +337,24 @@ export default function Bank() {
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
                 {/* <ImgCrop rotationSlider> */}
-                  <Upload
-                    beforeUpload={beforeUpload}
-                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                    listType="picture"
-                    showUploadList={false}
-                    onChange={handleChange}
-                    className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
-                  >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        className="h-[60px] w-[60px]"
-                      />
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
+                <Upload
+                  beforeUpload={beforeUpload}
+                  // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  listType="picture"
+                  showUploadList={false}
+                  onChange={handleChange}
+                  className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
+                >
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="avatar"
+                      className="h-[60px] w-[60px]"
+                    />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
                 {/* </ImgCrop> */}
                 <Row>
                   <p className="text-center">

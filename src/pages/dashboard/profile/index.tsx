@@ -38,12 +38,6 @@ const beforeUpload = (file: any) => {
   return isJpgOrPng && isLt2M;
 };
 
-const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(img);
-};
-
 export const Profile = () => {
   const { data } = useSession();
   const router = useRouter();
@@ -118,13 +112,25 @@ export const Profile = () => {
   const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
   const [check, setCheck] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<any>("");
   const inputs = useRef<any>([]);
   useRef<(HTMLInputElement | null)[]>([]);
   const length = 4;
   const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
 
   //functions
+  function getBase64(file: any) {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      setImageUrl(reader.result?.toString());
+      setLoading(false);
+    };
+    reader.onerror = function (error) {
+      console.log(error);
+    };
+  }
+
   const processInput = (e: React.ChangeEvent<HTMLInputElement>, slot: any) => {
     const num = e.target.value;
     if (/[^0-9]/.test(num)) return;
@@ -152,10 +158,8 @@ export const Profile = () => {
       return;
     }
     if (info.file.status === "done") {
-      getBase64(info.file.originFileObj, (url: any) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
+      getBase64(info.file.originFileObj);
+      return;
     }
   };
 
