@@ -70,7 +70,9 @@ export default function Signup() {
       {
         onSuccess: (data) => {
           if (data.success) {
-            message.success(data?.description);
+            message.success(
+              `Таны ${values.phone_number} дугаар руу баталгаажуулах код амжилттай илгээгдлээ.`
+            );
             setRegisterData((prevData) => ({
               ...prevData,
               phone: values.phone_number,
