@@ -90,8 +90,7 @@ export const SidebarLeftComponent = ({ setOpen }: any) => {
                 <Col span={18}>
                   <Button
                     onClick={() => {
-                      router.push("/");
-                      void signOut();
+                      void signOut({ redirect: false });
                     }}
                     className={style["sidebar-left-exit-button"]}
                   >
