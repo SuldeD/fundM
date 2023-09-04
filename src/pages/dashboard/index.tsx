@@ -8,6 +8,7 @@ import { useRequireAuth } from "app/utils/auth";
 import { api } from "app/utils/api";
 import { useMemo } from "react";
 import { useSession } from "next-auth/react";
+import { Loaderr } from "app/components/Loader";
 
 export const Dashboard = () => {
   const { data } = useSession();
@@ -139,6 +140,7 @@ export const Dashboard = () => {
   ];
 
   if (!data) {
+    <Loaderr />;
   } else {
     return (
       <Row justify="center" className={styles["dashboard-main-row"]}>
