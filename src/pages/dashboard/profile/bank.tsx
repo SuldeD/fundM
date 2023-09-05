@@ -119,7 +119,7 @@ export default function Bank() {
         ) => {
           if (data.success) {
             setReqId(data?.request_id);
-            setOpenVerifyPass(true);
+            setOpenVerify(true);
             setLoadingBtn(false);
             message.success(data.description);
           } else {
@@ -158,6 +158,7 @@ export default function Bank() {
             if (data.success) {
               setLoadingBtn(false);
               setOpenVerify(false);
+              setOpenVerifyPass(false);
               setCheck(true);
             } else {
               setLoadingBtn(false);
@@ -242,14 +243,6 @@ export default function Bank() {
           >
             Баталгаажуулах код авах
           </Button>
-          {/* <input
-            className="w-[100%] max-w-[195px] cursor-pointer rounded-[10px] bg-primary p-[8px] px-[8px] text-[14px] font-normal text-white"
-            type="button"
-            onClick={() => {
-              selectedBank.length > 0 && number.length > 0 && submit();
-            }}
-            value={"Баталгаажуулах код авах"}
-          /> */}
         </div>
 
         <Modal
@@ -298,16 +291,16 @@ export default function Bank() {
                   </div>
                 </Col>
                 <Col span={20}>
-                  <button
-                    type="submit"
-                    className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
+                  <Button
+                    type="primary"
+                    loading={loading}
+                    className={stylesL["dloan-modal-verify-button"]}
                     onClick={() => {
-                      code.join("").length == 4 && setOpenVerifyPass(false);
-                      code.join("").length == 4 && setOpenVerify(true);
+                      code.join("").length == 4 && submitVerify();
                     }}
                   >
                     Баталгаажуулах
-                  </button>
+                  </Button>
                 </Col>
               </Row>
             </Col>
@@ -330,10 +323,8 @@ export default function Bank() {
           <Row justify="center">
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
-                {/* <ImgCrop rotationSlider> */}
                 <Upload
                   beforeUpload={beforeUpload}
-                  // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                   listType="picture"
                   showUploadList={false}
                   onChange={handleChange}
@@ -349,7 +340,6 @@ export default function Bank() {
                     uploadButton
                   )}
                 </Upload>
-                {/* </ImgCrop> */}
                 <Row>
                   <p className="text-center">
                     {accountInfo?.account?.user_type == "org"
@@ -361,10 +351,12 @@ export default function Bank() {
                   <Button
                     type="primary"
                     loading={loadingBtn}
-                    onClick={imageUrl.length > 0 ? submitVerify : undefined}
+                    onClick={() => {
+                      imageUrl.length > 0 && setOpenVerifyPass(true);
+                    }}
                     className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
                   >
-                    Баталгаажуулах
+                     Үргэлжлүүлэх
                   </Button>
                 </Col>
               </Row>

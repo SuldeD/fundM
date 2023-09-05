@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form, Input, Modal, message } from "antd";
+import { Col, Row, Button, Form, Input, Modal, message, Checkbox } from "antd";
 import styles from "../../styles/login.module.css";
 import React, { useRef, useState } from "react";
 import { api } from "app/utils/api";
@@ -58,6 +58,7 @@ export default function Signup() {
   const [loading, setLoading] = useState<string>("");
 
   const onFinishPhone = async (values: any) => {
+    setLoading("loading");
     if (values.phone_number.length !== 8) {
       return warning({
         title: "Амжилтгүй",
@@ -79,11 +80,13 @@ export default function Signup() {
               username: values.phone_number,
               tmp_user_id: data.tmp_user_id,
             }));
+            setLoading("");
           } else {
             error({
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
             });
+            setLoading("");
           }
         },
       }
@@ -229,7 +232,11 @@ export default function Signup() {
     if (values.password.length < 8) {
       return warning({
         title: "Амжилтгүй",
-        content: <div>Нууц үг хамгийн багадаа 8 тэмдэгтээс бүрдэх ёстой.</div>,
+        content: (
+          <div>
+            Таны нууц үг багадаа 8 оронтой 1 том үсэг 1 тэмдэгт орсон байна!
+          </div>
+        ),
       });
     }
 
@@ -274,7 +281,7 @@ export default function Signup() {
             tmp_user_id: registerData.tmp_user_id,
             transaction_password: code.join("").toString(),
             user_type: "org",
-            username: registerData.register,
+            username: registerData.phone,
             email: registerData.email,
           },
           {
@@ -304,39 +311,6 @@ export default function Signup() {
     }
   };
 
-  // const onFinishQuestion = (values: any) => {
-  //   selectedQuestion == ""
-  //     ? warning({
-  //         title: "Амжилтгүй",
-  //         content: <div>Нууц асуулт сонгон уу!</div>,
-  //       })
-  //     : setRegisterData((prevData) => ({
-  //         ...prevData,
-  //         answer: values.answer,
-  //         question: selectedQuestion.slice(1),
-  //         security_question_id: selectedQuestion.slice(0, 1),
-  //       }));
-
-  //   if (values.answer.length < 8) {
-  //     warning({
-  //       title: "Амжилтгүй",
-  //       content: (
-  //         <div>
-  //           Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
-  //           тэмдэгтээс бүрдэх ёстой.
-  //         </div>
-  //       ),
-  //     });
-  //   } else {
-  //     signup({
-  //       ...registerData,
-  //       answer: values.answer,
-  //       question: selectedQuestion.slice(1),
-  //       security_question_id: selectedQuestion.slice(0, 1),
-  //     });
-  //   }
-  // };
-
   const signup = (registerData: RegisterType) => {
     setLoading("loading");
     mutationSignUp.mutate(registerData, {
@@ -350,6 +324,7 @@ export default function Signup() {
             title: "Амжилтгүй",
             content: <div>{data?.description || null}</div>,
           });
+          setLoading("");
         }
       },
     });
@@ -456,6 +431,10 @@ export default function Signup() {
                           autoFocus
                         />
                       </Form.Item>
+                      <p className="text-white opacity-[0.5]">
+                        Та зөвхөн өөрийн утасны дугаараа оруулан код хүлээн авч
+                        баталгаажуулалт хийнэ үү.
+                      </p>
                     </Col>
                     <Col span={24}>
                       <Row gutter={25}>
@@ -463,6 +442,7 @@ export default function Signup() {
                           <Form.Item>
                             <Button
                               type="primary"
+                              loading={loading == "loading"}
                               htmlType="submit"
                               className={`h-[40px] w-full rounded-[9px] bg-primary`}
                             >
@@ -632,6 +612,7 @@ export default function Signup() {
                 </Row>
               </motion.div>
             )}
+
           {registerData.phone.length > 0 &&
             registerData.tmp_user_id.length > 0 &&
             registerData.username.length > 0 &&
@@ -751,6 +732,21 @@ export default function Signup() {
                             <Input className={styles["input-style"]} />
                           </Form.Item>
                         </Col>
+                        {/* <Col span={24}>
+                          <Row justify="start">
+                            <p className="text-white">
+                              Та улс төрийн нөлөө бүхий этгээд мөн эсэх
+                            </p>
+                            <div className="mb-8 mt-2 flex gap-16 font-lato">
+                              <Checkbox className="border-black font-lato text-[20px] font-bold text-white">
+                                Тийм
+                              </Checkbox>
+                              <Checkbox className="font-lato text-[20px] font-bold text-white">
+                                Үгүй
+                              </Checkbox>
+                            </div>
+                          </Row>
+                        </Col> */}
                         <Col span={24}>
                           <Row gutter={25}>
                             <Col span={24}>
@@ -988,6 +984,11 @@ export default function Signup() {
                             }
                           )}
                         </Col>
+                        <p className="mt-2 text-white opacity-[0.5]">
+                          Энэхүү кодыг та мэдээлэл өөрчлөх болон хүсэлтээ
+                          баталгаажуулахдаа хэрэглэнэ.
+                        </p>
+
                         <Col span={24}>
                           <Row gutter={25}>
                             <Col span={20}>
@@ -1008,6 +1009,7 @@ export default function Signup() {
                                 <Form.Item className="w-[45%]">
                                   <Button
                                     type="primary"
+                                    loading={loading == "loading"}
                                     htmlType="submit"
                                     className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
                                   >
@@ -1024,122 +1026,6 @@ export default function Signup() {
                 </Row>
               </motion.div>
             )}
-          {/* {registerData.phone.length > 0 &&
-            registerData.tmp_user_id.length > 0 &&
-            registerData.username.length > 0 &&
-            registerData.pin_code.length > 0 &&
-            registerData.password.length > 0 &&
-            registerData.transaction_password.length > 0 && (
-              <motion.div
-                animate={{ x: "0", opacity: 1, scale: 1 }}
-                initial={{ x: "10%", opacity: 0, scale: 0.5 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Row justify="start" gutter={[0, 25]}>
-                  <Col span={24}>
-                    <div className={styles["header-text"]}>
-                      Нууц асуулт хариулт
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
-                    <Form
-                      name="basic"
-                      initialValues={{
-                        remember: true,
-                      }}
-                      className="login-form"
-                      autoComplete="off"
-                      layout="vertical"
-                      onFinish={onFinishQuestion}
-                    >
-                      <Row gutter={[0, 13]}>
-                        <Col span={24}>
-                          <div className={styles["phone-number-label"]}>
-                            Нууц асуулт сонгох
-                          </div>
-                        </Col>
-                        <Col span={24}>
-                          <select
-                            className={styles["input-style"]}
-                            style={{ backgroundColor: "white" }}
-                            onChange={(e) =>
-                              setSelectedQuestion(e.target.value)
-                            }
-                          >
-                            <option value={""}>Нууц асуулт сонгон уу!</option>
-                            {securityQuestion?.security_question_list.map(
-                              (
-                                list: {
-                                  security_question_id: any;
-                                  question: any;
-                                },
-                                idx: any
-                              ) => (
-                                <option
-                                  key={`option ${idx}`}
-                                  value={`${list.security_question_id}${list.question}`}
-                                >
-                                  {list.question}
-                                </option>
-                              )
-                            )}
-                          </select>
-                        </Col>
-                        <Col span={24}>
-                          <div className={styles["phone-number-label"]}>
-                            Нууц хариулт оруулах
-                          </div>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="answer"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Нууц хариулт оруулна уу!",
-                              },
-                            ]}
-                          >
-                            <Input.Password className={styles["input-style"]} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <Row gutter={25}>
-                            <Col span={24}>
-                              <div className="flex w-full justify-between">
-                                <Button
-                                  type="default"
-                                  onClick={() =>
-                                    setRegisterData((prevData) => ({
-                                      ...prevData,
-                                      transaction_password: "",
-                                    }))
-                                  }
-                                  className="h-[40px] w-[45%] rounded-[9px] text-white"
-                                >
-                                  Буцах
-                                </Button>
-
-                                <Form.Item className="w-[45%]">
-                                  <Button
-                                    loading={loading == "loading"}
-                                    type="primary"
-                                    htmlType="submit"
-                                    className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
-                                  >
-                                    Үргэлжлүүлэх
-                                  </Button>
-                                </Form.Item>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Col>
-                </Row>
-              </motion.div>
-            )} */}
         </Col>
       </Row>
     );

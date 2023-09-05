@@ -19,6 +19,8 @@ import moment from "moment";
 import { useRequireAuth } from "app/utils/auth";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
+import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
+
 import { useSession } from "next-auth/react";
 
 export const Loan = () => {
@@ -339,13 +341,51 @@ export const Loan = () => {
                         </div>
                       </Col>
                     </Row>
-                    <Slider
-                      min={minValue}
-                      step={10000}
-                      max={maxValue}
-                      onChange={(e) => setInputValue(e)}
-                      value={typeof inputValue === "number" ? inputValue : 0}
-                    />
+
+                    <div className="mt-3 flex justify-between">
+                      <div
+                        onClick={() =>
+                          minValue < inputValue &&
+                          setInputValue(
+                            maxValue < 10000000
+                              ? inputValue - 100000
+                              : maxValue >= 10000000 && maxValue <= 50000000
+                              ? inputValue - 500000
+                              : inputValue - 1000000
+                          )
+                        }
+                      >
+                        <MinusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
+                      </div>
+                      <Slider
+                        min={minValue}
+                        step={
+                          maxValue < 10000000
+                            ? 100000
+                            : maxValue >= 10000000 && maxValue <= 50000000
+                            ? 500000
+                            : 1000000
+                        }
+                        max={maxValue}
+                        className="w-[80%]"
+                        onChange={(e) => setInputValue(e)}
+                        value={typeof inputValue === "number" ? inputValue : 0}
+                      />
+                      <div
+                        onClick={() =>
+                          maxValue > inputValue &&
+                          setInputValue(
+                            maxValue < 10000000
+                              ? inputValue + 100000
+                              : maxValue >= 10000000 && maxValue <= 50000000
+                              ? inputValue + 500000
+                              : inputValue + 1000000
+                          )
+                        }
+                      >
+                        <PlusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
+                      </div>
+                    </div>
                   </Col>
                 </Row>
               </Col>
@@ -669,20 +709,7 @@ export const Loan = () => {
                       </Col>
                     </Row>
                   </Col>
-                  {/* <Col span={24}>
-                    <Row justify="space-between" align="middle">
-                      <Col flex="none">
-                        <div className={styles["dloan-detail-text"]}>
-                          Хүүгийн хэмжээ (хоногоор)
-                        </div>
-                      </Col>
-                      <Col flex="none">
-                        <div className={styles["dloan-detail-maxValue"]}>
-                          {rate} %
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col> */}
+
                   <Col span={24}>
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
