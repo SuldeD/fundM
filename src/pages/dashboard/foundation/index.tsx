@@ -615,7 +615,7 @@ export const Foundation = () => {
                       ? error({
                           title: "Амжилтгүй",
                           content: <div>Та дансаа баталгаажуулна уу</div>,
-                        }) && router.push("/dashboard/profile/bank")
+                        }) && router.push("/dashboard/profile")
                       : submit()
                     : setIsModalOpen(true);
                 }}
