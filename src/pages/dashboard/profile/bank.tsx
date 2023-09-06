@@ -16,15 +16,6 @@ import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
 import Select from "react-select";
 
-// const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-//   const reader = new FileReader();
-//   reader.addEventListener("load", () => callback(reader.result as string));
-//   reader.readAsDataURL(img);
-// };
-
-// var file = document.querySelector('#files > input[type="file"]').files[0];
-// getBase64(file); // prints the base64 string
-
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {

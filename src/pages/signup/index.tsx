@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form, Input, Modal, message, Checkbox } from "antd";
+import { Col, Row, Button, Form, Input, Modal, message } from "antd";
 import styles from "../../styles/login.module.css";
 import React, { useRef, useState } from "react";
 import { api } from "app/utils/api";
@@ -16,9 +16,6 @@ interface RegisterType {
   tmp_user_id: string;
   password: string;
   pin_code: string;
-  // security_question_id: string;
-  // question: string;
-  // answer: string;
   transaction_password: string;
   register: string;
   last_name: string;
@@ -45,9 +42,6 @@ export default function Signup() {
     tmp_user_id: "",
     password: "",
     pin_code: "",
-    // security_question_id: "",
-    // question: "",
-    // answer: "",
     transaction_password: "",
     register: "",
     last_name: "",
@@ -146,7 +140,14 @@ export default function Signup() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Validate length
-    if (search != "org" && values.register.length !== 10) {
+    // Validate the rest of the ID number (in this case, skipping the first two characters)
+    const remainingDigits = values.register.substring(2);
+    const numericPattern = /^[0-9]+$/; // Numeric digits pattern
+    if (
+      (search != "org" && values.register.length !== 10) ||
+      (search != "org" && values.register.length !== 12) ||
+      (search != "org" && !numericPattern.test(remainingDigits))
+    ) {
       return warning({
         title: "Амжилтгүй",
         content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
@@ -157,25 +158,35 @@ export default function Signup() {
     const firstTwoCharacters = values.register.substring(0, 2);
     const cyrillicPattern = /^[а-яөүА-ЯӨҮ\s]+$/; // Cyrillic letter pattern
     if (search != "org" && !cyrillicPattern.test(firstTwoCharacters)) {
-      return warning({
-        title: "Амжилтгүй",
-        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
-      });
-    }
+      let IsGenderCheck, IsGender, IsAgeCheck, IsYear, IsAge;
+      IsYear = 19;
+      IsGenderCheck = values.register.slice(-2, -1);
+      if (["0", "2", "4", "6", "8"].includes(IsGenderCheck)) {
+        IsGender = "female";
+      } else {
+        if (["1", "3", "5", "7", "9"].includes(IsGenderCheck)) {
+          IsGender = "male";
+        }
+      }
+      IsAgeCheck = values.register.slice(-6, -5);
+      if (IsAgeCheck === "2" || IsAgeCheck === "3") {
+        IsYear += 1;
+      }
+      const currentYear = new Date().getFullYear(); // Get the current year
+      IsAge = currentYear - parseInt(IsYear + values.register.slice(-8, -6));
 
-    // Validate the rest of the ID number (in this case, skipping the first two characters)
-    const remainingDigits = values.register.substring(2);
-    const numericPattern = /^[0-9]+$/; // Numeric digits pattern
-
-    if (
-      search != "org" &&
-      !numericPattern.test(remainingDigits) &&
-      values.register.length != 10
-    ) {
-      return warning({
-        title: "Амжилтгүй",
-        content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
-      });
+      if (
+        search != "org" &&
+        (IsGender === "female" || IsGender === "male") &&
+        IsAge > 17 &&
+        IsAge < 110
+      ) {
+      } else {
+        return warning({
+          title: "Амжилтгүй",
+          content: <div>17 </div>,
+        });
+      }
     }
 
     if (search == "org" && values.register.length < 6) {
@@ -431,7 +442,7 @@ export default function Signup() {
                           autoFocus
                         />
                       </Form.Item>
-                      <p className="text-white opacity-[0.5]">
+                      <p className="mb-4 text-white opacity-[0.5]">
                         Та зөвхөн өөрийн утасны дугаараа оруулан код хүлээн авч
                         баталгаажуулалт хийнэ үү.
                       </p>
@@ -834,6 +845,7 @@ export default function Signup() {
                             />
                           </Form.Item>
                         </Col>
+
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
                             Нэвтрэх нууц үг дахин оруулах
@@ -851,6 +863,10 @@ export default function Signup() {
                           >
                             <Input.Password className={styles["input-style"]} />
                           </Form.Item>
+                          <p className="text-white opacity-[0.5]">
+                            Таны нууц үг багадаа 8 оронтой 1 том үсэг 1 тэмдэгт
+                            орсон байна!
+                          </p>
                         </Col>
                         <Col span={24}>
                           <Row gutter={25}>

@@ -11,7 +11,6 @@ import {
   message,
 } from "antd";
 import styles from "../../../styles/profile.module.css";
-import ImgCrop from "antd-img-crop";
 import { HeaderDashboard } from "../../../components/header";
 import { useMemo, useRef, useState } from "react";
 import { Loaderr } from "app/components/Loader";
@@ -20,7 +19,6 @@ import { useRouter } from "next/router";
 import stylesL from "../../../styles/dloan.module.css";
 import { api } from "app/utils/api";
 import InputCode from "app/components/input";
-import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
 import { useSession } from "next-auth/react";
 import PopupModal from "app/components/modal";
 const { Panel } = Collapse;
@@ -120,12 +118,10 @@ export const Profile = () => {
 
   //functions
   function getBase64(file: any) {
-    console.log(file, "filee");
     let reader = new FileReader();
     reader.readAsDataURL(file);
 
     reader.onload = function () {
-      console.log(reader.result, "reader");
       setImageUrl(reader.result?.toString());
       setLoading(false);
     };
@@ -212,7 +208,7 @@ export const Profile = () => {
                 setEditNumber("");
                 setIsOpen(false);
                 setOpen(false);
-                setIsOpenVerifyPass(true);
+                setOpenVerify(true);
                 setChangeId(data.change_phone_id);
                 setFormToken(data.form_token);
                 message.success(data.description);
@@ -696,7 +692,7 @@ export const Profile = () => {
                             ),
                             onOk() {},
                           })
-                        : setIsOpenVerifyPass(true);
+                        : setOpenVerify(true);
                     }}
                   >
                     {accountInfo?.bank_account?.is_verify == 0
@@ -1208,16 +1204,17 @@ export const Profile = () => {
                   </div>
                 </Col>
                 <Col span={20}>
-                  <button
-                    type="submit"
-                    className={`${stylesL["dloan-modal-verify-button"]} bg-primary text-white`}
+                  <Button
+                    type="primary"
+                    loading={loadingBtn}
+                    className={stylesL["dloan-modal-verify-button"]}
                     onClick={() =>
                       code.join("").length == 4
                         ? clickedEdit
                           ? clickedEdit == 0
                             ? verifyPass()
                             : verifyTransPass()
-                          : setOpenVerify(true)
+                          : submitVerify()
                         : error({
                             title: "Амжилтгүй",
                             content: (
@@ -1227,7 +1224,7 @@ export const Profile = () => {
                     }
                   >
                     Баталгаажуулах
-                  </button>
+                  </Button>
                 </Col>
               </Row>
             </Col>
@@ -1280,10 +1277,12 @@ export const Profile = () => {
                   <Button
                     type="primary"
                     loading={loadingBtn}
-                    onClick={imageUrl.length > 0 ? submitVerify : undefined}
+                    onClick={() => {
+                      imageUrl.length > 0 && setIsOpenVerifyPass(true);
+                    }}
                     className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
                   >
-                    Баталгаажуулах
+                    Үргэлжлүүлэх
                   </Button>
                 </Col>
               </Row>
@@ -1295,6 +1294,8 @@ export const Profile = () => {
           buttonClick={() => {
             setCheck(false);
             setIsOpenVerifyPass(false);
+            setOpenVerify(false);
+            router.reload();
           }}
           buttonText={"Хаах"}
           closableM={null}
