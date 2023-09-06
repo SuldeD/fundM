@@ -2,6 +2,7 @@ import { useRequireAuth } from "app/utils/auth";
 import { usePathname } from "next/navigation";
 import { ProtectedLayout } from "../cmsLayout";
 import SimpleLayout from "../layout";
+import { useAppContext } from "app/context/appContext";
 
 const MainLayout = ({ children }: any) => {
   const path = usePathname();
@@ -20,7 +21,13 @@ const MainLayout = ({ children }: any) => {
   ];
   const Layout = privatePaths.includes(path) ? ProtectedLayout : SimpleLayout;
 
-  return <Layout>{children}</Layout>;
+  const { contextHolder } = useAppContext();
+  return (
+    <Layout>
+      {contextHolder}
+      {children}
+    </Layout>
+  );
 };
 
 export default MainLayout;

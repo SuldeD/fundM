@@ -15,6 +15,7 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
 import Select from "react-select";
+import { useAppContext } from "app/context/appContext";
 
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -33,6 +34,7 @@ export default function Bank() {
   const { error } = Modal;
   const { data } = useSession();
   useRequireAuth();
+  const { success } = useAppContext();
 
   //mutates
   const { mutate: addBankMutate } = api.profile.addBank.useMutation();
@@ -112,7 +114,7 @@ export default function Bank() {
             setReqId(data?.request_id);
             setOpenVerify(true);
             setLoadingBtn(false);
-            message.success(data.description);
+            success(data.description);
           } else {
             setLoadingBtn(false);
             error({

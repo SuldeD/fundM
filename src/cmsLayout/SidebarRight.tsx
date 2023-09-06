@@ -261,9 +261,6 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                       gutter={10}
                       className="rounded-[20px] bg-bank p-[10px]"
                     >
-                      <Col className="lg:hidden xl:flex" flex="none">
-                        <Avatar size={32} src={"/images/profile.png"} />
-                      </Col>
                       <Col flex="none">
                         <div className={styles["sidebar-right-profile-name"]}>
                           {accountInfo?.account?.first_name}

@@ -21,6 +21,7 @@ import { api } from "app/utils/api";
 import InputCode from "app/components/input";
 import { useSession } from "next-auth/react";
 import PopupModal from "app/components/modal";
+import { useAppContext } from "app/context/appContext";
 const { Panel } = Collapse;
 
 const beforeUpload = (file: any) => {
@@ -41,6 +42,7 @@ export const Profile = () => {
   const router = useRouter();
   const { error, warning } = Modal;
   useRequireAuth();
+  const { success } = useAppContext();
 
   //mutates
   const { mutate: addEmail } = api.profile.addEmail.useMutation();
@@ -211,7 +213,7 @@ export const Profile = () => {
                 setOpenVerify(true);
                 setChangeId(data.change_phone_id);
                 setFormToken(data.form_token);
-                message.success(data.description);
+                success(data.description);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -231,7 +233,7 @@ export const Profile = () => {
                 setEditEmail("");
                 setIsOpen(false);
                 setOpen(false);
-                message.success(data.description);
+                success(data.description);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -259,7 +261,7 @@ export const Profile = () => {
             setChangeId("");
             setFormToken("");
             setCode("");
-            message.success(data?.description);
+            success(data?.description);
           } else {
             error({
               title: "Амжилтгүй",
@@ -314,7 +316,7 @@ export const Profile = () => {
                 setLoginPassNew("");
                 setLoginPassNewVer("");
                 setOpen(false);
-                message.success(data.description);
+                success(data.description);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -354,7 +356,7 @@ export const Profile = () => {
                 setFundPassNew("");
                 setFundPassNewVer("");
                 setOpen(false);
-                message.success(data.description);
+                success(data.description);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -394,7 +396,7 @@ export const Profile = () => {
                 setForgotId(data?.forgot_id);
                 setOpen(false);
                 setIsOpenVerifyPass(true);
-                message.success(data.description);
+                success(data.description);
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -426,7 +428,7 @@ export const Profile = () => {
             setIsOpenVerifyPass(false);
             setFundPassNew("");
             setFundPassNewVer("");
-            message.success(data.description);
+            success(data.description);
           } else {
             error({
               title: "Амжилтгүй",
@@ -499,8 +501,8 @@ export const Profile = () => {
                     listType="picture-circle"
                     className="avatar-uploader  overflow-hidden"
                     showUploadList={false}
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
+                    // beforeUpload={beforeUpload}
+                    // onChange={handleChange}
                   >
                     {imageUrl ? (
                       <div className="relative">

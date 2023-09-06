@@ -7,6 +7,7 @@ import { Loaderr } from "app/components/Loader";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import stylesL from "../../styles/dloan.module.css";
+import { useAppContext } from "app/context/appContext";
 const { error, warning } = Modal;
 
 interface RegisterType {
@@ -20,6 +21,7 @@ interface RegisterType {
 
 export default function Forgot() {
   const router = useRouter();
+  const { success } = useAppContext();
 
   //mutates
   const mutationForgot = api.profile.forgotPass.useMutation();
@@ -34,7 +36,6 @@ export default function Forgot() {
     forgot_id: "",
     register: "",
   });
-  const [selectedQuestion, setSelectedQuestion] = useState<any>("");
   const [loading, setLoading] = useState<string>("");
   const [isOpenVerifyPass, setOpenVerifyPass] = useState<boolean>(false);
   const inputs = useRef<any>([]);
@@ -75,33 +76,6 @@ export default function Forgot() {
       phone: values.phone_number,
     }));
   };
-
-  // const onFinishQuestion = (values: any) => {
-  //   selectedQuestion == "" &&
-  //     error({
-  //       title: "Амжилтгүй",
-  //       content: <div>Нууц асуулт сонгон уу!</div>,
-  //     });
-
-  //   if (values.answer.length < 8) {
-  //     error({
-  //       title: "Амжилтгүй",
-  //       content: (
-  //         <div>
-  //           Таны сонгосон хариулт буруу байна. Нууц үг хамгийн багадаа 8
-  //           тэмдэгтээс бүрдэх ёстой.
-  //         </div>
-  //       ),
-  //     });
-  //   } else {
-  //     setRegisterData((prevData) => ({
-  //       ...prevData,
-  //       answer: values.answer,
-  //       question: selectedQuestion.slice(1),
-  //       security_question_id: selectedQuestion.slice(0, 1),
-  //     }));
-  //   }
-  // };
 
   const validateRegister = async (values: any) => {
     if (values.register.length <= 0) {
@@ -183,7 +157,7 @@ export default function Forgot() {
           {
             onSuccess: (data: any) => {
               if (data?.success) {
-                message.success(data.description);
+                success(data.description);
                 setRegisterData((prevData) => ({
                   ...prevData,
                   forgot_id: data?.forgot_id,
@@ -191,6 +165,7 @@ export default function Forgot() {
                 setOpenVerifyPass(true);
                 setLoading("");
               } else {
+                setLoading("");
                 error({
                   title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
@@ -221,7 +196,7 @@ export default function Forgot() {
         {
           onSuccess: (data: any) => {
             if (data.success) {
-              message.success(data.description);
+              success(data.description);
               setOpenVerifyPass(false);
               router.push("/login");
               setRegisterData({

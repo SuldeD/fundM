@@ -1,12 +1,13 @@
 import { Col, Row, Button, Form, Input, Modal, message } from "antd";
 import styles from "../../styles/login.module.css";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
 import { Loaderr } from "app/components/Loader";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
+import { useAppContext } from "app/context/appContext";
 
 const { error, warning } = Modal;
 
@@ -28,6 +29,7 @@ export default function Signup() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("s");
+  const { success } = useAppContext();
 
   const { mutate } = api.register.phoneSignUp.useMutation();
 
@@ -65,7 +67,7 @@ export default function Signup() {
       {
         onSuccess: (data) => {
           if (data.success) {
-            message.success(
+            success(
               `Таны ${values.phone_number} дугаар руу баталгаажуулах код амжилттай илгээгдлээ.`
             );
             setRegisterData((prevData) => ({
@@ -143,10 +145,10 @@ export default function Signup() {
     // Validate the rest of the ID number (in this case, skipping the first two characters)
     const remainingDigits = values.register.substring(2);
     const numericPattern = /^[0-9]+$/; // Numeric digits pattern
+
     if (
-      (search != "org" && values.register.length !== 10) ||
-      (search != "org" && values.register.length !== 12) ||
-      (search != "org" && !numericPattern.test(remainingDigits))
+      search != "org" &&
+      (values.register.length !== 10 || !numericPattern.test(remainingDigits))
     ) {
       return warning({
         title: "Амжилтгүй",
@@ -184,7 +186,7 @@ export default function Signup() {
       } else {
         return warning({
           title: "Амжилтгүй",
-          content: <div>17 </div>,
+          content: <div>Та 17 нас хүрээгүй бол бүртгүүлэх боломжгүй.</div>,
         });
       }
     }
@@ -298,7 +300,7 @@ export default function Signup() {
           {
             onSuccess: (data) => {
               if (data.success) {
-                message.success(data.description);
+                success(data.description);
                 router.push("/login");
               } else {
                 error({
@@ -327,7 +329,9 @@ export default function Signup() {
     mutationSignUp.mutate(registerData, {
       onSuccess: (data) => {
         if (data.success) {
-          message.success(data.description);
+          success(
+            `${data.description}. Цаашид та бүртгүүлсэн гар утасны дугаараар нэвтрэх болно.`
+          );
           setLoading("");
           router.push("/login");
         } else {
