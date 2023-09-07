@@ -286,7 +286,7 @@ export default function Bank() {
                 <Col span={20}>
                   <Button
                     type="primary"
-                    loading={loading}
+                    loading={loadingBtn}
                     className={stylesL["dloan-modal-verify-button"]}
                     onClick={() => {
                       code.join("").length == 4 && submitVerify();
@@ -343,7 +343,6 @@ export default function Bank() {
                 <Col span={24}>
                   <Button
                     type="primary"
-                    loading={loadingBtn}
                     onClick={() => {
                       imageUrl.length > 0 && setOpenVerifyPass(true);
                     }}
