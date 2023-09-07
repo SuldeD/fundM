@@ -282,7 +282,7 @@ export const FundHistory = () => {
             >
               <Col flex="none">
                 <div className={styles["fund-tabs-content-title"]}>
-                  Нийт зээлийн хэмжээ
+                  Нийт санхүүжилтийн хэмжээ
                 </div>
                 <div className={styles["fund-tabs-1-content-money"]}>
                   {numberToCurrency(sumMySaving)}
