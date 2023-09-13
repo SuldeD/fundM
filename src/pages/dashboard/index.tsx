@@ -183,7 +183,7 @@ export const Dashboard = () => {
                     </Col>
                     <Col span={24}>
                       <Button
-                        className={`${styles["dashboard-loan-finance-button"]} bg-primary`}
+                        className={styles["dashboard-loan-finance-button"]}
                         type="primary"
                         onClick={() => {
                           sumSaving > sumLoan

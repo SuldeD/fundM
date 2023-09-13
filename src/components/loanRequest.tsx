@@ -124,7 +124,7 @@ export const LoanReqComponent = ({ activeSavingOrders: data }: any) => {
                               <Col flex="none">
                                 <Button
                                   type="primary"
-                                  className={`${styles["loanReq-list-button"]} bg-primary`}
+                                  className={styles["loanReq-list-button"]}
                                   onClick={() =>
                                     router.push("/dashboard/foundation")
                                   }
