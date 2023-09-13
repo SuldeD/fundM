@@ -25,7 +25,7 @@ export const FundHistory = () => {
       order_up: "1",
       page: "1",
       page_size: "30",
-      filter_type: "my",
+      filter_type: "done",
     },
     { refetchOnWindowFocus: false }
   );
@@ -47,15 +47,13 @@ export const FundHistory = () => {
 
   const mySavingOrders = useMemo(() => {
     return requestSearch?.requests?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) == "100" && el.request_type == "saving"
+      (el: any) => el.is_my_request == "1" && el.request_type == "saving"
     );
   }, [requestSearch]);
 
   const myLoanOrders = useMemo(() => {
     return requestSearch?.requests?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) == "100" && el.request_type == "wallet"
+      (el: any) => el.is_my_request == "1" && el.request_type == "wallet"
     );
   }, [requestSearch]);
 
@@ -65,10 +63,7 @@ export const FundHistory = () => {
     }
     let num = 0;
     const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) === "100" &&
-        el.request_type === "wallet"
-      ) {
+      if (el.is_my_request == "1" && el.request_type === "wallet") {
         num += Number(el.loan_amount);
         return true;
       }
@@ -83,10 +78,7 @@ export const FundHistory = () => {
     }
     let num = 0;
     const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) === "100" &&
-        el.request_type === "saving"
-      ) {
+      if (el.is_my_request == "1" && el.request_type === "saving") {
         num += Number(el.loan_amount);
         return true;
       }
@@ -159,27 +151,30 @@ export const FundHistory = () => {
     },
     {
       title: " ",
-      dataIndex: "id",
-      key: "main_request_id",
+      dataIndex: "request_id",
+      key: "request_id",
       width: "10%",
       align: "center",
-      render: (main_request_id: string, data: any) => (
-        <Image
-          width={25}
-          onClick={() => {
-            setSelectedId(main_request_id);
-            setSelectedData(data);
-            data?.request_type == "saving"
-              ? setMyFundTabKey("2")
-              : setMyFundTabKey("1");
-            setOpen(true);
-          }}
-          src={"/images/info-icon.png"}
-          preview={false}
-          className="cursor-pointer"
-          alt="Information"
-        />
-      ),
+      render: (request_id: string, data: any) => {
+        console.log(request_id, "request_id");
+        return (
+          <Image
+            width={25}
+            onClick={() => {
+              setSelectedId(request_id);
+              setSelectedData(data);
+              data?.request_type == "saving"
+                ? setMyFundTabKey("2")
+                : setMyFundTabKey("1");
+              setOpen(true);
+            }}
+            src={"/images/info-icon.png"}
+            preview={false}
+            className="cursor-pointer"
+            alt="Information"
+          />
+        );
+      },
     },
   ];
   const columns1: any[] = [
@@ -245,15 +240,15 @@ export const FundHistory = () => {
     },
     {
       title: " ",
-      dataIndex: "id",
-      key: "main_request_id",
+      dataIndex: "request_id",
+      key: "request_id",
       width: "10%",
       align: "center",
-      render: (main_request_id: string, data: any) => (
+      render: (request_id: string, data: any) => (
         <Image
           width={25}
           onClick={() => {
-            setSelectedId(main_request_id);
+            setSelectedId(request_id);
             setSelectedData(data);
             data?.request_type == "saving"
               ? setMyFundTabKey("2")
@@ -384,7 +379,7 @@ export const FundHistory = () => {
   const verifyCompleteModal = (code: string) => {
     repayment(
       {
-        request_id: selectedData?.request_id && selectedData?.request_id,
+        request_id: activeClass && activeClass,
         password: code,
       },
       {
@@ -413,7 +408,8 @@ export const FundHistory = () => {
   const downloadPdfBtn = (code: string) => {
     downloadPdf(
       {
-        request_id: selectedData?.request_id && selectedData?.request_id,
+        request_id:
+          selectedData?.main_request_id && selectedData?.main_request_id,
         password: code.toString(),
         contract_type: selectedData?.request_type,
       },
@@ -446,7 +442,7 @@ export const FundHistory = () => {
     );
   };
 
-  console.log("selectedData", selectedData);
+  console.log("selectedData", requestSearch);
 
   return (
     <Row justify="center" className={styles["fund-main-row"]}>
@@ -480,7 +476,7 @@ export const FundHistory = () => {
           {orders &&
             orders.map(
               (o: any, idx: number) =>
-                o.id == activeClass && (
+                o.request_id == activeClass && (
                   <div key={`${idx}`}>
                     <Col span={22} key={`${idx}`} className="mx-auto w-full">
                       <Col className="mt-[20px]">

@@ -408,40 +408,128 @@ export const Loan = () => {
                     </Button>
                   </Col>
                   <Modal
-                    centered
-                    width={378}
-                    title={null}
-                    onCancel={() => {
-                      setIsCompleteOpenLoan(false);
-                      setChecked(false);
-                    }}
-                    open={isCompleteOpenLoan}
-                    footer={null}
-                  >
-                    <Row
-                      justify="center"
-                      gutter={[0, 30]}
-                      style={{ padding: "50px 0" }}
+                centered
+                closable={false}
+                width="90%"
+                title={
+                  <div className={styles["dloan-modal-title"]}>
+                    ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
+                  </div>
+                }
+                open={isModalOpen}
+                footer={null}
+              >
+                <Row justify="center">
+                  <Col>
+                    <Col
+                      span={24}
+                      className="my-5 rounded-[9px] bg-bank p-[50px]"
                     >
-                      <Col span={24}>
-                        <Row justify="center">
-                          <Image
-                            width={56}
-                            src={"/images/check.svg"}
-                            preview={false}
-                            alt="Header Logo"
-                          />
-                        </Row>
-                      </Col>
-                      <Col span={16}>
-                        <div className={styles["dloan-modal-complete-text"]}>
-                          Таны зээлийн эрх үүсгэх хүсэлт амжилттай бүртгэгдлээ.
-                          ФандМи биржээс таны зээлийн эрхийн хэмжээг нээж өгөх
-                          болно.
-                        </div>
-                      </Col>
+                      <div dangerouslySetInnerHTML={{ __html: html }} />
+                    </Col>
+                    <Form form={form}>
+                      <Row justify="center" gutter={[0, 10]}>
+                        <Col xs={24} lg={20}>
+                          <Form.Item
+                            name="agreement"
+                            valuePropName="checked"
+                            rules={[
+                              {
+                                validator: (_, value) =>
+                                  value
+                                    ? Promise.resolve()
+                                    : Promise.reject(
+                                        new Error(
+                                          "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
+                                        )
+                                      ),
+                              },
+                            ]}
+                          >
+                            <Checkbox style={{ color: "green" }}>
+                              <div className={styles["dloan-checkbox-text"]}>
+                                Зээлийн үйлчилгээний нөхцөл
+                              </div>
+                            </Checkbox>
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} lg={20}>
+                          <Row
+                            justify="space-between"
+                            className="gap-3"
+                            gutter={10}
+                            wrap={false}
+                          >
+                            <Button
+                              className={styles["dloan-button-back"]}
+                              onClick={() => setIsModalOpen(false)}
+                            >
+                              <div className={styles["dloan-button-back-text"]}>
+                                Буцах
+                              </div>
+                            </Button>
+
+                            <Button
+                              type="primary"
+                              className={styles["dloan-button-contiune"]}
+                              onClick={() => {
+                                form.validateFields();
+                                setChecked(!checked);
+                                setIsModalOpen(false);
+                              }}
+                              htmlType="submit"
+                            >
+                              Үргэлжлүүлэх
+                            </Button>
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Col>
+                </Row>
+              </Modal>
+
+              <InputCode
+                open={isVerifyOpen}
+                onFinish={verifyCompleteModal}
+                setOpen={setIsVerifyOpen}
+              />
+
+              <Modal
+                centered
+                width={378}
+                title={null}
+                onCancel={() => {
+                  setIsCompleteOpenLoan(false);
+                  setChecked(false);
+                }}
+                open={isCompleteOpenLoan}
+                footer={null}
+              >
+                <Row
+                  justify="center"
+                  gutter={[0, 30]}
+                  style={{ padding: "50px 0" }}
+                >
+                  <Col span={24}>
+                    <Row justify="center">
+                      <Image
+                        width={56}
+                        src={"/images/check.svg"}
+                        preview={false}
+                        alt="Header Logo"
+                      />
                     </Row>
-                  </Modal>
+                  </Col>
+                  <Col span={16}>
+                    <div className={styles["dloan-modal-complete-text"]}>
+                      Таны зээлийн эрх үүсгэх хүсэлт амжилттай бүртгэгдлээ.
+                      ФандМи биржээс таны зээлийн эрхийн хэмжээг нээж өгөх
+                      болно.
+                    </div>
+                  </Col>
+                </Row>
+              </Modal>
                 </Row>
               </Col>
             ) : (
