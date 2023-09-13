@@ -620,7 +620,13 @@ export const MyFund = () => {
                                           : stylesDL["dloan-rate-profit"]
                                       }
                                     >
-                                      {o.rate_month} %
+                                      {numberToCurrency(
+                                        Math.round(
+                                          Number(o.filled_amount / 100) *
+                                            Number(o.rate_day) *
+                                            Number(o.duration)
+                                        )
+                                      )}
                                     </div>
                                   </Col>
                                 </Row>
