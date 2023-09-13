@@ -407,6 +407,41 @@ export const Loan = () => {
                       Зээлийн эрх нээлгэх
                     </Button>
                   </Col>
+                  <Modal
+                    centered
+                    width={378}
+                    title={null}
+                    onCancel={() => {
+                      setIsCompleteOpenLoan(false);
+                      setChecked(false);
+                    }}
+                    open={isCompleteOpenLoan}
+                    footer={null}
+                  >
+                    <Row
+                      justify="center"
+                      gutter={[0, 30]}
+                      style={{ padding: "50px 0" }}
+                    >
+                      <Col span={24}>
+                        <Row justify="center">
+                          <Image
+                            width={56}
+                            src={"/images/check.svg"}
+                            preview={false}
+                            alt="Header Logo"
+                          />
+                        </Row>
+                      </Col>
+                      <Col span={16}>
+                        <div className={styles["dloan-modal-complete-text"]}>
+                          Таны зээлийн эрх үүсгэх хүсэлт амжилттай бүртгэгдлээ.
+                          ФандМи биржээс таны зээлийн эрхийн хэмжээг нээж өгөх
+                          болно.
+                        </div>
+                      </Col>
+                    </Row>
+                  </Modal>
                 </Row>
               </Col>
             ) : (

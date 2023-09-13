@@ -39,7 +39,7 @@ export default function Login({
                 />
                 <label>
                   <p className="mt-[25px] pb-[13px] font-inter text-[14px] font-normal leading-[14px] text-[#fff]">
-                    Нэвтрэх нэр оруулах
+                    Гар утасны дугаар оруулах
                   </p>
                   <input
                     className="w-full rounded-[21px] border border-white bg-[#fff] px-5 py-3 text-[14px] focus:outline-none"

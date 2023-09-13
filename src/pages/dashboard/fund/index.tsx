@@ -384,7 +384,7 @@ export const FundHistory = () => {
   const verifyCompleteModal = (code: string) => {
     repayment(
       {
-        request_id: selectedData?.id && selectedData?.id,
+        request_id: selectedData?.request_id && selectedData?.request_id,
         password: code,
       },
       {
@@ -445,6 +445,8 @@ export const FundHistory = () => {
       }
     );
   };
+
+  console.log("selectedData", selectedData);
 
   return (
     <Row justify="center" className={styles["fund-main-row"]}>
