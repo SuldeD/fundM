@@ -19,13 +19,13 @@ export const FundHistory = () => {
   const { mutate: downloadPdf } = api.loan.downloadPdf.useMutation();
 
   //queries
-  const { data: requestSearch } = api.loan.reguestSearch.useQuery(
+  const { data: loanSearch } = api.loan.loanSearch.useQuery(
     {
       order: "date",
       order_up: "1",
       page: "1",
-      page_size: "30",
-      filter_type: "done",
+      page_size: "50",
+      filter_type: "loan",
     },
     { refetchOnWindowFocus: false }
   );
@@ -42,43 +42,43 @@ export const FundHistory = () => {
 
   //constants
   const orders = useMemo(() => {
-    return requestSearch?.requests;
-  }, [requestSearch]);
+    return loanSearch?.loan_requests;
+  }, [loanSearch]);
 
   const mySavingOrders = useMemo(() => {
-    return requestSearch?.requests?.filter(
-      (el: any) => el.is_my_request == "1" && el.request_type == "saving"
+    return loanSearch?.loan_requests?.filter(
+      (el: any) => el.product_type_code == "saving"
     );
-  }, [requestSearch]);
+  }, [loanSearch]);
 
   const myLoanOrders = useMemo(() => {
-    return requestSearch?.requests?.filter(
-      (el: any) => el.is_my_request == "1" && el.request_type == "wallet"
+    return loanSearch?.loan_requests?.filter(
+      (el: any) => el.product_type_code == "loan"
     );
-  }, [requestSearch]);
+  }, [loanSearch]);
 
   const sumMyLoan = useMemo(() => {
-    if (!requestSearch || !requestSearch.requests) {
+    if (!loanSearch || !loanSearch.loan_requests) {
       return 0;
     }
     let num = 0;
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (el.is_my_request == "1" && el.request_type === "wallet") {
+    const filteredRequests = loanSearch.loan_requests.filter((el: any) => {
+      if (el.product_type_code === "loan") {
         num += Number(el.loan_amount);
         return true;
       }
       return false;
     });
     return num;
-  }, [requestSearch]);
+  }, [loanSearch]);
 
   const sumMySaving = useMemo(() => {
-    if (!requestSearch || !requestSearch.requests) {
+    if (!loanSearch || !loanSearch.requests) {
       return 0;
     }
     let num = 0;
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (el.is_my_request == "1" && el.request_type === "saving") {
+    const filteredRequests = loanSearch.loan_requests.filter((el: any) => {
+      if (el.product_type_code === "saving") {
         num += Number(el.loan_amount);
         return true;
       }
@@ -86,12 +86,12 @@ export const FundHistory = () => {
     });
 
     return num;
-  }, [requestSearch]);
+  }, [loanSearch]);
 
   const columns: any[] = [
     {
       title: "№",
-      dataIndex: "id",
+      dataIndex: "request_id",
       key: "is_status",
       width: "6%",
       render: (id: string) => (
@@ -112,7 +112,7 @@ export const FundHistory = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "request_type",
+      dataIndex: "product_type_code",
       key: "type",
       align: "center",
       width: "23%",
@@ -129,7 +129,7 @@ export const FundHistory = () => {
     },
     {
       title: "Хүү",
-      dataIndex: "rate_month",
+      dataIndex: "loan_rate_month",
       key: "rate",
       align: "center",
       width: "15%",
@@ -156,7 +156,6 @@ export const FundHistory = () => {
       width: "10%",
       align: "center",
       render: (request_id: string, data: any) => {
-        console.log(request_id, "request_id");
         return (
           <Image
             width={25}
@@ -180,7 +179,7 @@ export const FundHistory = () => {
   const columns1: any[] = [
     {
       title: "№",
-      dataIndex: "id",
+      dataIndex: "request_id",
       key: "is_status",
       width: "6%",
       render: (id: string) => (
@@ -201,7 +200,7 @@ export const FundHistory = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "request_type",
+      dataIndex: "product_type_code",
       key: "type",
       align: "center",
       width: "23%",
@@ -218,7 +217,7 @@ export const FundHistory = () => {
     },
     {
       title: "Хүү",
-      dataIndex: "rate_month",
+      dataIndex: "loan_rate_month",
       key: "rate",
       align: "center",
       width: "15%",
@@ -250,7 +249,7 @@ export const FundHistory = () => {
           onClick={() => {
             setSelectedId(request_id);
             setSelectedData(data);
-            data?.request_type == "saving"
+            data?.product_type_code == "saving"
               ? setMyFundTabKey("2")
               : setMyFundTabKey("1");
             setOpen(true);
@@ -408,10 +407,9 @@ export const FundHistory = () => {
   const downloadPdfBtn = (code: string) => {
     downloadPdf(
       {
-        request_id:
-          selectedData?.main_request_id && selectedData?.main_request_id,
+        request_id: activeClass && activeClass,
         password: code.toString(),
-        contract_type: selectedData?.request_type,
+        contract_type: selectedData?.product_type_code,
       },
       {
         onSuccess: (data: {
@@ -441,8 +439,6 @@ export const FundHistory = () => {
       }
     );
   };
-
-  console.log("selectedData", requestSearch);
 
   return (
     <Row justify="center" className={styles["fund-main-row"]}>
@@ -508,7 +504,6 @@ export const FundHistory = () => {
                               </Col>
                             </Row>
                           </Col>
-
                           {myFundTabKey == "2" && (
                             <Col span={24}>
                               <Row justify="space-between" align="middle">
@@ -522,16 +517,16 @@ export const FundHistory = () => {
                                 <Col flex="none">
                                   <div
                                     className={
-                                      o.request_type == "saving"
+                                      o.product_type_code == "saving"
                                         ? stylesFD["foundation-rate-profit"]
                                         : stylesDL["dloan-rate-profit"]
                                     }
                                   >
                                     {numberToCurrency(
                                       Math.floor(
-                                        (o.filled_amount / 100) *
-                                          Number(o.rate_day) *
-                                          Number(o.duration)
+                                        (o.loan_amount / 100) *
+                                          Number(o.loan_rate_day) *
+                                          Number(o.loan_day)
                                       )
                                     )}
                                   </div>
@@ -555,10 +550,102 @@ export const FundHistory = () => {
                                   >
                                     {numberToCurrency(
                                       Math.round(
-                                        Number(o.filled_amount / 100) *
-                                          Number(o.rate_day) *
-                                          Number(o.duration) *
+                                        Number(o.loan_amount / 100) *
+                                          Number(o.loan_rate_day) *
+                                          Number(o.loan_day) *
                                           0.1
+                                      )
+                                    )}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </Col>
+                          )}
+                          {myFundTabKey == "1" && (
+                            <Col span={24}>
+                              <Row justify="space-between" align="middle">
+                                <Col flex="none">
+                                  <div
+                                    className={stylesDL["dloan-detail-text"]}
+                                  >
+                                    Зээлийн хүү (төгрөгөөр)
+                                  </div>
+                                </Col>
+                                <Col flex="none">
+                                  <div
+                                    className={
+                                      o.product_type_code == "saving"
+                                        ? stylesFD["foundation-rate-profit"]
+                                        : stylesDL["dloan-rate-profit"]
+                                    }
+                                  >
+                                    {numberToCurrency(
+                                      Math.round(
+                                        Number(o.loan_amount / 100) *
+                                          Number(o.loan_rate_day) *
+                                          Number(o.loan_day)
+                                      )
+                                    )}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </Col>
+                          )}
+                          {myFundTabKey == "1" && (
+                            <Col span={24}>
+                              <Row justify="space-between" align="middle">
+                                <Col flex="none">
+                                  <div
+                                    className={stylesDL["dloan-detail-text"]}
+                                  >
+                                    Нийт төлөх зээлийн хэмжээ
+                                  </div>
+                                </Col>
+                                <Col flex="none">
+                                  <div
+                                    className={
+                                      stylesDL["dloan-detail-maxValue"]
+                                    }
+                                  >
+                                    {numberToCurrency(
+                                      (o.loan_amount / 100) *
+                                        o.loan_rate_day *
+                                        Number(o.loan_day) +
+                                        Number(o.loan_amount) +
+                                        (o.loan_amount / 100) *
+                                          Number(o.fee_percent)
+                                    )}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </Col>
+                          )}
+                          {myFundTabKey == "2" && (
+                            <Col span={24}>
+                              <Row justify="space-between" align="middle">
+                                <Col flex="none">
+                                  <div
+                                    className={stylesDL["dloan-detail-text"]}
+                                  >
+                                    Нийт
+                                  </div>
+                                </Col>
+                                <Col flex="none">
+                                  <div
+                                    className={
+                                      stylesDL["dloan-detail-maxValue"]
+                                    }
+                                  >
+                                    {numberToCurrency(
+                                      Math.round(
+                                        (o.loan_amount / 100) *
+                                          Number(o.loan_rate_day) *
+                                          Number(o.loan_day) -
+                                          Number(o.loan_amount / 100) *
+                                            Number(o.loan_rate_day) *
+                                            Number(o.loan_day) *
+                                            0.1 +
+                                          Number(o.loan_amount)
                                       )
                                     )}
                                   </div>
@@ -570,28 +657,34 @@ export const FundHistory = () => {
                             <Row justify="space-between" align="middle">
                               <Col flex="none">
                                 <div className={stylesDL["dloan-detail-text"]}>
-                                  Хүүгийн хэмжээ
+                                  Хүүгийн хэмжээ (хувь)
                                 </div>
                               </Col>
                               <Col flex="none">
                                 <div
-                                  className={
-                                    o.request_type == "saving"
-                                      ? stylesFD["foundation-rate-profit"]
-                                      : stylesDL["dloan-rate-profit"]
-                                  }
+                                  className={stylesDL["dloan-detail-maxValue"]}
                                 >
-                                  {numberToCurrency(
-                                    Math.round(
-                                      Number(o.filled_amount / 100) *
-                                        Number(o.rate_day) *
-                                        Number(o.duration)
-                                    )
-                                  )}
+                                  {o.loan_rate_month} %
                                 </div>
                               </Col>
                             </Row>
                           </Col>
+                          <Col span={24}>
+                            <Row justify="space-between" align="middle">
+                              <Col flex="none">
+                                <div className={stylesDL["dloan-detail-text"]}>
+                                  Хугацаа
+                                </div>
+                              </Col>
+                              <Col flex="none">
+                                <div
+                                  className={stylesDL["dloan-detail-maxValue"]}
+                                >
+                                  {o.loan_day} хоног
+                                </div>
+                              </Col>
+                            </Row>
+                          </Col>{" "}
                           {myFundTabKey == "1" && (
                             <Col span={24}>
                               <Row justify="space-between" align="middle">
@@ -626,7 +719,7 @@ export const FundHistory = () => {
                                   <div
                                     className={stylesDL["dloan-detail-text"]}
                                   >
-                                    Нийт төлөх зээлийн хэмжээ
+                                    Зээлийн төлөлт хийх өдөр
                                   </div>
                                 </Col>
                                 <Col flex="none">
@@ -635,52 +728,7 @@ export const FundHistory = () => {
                                       stylesDL["dloan-detail-maxValue"]
                                     }
                                   >
-                                    {numberToCurrency(
-                                      (o.loan_amount / 100) *
-                                        o.rate_day *
-                                        Number(o.duration) +
-                                        Number(o.loan_amount) +
-                                        (o.loan_amount / 100) *
-                                          Number(o.fee_percent)
-                                    )}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
-                          <Col span={24}>
-                            <Row justify="space-between" align="middle">
-                              <Col flex="none">
-                                <div className={stylesDL["dloan-detail-text"]}>
-                                  Хугацаа
-                                </div>
-                              </Col>
-                              <Col flex="none">
-                                <div
-                                  className={stylesDL["dloan-detail-maxValue"]}
-                                >
-                                  {o.duration} хоног
-                                </div>
-                              </Col>
-                            </Row>
-                          </Col>
-                          {myFundTabKey == "1" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Эргэн төлөгдөх хугацаа
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      stylesDL["dloan-detail-maxValue"]
-                                    }
-                                  >
-                                    {o.expire_date.slice(0, 10)}
+                                    {o.this_month_pay_date.slice(0, 10)}
                                   </div>
                                 </Col>
                               </Row>
@@ -689,26 +737,27 @@ export const FundHistory = () => {
                         </Row>
                       </Col>
                     </Col>
-                    {o.is_my_request == "1" && (
-                      <Col span={22} className="mx-auto w-full">
-                        <Col className="mt-[20px]">
-                          <Row gutter={[0, 22]}>
-                            <Col span={24} className="flex">
-                              <Button
-                                type="link"
-                                className="flex  p-0"
-                                onClick={() => setOpenPdf(true)}
-                              >
-                                <img src="/images/pdf.svg" alt="pdf" />
-                                <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
-                                  Богино хугацааны санхүүжилтын гэрээ
-                                </p>
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Col>
+
+                    <Col span={22} className="mx-auto w-full">
+                      <Col className="mt-[20px]">
+                        <Row gutter={[0, 22]}>
+                          <Col span={24} className="flex">
+                            <Button
+                              type="link"
+                              className="flex  p-0"
+                              onClick={() => setOpenPdf(true)}
+                            >
+                              <img src="/images/pdf.svg" alt="pdf" />
+                              <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
+                                {myFundTabKey == "1"
+                                  ? "Зээлийн гэрээ"
+                                  : "Богино хугацааны санхүүжилтын гэрээ"}
+                              </p>
+                            </Button>
+                          </Col>
+                        </Row>
                       </Col>
-                    )}
+                    </Col>
 
                     <Col className="mx-auto mt-[20px]" span={22}>
                       {activeClass && (

@@ -16,13 +16,13 @@ const History = () => {
   useRequireAuth();
 
   //query
-  const { data: requestSearch } = api.loan.reguestSearch.useQuery(
+  const { data: loanSearch } = api.loan.loanSearch.useQuery(
     {
       order: "date",
       order_up: "1",
       page: "1",
-      page_size: "30",
-      filter_type: "done",
+      page_size: "50",
+      filter_type: "current",
     },
     { refetchOnWindowFocus: false }
   );
@@ -34,8 +34,8 @@ const History = () => {
   const [value, setValue] = useState<any>(null);
 
   const dataTable = useMemo(() => {
-    return requestSearch?.requests;
-  }, [requestSearch]);
+    return loanSearch?.loan_requests;
+  }, [loanSearch]);
 
   const onOpenChange = (open: any) => {
     if (open) {
@@ -77,7 +77,7 @@ const History = () => {
   const columns: any[] = [
     {
       title: "№",
-      dataIndex: "id",
+      dataIndex: "request_id",
       key: "request_id",
       width: "6%",
       render: (request_id: string) => (
@@ -98,7 +98,7 @@ const History = () => {
     },
     {
       title: "Төрөл",
-      dataIndex: "request_type",
+      dataIndex: "product_type_code",
       key: "type",
       align: "center",
       width: "23%",
@@ -115,19 +115,19 @@ const History = () => {
     },
     {
       title: "Хүү",
-      dataIndex: "rate_month",
+      dataIndex: "loan_rate_month",
       key: "rate",
       align: "center",
       width: "15%",
       render: (rate: string) => (
         <div className={styles["history-table-number"]}>
-          {rate?.slice(0, 4)} %
+          {rate.toString()?.slice(0, 4)} %
         </div>
       ),
     },
     {
       title: "Хаасан огноо",
-      dataIndex: "create_date",
+      dataIndex: "this_month_pay_date",
       key: "date",
       align: "center",
       width: "23%",

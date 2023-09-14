@@ -448,7 +448,7 @@ export const List = () => {
                                   >
                                     {numberToCurrency(
                                       Math.round(
-                                        (o.filled_amount / 100) *
+                                        (o.loan_amount / 100) *
                                           Number(o.rate_day) *
                                           Number(o.duration)
                                       )
@@ -474,7 +474,7 @@ export const List = () => {
                                   >
                                     {numberToCurrency(
                                       Math.round(
-                                        Number(o.balance_amount / 100) *
+                                        Number(o.loan_amount / 100) *
                                           Number(o.rate_day) *
                                           Number(o.duration) *
                                           0.1
@@ -500,7 +500,13 @@ export const List = () => {
                                       : stylesDL["dloan-rate-profit"]
                                   }
                                 >
-                                  {o.rate_month} %
+                                  {numberToCurrency(
+                                    Math.round(
+                                      Number(o.balance_amount / 100) *
+                                        Number(o.rate_day) *
+                                        Number(o.duration)
+                                    )
+                                  )}
                                 </div>
                               </Col>
                             </Row>

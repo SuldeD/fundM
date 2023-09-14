@@ -314,6 +314,8 @@ export const MyFund = () => {
     },
   ];
 
+  console.log(orders);
+
   const items = [
     {
       key: "1",
@@ -561,8 +563,8 @@ export const MyFund = () => {
                                         }
                                       >
                                         {numberToCurrency(
-                                          Math.round(
-                                            Number(o.balance_amount / 100) *
+                                          Math.ceil(
+                                            Number(o.loan_amount / 100) *
                                               Number(o.rate_day) *
                                               Number(o.duration)
                                           )
@@ -592,7 +594,7 @@ export const MyFund = () => {
                                       >
                                         {numberToCurrency(
                                           Math.round(
-                                            Number(o.balance_amount / 100) *
+                                            Number(o.loan_amount / 100) *
                                               Number(o.rate_day) *
                                               Number(o.duration) *
                                               0.1
@@ -622,7 +624,7 @@ export const MyFund = () => {
                                     >
                                       {numberToCurrency(
                                         Math.round(
-                                          Number(o.filled_amount / 100) *
+                                          Number(o.balance_amount / 100) *
                                             Number(o.rate_day) *
                                             Number(o.duration)
                                         )
