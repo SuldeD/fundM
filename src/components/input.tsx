@@ -34,14 +34,17 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
     }
   };
 
-  function submit() {
-    setLoadings(true);
+  async function submit() {
     if (code.join("").length == 4) {
-      onFinish(code.join(""));
-      setLoadings(false);
+      await onFinish(code.join(""));
+      setTimeout(() => {
+        setLoadings(false);
+      }, 4000);
       setCode([...Array(length)].map(() => ""));
     } else {
-      setLoadings(false);
+      setTimeout(() => {
+        setLoadings(false);
+      }, 4000);
       error({
         title: "Амжилтгүй",
         content: <div>FundMe кодоо оруулна уу!</div>,
@@ -111,9 +114,12 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
                 <Col span={20}>
                   <Button
                     type="primary"
-                    loading={loadings == true}
+                    loading={loadings}
                     className={styles["dloan-modal-verify-button"]}
-                    onClick={submit}
+                    onClick={() => {
+                      setLoadings(true);
+                      submit();
+                    }}
                   >
                     Баталгаажуулах
                   </Button>
