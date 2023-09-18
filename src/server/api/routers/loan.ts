@@ -324,17 +324,18 @@ export const loanRouter = createTRPCRouter({
       z.object({
         request_id: z.string(),
         password: z.string(),
+        pay_type:z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
-      const { request_id, password } = input;
+      const { request_id, password, pay_type } = input;
 
       const body = encrypt(
         JSON.stringify({
           request_id,
           password,
-          pay_type: "",
+          pay_type,
         })
       );
       const res2 = await fetch(

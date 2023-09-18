@@ -81,6 +81,24 @@ export const MyFund = () => {
     });
     return Math.round(num);
   }, [requestSearch]);
+  const sumMyLoanBalance = useMemo(() => {
+    if (!requestSearch || !requestSearch.requests) {
+      return 0;
+    }
+    let num = 0;
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "wallet"
+      ) {
+        num += Number(el.balance_amount);
+        return true;
+      }
+      return false;
+    });
+    return Math.round(num);
+  }, [requestSearch]);
+
   const sumMySaving = useMemo(() => {
     if (!requestSearch || !requestSearch.requests) {
       return 0;
@@ -92,6 +110,24 @@ export const MyFund = () => {
         el.request_type === "saving"
       ) {
         num += Number(el.loan_amount);
+        return true;
+      }
+      return false;
+    });
+
+    return Math.round(num);
+  }, [requestSearch]);
+  const sumMySavingBalance = useMemo(() => {
+    if (!requestSearch || !requestSearch.requests) {
+      return 0;
+    }
+    let num = 0;
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "saving"
+      ) {
+        num += Number(el.balance_amount);
         return true;
       }
       return false;
@@ -314,7 +350,7 @@ export const MyFund = () => {
     },
   ];
 
-  console.log(orders);
+  console.log(mySavingOrders);
 
   const items = [
     {
@@ -361,14 +397,7 @@ export const MyFund = () => {
               </div>
               <div className={styles["myfund-tabs-content-rate"]}>
                 {myLoanOrders.length > 0
-                  ? numberToCurrency(
-                      Math.round(
-                        sumMyLoan -
-                          (sumMyLoan * myLoanOrdersSum) /
-                            myLoanOrders.length /
-                            100
-                      )
-                    )
+                  ? numberToCurrency(sumMyLoanBalance)
                   : numberToCurrency(0)}
               </div>
             </Col>
@@ -424,7 +453,7 @@ export const MyFund = () => {
                 </div>
                 <div className={styles["myfund-tabs-content-rate"]}>
                   {mySavingOrders.length > 0
-                    ? Math.round(mySavingOrdersSum / mySavingOrders.length)
+                    ? Math.round(100 - (sumMySavingBalance * 100) / sumMySaving)
                     : 0}{" "}
                   %
                 </div>
@@ -435,13 +464,7 @@ export const MyFund = () => {
                 </div>
                 <div className={styles["myfund-tabs-content-rate"]}>
                   {mySavingOrders.length > 0
-                    ? numberToCurrency(
-                        Math.round(
-                          sumMySaving -
-                            sumMySaving *
-                              (mySavingOrdersSum / mySavingOrders.length / 100)
-                        )
-                      )
+                    ? numberToCurrency(sumMySavingBalance)
                     : numberToCurrency(sumMySaving)}
                 </div>
               </Col>
@@ -541,7 +564,6 @@ export const MyFund = () => {
                                   </Col>
                                 </Row>
                               </Col>
-
                               {myFundTabKey == "2" && (
                                 <Col span={24}>
                                   <Row justify="space-between" align="middle">
@@ -605,34 +627,146 @@ export const MyFund = () => {
                                   </Row>
                                 </Col>
                               )}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Зээлийн хүү (төгрөгөөр)
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          o.request_type == "saving"
+                                            ? stylesFD["foundation-rate-profit"]
+                                            : stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            Number(o.loan_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Нийт
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.ceil(
+                                            (o.loan_amount / 100) *
+                                              o.rate_day *
+                                              Number(o.duration) +
+                                              Number(o.loan_amount) +
+                                              (o.loan_amount / 100) *
+                                                Number(o.fee_percent)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Нийт
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            (o.loan_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration) -
+                                              Number(o.loan_amount / 100) *
+                                                Number(o.rate_day) *
+                                                Number(o.duration) *
+                                                0.1 +
+                                              Number(o.loan_amount)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
                               <Col span={24}>
                                 <Row justify="space-between" align="middle">
                                   <Col flex="none">
                                     <div
                                       className={stylesDL["dloan-detail-text"]}
                                     >
-                                      Хүүгийн хэмжээ
+                                      Хүүгийн хэмжээ (хувь)
                                     </div>
                                   </Col>
                                   <Col flex="none">
                                     <div
                                       className={
-                                        o.request_type == "saving"
-                                          ? stylesFD["foundation-rate-profit"]
-                                          : stylesDL["dloan-rate-profit"]
+                                        stylesDL["dloan-detail-maxValue"]
                                       }
                                     >
-                                      {numberToCurrency(
-                                        Math.round(
-                                          Number(o.balance_amount / 100) *
-                                            Number(o.rate_day) *
-                                            Number(o.duration)
-                                        )
-                                      )}
+                                      {o.rate_month} %
                                     </div>
                                   </Col>
                                 </Row>
                               </Col>
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Хугацаа
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        stylesDL["dloan-detail-maxValue"]
+                                      }
+                                    >
+                                      {o.duration} хоног
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>{" "}
                               {myFundTabKey == "1" && (
                                 <Col span={24}>
                                   <Row justify="space-between" align="middle">
@@ -673,60 +807,7 @@ export const MyFund = () => {
                                           stylesDL["dloan-detail-text"]
                                         }
                                       >
-                                        Нийт төлөх зээлийн хэмжээ
-                                      </div>
-                                    </Col>
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          stylesDL["dloan-detail-maxValue"]
-                                        }
-                                      >
-                                        {numberToCurrency(
-                                          Math.ceil(
-                                            (o.loan_amount / 100) *
-                                              o.rate_day *
-                                              Number(o.duration) +
-                                              Number(o.loan_amount) +
-                                              (o.loan_amount / 100) *
-                                                Number(o.fee_percent)
-                                          )
-                                        )}
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                </Col>
-                              )}
-                              <Col span={24}>
-                                <Row justify="space-between" align="middle">
-                                  <Col flex="none">
-                                    <div
-                                      className={stylesDL["dloan-detail-text"]}
-                                    >
-                                      Хугацаа
-                                    </div>
-                                  </Col>
-                                  <Col flex="none">
-                                    <div
-                                      className={
-                                        stylesDL["dloan-detail-maxValue"]
-                                      }
-                                    >
-                                      {o.duration} хоног
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </Col>
-                              {myFundTabKey == "1" && (
-                                <Col span={24}>
-                                  <Row justify="space-between" align="middle">
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          stylesDL["dloan-detail-text"]
-                                        }
-                                      >
-                                        Эргэн төлөгдөх хугацаа
+                                        Зээлийн төлөлт хийх өдөр
                                       </div>
                                     </Col>
                                     <Col flex="none">

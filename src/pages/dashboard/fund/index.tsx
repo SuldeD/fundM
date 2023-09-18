@@ -46,15 +46,15 @@ export const FundHistory = () => {
   }, [loanSearch]);
 
   const mySavingOrders = useMemo(() => {
-    return loanSearch?.loan_requests?.filter(
-      (el: any) => el.product_type_code == "saving"
-    );
+    return loanSearch?.loan_requests
+      ?.reverse()
+      .filter((el: any) => el.product_type_code == "saving");
   }, [loanSearch]);
 
   const myLoanOrders = useMemo(() => {
-    return loanSearch?.loan_requests?.filter(
-      (el: any) => el.product_type_code == "loan"
-    );
+    return loanSearch?.loan_requests
+      ?.reverse()
+      .filter((el: any) => el.product_type_code == "loan");
   }, [loanSearch]);
 
   const sumMyLoan = useMemo(() => {
@@ -73,12 +73,12 @@ export const FundHistory = () => {
   }, [loanSearch]);
 
   const sumMySaving = useMemo(() => {
-    if (!loanSearch || !loanSearch.requests) {
+    if (!loanSearch || !loanSearch.loan_requests) {
       return 0;
     }
     let num = 0;
     const filteredRequests = loanSearch.loan_requests.filter((el: any) => {
-      if (el.product_type_code === "saving") {
+      if (el.product_type_code == "saving") {
         num += Number(el.loan_amount);
         return true;
       }
@@ -133,8 +133,10 @@ export const FundHistory = () => {
       key: "rate",
       align: "center",
       width: "15%",
-      render: (rate: string) => (
-        <div className={styles["fund-tabs-content-table-number"]}>{rate} %</div>
+      render: (rate: number) => (
+        <div className={styles["fund-tabs-content-table-number"]}>
+          {Math.round(rate * 10) / 10}0 %
+        </div>
       ),
     },
     {
@@ -144,9 +146,7 @@ export const FundHistory = () => {
       align: "center",
       width: "23%",
       render: (day: string) => (
-        <div className={styles["fund-tabs-content-table-number"]}>
-          {day.slice(0, 10)}
-        </div>
+        <div className={styles["fund-tabs-content-table-number"]}>{day}</div>
       ),
     },
     {
@@ -221,8 +221,10 @@ export const FundHistory = () => {
       key: "rate",
       align: "center",
       width: "15%",
-      render: (rate: string) => (
-        <div className={styles["fund-tabs-content-table-number"]}>{rate} %</div>
+      render: (rate: number) => (
+        <div className={styles["fund-tabs-content-table-number"]}>
+          {Math.round(rate * 10) / 10}0 %
+        </div>
       ),
     },
     {
@@ -232,9 +234,7 @@ export const FundHistory = () => {
       align: "center",
       width: "23%",
       render: (day: string) => (
-        <div className={styles["fund-tabs-content-table-number"]}>
-          {day.slice(0, 10)}
-        </div>
+        <div className={styles["fund-tabs-content-table-number"]}>{day}</div>
       ),
     },
     {
@@ -287,10 +287,10 @@ export const FundHistory = () => {
                   Дундаж хүү
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {mySavingOrders && mySavingOrders[0]?.rate_month
-                    ? mySavingOrders[0]?.rate_month
-                    : "0"}{" "}
-                  %
+                  {mySavingOrders && mySavingOrders[0]?.loan_rate_month
+                    ? Math.round(mySavingOrders[0]?.loan_rate_month * 10) / 10
+                    : "0"}
+                  0 %
                 </div>
               </Col>
               <Col flex="none">
@@ -341,10 +341,10 @@ export const FundHistory = () => {
                   Дундаж хүү
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
-                  {myLoanOrders && myLoanOrders[0]?.rate_month
-                    ? myLoanOrders[0]?.rate_month
-                    : "0"}{" "}
-                  %
+                  {myLoanOrders && myLoanOrders[0]?.loan_rate_month
+                    ? Math.round(myLoanOrders[0]?.loan_rate_month * 10) / 10
+                    : "0"}
+                  0 %
                 </div>
               </Col>
               <Col flex="none">
@@ -380,6 +380,7 @@ export const FundHistory = () => {
       {
         request_id: activeClass && activeClass,
         password: code,
+        pay_type: foundationBankData == "3" ? "extension" : "loan",
       },
       {
         onSuccess: (data: {
@@ -485,7 +486,7 @@ export const FundHistory = () => {
                               <Col flex="none">
                                 <div
                                   className={
-                                    o.request_type == "saving"
+                                    o.product_type_code == "saving"
                                       ? stylesFD["foundation-detail-text"]
                                       : stylesDL["dloan-detail-text"]
                                   }
@@ -525,7 +526,8 @@ export const FundHistory = () => {
                                     {numberToCurrency(
                                       Math.floor(
                                         (o.loan_amount / 100) *
-                                          Number(o.loan_rate_day) *
+                                          (Math.round(o.loan_rate_day * 10) /
+                                            10) *
                                           Number(o.loan_day)
                                       )
                                     )}
@@ -551,7 +553,8 @@ export const FundHistory = () => {
                                     {numberToCurrency(
                                       Math.round(
                                         Number(o.loan_amount / 100) *
-                                          Number(o.loan_rate_day) *
+                                          (Math.round(o.loan_rate_day * 10) /
+                                            10) *
                                           Number(o.loan_day) *
                                           0.1
                                       )
@@ -582,7 +585,10 @@ export const FundHistory = () => {
                                     {numberToCurrency(
                                       Math.round(
                                         Number(o.loan_amount / 100) *
-                                          Number(o.loan_rate_day) *
+                                          Number(
+                                            Math.round(o.loan_rate_day * 10) /
+                                              10
+                                          ) *
                                           Number(o.loan_day)
                                       )
                                     )}
@@ -609,7 +615,8 @@ export const FundHistory = () => {
                                   >
                                     {numberToCurrency(
                                       (o.loan_amount / 100) *
-                                        o.loan_rate_day *
+                                        (Math.round(o.loan_rate_day * 10) /
+                                          10) *
                                         Number(o.loan_day) +
                                         Number(o.loan_amount) +
                                         (o.loan_amount / 100) *
@@ -639,10 +646,12 @@ export const FundHistory = () => {
                                     {numberToCurrency(
                                       Math.round(
                                         (o.loan_amount / 100) *
-                                          Number(o.loan_rate_day) *
+                                          (Math.round(o.loan_rate_day * 10) /
+                                            10) *
                                           Number(o.loan_day) -
                                           Number(o.loan_amount / 100) *
-                                            Number(o.loan_rate_day) *
+                                            (Math.round(o.loan_rate_day * 10) /
+                                              10) *
                                             Number(o.loan_day) *
                                             0.1 +
                                           Number(o.loan_amount)
@@ -664,7 +673,7 @@ export const FundHistory = () => {
                                 <div
                                   className={stylesDL["dloan-detail-maxValue"]}
                                 >
-                                  {o.loan_rate_month} %
+                                  {Math.round(o.loan_rate_month * 10) / 10}0 %
                                 </div>
                               </Col>
                             </Row>
@@ -698,7 +707,7 @@ export const FundHistory = () => {
                                 <Col flex="none">
                                   <div
                                     className={
-                                      o.request_type == "saving"
+                                      o.product_type_code == "saving"
                                         ? stylesFD["foundation-rate-profit"]
                                         : stylesDL["dloan-rate-profit"]
                                     }
@@ -787,7 +796,8 @@ export const FundHistory = () => {
                               className={stylesDL["dloan-button-back"]}
                               type="primary"
                               onClick={() => {
-                                message.info("coming soon");
+                                setIsVerifyOpen(true);
+                                setFoundationBankData("3");
                               }}
                             >
                               <Col flex={"auto"}>
@@ -936,6 +946,11 @@ export const FundHistory = () => {
                 />
               </div>
             </div>
+            {foundationBankData?.product?.extension_desc && (
+              <div className="mt-[10px] text-red-600">
+                {foundationBankData?.product?.extension_desc}
+              </div>
+            )}
 
             <div className="mt-[20px]">
               <label className="text-sm font-normal text-black text-opacity-50">

@@ -241,6 +241,7 @@ export const Loan = () => {
                 if (data.success) {
                   setIsVerifyOpen(false);
                   setIsCompleteOpen(true);
+                  setChecked(false);
                 } else {
                   error({
                     title: "Амжилтгүй",
@@ -266,6 +267,7 @@ export const Loan = () => {
                 if (data.success) {
                   setIsVerifyOpen(false);
                   setIsCompleteOpenLoan(true);
+                  setChecked(false);
                 } else {
                   error({
                     title: "Амжилтгүй",

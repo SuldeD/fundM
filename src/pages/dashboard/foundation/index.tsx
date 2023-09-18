@@ -129,6 +129,7 @@ export const Foundation = () => {
                 {
                   request_id: requestId && requestId,
                   password: code.toString(),
+                  pay_type: "saving",
                 },
                 {
                   onSuccess: (data: {
@@ -139,7 +140,9 @@ export const Foundation = () => {
                   }) => {
                     if (data.success) {
                       setFoundationBankData(data);
+                      setChecked(false);
                     } else {
+                      setChecked(false);
                       error({
                         title: "Амжилтгүй",
                         content: <div>{data?.description || null}</div>,
