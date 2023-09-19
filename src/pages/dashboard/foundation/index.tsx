@@ -56,7 +56,6 @@ export const Foundation = () => {
   const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
   const [activeDuration, setActiveDuration] = useState<number>(0);
-  const [requestId, setRequestId] = useState<string>("");
   const [foundationBankData, setFoundationBankData] = useState<any>();
   const [checked, setChecked] = useState<boolean>(false);
 
@@ -75,7 +74,7 @@ export const Foundation = () => {
   const rate = Number(saving?.loan_rate_day);
 
   //functions
-  function submit() {
+  function submit(code: any) {
     loanReqMutate(
       {
         product_id: (saving?.product_id).toString(),
@@ -96,8 +95,8 @@ export const Foundation = () => {
           description: any;
         }) => {
           if (data.success) {
-            setRequestId(data?.request_id);
             setIsVerifyOpen(true);
+            verifyCompleteModal({ code, request_id: data?.request_id });
           } else {
             error({
               title: "Амжилтгүй",
@@ -108,11 +107,11 @@ export const Foundation = () => {
       }
     );
   }
-  function verifyCompleteModal(code: any) {
+  function verifyCompleteModal({ code, request_id }: any) {
     if (code) {
       loanReqConfirmMut(
         {
-          request_id: requestId && requestId,
+          request_id: request_id && request_id,
           password: code.toString(),
         },
         {
@@ -127,7 +126,7 @@ export const Foundation = () => {
               setIsCompleteOpen(true);
               repayment(
                 {
-                  request_id: requestId && requestId,
+                  request_id: request_id && request_id,
                   password: code.toString(),
                   pay_type: "saving",
                 },
@@ -619,7 +618,7 @@ export const Foundation = () => {
                           title: "Амжилтгүй",
                           content: <div>Та дансаа баталгаажуулна уу</div>,
                         }) && router.push("/dashboard/profile")
-                      : submit()
+                      : setIsVerifyOpen(true)
                     : setIsModalOpen(true);
                 }}
               >
@@ -681,7 +680,10 @@ export const Foundation = () => {
                         >
                           <Button
                             className={styles["foundation-button-back"]}
-                            onClick={() => setIsModalOpen(false)}
+                            onClick={() => {
+                              setIsModalOpen(false);
+                              setChecked(false);
+                            }}
                           >
                             <div
                               className={styles["foundation-button-back-text"]}
@@ -708,7 +710,7 @@ export const Foundation = () => {
 
             <InputCode
               open={isVerifyOpen}
-              onFinish={verifyCompleteModal}
+              onFinish={submit}
               setOpen={setIsVerifyOpen}
             />
 

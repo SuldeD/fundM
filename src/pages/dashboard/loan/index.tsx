@@ -68,14 +68,10 @@ export const Loan = () => {
   //state
   const [checked, setChecked] = useState<boolean>(false);
   const [loadings, setLoadings] = useState<boolean>(false);
-  const [requestId, setRequestId] = useState<string>("");
   const [activeClass, setActiveClass] = useState<any>(true);
   const [inputValue, setInputValue] = useState<number>(50000);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
-  const [transaction_id, setTransaction_id] = useState<any>();
-  const [form_token, setForm_token] = useState<any>();
-  const [pin_code, setPin_code] = useState<any>();
   const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
   const [isCompleteOpenLoan, setIsCompleteOpenLoan] = useState<boolean>(false);
   const [activeDuration, setActiveDuration] = useState<number>(0);
@@ -134,7 +130,7 @@ export const Loan = () => {
   }, [getContent]);
 
   //function
-  function submit() {
+  function submit(code: any) {
     setLoadings(true);
     try {
       if (status == 1) {
@@ -162,11 +158,16 @@ export const Loan = () => {
               description: any;
             }) => {
               if (data.success) {
-                setTransaction_id(data?.transaction_id);
-                setForm_token(data?.form_token);
-                setIsVerifyOpen(true);
-                setPin_code(data?.pin_code);
+                // setTransaction_id(data?.transaction_id);
+                // setForm_token(data?.form_token);
+                // setPin_code(data?.pin_code);
                 setLoadings(false);
+                verifyCompleteModal({
+                  code,
+                  transaction_id: data?.transaction_id,
+                  form_token: data?.form_token,
+                  pin_code: data?.pin_code,
+                });
               } else {
                 setLoadings(false);
                 error({
@@ -201,9 +202,10 @@ export const Loan = () => {
               description: any;
             }) => {
               if (data.success) {
-                setRequestId(data?.request_id);
-                setIsVerifyOpen(true);
+                // setRequestId(data?.request_id);
+
                 setLoadings(false);
+                verifyCompleteModal({ request_id: data?.request_id });
               } else {
                 setLoadings(false);
                 error({
@@ -220,7 +222,13 @@ export const Loan = () => {
     }
   }
 
-  function verifyCompleteModal(code: any) {
+  function verifyCompleteModal({
+    code,
+    transaction_id,
+    form_token,
+    pin_code,
+    request_id,
+  }: any) {
     if (code) {
       try {
         if (status == 1) {
@@ -254,7 +262,7 @@ export const Loan = () => {
         } else {
           loanReqConfirmMut(
             {
-              request_id: requestId && requestId,
+              request_id: request_id && request_id,
               password: code.toString(),
             },
             {
@@ -405,7 +413,7 @@ export const Loan = () => {
                               title: "Амжилтгүй",
                               content: <div>Та дансаа баталгаажуулна уу</div>,
                             }) && router.push("/dashboard/profile")
-                          : submit();
+                          : setIsVerifyOpen(true);
                       }}
                     >
                       Зээлийн эрх нээлгэх
@@ -499,7 +507,7 @@ export const Loan = () => {
 
                   <InputCode
                     open={isVerifyOpen}
-                    onFinish={verifyCompleteModal}
+                    onFinish={submit}
                     setOpen={setIsVerifyOpen}
                   />
 
@@ -1083,7 +1091,7 @@ export const Loan = () => {
                             title: "Амжилтгүй",
                             content: <div>Та дансаа баталгаажуулна уу</div>,
                           }) && router.push("/dashboard/profile")
-                        : submit()
+                        : setIsVerifyOpen(true)
                       : setIsModalOpen(true);
                   }}
                 >
@@ -1175,7 +1183,7 @@ export const Loan = () => {
 
               <InputCode
                 open={isVerifyOpen}
-                onFinish={verifyCompleteModal}
+                onFinish={submit}
                 setOpen={setIsVerifyOpen}
               />
 
