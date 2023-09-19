@@ -11,6 +11,7 @@ import {
   message,
 } from "antd";
 import styles from "../../../styles/profile.module.css";
+import modalstyles from "../../../styles/modal.module.css";
 import { HeaderDashboard } from "../../../components/header";
 import { useMemo, useRef, useState } from "react";
 import { Loaderr } from "app/components/Loader";
@@ -22,6 +23,7 @@ import InputCode from "app/components/input";
 import { useSession } from "next-auth/react";
 import PopupModal from "app/components/modal";
 import { useAppContext } from "app/context/appContext";
+
 const { Panel } = Collapse;
 
 const beforeUpload = (file: any) => {
@@ -183,7 +185,7 @@ export const Profile = () => {
       } else {
         warning({
           title: "Амжилтгүй",
-          content: <div>Хүчинтэй утасны дугаар оруулна уу !</div>,
+          content: <div>Хүчинтэй имэйл хаяг оруулна уу !</div>,
         });
       }
     } else if (clickedEdit == 1) {
@@ -331,9 +333,9 @@ export const Profile = () => {
 
     if (clickedEdit == 3) {
       if (
-        fundPassPrev.length <= 0 ||
-        fundPassNew.length <= 0 ||
-        fundPassNewVer.length <= 0
+        fundPassPrev.length <= 3 ||
+        fundPassNew.length <= 3 ||
+        fundPassNewVer.length <= 3
       ) {
         return warning({
           title: "Амжилтгүй",
@@ -963,15 +965,17 @@ export const Profile = () => {
       <Row justify="center" className={styles["profile-main-row"]}>
         <Modal
           title={
-            clickedEdit == 0
-              ? "Утасны дугаар өөрчлөх"
-              : clickedEdit == 1
-              ? "Имэйл хаяг өөрчлөх"
-              : clickedEdit == 2
-              ? "Нэвтрэх нууц үг солих"
-              : clickedEdit == 3
-              ? "Fund me код солих"
-              : clickedEdit == 4 && "Fund me код шинээр үүсгэх"
+            <div className="text-center">
+              {clickedEdit == 0
+                ? "Утасны дугаар өөрчлөх"
+                : clickedEdit == 1
+                ? "Имэйл хаяг өөрчлөх"
+                : clickedEdit == 2
+                ? "Нэвтрэх нууц үг солих"
+                : clickedEdit == 3
+                ? "Fund me код солих"
+                : clickedEdit == 4 && "Fund me код шинээр үүсгэх"}
+            </div>
           }
           centered
           open={open}
@@ -980,7 +984,7 @@ export const Profile = () => {
           footer={[
             <div className="flex justify-between">
               <Button
-                className="w-[158px] cursor-pointer rounded-[20px] border bg-[#fff] text-center text-[#000]"
+                className={modalstyles["modal-ghost-button"]}
                 onClick={() => {
                   setOpen(false);
                   setCode([...Array(length)].map(() => ""));
@@ -997,7 +1001,7 @@ export const Profile = () => {
               </Button>
 
               <Button
-                className="w-[168px] rounded-[20px] bg-primary font-raleway text-[#fff]"
+                className={modalstyles["modal-button"]}
                 type="primary"
                 onClick={
                   clickedEdit == 0
@@ -1037,7 +1041,7 @@ export const Profile = () => {
                 Одоогын нууц үг оруулах
               </label>{" "}
               <Input.Password
-                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                className="mb-5 mt-3  h-[38px] w-full rounded-[9px] border px-2 py-1"
                 value={loginPassPrev}
                 onChange={(e) => setLoginPassPrev(e.target.value)}
               />
@@ -1049,7 +1053,7 @@ export const Profile = () => {
                 Шинэ нууц үг оруулах
               </label>
               <Input.Password
-                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
                 value={loginPassNew}
                 onChange={(e) => setLoginPassNew(e.target.value)}
               />
@@ -1061,7 +1065,7 @@ export const Profile = () => {
                 Шинэ нууц үг дахин оруулах
               </label>
               <Input.Password
-                className=" w-full rounded-[9px] border px-2 py-1"
+                className=" mt-3 h-[38px] w-full  rounded-[9px] border px-2 py-1"
                 value={loginPassNewVer}
                 onChange={(e) => setLoginPassNewVer(e.target.value)}
               />
@@ -1073,10 +1077,15 @@ export const Profile = () => {
                 Одоогын FundMe код оруулах
               </label>{" "}
               <Input.Password
-                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
                 value={fundPassPrev}
                 maxLength={4}
-                onChange={(e) => setFundPassPrev(e.target.value)}
+                onChange={(e) => {
+                  const numericPattern = /^[0-9]+$/;
+                  return numericPattern.test(e.target.value)
+                    ? setFundPassPrev(e.target.value)
+                    : setFundPassPrev("");
+                }}
               />
             </div>
           )}
@@ -1086,10 +1095,16 @@ export const Profile = () => {
                 Шинэ FundMe код оруулах
               </label>
               <Input.Password
-                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
                 value={fundPassNew}
                 maxLength={4}
-                onChange={(e) => setFundPassNew(e.target.value)}
+                type="number"
+                onChange={(e) => {
+                  const numericPattern = /^[0-9]+$/;
+                  return numericPattern.test(e.target.value)
+                    ? setFundPassNew(e.target.value)
+                    : setFundPassNew("");
+                }}
               />
             </div>
           )}
@@ -1099,23 +1114,34 @@ export const Profile = () => {
                 Шинэ FundMe код дахин оруулах
               </label>
               <Input.Password
-                className=" w-full rounded-[9px] border px-2 py-1"
+                className=" mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
                 value={fundPassNewVer}
                 maxLength={4}
-                onChange={(e) => setFundPassNewVer(e.target.value)}
+                type="number"
+                onChange={(e) => {
+                  const numericPattern = /^[0-9]+$/;
+                  return numericPattern.test(e.target.value)
+                    ? setFundPassNewVer(e.target.value)
+                    : setFundPassNewVer("");
+                }}
               />
             </div>
           )}
           {clickedEdit == 0 && (
             <Input
-              className="my-5 w-full rounded-[9px] border px-2 py-1"
+              className="my-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
               value={editNumber}
-              onChange={(e) => setEditNumber(e.target.value)}
+              onChange={(e) => {
+                const numericPattern = /^[0-9]+$/;
+                return numericPattern.test(e.target.value)
+                  ? setEditNumber(e.target.value)
+                  : setEditNumber("");
+              }}
             />
           )}
           {clickedEdit == 1 && (
             <Input
-              className="my-5 w-full rounded-[9px] border px-2 py-1"
+              className="my-5 h-[38px] w-full rounded-[9px] border px-2 py-1"
               value={editEmail}
               onChange={(e) => setEditEmail(e.target.value)}
             />
@@ -1127,10 +1153,15 @@ export const Profile = () => {
                 Шинэ FundMe код оруулах
               </label>
               <Input.Password
-                className="mb-5 w-full rounded-[9px] border px-2 py-1"
+                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
                 value={fundPassNew}
                 maxLength={4}
-                onChange={(e) => setFundPassNew(e.target.value)}
+                onChange={(e) => {
+                  const numericPattern = /^[0-9]+$/;
+                  return numericPattern.test(e.target.value)
+                    ? setFundPassNew(e.target.value)
+                    : setFundPassNew("");
+                }}
               />
             </div>
           )}
@@ -1140,20 +1171,29 @@ export const Profile = () => {
                 Шинэ FundMe код дахин оруулах
               </label>
               <Input.Password
-                className="mb-[20px] w-full rounded-[9px] border px-2 py-1"
+                className="mb-[20px] mt-3 h-[38px]  w-full rounded-[9px] border px-2 py-1"
                 value={fundPassNewVer}
                 maxLength={4}
-                onChange={(e) => setFundPassNewVer(e.target.value)}
+                onChange={(e) => {
+                  const numericPattern = /^[0-9]+$/;
+                  return numericPattern.test(e.target.value)
+                    ? setFundPassNewVer(e.target.value)
+                    : setFundPassNewVer("");
+                }}
               />
             </div>
           )}
-          <p className="font-sub mx-auto mb-[40px] w-[60%] text-center font-raleway text-[12px] font-normal">
+          <p className="font-sub mx-auto mt-3 w-[80%] text-center font-raleway text-[12px] font-normal">
             {clickedEdit == 0
               ? "Та өөрийн шинээр бүртгүүлэх утасны дугаараа оруулна уу."
               : clickedEdit == 4
-              ? "Та өөрийн FundMe код оруулж зээл авах хүсэлтээ баталгаажуулна уу."
+              ? "Таны FundMe код багадаа 4 тоо орсон байна!"
               : clickedEdit == 1
               ? "Та өөрийн шинээр бүртгүүлэх имэйл хаяг оруулна уу."
+              : clickedEdit == 2
+              ? "Таны нууц үг багадаа 8 оронтой 1 том үсэг 1 тэмдэгт орсон байна!"
+              : clickedEdit == 3
+              ? "Таны FundMe код багадаа 4 тоо орсон байна!"
               : ""}
           </p>
         </Modal>

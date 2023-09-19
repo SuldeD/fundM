@@ -310,7 +310,7 @@ export const Loan = () => {
             />
             {status == 0 ? (
               <Col md={22}>
-                <Row gutter={[22, 10]} justify="space-between" align="middle">
+                <Row gutter={[22, 0]} justify="space-between" align="middle">
                   <Col span={24}>
                     <div className={styles["dloan-slider-input-title"]}>
                       Зээлийн хэмжээ

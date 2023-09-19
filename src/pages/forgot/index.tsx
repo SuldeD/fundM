@@ -539,6 +539,10 @@ export default function Forgot() {
                           >
                             <Input.Password className={styles["input-style"]} />
                           </Form.Item>
+                          <p className="text-white opacity-[0.5]">
+                            Таны нууц үг багадаа 8 оронтой 1 том үсэг 1 тэмдэгт
+                            орсон байна!
+                          </p>
                         </Col>
                         <Col span={24}>
                           <Row gutter={25}>

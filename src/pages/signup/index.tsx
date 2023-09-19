@@ -146,6 +146,10 @@ export default function Signup() {
     const remainingDigits = values.register.substring(2);
     const numericPattern = /^[0-9]+$/; // Numeric digits pattern
 
+    // Validate that the first two characters are Cyrillic letters
+    const firstTwoCharacters = values.register.substring(0, 2);
+    const cyrillicPattern = /^[а-яөүА-ЯӨҮ\s]+$/; // Cyrillic letter pattern
+
     if (
       search != "org" &&
       (values.register.length !== 10 || !numericPattern.test(remainingDigits))
@@ -154,12 +158,7 @@ export default function Signup() {
         title: "Амжилтгүй",
         content: <div>Зөв регистрийн дугаар оруулна уу!</div>,
       });
-    }
-
-    // Validate that the first two characters are Cyrillic letters
-    const firstTwoCharacters = values.register.substring(0, 2);
-    const cyrillicPattern = /^[а-яөүА-ЯӨҮ\s]+$/; // Cyrillic letter pattern
-    if (search != "org" && !cyrillicPattern.test(firstTwoCharacters)) {
+    } else if (search != "org") {
       let IsGenderCheck, IsGender, IsAgeCheck, IsYear, IsAge;
       IsYear = 19;
       IsGenderCheck = values.register.slice(-2, -1);
@@ -184,9 +183,9 @@ export default function Signup() {
         IsAge < 110
       ) {
       } else {
-        return warning({
+        return error({
           title: "Амжилтгүй",
-          content: <div>Та 17 нас хүрээгүй бол бүртгүүлэх боломжгүй.</div>,
+          content: <div>Та 18 нас хүрээгүй бол бүртгүүлэх боломжгүй.</div>,
         });
       }
     }
@@ -300,7 +299,9 @@ export default function Signup() {
           {
             onSuccess: (data) => {
               if (data.success) {
-                success(data.description);
+                success(
+                  `${data.description}. Цаашид та бүртгүүлсэн гар утасны дугаар(${registerData?.phone}) нэвтрэх болно.`
+                );
                 router.push("/login");
               } else {
                 error({
@@ -330,7 +331,7 @@ export default function Signup() {
       onSuccess: (data) => {
         if (data.success) {
           success(
-            `${data.description}. Цаашид та бүртгүүлсэн гар утасны дугаараар нэвтрэх болно.`
+            `${data.description}. Цаашид та бүртгүүлсэн гар утасны дугаар(${registerData?.phone}) нэвтрэх болно.`
           );
           setLoading("");
           router.push("/login");
