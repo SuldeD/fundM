@@ -185,6 +185,43 @@ export const loanRouter = createTRPCRouter({
       return accountStatus;
     }),
 
+    checkPayAmount: protectedProcedure
+    .input(
+      z.object({
+        request_id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { request_id } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          request_id,
+          pay_type: "loan"
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/loan/check/pay/amount`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
+
+    
+
   loanRequest: protectedProcedure
     .input(
       z.object({

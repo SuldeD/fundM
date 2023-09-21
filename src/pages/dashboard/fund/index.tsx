@@ -17,6 +17,7 @@ export const FundHistory = () => {
   //mutates
   const { mutate: repayment } = api.loan.repayment.useMutation();
   const { mutate: downloadPdf } = api.loan.downloadPdf.useMutation();
+  const { mutate: checkPayAmount } = api.loan.checkPayAmount.useMutation();
 
   //queries
   const { data: loanSearch } = api.loan.loanSearch.useQuery(
@@ -100,7 +101,7 @@ export const FundHistory = () => {
     },
     {
       title: "Зээлийн хэмжээ",
-      dataIndex: "loan_amount",
+      dataIndex: "this_month_unpaid_amount",
       key: "loan_amount",
       align: "center",
       width: "23%",
@@ -161,7 +162,34 @@ export const FundHistory = () => {
             width={25}
             onClick={() => {
               setSelectedId(request_id);
-              setSelectedData(data);
+              data?.product_type_code == "saving"
+                ? setMyFundTabKey("2")
+                : setMyFundTabKey("1");
+              checkPayAmount(
+                {
+                  request_id: request_id && request_id,
+                },
+                {
+                  onSuccess: (data: {
+                    success: any;
+                    request_id: any;
+                    loan_requests: import("react").SetStateAction<undefined>;
+                    description: any;
+                    loan_info: any;
+                  }) => {
+                    if (data.success) {
+                      console.log(data);
+                      setSelectedData(data?.loan_info);
+                      setOpen(true);
+                    } else {
+                      error({
+                        title: "Амжилтгүй",
+                        content: <div>{data?.description || null}</div>,
+                      });
+                    }
+                  },
+                }
+              );
               data?.request_type == "saving"
                 ? setMyFundTabKey("2")
                 : setMyFundTabKey("1");
@@ -583,14 +611,7 @@ export const FundHistory = () => {
                                     }
                                   >
                                     {numberToCurrency(
-                                      Math.round(
-                                        Number(o.loan_amount / 100) *
-                                          Number(
-                                            Math.round(o.loan_rate_day * 10) /
-                                              10
-                                          ) *
-                                          Number(o.loan_day)
-                                      )
+                                      selectedData?.loan_rate_amount
                                     )}
                                   </div>
                                 </Col>
@@ -614,13 +635,7 @@ export const FundHistory = () => {
                                     }
                                   >
                                     {numberToCurrency(
-                                      (o.loan_amount / 100) *
-                                        (Math.round(o.loan_rate_day * 10) /
-                                          10) *
-                                        Number(o.loan_day) +
-                                        Number(o.loan_amount) +
-                                        (o.loan_amount / 100) *
-                                          Number(o.fee_percent)
+                                      selectedData?.close_pay_amount
                                     )}
                                   </div>
                                 </Col>
@@ -713,14 +728,40 @@ export const FundHistory = () => {
                                     }
                                   >
                                     {numberToCurrency(
-                                      (o.loan_amount / 100) *
-                                        Number(o.fee_percent)
+                                      selectedData?.loan_fee_amount
                                     )}
                                   </div>
                                 </Col>
                               </Row>
                             </Col>
                           )}
+                          {myFundTabKey == "1" &&
+                            selectedData?.lost_amount > 0 && (
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Хугацаа хэтэрүүлсэн нэмэгдэл
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        o.product_type_code == "saving"
+                                          ? stylesFD["foundation-rate-profit"]
+                                          : stylesDL["dloan-rate-profit"]
+                                      }
+                                    >
+                                      {numberToCurrency(
+                                        selectedData?.lost_amount
+                                      )}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                            )}
                           {myFundTabKey == "1" && (
                             <Col span={24}>
                               <Row justify="space-between" align="middle">
@@ -737,7 +778,7 @@ export const FundHistory = () => {
                                       stylesDL["dloan-detail-maxValue"]
                                     }
                                   >
-                                    {o?.loan_end_date?.slice(0, 10)}
+                                    {selectedData?.subscribe_date?.slice(0, 10)}
                                   </div>
                                 </Col>
                               </Row>
