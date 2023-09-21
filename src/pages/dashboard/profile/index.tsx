@@ -1183,7 +1183,7 @@ export const Profile = () => {
               />
             </div>
           )}
-          <p className="font-sub mx-auto mt-3 w-[80%] text-center font-raleway text-[12px] font-normal">
+          <p className="mx-auto mt-3 w-[80%] text-center font-raleway text-[14px] font-normal text-[red]">
             {clickedEdit == 0
               ? "Та өөрийн шинээр бүртгүүлэх утасны дугаараа оруулна уу."
               : clickedEdit == 4

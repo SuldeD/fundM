@@ -127,7 +127,7 @@ const History = () => {
     },
     {
       title: "Хаасан огноо",
-      dataIndex: "this_month_pay_date",
+      dataIndex: "close_date",
       key: "date",
       align: "center",
       width: "23%",
