@@ -406,13 +406,38 @@ export const Foundation = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             numberToCurrency(
-                              Math.floor(
+                              Math.ceil(
                                 (inputValue / 100) *
                                   rate *
                                   Number(dataTable[activeDuration].duration) *
                                   0.1
                               )
                             )}
+                        </div>
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col span={24}>
+                    <Row justify="space-between" align="middle">
+                      <Col flex="none">
+                        <div className={styles["foundation-detail-text"]}>
+                          Нийт
+                        </div>
+                      </Col>
+                      <Col flex="none">
+                        <div className={styles["foundation-detail-maxValue"]}>
+                          {numberToCurrency(
+                            Math.floor(
+                              (inputValue / 100) *
+                                (Math.round(rate * 10) / 10) *
+                                Number(dataTable[activeDuration].duration) -
+                                Number(inputValue / 100) *
+                                  (Math.round(rate * 10) / 10) *
+                                  Number(dataTable[activeDuration].duration) *
+                                  0.1 +
+                                Number(inputValue)
+                            )
+                          )}
                         </div>
                       </Col>
                     </Row>
