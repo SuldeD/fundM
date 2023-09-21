@@ -121,7 +121,7 @@ const History = () => {
       width: "15%",
       render: (rate: string) => (
         <div className={styles["history-table-number"]}>
-          {rate.toString()?.slice(0, 4)} %
+          {Math.round(Number(rate) * 10) / 10}%
         </div>
       ),
     },
