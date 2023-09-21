@@ -65,7 +65,7 @@ export const FundHistory = () => {
     let num = 0;
     const filteredRequests = loanSearch.loan_requests.filter((el: any) => {
       if (el.product_type_code === "loan") {
-        num += Number(el.loan_amount);
+        num += Math.ceil(Number(el.this_month_unpaid_amount));
         return true;
       }
       return false;
@@ -105,9 +105,9 @@ export const FundHistory = () => {
       key: "loan_amount",
       align: "center",
       width: "23%",
-      render: (loan_amount: string) => (
+      render: (loan_amount: number) => (
         <div className={styles["fund-tabs-content-table-number"]}>
-          {numberToCurrency(loan_amount)}
+          {numberToCurrency(Math.ceil(loan_amount))}
         </div>
       ),
     },
@@ -120,11 +120,11 @@ export const FundHistory = () => {
       render: (type: string) =>
         type == "saving" ? (
           <div className={stylesList["dashboard-list-item-type-2"]}>
-            Өгөх хүсэлт
+            Өгсөн санхүүжилт
           </div>
         ) : (
           <div className={stylesList["dashboard-list-item-type-1"]}>
-            Авах хүсэлт
+            Авсан зээл
           </div>
         ),
     },
@@ -235,11 +235,11 @@ export const FundHistory = () => {
       render: (type: string) =>
         type == "saving" ? (
           <div className={stylesList["dashboard-list-item-type-2"]}>
-            Өгөх хүсэлт
+            Өгсөн санхүүжилт
           </div>
         ) : (
           <div className={stylesList["dashboard-list-item-type-1"]}>
-            Авах хүсэлт
+            Авсан зээл
           </div>
         ),
     },
@@ -493,8 +493,8 @@ export const FundHistory = () => {
           title={
             <div className="text-center font-beau text-[16px] font-medium">
               {myFundTabKey == "1"
-                ? "Зээлийн хүсэлт дэлгэрэнгүй"
-                : "Санхүүжилт хүсэлт дэлгэрэнгүй"}
+                ? "Зээлийн дэлгэрэнгүй"
+                : "Санхүүжилт дэлгэрэнгүй"}
             </div>
           }
         >
@@ -592,32 +592,35 @@ export const FundHistory = () => {
                               </Row>
                             </Col>
                           )}
-                          {myFundTabKey == "1" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Зээлийн хүү (төгрөгөөр)
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      o.product_type_code == "saving"
-                                        ? stylesFD["foundation-rate-profit"]
-                                        : stylesDL["dloan-rate-profit"]
-                                    }
-                                  >
-                                    {numberToCurrency(
-                                      selectedData?.loan_rate_amount
-                                    )}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
+                          {myFundTabKey == "1" &&
+                            selectedData?.loan_rate_amount > 0 && (
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Зээлийн хүү (төгрөгөөр)
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        o.product_type_code == "saving"
+                                          ? stylesFD["foundation-rate-profit"]
+                                          : stylesDL["dloan-rate-profit"]
+                                      }
+                                    >
+                                      {numberToCurrency(
+                                        Math.ceil(
+                                          selectedData?.loan_rate_amount
+                                        )
+                                      )}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                            )}
                           {myFundTabKey == "1" && (
                             <Col span={24}>
                               <Row justify="space-between" align="middle">
@@ -709,41 +712,15 @@ export const FundHistory = () => {
                               </Col>
                             </Row>
                           </Col>{" "}
-                          {myFundTabKey == "1" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Зээл олголтын шимтгэл
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      o.product_type_code == "saving"
-                                        ? stylesFD["foundation-rate-profit"]
-                                        : stylesDL["dloan-rate-profit"]
-                                    }
-                                  >
-                                    {numberToCurrency(
-                                      selectedData?.loan_fee_amount
-                                    )}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
                           {myFundTabKey == "1" &&
-                            selectedData?.lost_amount > 0 && (
+                            selectedData?.loan_fee_amount > 0 && (
                               <Col span={24}>
                                 <Row justify="space-between" align="middle">
                                   <Col flex="none">
                                     <div
                                       className={stylesDL["dloan-detail-text"]}
                                     >
-                                      Хугацаа хэтэрүүлсэн нэмэгдэл
+                                      Зээл олголтын шимтгэл
                                     </div>
                                   </Col>
                                   <Col flex="none">
@@ -755,7 +732,34 @@ export const FundHistory = () => {
                                       }
                                     >
                                       {numberToCurrency(
-                                        selectedData?.lost_amount
+                                        Number(selectedData?.loan_fee_amount)
+                                      )}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                            )}
+                          {myFundTabKey == "1" &&
+                            selectedData?.lost_amount > 0 && (
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Хугацаа хэтэрүүлсэн зээлийн алданги
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        o.product_type_code == "saving"
+                                          ? stylesFD["foundation-rate-profit"]
+                                          : stylesDL["dloan-rate-profit"]
+                                      }
+                                    >
+                                      {numberToCurrency(
+                                        Math.ceil(selectedData?.lost_amount)
                                       )}
                                     </div>
                                   </Col>
@@ -854,24 +858,28 @@ export const FundHistory = () => {
                               </div>
                             </Col>
                           </Button>
-                          {myFundTabKey == "1" && (
-                            <Button
-                              className={stylesDL["dloan-button-back"]}
-                              type="primary"
-                              onClick={() => {
-                                setIsVerifyOpen(true);
-                                setFoundationBankData("3");
-                              }}
-                            >
-                              <Col flex={"auto"}>
-                                <div
-                                  className={styles["dloan-change-button-text"]}
-                                >
-                                  Зээл сунгах
-                                </div>
-                              </Col>
-                            </Button>
-                          )}
+                          {false &&
+                            myFundTabKey == "1" &&
+                            o.is_extension == 1 && (
+                              <Button
+                                className={stylesDL["dloan-button-back"]}
+                                type="primary"
+                                onClick={() => {
+                                  setIsVerifyOpen(true);
+                                  setFoundationBankData("3");
+                                }}
+                              >
+                                <Col flex={"auto"}>
+                                  <div
+                                    className={
+                                      styles["dloan-change-button-text"]
+                                    }
+                                  >
+                                    Зээл сунгах
+                                  </div>
+                                </Col>
+                              </Button>
+                            )}
                           {myFundTabKey == "1" && (
                             <Button
                               className={stylesDL["dloan-button-back"]}
