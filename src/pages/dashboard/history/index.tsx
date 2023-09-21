@@ -45,13 +45,15 @@ const History = () => {
     }
   };
 
+  console.log(dataTable);
+
   const print = () => {
     setFilterData([]);
 
     dataTable?.forEach((dt: any) => {
       if (
-        dt?.close_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
-        dt?.close_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD") &&
+        dt?.close_date?.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
+        dt?.close_date?.slice(0, 10) <= value?.[1].format("YYYY-MM-DD") &&
         dt?.product_type_code == type
       ) {
         dt && setFilterData((prev: any) => [...prev, dt]);
@@ -61,8 +63,8 @@ const History = () => {
           setFilterData((prev: any) => [...prev, dt]);
       } else if (
         type == undefined &&
-        dt?.close_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
-        dt?.close_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD")
+        dt?.close_date?.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
+        dt?.close_date?.slice(0, 10) <= value?.[1].format("YYYY-MM-DD")
       ) {
         dt && setFilterData((prev: any) => [...prev, dt]);
       } else if (
@@ -121,7 +123,7 @@ const History = () => {
       width: "15%",
       render: (rate: string) => (
         <div className={styles["history-table-number"]}>
-          {Math.round(Number(rate) * 10) / 10}%
+          {Math.round(Number(rate) * 10) / 10}0 %
         </div>
       ),
     },
@@ -172,7 +174,7 @@ const History = () => {
                         label: "Өгсөн санхүүжилт",
                       },
                       {
-                        value: "wallet",
+                        value: "loan",
                         label: "Авсан зээл",
                       },
                     ]}
