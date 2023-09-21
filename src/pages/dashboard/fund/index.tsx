@@ -858,28 +858,24 @@ export const FundHistory = () => {
                               </div>
                             </Col>
                           </Button>
-                          {false &&
-                            myFundTabKey == "1" &&
-                            o.is_extension == 1 && (
-                              <Button
-                                className={stylesDL["dloan-button-back"]}
-                                type="primary"
-                                onClick={() => {
-                                  setIsVerifyOpen(true);
-                                  setFoundationBankData("3");
-                                }}
-                              >
-                                <Col flex={"auto"}>
-                                  <div
-                                    className={
-                                      styles["dloan-change-button-text"]
-                                    }
-                                  >
-                                    Зээл сунгах
-                                  </div>
-                                </Col>
-                              </Button>
-                            )}
+                          {myFundTabKey == "1" && o.is_extension == 1 && (
+                            <Button
+                              className={stylesDL["dloan-button-back"]}
+                              type="primary"
+                              onClick={() => {
+                                setIsVerifyOpen(true);
+                                setFoundationBankData("3");
+                              }}
+                            >
+                              <Col flex={"auto"}>
+                                <div
+                                  className={styles["dloan-change-button-text"]}
+                                >
+                                  Зээл сунгах
+                                </div>
+                              </Col>
+                            </Button>
+                          )}
                           {myFundTabKey == "1" && (
                             <Button
                               className={stylesDL["dloan-button-back"]}
