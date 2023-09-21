@@ -737,7 +737,29 @@ export const FundHistory = () => {
                                       stylesDL["dloan-detail-maxValue"]
                                     }
                                   >
-                                    {o.this_month_pay_date.slice(0, 10)}
+                                    {o?.loan_end_date?.slice(0, 10)}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </Col>
+                          )}
+                          {myFundTabKey == "2" && (
+                            <Col span={24}>
+                              <Row justify="space-between" align="middle">
+                                <Col flex="none">
+                                  <div
+                                    className={stylesDL["dloan-detail-text"]}
+                                  >
+                                    Дуусах өдөр
+                                  </div>
+                                </Col>
+                                <Col flex="none">
+                                  <div
+                                    className={
+                                      stylesDL["dloan-detail-maxValue"]
+                                    }
+                                  >
+                                    {o?.loan_end_date?.slice(0, 10)}
                                   </div>
                                 </Col>
                               </Row>

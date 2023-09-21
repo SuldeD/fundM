@@ -74,7 +74,7 @@ export const Dashboard = () => {
     },
     {
       title: "Захиалгын хэмжээ",
-      dataIndex: "filled_amount",
+      dataIndex: "loan_amount",
       key: "filled_amount",
 
       width: "20%",

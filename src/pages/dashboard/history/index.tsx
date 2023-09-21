@@ -45,8 +45,6 @@ const History = () => {
     }
   };
 
-  console.log(dataTable);
-
   const print = () => {
     setFilterData([]);
 
