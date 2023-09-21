@@ -50,19 +50,19 @@ const History = () => {
 
     dataTable?.forEach((dt: any) => {
       if (
-        dt?.create_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
-        dt?.create_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD") &&
-        dt?.request_type == type
+        dt?.close_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
+        dt?.close_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD") &&
+        dt?.product_type_code == type
       ) {
         dt && setFilterData((prev: any) => [...prev, dt]);
       } else if (type && value?.[0].format("YYYY-MM-DD") == undefined) {
-        dt?.request_type == type &&
+        dt?.product_type_code == type &&
           dt &&
           setFilterData((prev: any) => [...prev, dt]);
       } else if (
         type == undefined &&
-        dt?.create_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
-        dt?.create_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD")
+        dt?.close_date.slice(0, 10) >= value?.[0].format("YYYY-MM-DD") &&
+        dt?.close_date.slice(0, 10) <= value?.[1].format("YYYY-MM-DD")
       ) {
         dt && setFilterData((prev: any) => [...prev, dt]);
       } else if (
