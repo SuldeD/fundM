@@ -758,7 +758,7 @@ export const Loan = () => {
                               {dataTable &&
                                 typeof activeDuration == "number" &&
                                 numberToCurrency(
-                                  Math.round(
+                                  Math.ceil(
                                     (inputValue / 100) *
                                       rate *
                                       Number(

@@ -385,9 +385,9 @@ export const Foundation = () => {
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             numberToCurrency(
-                              Math.floor(
+                              Math.ceil(
                                 (inputValue / 100) *
-                                  (Math.round(rate * 10) / 10) *
+                                  rate *
                                   Number(dataTable[activeDuration].duration)
                               )
                             )}
@@ -409,7 +409,7 @@ export const Foundation = () => {
                             numberToCurrency(
                               Math.ceil(
                                 (inputValue / 100) *
-                                  (Math.round(rate * 10) / 10) *
+                                  rate *
                                   Number(dataTable[activeDuration].duration) *
                                   0.1
                               )
@@ -428,12 +428,12 @@ export const Foundation = () => {
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
                           {numberToCurrency(
-                            Math.floor(
+                            Math.ceil(
                               (inputValue / 100) *
-                                (Math.round(rate * 10) / 10) *
+                                rate *
                                 Number(dataTable[activeDuration].duration) -
                                 Number(inputValue / 100) *
-                                  (Math.round(rate * 10) / 10) *
+                                  rate *
                                   Number(dataTable[activeDuration].duration) *
                                   0.1 +
                                 Number(inputValue)
