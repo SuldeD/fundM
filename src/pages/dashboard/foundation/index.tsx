@@ -10,6 +10,7 @@ import {
   message,
 } from "antd";
 import styles from "../../../styles/foundation.module.css";
+import stylesL from "../../../styles/dloan.module.css";
 import { useRouter } from "next/router";
 import { useMemo, useRef, useState } from "react";
 import { numberToCurrency } from "../../../utils/number.helpers";
@@ -386,7 +387,7 @@ export const Foundation = () => {
                             numberToCurrency(
                               Math.floor(
                                 (inputValue / 100) *
-                                  rate *
+                                  (Math.round(rate * 10) / 10) *
                                   Number(dataTable[activeDuration].duration)
                               )
                             )}
@@ -402,13 +403,13 @@ export const Foundation = () => {
                         </div>
                       </Col>
                       <Col flex="none">
-                        <div className={styles["foundation-detail-maxValue"]}>
+                        <div className={stylesL["dloan-rate-profit"]}>
                           {dataTable &&
                             typeof activeDuration == "number" &&
                             numberToCurrency(
                               Math.ceil(
                                 (inputValue / 100) *
-                                  rate *
+                                  (Math.round(rate * 10) / 10) *
                                   Number(dataTable[activeDuration].duration) *
                                   0.1
                               )

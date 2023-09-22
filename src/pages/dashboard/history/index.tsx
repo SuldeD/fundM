@@ -96,6 +96,22 @@ const History = () => {
         </div>
       ),
     },
+
+    {
+      title: "Нийт хэмжээ",
+      dataIndex: "total_paid_amount",
+      key: "loanTotal",
+      align: "center",
+      width: "23%",
+      render: (loanTotal: string, data: any) => (
+        <div className={styles["history-table-number"]}>
+          {data?.product_type_code == "saving"
+            ? numberToCurrency(data?.saving_paid_amount)
+            : numberToCurrency(loanTotal)}
+        </div>
+      ),
+    },
+
     {
       title: "Төрөл",
       dataIndex: "product_type_code",
