@@ -63,16 +63,16 @@ export const Foundation = () => {
   //constants
   const saving = useMemo(() => {
     return loanData?.product_list?.find(
-      (it: any) => it.product_code === "saving"
+      (it: any) => it?.product_code === "saving"
     );
   }, [loanData]);
-  const dataTable = saving?.duration;
+  const dataTable = saving && saving?.duration;
   const html = useMemo(() => {
-    return getContent?.page_html;
+    return getContent && getContent?.page_html;
   }, [getContent]);
   const minValue = Number(saving && saving?.loan_min_amount);
   const maxValue = Number(saving && saving?.loan_max_amount);
-  const rate = Number(saving?.loan_rate_day);
+  const rate = Number(saving && saving?.loan_rate_day);
 
   //functions
   function submit(code: any) {
@@ -427,18 +427,21 @@ export const Foundation = () => {
                       </Col>
                       <Col flex="none">
                         <div className={styles["foundation-detail-maxValue"]}>
-                          {numberToCurrency(
-                            Math.ceil(
-                              (inputValue / 100) *
-                                rate *
-                                Number(dataTable[activeDuration].duration) -
-                                Number(inputValue / 100) *
+                          {dataTable &&
+                            numberToCurrency(
+                              Math.ceil(
+                                (inputValue / 100) *
                                   rate *
-                                  Number(dataTable[activeDuration].duration) *
-                                  0.1 +
-                                Number(inputValue)
-                            )
-                          )}
+                                  Number(dataTable[activeDuration]?.duration) -
+                                  Number(inputValue / 100) *
+                                    rate *
+                                    Number(
+                                      dataTable[activeDuration]?.duration
+                                    ) *
+                                    0.1 +
+                                  Number(inputValue)
+                              )
+                            )}
                         </div>
                       </Col>
                     </Row>

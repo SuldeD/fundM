@@ -102,7 +102,7 @@ const History = () => {
       dataIndex: "total_paid_amount",
       key: "loanTotal",
       align: "center",
-      width: "23%",
+      width: "20%",
       render: (loanTotal: string, data: any) => (
         <div className={styles["history-table-number"]}>
           {data?.product_type_code == "saving"
@@ -117,7 +117,7 @@ const History = () => {
       dataIndex: "product_type_code",
       key: "type",
       align: "center",
-      width: "23%",
+      width: "20%",
       render: (type: string) =>
         type == "saving" ? (
           <div className={stylesList["dashboard-list-item-type-2"]}>
