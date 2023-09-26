@@ -212,7 +212,7 @@ const History = () => {
                     className={styles["history-search-button"]}
                   >
                     <Row justify="center" gutter={10} align="middle">
-                      <Col flex="none">
+                      <Col flex="none" className="mt-1">
                         <SearchOutlined
                           style={{
                             fontSize: 16,
@@ -220,7 +220,7 @@ const History = () => {
                           }}
                         />
                       </Col>
-                      <Col flex="none" className="hidden lg:flex">
+                      <Col flex="none" className="hidden md:flex">
                         <div className={styles["history-search-button-text"]}>
                           Хайх
                         </div>

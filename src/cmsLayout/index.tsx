@@ -192,6 +192,20 @@ export const ProtectedLayout = ({ children }: any) => {
     setOpenDra(false);
   };
 
+  const IsGender = useMemo(() => {
+    const IsGenderCheck = accountInfo?.account?.register?.slice(-2, -1);
+
+    if (["0", "2", "4", "6", "8"].includes(IsGenderCheck)) {
+      return "2";
+    } else if (accountInfo?.account?.register > 10) {
+      return "0";
+    } else {
+      if (["1", "3", "5", "7", "9"].includes(IsGenderCheck)) {
+        return "1";
+      }
+    }
+  }, [accountInfo]);
+
   return (
     <Layout>
       <PopupModal
@@ -362,7 +376,13 @@ export const ProtectedLayout = ({ children }: any) => {
               <Row gutter={10} align="middle">
                 <Col flex="none">
                   <img
-                    src="/images/profile.png"
+                    src={
+                      IsGender == "1"
+                        ? "https://www.svgrepo.com/show/31050/man.svg"
+                        : IsGender == "2"
+                        ? "https://www.svgrepo.com/show/954/woman.svg"
+                        : "https://www.svgrepo.com/show/54329/office-block.svg"
+                    }
                     className="h-[30px] w-[30px] rounded-[50%]"
                     alt="profile"
                   />

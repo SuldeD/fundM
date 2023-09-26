@@ -121,16 +121,16 @@ export const LoanTakeReqComponent = ({ activeLoanOrders: data }: any) => {
                                   </Col>
                                 </Row>
                               </Col>
-                              <Col flex="none">
-                                <Button
-                                  type="primary"
-                                  className={`${styles["loanReq-list-button"]} bg-primary`}
-                                  onClick={() => router.push("/dashboard/loan")}
-                                >
-                                  Зээл авах
-                                </Button>
-                              </Col>
                             </Row>
+                          </Col>
+                          <Col className="mt-2 w-full">
+                            <Button
+                              type="primary"
+                              className={styles["loanReq-list-button"]}
+                              onClick={() => router.push("/dashboard/loan")}
+                            >
+                              Зээл авах
+                            </Button>
                           </Col>
                         </Row>
                       </Col>

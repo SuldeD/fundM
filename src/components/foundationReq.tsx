@@ -121,7 +121,7 @@ export const FoundationReq = ({ activeSavingOrders: data }: any) => {
                                   </Col>
                                 </Row>
                               </Col>
-                              <Col flex="none">
+                              <Col className="mt-2 w-full">
                                 <Button
                                   type="primary"
                                   className={`${styles["loanReq-list-button"]} bg-primary`}

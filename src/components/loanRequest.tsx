@@ -121,20 +121,19 @@ export const LoanReqComponent = ({ activeSavingOrders: data }: any) => {
                                   </Col>
                                 </Row>
                               </Col>
-                              <Col flex="none">
-                                <Button
-                                  type="primary"
-                                  className={styles["loanReq-list-button"]}
-                                  onClick={() =>
-                                    router.push("/dashboard/foundation")
-                                  }
-                                >
-                                  Санхүүжилт өгөх
-                                </Button>
-                              </Col>
                             </Row>
                           </Col>
                         </Row>
+
+                        <Col className="mt-2 w-full">
+                          <Button
+                            type="primary"
+                            className={styles["loanReq-list-button"]}
+                            onClick={() => router.push("/dashboard/foundation")}
+                          >
+                            Санхүүжилт өгөх
+                          </Button>
+                        </Col>
                       </Col>
                     </Row>
                   </Col>

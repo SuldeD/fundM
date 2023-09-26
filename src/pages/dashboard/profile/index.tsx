@@ -476,6 +476,20 @@ export const Profile = () => {
     }
   }
 
+  const IsGender = useMemo(() => {
+    const IsGenderCheck = accountInfo?.account?.register?.slice(-2, -1);
+
+    if (["0", "2", "4", "6", "8"].includes(IsGenderCheck)) {
+      return "2";
+    } else if (accountInfo?.account?.register > 10) {
+      return "0";
+    } else {
+      if (["1", "3", "5", "7", "9"].includes(IsGenderCheck)) {
+        return "1";
+      }
+    }
+  }, [accountInfo]);
+
   const items = [
     {
       key: "1",
@@ -501,12 +515,31 @@ export const Profile = () => {
                     name="avatar"
                     customRequest={() => {}}
                     listType="picture-circle"
-                    className="avatar-uploader  overflow-hidden"
+                    className="avatar-uploader overflow-hidden"
                     showUploadList={false}
+                    disabled={true}
                     // beforeUpload={beforeUpload}
                     // onChange={handleChange}
                   >
-                    {imageUrl ? (
+                    <img
+                      alt="gender"
+                      className={
+                        IsGender == "1"
+                          ? "rounded-[50%] bg-blue-300"
+                          : IsGender == "2"
+                          ? "rounded-[50%] bg-red-300"
+                          : "rounded-[50%]"
+                      }
+                      src={
+                        IsGender == "1"
+                          ? "https://www.svgrepo.com/show/31050/man.svg"
+                          : IsGender == "2"
+                          ? "https://www.svgrepo.com/show/954/woman.svg"
+                          : "https://www.svgrepo.com/show/54329/office-block.svg"
+                      }
+                    />
+
+                    {/* {imageUrl ? (
                       <div className="relative">
                         <img
                           src={imageUrl}
@@ -521,7 +554,7 @@ export const Profile = () => {
                       </div>
                     ) : (
                       uploadButton
-                    )}
+                    )} */}
                   </Upload>
                 </Col>
                 <Col flex="none">
