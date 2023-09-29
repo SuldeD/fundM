@@ -34,7 +34,8 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
     }
   };
 
-  async function submit() {
+  async function submit(e: any) {
+    e.preventDefault();
     if (code.join("").length == 4) {
       await onFinish(code.join(""));
       setTimeout(() => {
@@ -78,53 +79,58 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
         >
           <Row justify="center">
             <Col span={20}>
-              <Row justify="center" gutter={[0, 20]}>
-                <Col span={20} className="flex justify-between">
-                  {code.map(
-                    (
-                      num: string | number | readonly string[] | undefined,
-                      idx: React.Key | null | undefined
-                    ) => {
-                      return (
-                        <input
-                          key={idx}
-                          type="text"
-                          inputMode="numeric"
-                          className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
-                          maxLength={1}
-                          value={num}
-                          autoFocus={!code[0].length && idx === 0}
-                          onChange={(e) => processInput(e, idx)}
-                          onKeyUp={(e) => onKeyUp(e, idx)}
-                          ref={(ref) => inputs.current.push(ref)}
-                        />
-                      );
-                    }
-                  )}
-                </Col>
-                <Col span={20}>
-                  <div className="mb-[10px] text-center font-raleway font-[12px] leading-[20px] text-sub">
-                    Та өөрийн{" "}
-                    <span className="font-semibold text-[#0300B4]">
-                      FundMe код{" "}
-                    </span>
-                    оруулж хүсэлтээ баталгаажуулна уу.
-                  </div>
-                </Col>
-                <Col span={20}>
-                  <Button
-                    type="primary"
-                    loading={loadings}
-                    className={styles["dloan-modal-verify-button"]}
-                    onClick={() => {
-                      setLoadings(true);
-                      submit();
-                    }}
-                  >
-                    Баталгаажуулах
-                  </Button>
-                </Col>
-              </Row>
+              <form
+                onSubmit={(e) => {
+                  setLoadings(true);
+                  submit(e);
+                }}
+              >
+                <Row justify="center" gutter={[0, 20]}>
+                  <Col span={20} className="flex justify-between">
+                    {code.map(
+                      (
+                        num: string | number | readonly string[] | undefined,
+                        idx: React.Key | null | undefined
+                      ) => {
+                        return (
+                          <input
+                            key={idx}
+                            type="text"
+                            inputMode="numeric"
+                            className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
+                            maxLength={1}
+                            value={num}
+                            autoFocus={!code[0].length && idx === 0}
+                            onChange={(e) => processInput(e, idx)}
+                            onKeyUp={(e) => onKeyUp(e, idx)}
+                            ref={(ref) => inputs.current.push(ref)}
+                          />
+                        );
+                      }
+                    )}
+                  </Col>
+                  <Col span={20}>
+                    <div className="mb-[10px] text-center font-raleway font-[12px] leading-[20px] text-sub">
+                      Та өөрийн{" "}
+                      <span className="font-semibold text-[#0300B4]">
+                        FundMe код{" "}
+                      </span>
+                      оруулж хүсэлтээ баталгаажуулна уу.
+                    </div>
+                  </Col>
+                  <Col span={20}>
+                    <button type="submit" className="w-full">
+                      <Button
+                        type="primary"
+                        loading={loadings}
+                        className={styles["dloan-modal-verify-button"]}
+                      >
+                        Баталгаажуулах
+                      </Button>
+                    </button>
+                  </Col>
+                </Row>
+              </form>
             </Col>
           </Row>
         </Modal>
