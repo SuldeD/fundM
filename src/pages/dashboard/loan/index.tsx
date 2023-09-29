@@ -84,7 +84,7 @@ export const Loan = () => {
   }, [savingData]);
 
   const loanReq = useMemo(() => {
-    return loanSearch?.loan_requests.length > 0
+    return loanSearch?.loan_requests?.length > 0
       ? loanSearch?.loan_requests
       : [];
   }, [loanSearch]);
@@ -202,10 +202,8 @@ export const Loan = () => {
               description: any;
             }) => {
               if (data.success) {
-                // setRequestId(data?.request_id);
-
                 setLoadings(false);
-                verifyCompleteModal({ request_id: data?.request_id });
+                verifyCompleteModal({ request_id: data?.request_id, code });
               } else {
                 setLoadings(false);
                 error({
