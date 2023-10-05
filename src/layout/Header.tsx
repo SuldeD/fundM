@@ -155,7 +155,7 @@ export const HeaderComponent = () => {
                         >
                           Байгууллага
                         </Button>
-                        <Button
+                        {/* <Button
                           className="mt-3 w-full"
                           onClick={() => {
                             router.push("/signup");
@@ -163,7 +163,7 @@ export const HeaderComponent = () => {
                           }}
                         >
                           Хэрэглэгч
-                        </Button>
+                        </Button> */}
                       </div>
                     }
                     trigger="click"
@@ -294,7 +294,7 @@ export const HeaderComponent = () => {
                               >
                                 Байгууллага
                               </Button>
-                              <Button
+                              {/* <Button
                                 className="mt-3 w-full"
                                 onClick={() => {
                                   router.push("/signup");
@@ -303,7 +303,7 @@ export const HeaderComponent = () => {
                                 }}
                               >
                                 Хэрэглэгч
-                              </Button>
+                              </Button> */}
                             </div>
                           }
                           trigger="click"

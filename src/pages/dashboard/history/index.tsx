@@ -1,19 +1,17 @@
 import { Row, Col, Select, DatePicker, Button, Table } from "antd";
-import styles from "../../../styles/history.module.css";
-import stylesList from "../../../styles/dashboard.module.css";
+import styles from "app/styles/history.module.css";
+import stylesList from "app/styles/dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
-import { HeaderDashboard } from "../../../components/header";
+import { HeaderDashboard } from "app/components/header";
 import { useMemo, useState } from "react";
-import { numberToCurrency } from "../../../utils/number.helpers";
-import { Loaderr } from "app/components/Loader";
-import { useRequireAuth } from "app/utils/auth";
+import { numberToCurrency } from "app/utils/number.helpers";
 import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
+import { ProtectedLayout } from "app/cmsLayout";
 const { RangePicker } = DatePicker;
 
 const History = () => {
   const { data } = useSession();
-  useRequireAuth();
 
   //query
   const { data: loanSearch } = api.loan.loanSearch.useQuery(
@@ -156,98 +154,100 @@ const History = () => {
   ];
 
   if (!data) {
-    return <Loaderr />;
+    return null;
   } else {
     return (
-      <Row
-        justify="center"
-        className={styles["history-main-row"]}
-        gutter={[0, 20]}
-      >
-        <Col span={22}>
-          <Row gutter={[0, 30]}>
-            <HeaderDashboard
-              title={"Санхүүжилтын түүх"}
-              subTitle={
-                "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-              }
-            />
-            <Col xs={24} xl={18}>
-              <Row justify="space-between" align="middle" gutter={20}>
-                <Col span={6}>
-                  <Select
-                    allowClear={true}
-                    style={{
-                      width: "100%",
-                    }}
-                    placeholder="Төрөл"
-                    onChange={(e) => setType(e)}
-                    options={[
-                      {
-                        value: "saving",
-                        label: "Өгсөн санхүүжилт",
-                      },
-                      {
-                        value: "loan",
-                        label: "Авсан зээл",
-                      },
-                    ]}
-                  />
-                </Col>
-                <Col span={12}>
-                  <RangePicker
-                    style={{ width: "100%" }}
-                    suffixIcon={null}
-                    bordered={false}
-                    value={dates || value}
-                    onCalendarChange={(val) => setDates(val)}
-                    onChange={(val) => setValue(val)}
-                    onOpenChange={onOpenChange}
-                  />
-                </Col>
-                <Col span={6}>
-                  <Button
-                    onClick={print}
-                    type="primary"
-                    className={styles["history-search-button"]}
-                  >
-                    <Row justify="center" gutter={10} align="middle">
-                      <Col flex="none" className="mt-1">
-                        <SearchOutlined
-                          style={{
-                            fontSize: 16,
-                            color: "#FFF",
-                          }}
-                        />
-                      </Col>
-                      <Col flex="none" className="hidden md:flex">
-                        <div className={styles["history-search-button-text"]}>
-                          Хайх
-                        </div>
-                      </Col>
-                    </Row>
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-            <Col span={24}>
-              <Table
-                scroll={{ x: 430 }}
-                columns={columns}
-                key={"request_id"}
-                pagination={{
-                  pageSize: 8,
-                  position: ["bottomCenter"],
-                }}
-                dataSource={
-                  filterData ? filterData?.reverse() : dataTable?.reverse()
+      <ProtectedLayout>
+        <Row
+          justify="center"
+          className={styles["history-main-row"]}
+          gutter={[0, 20]}
+        >
+          <Col span={22}>
+            <Row gutter={[0, 30]}>
+              <HeaderDashboard
+                title={"Санхүүжилтын түүх"}
+                subTitle={
+                  "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
                 }
-                rowKey={"create_date"}
               />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+              <Col xs={24} xl={18}>
+                <Row justify="space-between" align="middle" gutter={20}>
+                  <Col span={6}>
+                    <Select
+                      allowClear={true}
+                      style={{
+                        width: "100%",
+                      }}
+                      placeholder="Төрөл"
+                      onChange={(e) => setType(e)}
+                      options={[
+                        {
+                          value: "saving",
+                          label: "Өгсөн санхүүжилт",
+                        },
+                        {
+                          value: "loan",
+                          label: "Авсан зээл",
+                        },
+                      ]}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <RangePicker
+                      style={{ width: "100%" }}
+                      suffixIcon={null}
+                      bordered={false}
+                      value={dates || value}
+                      onCalendarChange={(val) => setDates(val)}
+                      onChange={(val) => setValue(val)}
+                      onOpenChange={onOpenChange}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Button
+                      onClick={print}
+                      type="primary"
+                      className={styles["history-search-button"]}
+                    >
+                      <Row justify="center" gutter={10} align="middle">
+                        <Col flex="none" className="mt-1">
+                          <SearchOutlined
+                            style={{
+                              fontSize: 16,
+                              color: "#FFF",
+                            }}
+                          />
+                        </Col>
+                        <Col flex="none" className="hidden md:flex">
+                          <div className={styles["history-search-button-text"]}>
+                            Хайх
+                          </div>
+                        </Col>
+                      </Row>
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={24}>
+                <Table
+                  scroll={{ x: 430 }}
+                  columns={columns}
+                  key={"request_id"}
+                  pagination={{
+                    pageSize: 8,
+                    position: ["bottomCenter"],
+                  }}
+                  dataSource={
+                    filterData ? filterData?.reverse() : dataTable?.reverse()
+                  }
+                  rowKey={"create_date"}
+                />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </ProtectedLayout>
     );
   }
 };

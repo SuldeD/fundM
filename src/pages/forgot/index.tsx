@@ -3,11 +3,11 @@ import styles from "../../styles/login.module.css";
 import React, { useRef, useState } from "react";
 import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
-import { Loaderr } from "app/components/Loader";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import stylesL from "../../styles/dloan.module.css";
 import { useAppContext } from "app/context/appContext";
+import SimpleLayout from "app/layout";
 const { error, warning } = Modal;
 
 interface RegisterType {
@@ -221,10 +221,10 @@ export default function Forgot() {
 
   const { data } = useSession();
   if (data) {
-    return <Loaderr />;
+    return null;
   } else {
     return (
-      <Row
+      <SimpleLayout><Row
         className={styles["login-background-image"]}
         justify="center"
         align={"middle"}
@@ -643,7 +643,8 @@ export default function Forgot() {
             </Col>
           </Row>
         </Modal>
-      </Row>
+      </Row></SimpleLayout>
+      
     );
   }
 }

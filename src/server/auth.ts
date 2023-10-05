@@ -10,7 +10,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "app/server/db";
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import { loanServiceHeaders } from "app/contants";
-import { use } from "react";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -62,7 +61,8 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     session: async ({ session, token, user }) => {
-      console.log("this is session");
+      console.log(session,"this is session");
+
       return {
         ...session,
         user: {
@@ -123,7 +123,6 @@ export const authOptions: NextAuthOptions = {
 
         const raw = await res.json();
         const user = decrypt(raw);
-        console.log(user);
         if (user.success) {
           const res2 = await fetch(
             `${process.env.BACKEND_URL}/account/get/info`,
@@ -208,5 +207,7 @@ export const getServerAuthSession = (ctx: {
   req: GetServerSidePropsContext["req"] | any;
   res: GetServerSidePropsContext["res"] | any;
 }) => {
+
+
   return getServerSession(ctx.req, ctx.res, authOptions);
 };

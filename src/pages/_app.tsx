@@ -6,7 +6,6 @@ import "app/styles/globals.css";
 import Head from "next/head";
 import mnMN from "antd/locale/mn_MN";
 import { ConfigProvider, App as AntdApp } from "antd";
-import MainLayout from "./layout";
 import { AppWrapper } from "app/context/appContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -32,9 +31,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             locale={mnMN}
           >
             <AppWrapper>
-              <MainLayout>
-                <Component {...pageProps} />
-              </MainLayout>
+              <Component {...pageProps} />
             </AppWrapper>
           </ConfigProvider>
         </AntdApp>

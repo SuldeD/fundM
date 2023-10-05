@@ -10,19 +10,19 @@ import {
   Input,
   message,
 } from "antd";
-import styles from "../../../styles/profile.module.css";
-import modalstyles from "../../../styles/modal.module.css";
-import { HeaderDashboard } from "../../../components/header";
+import styles from "app/styles/profile.module.css";
+import modalstyles from "app/styles/modal.module.css";
+import { HeaderDashboard } from "app/components/header";
 import { useMemo, useRef, useState } from "react";
 import { Loaderr } from "app/components/Loader";
-import { useRequireAuth } from "app/utils/auth";
 import { useRouter } from "next/router";
-import stylesL from "../../../styles/dloan.module.css";
+import stylesL from "app/styles/dloan.module.css";
 import { api } from "app/utils/api";
 import InputCode from "app/components/input";
 import { useSession } from "next-auth/react";
 import PopupModal from "app/components/modal";
 import { useAppContext } from "app/context/appContext";
+import { ProtectedLayout } from "app/cmsLayout";
 
 const { Panel } = Collapse;
 
@@ -43,7 +43,6 @@ export const Profile = () => {
   const { data } = useSession();
   const router = useRouter();
   const { error, warning } = Modal;
-  useRequireAuth();
   const { success } = useAppContext();
 
   //mutates
@@ -995,409 +994,411 @@ export const Profile = () => {
     return <Loaderr />;
   } else {
     return (
-      <Row justify="center" className={styles["profile-main-row"]}>
-        <Modal
-          title={
-            <div className="text-center">
-              {clickedEdit == 0
-                ? "Утасны дугаар өөрчлөх"
-                : clickedEdit == 1
-                ? "Имэйл хаяг өөрчлөх"
-                : clickedEdit == 2
-                ? "Нэвтрэх нууц үг солих"
-                : clickedEdit == 3
-                ? "Fund me код солих"
-                : clickedEdit == 4 && "Fund me код шинээр үүсгэх"}
-            </div>
-          }
-          centered
-          open={open}
-          width={378}
-          closeIcon={false}
-          footer={[
-            <div className="flex justify-between">
-              <Button
-                className={modalstyles["modal-ghost-button"]}
-                onClick={() => {
-                  setOpen(false);
-                  setCode([...Array(length)].map(() => ""));
-                  setEditEmail("");
-                  setLoginPassPrev("");
-                  setLoginPassNew("");
-                  setFundPassPrev("");
-                  setFundPassNewVer("");
-                  setLoginPassNewVer("");
-                  setFundPassNew("");
-                }}
-              >
-                Хаах
-              </Button>
-
-              <Button
-                className={modalstyles["modal-button"]}
-                type="primary"
-                onClick={
-                  clickedEdit == 0
-                    ? handleOk
-                    : clickedEdit == 4
-                    ? handleOkForgotTrans
-                    : clickedEdit == 1
-                    ? handleOk
-                    : handleOkPanel2
-                }
-              >
+      <ProtectedLayout>
+        <Row justify="center" className={styles["profile-main-row"]}>
+          <Modal
+            title={
+              <div className="text-center">
                 {clickedEdit == 0
-                  ? "Үргэлжлүүлэх"
-                  : clickedEdit == 4
-                  ? "Үргэлжлүүлэх"
+                  ? "Утасны дугаар өөрчлөх"
                   : clickedEdit == 1
-                  ? "Үргэлжлүүлэх"
-                  : "Хадгалах"}
-              </Button>
-            </div>,
-          ]}
-          onCancel={() => {
-            setOpen(false);
-            setCode([...Array(length)].map(() => ""));
-            setEditEmail("");
-            setLoginPassPrev("");
-            setLoginPassNew("");
-            setFundPassPrev("");
-            setFundPassNewVer("");
-            setLoginPassNewVer("");
-            setFundPassNew("");
-          }}
-        >
-          {clickedEdit == 2 && (
-            <div className="mt-5">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Одоогын нууц үг оруулах
-              </label>{" "}
-              <Input.Password
-                className="mb-5 mt-3  h-[38px] w-full rounded-[9px] border px-2 py-1"
-                value={loginPassPrev}
-                onChange={(e) => setLoginPassPrev(e.target.value)}
-              />
-            </div>
-          )}
-          {clickedEdit == 2 && (
-            <div>
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Шинэ нууц үг оруулах
-              </label>
-              <Input.Password
-                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
-                value={loginPassNew}
-                onChange={(e) => setLoginPassNew(e.target.value)}
-              />
-            </div>
-          )}
-          {clickedEdit == 2 && (
-            <div>
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Шинэ нууц үг дахин оруулах
-              </label>
-              <Input.Password
-                className=" mt-3 h-[38px] w-full  rounded-[9px] border px-2 py-1"
-                value={loginPassNewVer}
-                onChange={(e) => setLoginPassNewVer(e.target.value)}
-              />
-            </div>
-          )}
-          {clickedEdit == 3 && (
-            <div className="mt-5">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Одоогын FundMe код оруулах
-              </label>{" "}
-              <Input.Password
-                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
-                value={fundPassPrev}
-                maxLength={4}
-                onChange={(e) => {
-                  const numericPattern = /^[0-9]+$/;
-                  return numericPattern.test(e.target.value)
-                    ? setFundPassPrev(e.target.value)
-                    : setFundPassPrev("");
-                }}
-              />
-            </div>
-          )}
-          {clickedEdit == 3 && (
-            <div>
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Шинэ FundMe код оруулах
-              </label>
-              <Input.Password
-                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
-                value={fundPassNew}
-                maxLength={4}
-                type="number"
-                onChange={(e) => {
-                  const numericPattern = /^[0-9]+$/;
-                  return numericPattern.test(e.target.value)
-                    ? setFundPassNew(e.target.value)
-                    : setFundPassNew("");
-                }}
-              />
-            </div>
-          )}
-          {clickedEdit == 3 && (
-            <div>
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Шинэ FundMe код дахин оруулах
-              </label>
-              <Input.Password
-                className=" mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
-                value={fundPassNewVer}
-                maxLength={4}
-                type="number"
-                onChange={(e) => {
-                  const numericPattern = /^[0-9]+$/;
-                  return numericPattern.test(e.target.value)
-                    ? setFundPassNewVer(e.target.value)
-                    : setFundPassNewVer("");
-                }}
-              />
-            </div>
-          )}
-          {clickedEdit == 0 && (
-            <Input
-              className="my-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
-              value={editNumber}
-              onChange={(e) => {
-                const numericPattern = /^[0-9]+$/;
-                return numericPattern.test(e.target.value)
-                  ? setEditNumber(e.target.value)
-                  : setEditNumber("");
-              }}
-            />
-          )}
-          {clickedEdit == 1 && (
-            <Input
-              className="my-5 h-[38px] w-full rounded-[9px] border px-2 py-1"
-              value={editEmail}
-              onChange={(e) => setEditEmail(e.target.value)}
-            />
-          )}
-
-          {clickedEdit == 4 && (
-            <div className="mt-5">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Шинэ FundMe код оруулах
-              </label>
-              <Input.Password
-                className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
-                value={fundPassNew}
-                maxLength={4}
-                onChange={(e) => {
-                  const numericPattern = /^[0-9]+$/;
-                  return numericPattern.test(e.target.value)
-                    ? setFundPassNew(e.target.value)
-                    : setFundPassNew("");
-                }}
-              />
-            </div>
-          )}
-          {clickedEdit == 4 && (
-            <div>
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Шинэ FundMe код дахин оруулах
-              </label>
-              <Input.Password
-                className="mb-[20px] mt-3 h-[38px]  w-full rounded-[9px] border px-2 py-1"
-                value={fundPassNewVer}
-                maxLength={4}
-                onChange={(e) => {
-                  const numericPattern = /^[0-9]+$/;
-                  return numericPattern.test(e.target.value)
-                    ? setFundPassNewVer(e.target.value)
-                    : setFundPassNewVer("");
-                }}
-              />
-            </div>
-          )}
-          <p className="mx-auto mt-3 w-[80%] text-center font-raleway text-[14px] font-normal text-[red]">
-            {clickedEdit == 0
-              ? "Та өөрийн шинээр бүртгүүлэх утасны дугаараа оруулна уу."
-              : clickedEdit == 4
-              ? "Таны FundMe код багадаа 4 тоо орсон байна!"
-              : clickedEdit == 1
-              ? "Та өөрийн шинээр бүртгүүлэх имэйл хаяг оруулна уу."
-              : clickedEdit == 2
-              ? "Таны нууц үг багадаа 8 оронтой 1 том үсэг 1 тэмдэгт орсон байна!"
-              : clickedEdit == 3
-              ? "Таны FundMe код багадаа 4 тоо орсон байна!"
-              : ""}
-          </p>
-        </Modal>
-
-        <InputCode open={isOpen} onFinish={submit} setOpen={setIsOpen} />
-
-        <Modal
-          centered
-          width={378}
-          title={
-            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-              Баталгаажуулах код оруулах
-            </div>
-          }
-          closable={true}
-          onCancel={() => setIsOpenVerifyPass(false)}
-          open={isOpenVerifyPass}
-          footer={null}
-        >
-          <Row justify="center">
-            <Col span={20}>
-              <Row justify="center" gutter={[0, 20]}>
-                <Col span={20} className="my-3 flex justify-between">
-                  {code.map(
-                    (
-                      num: string | number | readonly string[] | undefined,
-                      idx: React.Key | null | undefined
-                    ) => {
-                      return (
-                        <input
-                          key={idx}
-                          type="text"
-                          inputMode="numeric"
-                          className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
-                          maxLength={1}
-                          value={num}
-                          autoFocus={!code[0].length && idx === 0}
-                          onChange={(e) => processInput(e, idx)}
-                          onKeyUp={(e) => onKeyUp(e, idx)}
-                          ref={(ref) => inputs.current.push(ref)}
-                        />
-                      );
-                    }
-                  )}
-                </Col>
-                <Col span={20}>
-                  <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                    Бид таны бүртгүүлсэн банкны дансруу нэг удаагын
-                    баталгаажуулах код илгэлээ.
-                  </div>
-                </Col>
-                <Col span={20}>
-                  <Button
-                    type="primary"
-                    loading={loadingBtn}
-                    className={stylesL["dloan-modal-verify-button"]}
-                    onClick={() =>
-                      code.join("").length == 4
-                        ? clickedEdit
-                          ? clickedEdit == 0
-                            ? verifyPass()
-                            : verifyTransPass()
-                          : submitVerify()
-                        : error({
-                            title: "Амжилтгүй",
-                            content: (
-                              <div>Хүчинтэй утасны дугаар оруулна уу !</div>
-                            ),
-                          })
-                    }
-                  >
-                    Баталгаажуулах
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Modal>
-
-        <Modal
-          centered
-          width={478}
-          title={
-            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-              Гарын үсгийн зураг оруулах
-            </div>
-          }
-          closable={true}
-          onCancel={() => setOpenVerify(false)}
-          open={isOpenVerify}
-          footer={null}
-        >
-          <Row justify="center">
-            <Col span={20}>
-              <Row justify="center" gutter={[0, 20]}>
-                <Upload
-                  beforeUpload={beforeUpload}
-                  customRequest={() => {}}
-                  listType="picture"
-                  showUploadList={false}
-                  onChange={handleChange}
-                  className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
+                  ? "Имэйл хаяг өөрчлөх"
+                  : clickedEdit == 2
+                  ? "Нэвтрэх нууц үг солих"
+                  : clickedEdit == 3
+                  ? "Fund me код солих"
+                  : clickedEdit == 4 && "Fund me код шинээр үүсгэх"}
+              </div>
+            }
+            centered
+            open={open}
+            width={378}
+            closeIcon={false}
+            footer={[
+              <div className="flex justify-between">
+                <Button
+                  className={modalstyles["modal-ghost-button"]}
+                  onClick={() => {
+                    setOpen(false);
+                    setCode([...Array(length)].map(() => ""));
+                    setEditEmail("");
+                    setLoginPassPrev("");
+                    setLoginPassNew("");
+                    setFundPassPrev("");
+                    setFundPassNewVer("");
+                    setLoginPassNewVer("");
+                    setFundPassNew("");
+                  }}
                 >
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt="avatar"
-                      className="h-[60px] w-[60px]"
-                    />
-                  ) : (
-                    uploadButton
-                  )}
-                </Upload>
+                  Хаах
+                </Button>
 
-                <Row>
-                  <p className="text-center">
-                    {accountInfo?.account?.user_type == "org"
-                      ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
-                      : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
-                  </p>
+                <Button
+                  className={modalstyles["modal-button"]}
+                  type="primary"
+                  onClick={
+                    clickedEdit == 0
+                      ? handleOk
+                      : clickedEdit == 4
+                      ? handleOkForgotTrans
+                      : clickedEdit == 1
+                      ? handleOk
+                      : handleOkPanel2
+                  }
+                >
+                  {clickedEdit == 0
+                    ? "Үргэлжлүүлэх"
+                    : clickedEdit == 4
+                    ? "Үргэлжлүүлэх"
+                    : clickedEdit == 1
+                    ? "Үргэлжлүүлэх"
+                    : "Хадгалах"}
+                </Button>
+              </div>,
+            ]}
+            onCancel={() => {
+              setOpen(false);
+              setCode([...Array(length)].map(() => ""));
+              setEditEmail("");
+              setLoginPassPrev("");
+              setLoginPassNew("");
+              setFundPassPrev("");
+              setFundPassNewVer("");
+              setLoginPassNewVer("");
+              setFundPassNew("");
+            }}
+          >
+            {clickedEdit == 2 && (
+              <div className="mt-5">
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Одоогын нууц үг оруулах
+                </label>{" "}
+                <Input.Password
+                  className="mb-5 mt-3  h-[38px] w-full rounded-[9px] border px-2 py-1"
+                  value={loginPassPrev}
+                  onChange={(e) => setLoginPassPrev(e.target.value)}
+                />
+              </div>
+            )}
+            {clickedEdit == 2 && (
+              <div>
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Шинэ нууц үг оруулах
+                </label>
+                <Input.Password
+                  className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
+                  value={loginPassNew}
+                  onChange={(e) => setLoginPassNew(e.target.value)}
+                />
+              </div>
+            )}
+            {clickedEdit == 2 && (
+              <div>
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Шинэ нууц үг дахин оруулах
+                </label>
+                <Input.Password
+                  className=" mt-3 h-[38px] w-full  rounded-[9px] border px-2 py-1"
+                  value={loginPassNewVer}
+                  onChange={(e) => setLoginPassNewVer(e.target.value)}
+                />
+              </div>
+            )}
+            {clickedEdit == 3 && (
+              <div className="mt-5">
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Одоогын FundMe код оруулах
+                </label>{" "}
+                <Input.Password
+                  className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
+                  value={fundPassPrev}
+                  maxLength={4}
+                  onChange={(e) => {
+                    const numericPattern = /^[0-9]+$/;
+                    return numericPattern.test(e.target.value)
+                      ? setFundPassPrev(e.target.value)
+                      : setFundPassPrev("");
+                  }}
+                />
+              </div>
+            )}
+            {clickedEdit == 3 && (
+              <div>
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Шинэ FundMe код оруулах
+                </label>
+                <Input.Password
+                  className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
+                  value={fundPassNew}
+                  maxLength={4}
+                  type="number"
+                  onChange={(e) => {
+                    const numericPattern = /^[0-9]+$/;
+                    return numericPattern.test(e.target.value)
+                      ? setFundPassNew(e.target.value)
+                      : setFundPassNew("");
+                  }}
+                />
+              </div>
+            )}
+            {clickedEdit == 3 && (
+              <div>
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Шинэ FundMe код дахин оруулах
+                </label>
+                <Input.Password
+                  className=" mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
+                  value={fundPassNewVer}
+                  maxLength={4}
+                  type="number"
+                  onChange={(e) => {
+                    const numericPattern = /^[0-9]+$/;
+                    return numericPattern.test(e.target.value)
+                      ? setFundPassNewVer(e.target.value)
+                      : setFundPassNewVer("");
+                  }}
+                />
+              </div>
+            )}
+            {clickedEdit == 0 && (
+              <Input
+                className="my-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
+                value={editNumber}
+                onChange={(e) => {
+                  const numericPattern = /^[0-9]+$/;
+                  return numericPattern.test(e.target.value)
+                    ? setEditNumber(e.target.value)
+                    : setEditNumber("");
+                }}
+              />
+            )}
+            {clickedEdit == 1 && (
+              <Input
+                className="my-5 h-[38px] w-full rounded-[9px] border px-2 py-1"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+              />
+            )}
+
+            {clickedEdit == 4 && (
+              <div className="mt-5">
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Шинэ FundMe код оруулах
+                </label>
+                <Input.Password
+                  className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
+                  value={fundPassNew}
+                  maxLength={4}
+                  onChange={(e) => {
+                    const numericPattern = /^[0-9]+$/;
+                    return numericPattern.test(e.target.value)
+                      ? setFundPassNew(e.target.value)
+                      : setFundPassNew("");
+                  }}
+                />
+              </div>
+            )}
+            {clickedEdit == 4 && (
+              <div>
+                <label className="text-sm font-normal text-black text-opacity-50">
+                  Шинэ FundMe код дахин оруулах
+                </label>
+                <Input.Password
+                  className="mb-[20px] mt-3 h-[38px]  w-full rounded-[9px] border px-2 py-1"
+                  value={fundPassNewVer}
+                  maxLength={4}
+                  onChange={(e) => {
+                    const numericPattern = /^[0-9]+$/;
+                    return numericPattern.test(e.target.value)
+                      ? setFundPassNewVer(e.target.value)
+                      : setFundPassNewVer("");
+                  }}
+                />
+              </div>
+            )}
+            <p className="mx-auto mt-3 w-[80%] text-center font-raleway text-[14px] font-normal text-[red]">
+              {clickedEdit == 0
+                ? "Та өөрийн шинээр бүртгүүлэх утасны дугаараа оруулна уу."
+                : clickedEdit == 4
+                ? "Таны FundMe код багадаа 4 тоо орсон байна!"
+                : clickedEdit == 1
+                ? "Та өөрийн шинээр бүртгүүлэх имэйл хаяг оруулна уу."
+                : clickedEdit == 2
+                ? "Таны нууц үг багадаа 8 оронтой 1 том үсэг 1 тэмдэгт орсон байна!"
+                : clickedEdit == 3
+                ? "Таны FundMe код багадаа 4 тоо орсон байна!"
+                : ""}
+            </p>
+          </Modal>
+
+          <InputCode open={isOpen} onFinish={submit} setOpen={setIsOpen} />
+
+          <Modal
+            centered
+            width={378}
+            title={
+              <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
+                Баталгаажуулах код оруулах
+              </div>
+            }
+            closable={true}
+            onCancel={() => setIsOpenVerifyPass(false)}
+            open={isOpenVerifyPass}
+            footer={null}
+          >
+            <Row justify="center">
+              <Col span={20}>
+                <Row justify="center" gutter={[0, 20]}>
+                  <Col span={20} className="my-3 flex justify-between">
+                    {code.map(
+                      (
+                        num: string | number | readonly string[] | undefined,
+                        idx: React.Key | null | undefined
+                      ) => {
+                        return (
+                          <input
+                            key={idx}
+                            type="text"
+                            inputMode="numeric"
+                            className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
+                            maxLength={1}
+                            value={num}
+                            autoFocus={!code[0].length && idx === 0}
+                            onChange={(e) => processInput(e, idx)}
+                            onKeyUp={(e) => onKeyUp(e, idx)}
+                            ref={(ref) => inputs.current.push(ref)}
+                          />
+                        );
+                      }
+                    )}
+                  </Col>
+                  <Col span={20}>
+                    <div className="text-center font-raleway text-[12px] font-normal text-sub">
+                      Бид таны бүртгүүлсэн утасны дугаар руу нэг удаагын
+                      баталгаажуулах код илгэлээ.
+                    </div>
+                  </Col>
+                  <Col span={20}>
+                    <Button
+                      type="primary"
+                      loading={loadingBtn}
+                      className={stylesL["dloan-modal-verify-button"]}
+                      onClick={() =>
+                        code.join("").length == 4
+                          ? clickedEdit
+                            ? clickedEdit == 0
+                              ? verifyPass()
+                              : verifyTransPass()
+                            : submitVerify()
+                          : error({
+                              title: "Амжилтгүй",
+                              content: (
+                                <div>Хүчинтэй утасны дугаар оруулна уу !</div>
+                              ),
+                            })
+                      }
+                    >
+                      Баталгаажуулах
+                    </Button>
+                  </Col>
                 </Row>
-                <Col span={24}>
-                  <Button
-                    type="primary"
-                    loading={loadingBtn}
-                    onClick={() => {
-                      imageUrl.length > 0 && setIsOpenVerifyPass(true);
-                    }}
-                    className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
+              </Col>
+            </Row>
+          </Modal>
+
+          <Modal
+            centered
+            width={478}
+            title={
+              <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
+                Гарын үсгийн зураг оруулах
+              </div>
+            }
+            closable={true}
+            onCancel={() => setOpenVerify(false)}
+            open={isOpenVerify}
+            footer={null}
+          >
+            <Row justify="center">
+              <Col span={20}>
+                <Row justify="center" gutter={[0, 20]}>
+                  <Upload
+                    beforeUpload={beforeUpload}
+                    customRequest={() => {}}
+                    listType="picture"
+                    showUploadList={false}
+                    onChange={handleChange}
+                    className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
                   >
-                    Үргэлжлүүлэх
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Modal>
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="avatar"
+                        className="h-[60px] w-[60px]"
+                      />
+                    ) : (
+                      uploadButton
+                    )}
+                  </Upload>
 
-        <PopupModal
-          buttonClick={() => {
-            setCheck(false);
-            setIsOpenVerifyPass(false);
-            setOpenVerify(false);
-            router.reload();
-          }}
-          buttonText={"Хаах"}
-          closableM={null}
-          closeModal={null}
-          customDiv={null}
-          customIconWidth={null}
-          iconPath={"/images/check"}
-          modalWidth={null}
-          open={check}
-          text={<p>Таны данс амжилттай холбогдлоо.</p>}
-          textAlign={"center"}
-        />
+                  <Row>
+                    <p className="text-center">
+                      {accountInfo?.account?.user_type == "org"
+                        ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
+                        : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
+                    </p>
+                  </Row>
+                  <Col span={24}>
+                    <Button
+                      type="primary"
+                      loading={loadingBtn}
+                      onClick={() => {
+                        imageUrl.length > 0 && setIsOpenVerifyPass(true);
+                      }}
+                      className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
+                    >
+                      Үргэлжлүүлэх
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Modal>
 
-        <Col span={22}>
-          <Row gutter={[0, 20]}>
-            <HeaderDashboard
-              title={"Миний мэдээлэл"}
-              subTitle={
-                "Та банкны мэдээллээ өөрчлөх бол манай байгууллагын таньд ойрхон салбарт хандана уу."
-              }
-            />
-            <Col span={24}>
-              <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+          <PopupModal
+            buttonClick={() => {
+              setCheck(false);
+              setIsOpenVerifyPass(false);
+              setOpenVerify(false);
+              router.reload();
+            }}
+            buttonText={"Хаах"}
+            closableM={null}
+            closeModal={null}
+            customDiv={null}
+            customIconWidth={null}
+            iconPath={"/images/check"}
+            modalWidth={null}
+            open={check}
+            text={<p>Таны данс амжилттай холбогдлоо.</p>}
+            textAlign={"center"}
+          />
+
+          <Col span={22}>
+            <Row gutter={[0, 20]}>
+              <HeaderDashboard
+                title={"Миний мэдээлэл"}
+                subTitle={
+                  "Та банкны мэдээллээ өөрчлөх бол манай байгууллагын таньд ойрхон салбарт хандана уу."
+                }
+              />
+              <Col span={24}>
+                <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </ProtectedLayout>
     );
   }
 };

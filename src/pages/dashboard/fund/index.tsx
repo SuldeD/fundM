@@ -1,18 +1,19 @@
 import { Row, Col, Tabs, Table, Image, Button, Modal, message } from "antd";
-import styles from "../../../styles/fund.module.css";
-import stylesDL from "../../../styles/dloan.module.css";
-import stylesFD from "../../../styles/foundation.module.css";
-import stylesList from "../../../styles/dashboard.module.css";
-import { numberToCurrency } from "../../../utils/number.helpers";
-import { HeaderDashboard } from "../../../components/header";
-import { useRequireAuth } from "app/utils/auth";
+import styles from "app/styles/fund.module.css";
+import stylesDL from "app/styles/dloan.module.css";
+import stylesFD from "app/styles/foundation.module.css";
+import stylesList from "app/styles/dashboard.module.css";
+import { numberToCurrency } from "app/utils/number.helpers";
+import { HeaderDashboard } from "app/components/header";
 import { useMemo, useState } from "react";
 import { api } from "app/utils/api";
 import InputCode from "app/components/input";
+import { ProtectedLayout } from "app/cmsLayout";
+import { useSession } from "next-auth/react";
 
 export const FundHistory = () => {
-  useRequireAuth();
   const { error } = Modal;
+  const { data } = useSession();
 
   //mutates
   const { mutate: repayment } = api.loan.repayment.useMutation();
@@ -469,600 +470,668 @@ export const FundHistory = () => {
     );
   };
 
-  return (
-    <Row justify="center" className={styles["fund-main-row"]}>
-      <Col span={22}>
-        <Row gutter={[0, 20]}>
-          <HeaderDashboard
-            title={"Миний санхүүжилт"}
-            subTitle={
-              "Харилцагч та өөрийн нийт идэвхтэй байгаа өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-            }
-          />
+  if (!data) {
+  } else {
+    return (
+      <ProtectedLayout>
+        <Row justify="center" className={styles["fund-main-row"]}>
+          <Col span={22}>
+            <Row gutter={[0, 20]}>
+              <HeaderDashboard
+                title={"Миний санхүүжилт"}
+                subTitle={
+                  "Харилцагч та өөрийн нийт идэвхтэй байгаа өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
+                }
+              />
 
-          <Col span={24}>
-            <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
+              <Col span={24}>
+                <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
+              </Col>
+            </Row>
+
+            <Modal
+              open={open}
+              onCancel={() => setOpen(false)}
+              footer={null}
+              closeIcon={null}
+              title={
+                <div className="text-center font-beau text-[16px] font-medium">
+                  {myFundTabKey == "1"
+                    ? "Зээлийн дэлгэрэнгүй"
+                    : "Санхүүжилт дэлгэрэнгүй"}
+                </div>
+              }
+            >
+              {orders &&
+                orders.map(
+                  (o: any, idx: number) =>
+                    o.request_id == activeClass && (
+                      <div key={`${idx}`}>
+                        <Col
+                          span={22}
+                          key={`${idx}`}
+                          className="mx-auto w-full"
+                        >
+                          <Col className="mt-[20px]">
+                            <Row
+                              className={stylesDL["dloan-detail"]}
+                              gutter={[0, 22]}
+                            >
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        o.product_type_code == "saving"
+                                          ? stylesFD["foundation-detail-text"]
+                                          : stylesDL["dloan-detail-text"]
+                                      }
+                                    >
+                                      {myFundTabKey == "1"
+                                        ? "Үндсэн зээлийн хэмжээ"
+                                        : "Санхүүжилтын хэмжээ"}
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        stylesDL["dloan-detail-maxValue"]
+                                      }
+                                    >
+                                      {numberToCurrency(o.loan_amount)}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Хүүгийн ашиг
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          o.product_type_code == "saving"
+                                            ? stylesFD["foundation-rate-profit"]
+                                            : stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.floor(
+                                            (o.loan_amount / 100) *
+                                              (Math.round(
+                                                o.loan_rate_day * 10
+                                              ) /
+                                                10) *
+                                              Number(o.loan_day)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Татвар
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            Number(o.loan_amount / 100) *
+                                              (Math.round(
+                                                o.loan_rate_day * 10
+                                              ) /
+                                                10) *
+                                              Number(o.loan_day) *
+                                              0.1
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "1" &&
+                                selectedData?.loan_rate_amount > 0 && (
+                                  <Col span={24}>
+                                    <Row justify="space-between" align="middle">
+                                      <Col flex="none">
+                                        <div
+                                          className={
+                                            stylesDL["dloan-detail-text"]
+                                          }
+                                        >
+                                          Зээлийн хүү (төгрөгөөр)
+                                        </div>
+                                      </Col>
+                                      <Col flex="none">
+                                        <div
+                                          className={
+                                            o.product_type_code == "saving"
+                                              ? stylesFD[
+                                                  "foundation-rate-profit"
+                                                ]
+                                              : stylesDL["dloan-rate-profit"]
+                                          }
+                                        >
+                                          {numberToCurrency(
+                                            Math.ceil(
+                                              selectedData?.loan_rate_amount
+                                            )
+                                          )}
+                                        </div>
+                                      </Col>
+                                    </Row>
+                                  </Col>
+                                )}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Нийт төлөх зээлийн хэмжээ
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          selectedData?.close_pay_amount
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Нийт
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            (o.loan_amount / 100) *
+                                              (Math.round(
+                                                o.loan_rate_day * 10
+                                              ) /
+                                                10) *
+                                              Number(o.loan_day) -
+                                              Number(o.loan_amount / 100) *
+                                                (Math.round(
+                                                  o.loan_rate_day * 10
+                                                ) /
+                                                  10) *
+                                                Number(o.loan_day) *
+                                                0.1 +
+                                              Number(o.loan_amount)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Хүүгийн хэмжээ (хувь)
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        stylesDL["dloan-detail-maxValue"]
+                                      }
+                                    >
+                                      {Math.round(o.loan_rate_month * 10) / 10}0
+                                      %
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Хугацаа
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        stylesDL["dloan-detail-maxValue"]
+                                      }
+                                    >
+                                      {o.loan_day} хоног
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>{" "}
+                              {myFundTabKey == "1" &&
+                                selectedData?.loan_fee_amount > 0 && (
+                                  <Col span={24}>
+                                    <Row justify="space-between" align="middle">
+                                      <Col flex="none">
+                                        <div
+                                          className={
+                                            stylesDL["dloan-detail-text"]
+                                          }
+                                        >
+                                          Зээл олголтын шимтгэл
+                                        </div>
+                                      </Col>
+                                      <Col flex="none">
+                                        <div
+                                          className={
+                                            o.product_type_code == "saving"
+                                              ? stylesFD[
+                                                  "foundation-rate-profit"
+                                                ]
+                                              : stylesDL["dloan-rate-profit"]
+                                          }
+                                        >
+                                          {numberToCurrency(
+                                            Number(
+                                              selectedData?.loan_fee_amount
+                                            )
+                                          )}
+                                        </div>
+                                      </Col>
+                                    </Row>
+                                  </Col>
+                                )}
+                              {myFundTabKey == "1" &&
+                                selectedData?.lost_amount > 0 && (
+                                  <Col span={24}>
+                                    <Row justify="space-between" align="middle">
+                                      <Col flex="none">
+                                        <div
+                                          className={
+                                            stylesDL["dloan-detail-text"]
+                                          }
+                                        >
+                                          Хугацаа хэтэрүүлсэн зээлийн алданги
+                                        </div>
+                                      </Col>
+                                      <Col flex="none">
+                                        <div
+                                          className={
+                                            o.product_type_code == "saving"
+                                              ? stylesFD[
+                                                  "foundation-rate-profit"
+                                                ]
+                                              : stylesDL["dloan-rate-profit"]
+                                          }
+                                        >
+                                          {numberToCurrency(
+                                            Math.ceil(selectedData?.lost_amount)
+                                          )}
+                                        </div>
+                                      </Col>
+                                    </Row>
+                                  </Col>
+                                )}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Зээлийн төлөлт хийх өдөр
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {selectedData?.subscribe_date?.slice(
+                                          0,
+                                          10
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Дуусах өдөр
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {o?.loan_end_date?.slice(0, 10)}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                            </Row>
+                          </Col>
+                        </Col>
+
+                        <Col span={22} className="mx-auto w-full">
+                          <Col className="mt-[20px]">
+                            <Row gutter={[0, 22]}>
+                              <Col span={24} className="flex">
+                                <Button
+                                  type="link"
+                                  className="flex  p-0"
+                                  onClick={() => setOpenPdf(true)}
+                                >
+                                  <img src="/images/pdf.svg" alt="pdf" />
+                                  <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
+                                    {myFundTabKey == "1"
+                                      ? "Зээлийн гэрээ"
+                                      : "Богино хугацааны санхүүжилтын гэрээ"}
+                                  </p>
+                                </Button>
+                              </Col>
+                            </Row>
+                          </Col>
+                        </Col>
+
+                        <Col className="mx-auto mt-[20px]" span={22}>
+                          {activeClass && (
+                            <Row
+                              justify="space-between"
+                              className="gap-4"
+                              wrap={false}
+                            >
+                              <Button
+                                className={stylesDL["dloan-button-back"]}
+                                type="default"
+                                onClick={() => {
+                                  setSelectedId("");
+                                  setOpen(false);
+                                }}
+                              >
+                                <Col flex={"auto"}>
+                                  <div
+                                    className={
+                                      styles["dloan-change-button-text"]
+                                    }
+                                  >
+                                    Хаах
+                                  </div>
+                                </Col>
+                              </Button>
+                              {myFundTabKey == "1" && o.is_extension == 1 && (
+                                <Button
+                                  className={stylesDL["dloan-button-back"]}
+                                  type="primary"
+                                  onClick={() => {
+                                    setIsVerifyOpen(true);
+                                    setFoundationBankData("3");
+                                  }}
+                                >
+                                  <Col flex={"auto"}>
+                                    <div
+                                      className={
+                                        styles["dloan-change-button-text"]
+                                      }
+                                    >
+                                      Зээл сунгах
+                                    </div>
+                                  </Col>
+                                </Button>
+                              )}
+                              {myFundTabKey == "1" && (
+                                <Button
+                                  className={stylesDL["dloan-button-back"]}
+                                  type="primary"
+                                  onClick={() => {
+                                    setIsVerifyOpen(true);
+                                  }}
+                                >
+                                  <Col flex={"auto"}>
+                                    <div
+                                      className={
+                                        styles["dloan-change-button-text"]
+                                      }
+                                    >
+                                      Зээл төлөх
+                                    </div>
+                                  </Col>
+                                </Button>
+                              )}
+                            </Row>
+                          )}
+                        </Col>
+                      </div>
+                    )
+                )}
+            </Modal>
+
+            <InputCode
+              open={isVerifyOpen}
+              onFinish={verifyCompleteModal}
+              setOpen={setIsVerifyOpen}
+            />
+
+            <InputCode
+              open={openPdf}
+              onFinish={downloadPdfBtn}
+              setOpen={setOpenPdf}
+            />
+
+            <Modal
+              centered
+              width={378}
+              title={null}
+              open={isCompleteOpen}
+              closeIcon={false}
+              footer={
+                <Button
+                  className={`mt-[40px] flex h-[40px] w-[50%] justify-start rounded-[20px]`}
+                  onClick={() => setIsCompleteOpen(false)}
+                >
+                  <p className="w-full p-[4px] text-center">Хаах</p>
+                </Button>
+              }
+            >
+              <div className="text-center text-lg font-bold text-black">
+                Зээл төлөх
+              </div>
+              <div>
+                <div className="mt-[20px] ">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Хүлээн авах банкны нэр
+                  </label>
+                  <input
+                    value={foundationBankData?.product?.bank_name}
+                    disabled
+                    className="mt-[8px] h-[44px] w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                  />
+                </div>
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Данс эзэмшигчийн нэр
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
+                    <input
+                      value={foundationBankData?.product?.account_name}
+                      disabled
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        message.success("Copy to clipboard");
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.account_name
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Дансны дугаар
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
+                    <input
+                      value={foundationBankData?.product?.account_num}
+                      disabled
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        message.success("Copy to clipboard");
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.account_num
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Гүйлгээний дүн
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
+                    <input
+                      value={foundationBankData?.product?.now_month_pay_amount}
+                      disabled
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        message.success("Copy to clipboard");
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.now_month_pay_amount
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+                {foundationBankData?.product?.extension_desc && (
+                  <div className="mt-[10px] text-red-600">
+                    {foundationBankData?.product?.extension_desc}
+                  </div>
+                )}
+
+                <div className="mt-[20px]">
+                  <label className="text-sm font-normal text-black text-opacity-50">
+                    Гүйлгээний утга
+                  </label>
+                  <div className="mt-[8px] flex h-[44px] justify-between">
+                    <input
+                      value={
+                        foundationBankData?.product?.transaction_description
+                      }
+                      disabled
+                      className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
+                    />
+                    <img
+                      src="/images/iconamoon_copy.svg"
+                      className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
+                      alt=""
+                      onClick={() => {
+                        message.success("Copy to clipboard");
+                        navigator.clipboard.writeText(
+                          foundationBankData?.product?.transaction_description
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-[30px] text-xs font-normal leading-[18px] text-red-600">
+                  <p>
+                    Дараах тохиолдлуудад таны данс цэнэглэлт амжилтгүй болох
+                    бөгөөд ажлын 2 хоногийн дотор анх шилжүүлсэн данс руу буцаан
+                    шилжүүлэхийг АНХААРНА УУ!
+                  </p>
+                  <ol className="list-disc ps-[35px] pt-[15px]">
+                    <li>Гүйлгээний утга буруу</li>
+                    <li>KYC баталгаажуулалт хийгдээгүй</li>
+                    <li>Бүртгэлгүй банкны данснаас шилжүүлэг хийсэн</li>
+                    <li>
+                      Бүртгэлтэй, гэхдээ баталгаажуулаагүй данснаас шилжүүлэг
+                      хийсэн
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </Modal>
           </Col>
         </Row>
-
-        <Modal
-          open={open}
-          onCancel={() => setOpen(false)}
-          footer={null}
-          closeIcon={null}
-          title={
-            <div className="text-center font-beau text-[16px] font-medium">
-              {myFundTabKey == "1"
-                ? "Зээлийн дэлгэрэнгүй"
-                : "Санхүүжилт дэлгэрэнгүй"}
-            </div>
-          }
-        >
-          {orders &&
-            orders.map(
-              (o: any, idx: number) =>
-                o.request_id == activeClass && (
-                  <div key={`${idx}`}>
-                    <Col span={22} key={`${idx}`} className="mx-auto w-full">
-                      <Col className="mt-[20px]">
-                        <Row
-                          className={stylesDL["dloan-detail"]}
-                          gutter={[0, 22]}
-                        >
-                          <Col span={24}>
-                            <Row justify="space-between" align="middle">
-                              <Col flex="none">
-                                <div
-                                  className={
-                                    o.product_type_code == "saving"
-                                      ? stylesFD["foundation-detail-text"]
-                                      : stylesDL["dloan-detail-text"]
-                                  }
-                                >
-                                  {myFundTabKey == "1"
-                                    ? "Үндсэн зээлийн хэмжээ"
-                                    : "Санхүүжилтын хэмжээ"}
-                                </div>
-                              </Col>
-                              <Col flex="none">
-                                <div
-                                  className={stylesDL["dloan-detail-maxValue"]}
-                                >
-                                  {numberToCurrency(o.loan_amount)}
-                                </div>
-                              </Col>
-                            </Row>
-                          </Col>
-                          {myFundTabKey == "2" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Хүүгийн ашиг
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      o.product_type_code == "saving"
-                                        ? stylesFD["foundation-rate-profit"]
-                                        : stylesDL["dloan-rate-profit"]
-                                    }
-                                  >
-                                    {numberToCurrency(
-                                      Math.floor(
-                                        (o.loan_amount / 100) *
-                                          (Math.round(o.loan_rate_day * 10) /
-                                            10) *
-                                          Number(o.loan_day)
-                                      )
-                                    )}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
-                          {myFundTabKey == "2" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Татвар
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-rate-profit"]}
-                                  >
-                                    {numberToCurrency(
-                                      Math.round(
-                                        Number(o.loan_amount / 100) *
-                                          (Math.round(o.loan_rate_day * 10) /
-                                            10) *
-                                          Number(o.loan_day) *
-                                          0.1
-                                      )
-                                    )}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
-                          {myFundTabKey == "1" &&
-                            selectedData?.loan_rate_amount > 0 && (
-                              <Col span={24}>
-                                <Row justify="space-between" align="middle">
-                                  <Col flex="none">
-                                    <div
-                                      className={stylesDL["dloan-detail-text"]}
-                                    >
-                                      Зээлийн хүү (төгрөгөөр)
-                                    </div>
-                                  </Col>
-                                  <Col flex="none">
-                                    <div
-                                      className={
-                                        o.product_type_code == "saving"
-                                          ? stylesFD["foundation-rate-profit"]
-                                          : stylesDL["dloan-rate-profit"]
-                                      }
-                                    >
-                                      {numberToCurrency(
-                                        Math.ceil(
-                                          selectedData?.loan_rate_amount
-                                        )
-                                      )}
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </Col>
-                            )}
-                          {myFundTabKey == "1" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Нийт төлөх зээлийн хэмжээ
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      stylesDL["dloan-detail-maxValue"]
-                                    }
-                                  >
-                                    {numberToCurrency(
-                                      selectedData?.close_pay_amount
-                                    )}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
-                          {myFundTabKey == "2" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Нийт
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      stylesDL["dloan-detail-maxValue"]
-                                    }
-                                  >
-                                    {numberToCurrency(
-                                      Math.round(
-                                        (o.loan_amount / 100) *
-                                          (Math.round(o.loan_rate_day * 10) /
-                                            10) *
-                                          Number(o.loan_day) -
-                                          Number(o.loan_amount / 100) *
-                                            (Math.round(o.loan_rate_day * 10) /
-                                              10) *
-                                            Number(o.loan_day) *
-                                            0.1 +
-                                          Number(o.loan_amount)
-                                      )
-                                    )}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
-                          <Col span={24}>
-                            <Row justify="space-between" align="middle">
-                              <Col flex="none">
-                                <div className={stylesDL["dloan-detail-text"]}>
-                                  Хүүгийн хэмжээ (хувь)
-                                </div>
-                              </Col>
-                              <Col flex="none">
-                                <div
-                                  className={stylesDL["dloan-detail-maxValue"]}
-                                >
-                                  {Math.round(o.loan_rate_month * 10) / 10}0 %
-                                </div>
-                              </Col>
-                            </Row>
-                          </Col>
-                          <Col span={24}>
-                            <Row justify="space-between" align="middle">
-                              <Col flex="none">
-                                <div className={stylesDL["dloan-detail-text"]}>
-                                  Хугацаа
-                                </div>
-                              </Col>
-                              <Col flex="none">
-                                <div
-                                  className={stylesDL["dloan-detail-maxValue"]}
-                                >
-                                  {o.loan_day} хоног
-                                </div>
-                              </Col>
-                            </Row>
-                          </Col>{" "}
-                          {myFundTabKey == "1" &&
-                            selectedData?.loan_fee_amount > 0 && (
-                              <Col span={24}>
-                                <Row justify="space-between" align="middle">
-                                  <Col flex="none">
-                                    <div
-                                      className={stylesDL["dloan-detail-text"]}
-                                    >
-                                      Зээл олголтын шимтгэл
-                                    </div>
-                                  </Col>
-                                  <Col flex="none">
-                                    <div
-                                      className={
-                                        o.product_type_code == "saving"
-                                          ? stylesFD["foundation-rate-profit"]
-                                          : stylesDL["dloan-rate-profit"]
-                                      }
-                                    >
-                                      {numberToCurrency(
-                                        Number(selectedData?.loan_fee_amount)
-                                      )}
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </Col>
-                            )}
-                          {myFundTabKey == "1" &&
-                            selectedData?.lost_amount > 0 && (
-                              <Col span={24}>
-                                <Row justify="space-between" align="middle">
-                                  <Col flex="none">
-                                    <div
-                                      className={stylesDL["dloan-detail-text"]}
-                                    >
-                                      Хугацаа хэтэрүүлсэн зээлийн алданги
-                                    </div>
-                                  </Col>
-                                  <Col flex="none">
-                                    <div
-                                      className={
-                                        o.product_type_code == "saving"
-                                          ? stylesFD["foundation-rate-profit"]
-                                          : stylesDL["dloan-rate-profit"]
-                                      }
-                                    >
-                                      {numberToCurrency(
-                                        Math.ceil(selectedData?.lost_amount)
-                                      )}
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </Col>
-                            )}
-                          {myFundTabKey == "1" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Зээлийн төлөлт хийх өдөр
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      stylesDL["dloan-detail-maxValue"]
-                                    }
-                                  >
-                                    {selectedData?.subscribe_date?.slice(0, 10)}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
-                          {myFundTabKey == "2" && (
-                            <Col span={24}>
-                              <Row justify="space-between" align="middle">
-                                <Col flex="none">
-                                  <div
-                                    className={stylesDL["dloan-detail-text"]}
-                                  >
-                                    Дуусах өдөр
-                                  </div>
-                                </Col>
-                                <Col flex="none">
-                                  <div
-                                    className={
-                                      stylesDL["dloan-detail-maxValue"]
-                                    }
-                                  >
-                                    {o?.loan_end_date?.slice(0, 10)}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Col>
-                          )}
-                        </Row>
-                      </Col>
-                    </Col>
-
-                    <Col span={22} className="mx-auto w-full">
-                      <Col className="mt-[20px]">
-                        <Row gutter={[0, 22]}>
-                          <Col span={24} className="flex">
-                            <Button
-                              type="link"
-                              className="flex  p-0"
-                              onClick={() => setOpenPdf(true)}
-                            >
-                              <img src="/images/pdf.svg" alt="pdf" />
-                              <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
-                                {myFundTabKey == "1"
-                                  ? "Зээлийн гэрээ"
-                                  : "Богино хугацааны санхүүжилтын гэрээ"}
-                              </p>
-                            </Button>
-                          </Col>
-                        </Row>
-                      </Col>
-                    </Col>
-
-                    <Col className="mx-auto mt-[20px]" span={22}>
-                      {activeClass && (
-                        <Row
-                          justify="space-between"
-                          className="gap-4"
-                          wrap={false}
-                        >
-                          <Button
-                            className={stylesDL["dloan-button-back"]}
-                            type="default"
-                            onClick={() => {
-                              setSelectedId("");
-                              setOpen(false);
-                            }}
-                          >
-                            <Col flex={"auto"}>
-                              <div
-                                className={styles["dloan-change-button-text"]}
-                              >
-                                Хаах
-                              </div>
-                            </Col>
-                          </Button>
-                          {myFundTabKey == "1" && o.is_extension == 1 && (
-                            <Button
-                              className={stylesDL["dloan-button-back"]}
-                              type="primary"
-                              onClick={() => {
-                                setIsVerifyOpen(true);
-                                setFoundationBankData("3");
-                              }}
-                            >
-                              <Col flex={"auto"}>
-                                <div
-                                  className={styles["dloan-change-button-text"]}
-                                >
-                                  Зээл сунгах
-                                </div>
-                              </Col>
-                            </Button>
-                          )}
-                          {myFundTabKey == "1" && (
-                            <Button
-                              className={stylesDL["dloan-button-back"]}
-                              type="primary"
-                              onClick={() => {
-                                setIsVerifyOpen(true);
-                              }}
-                            >
-                              <Col flex={"auto"}>
-                                <div
-                                  className={styles["dloan-change-button-text"]}
-                                >
-                                  Зээл төлөх
-                                </div>
-                              </Col>
-                            </Button>
-                          )}
-                        </Row>
-                      )}
-                    </Col>
-                  </div>
-                )
-            )}
-        </Modal>
-
-        <InputCode
-          open={isVerifyOpen}
-          onFinish={verifyCompleteModal}
-          setOpen={setIsVerifyOpen}
-        />
-
-        <InputCode
-          open={openPdf}
-          onFinish={downloadPdfBtn}
-          setOpen={setOpenPdf}
-        />
-
-        <Modal
-          centered
-          width={378}
-          title={null}
-          open={isCompleteOpen}
-          closeIcon={false}
-          footer={
-            <Button
-              className={`mt-[40px] flex h-[40px] w-[50%] justify-start rounded-[20px]`}
-              onClick={() => setIsCompleteOpen(false)}
-            >
-              <p className="w-full p-[4px] text-center">Хаах</p>
-            </Button>
-          }
-        >
-          <div className="text-center text-lg font-bold text-black">
-            Зээл төлөх
-          </div>
-          <div>
-            <div className="mt-[20px] ">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Хүлээн авах банкны нэр
-              </label>
-              <input
-                value={foundationBankData?.product?.bank_name}
-                disabled
-                className="mt-[8px] h-[44px] w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-              />
-            </div>
-            <div className="mt-[20px]">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Данс эзэмшигчийн нэр
-              </label>
-              <div className="mt-[8px] flex h-[44px] justify-between">
-                <input
-                  value={foundationBankData?.product?.account_name}
-                  disabled
-                  className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                />
-                <img
-                  src="/images/iconamoon_copy.svg"
-                  className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                  alt=""
-                  onClick={() => {
-                    message.success("Copy to clipboard");
-                    navigator.clipboard.writeText(
-                      foundationBankData?.product?.account_name
-                    );
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="mt-[20px]">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Дансны дугаар
-              </label>
-              <div className="mt-[8px] flex h-[44px] justify-between">
-                <input
-                  value={foundationBankData?.product?.account_num}
-                  disabled
-                  className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                />
-                <img
-                  src="/images/iconamoon_copy.svg"
-                  className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                  alt=""
-                  onClick={() => {
-                    message.success("Copy to clipboard");
-                    navigator.clipboard.writeText(
-                      foundationBankData?.product?.account_num
-                    );
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="mt-[20px]">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Гүйлгээний дүн
-              </label>
-              <div className="mt-[8px] flex h-[44px] justify-between">
-                <input
-                  value={foundationBankData?.product?.now_month_pay_amount}
-                  disabled
-                  className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                />
-                <img
-                  src="/images/iconamoon_copy.svg"
-                  className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                  alt=""
-                  onClick={() => {
-                    message.success("Copy to clipboard");
-                    navigator.clipboard.writeText(
-                      foundationBankData?.product?.now_month_pay_amount
-                    );
-                  }}
-                />
-              </div>
-            </div>
-            {foundationBankData?.product?.extension_desc && (
-              <div className="mt-[10px] text-red-600">
-                {foundationBankData?.product?.extension_desc}
-              </div>
-            )}
-
-            <div className="mt-[20px]">
-              <label className="text-sm font-normal text-black text-opacity-50">
-                Гүйлгээний утга
-              </label>
-              <div className="mt-[8px] flex h-[44px] justify-between">
-                <input
-                  value={foundationBankData?.product?.transaction_description}
-                  disabled
-                  className="w-full rounded-lg border bg-[#F2F2F2] p-3 text-sm font-semibold text-black"
-                />
-                <img
-                  src="/images/iconamoon_copy.svg"
-                  className="ms-[10px] cursor-pointer rounded-[50%] bg-[#F2F2F2] p-3"
-                  alt=""
-                  onClick={() => {
-                    message.success("Copy to clipboard");
-                    navigator.clipboard.writeText(
-                      foundationBankData?.product?.transaction_description
-                    );
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="mt-[30px] text-xs font-normal leading-[18px] text-red-600">
-              <p>
-                Дараах тохиолдлуудад таны данс цэнэглэлт амжилтгүй болох бөгөөд
-                ажлын 2 хоногийн дотор анх шилжүүлсэн данс руу буцаан
-                шилжүүлэхийг АНХААРНА УУ!
-              </p>
-              <ol className="list-disc ps-[35px] pt-[15px]">
-                <li>Гүйлгээний утга буруу</li>
-                <li>KYC баталгаажуулалт хийгдээгүй</li>
-                <li>Бүртгэлгүй банкны данснаас шилжүүлэг хийсэн</li>
-                <li>
-                  Бүртгэлтэй, гэхдээ баталгаажуулаагүй данснаас шилжүүлэг хийсэн
-                </li>
-              </ol>
-            </div>
-          </div>
-        </Modal>
-      </Col>
-    </Row>
-  );
+      </ProtectedLayout>
+    );
+  }
 };
 
 export default FundHistory;

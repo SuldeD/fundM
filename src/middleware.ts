@@ -1,0 +1,42 @@
+import { NextResponse } from "next/server";
+
+const protectedRoutes: any = [
+  "/dashboard",
+  "/dashboard/fund",
+  "/dashboard/myfund",
+  "/dashboard/myfund/list",
+  "/dashboard/history",
+  "/dashboard/loan",
+  "/dashboard/foundation",
+  "/dashboard/profile",
+  "/dashboard/profile/bank",
+];
+const unprotectedRoutes: any = [
+  "/login",
+  "/signup",
+  "/forgot",
+  "/signup/verify-phone",
+  "/signup/password",
+  "/signup/question",
+  "/signup/transaction-password",
+  "/",
+  "/about-us",
+  "/finance",
+  "/loan",
+  "/#app",
+  "/#contact",
+];
+
+async function middleware(req: any) {
+  const session = req?.cookies?.get("next-auth.session-token")?.value ? true :false;
+
+  if (!session && protectedRoutes.includes(req.nextUrl.pathname)) {
+    const absoluteURL = new URL("/404", req.nextUrl.origin);
+    return NextResponse.redirect(absoluteURL.toString());
+  } else if (unprotectedRoutes.includes(req.nextUrl.pathname) && session) {
+    const absoluteURL = new URL("/dashboard/404", req.nextUrl.origin);
+    return NextResponse.redirect(absoluteURL.toString());
+  }
+}
+
+export default middleware;

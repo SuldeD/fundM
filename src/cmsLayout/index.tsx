@@ -14,21 +14,20 @@ import {
 } from "antd";
 import SidebarRightComponent from "./SidebarRight";
 import SidebarLeftComponent from "./SidebarLeft";
-import PopupModal from "../components/modal";
-import { useRequireAuth } from "app/utils/auth";
-import styles from "../styles/foundation.module.css";
-import style from "../styles/Header.module.css";
+import PopupModal from "app/components/modal";
+import styles from "app/styles/foundation.module.css";
+import style from "app/styles/Header.module.css";
 import { signOut } from "next-auth/react";
 import { api } from "app/utils/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAppContext } from "app/context/appContext";
 const { Header } = Layout;
 const { Content } = Layout;
 
 export const ProtectedLayout = ({ children }: any) => {
-  useRequireAuth();
   const router = useRouter();
   const { error } = Modal;
   const [form] = Form.useForm();
@@ -205,6 +204,24 @@ export const ProtectedLayout = ({ children }: any) => {
       }
     }
   }, [accountInfo]);
+
+  const { contextHolder, unaut } = useAppContext();
+
+  const showConfirm = () => {
+    error({
+      content: <div className="text-[18px]">Login pls</div>,
+      onOk() {
+        console.log("OK");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  console.log(unaut, "unaut");
+
+  // showConfirm();
 
   return (
     <Layout>
@@ -393,7 +410,7 @@ export const ProtectedLayout = ({ children }: any) => {
 
             <Button
               onClick={() => {
-                void signOut(), router.push("/");
+                void signOut();
               }}
               className={`${style["drawer-title-div"]} w-full bg-red-400`}
             >
@@ -414,7 +431,10 @@ export const ProtectedLayout = ({ children }: any) => {
           </div>
         </Drawer>
 
-        <Content>{children}</Content>
+        <Content>
+          {contextHolder}
+          {children}
+        </Content>
       </Layout>
       {openNotf && (
         <div className="absolute right-[2%] top-[8%] z-50 max-h-[95vh] overflow-auto rounded-[8px] border bg-white p-[10px] drop-shadow-2xl lg:hidden ">

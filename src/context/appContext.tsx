@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { Modal, message } from "antd";
 import { createContext, useContext, useState } from "react";
 
 interface AppContext {
@@ -6,11 +6,14 @@ interface AppContext {
   setMyFundTabKey: React.Dispatch<React.SetStateAction<string>>;
   success: any;
   contextHolder: any;
+  setUnaut: any;
+  unaut: boolean;
 }
 const AppContext = createContext<AppContext>({} as AppContext);
 
 export const AppWrapper = ({ children }: any) => {
   const [myFundTabKey, setMyFundTabKey] = useState("1");
+  const [unaut, setUnaut] = useState<boolean>(false);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -30,6 +33,8 @@ export const AppWrapper = ({ children }: any) => {
     setMyFundTabKey,
     contextHolder,
     success,
+    setUnaut,
+    unaut,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
