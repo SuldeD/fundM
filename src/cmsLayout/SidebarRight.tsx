@@ -108,8 +108,8 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             error({
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
+              onOk: () => signOut(),
             });
-            // signOut();
           }
         },
       }

@@ -137,8 +137,8 @@ export const ProtectedLayout = ({ children }: any) => {
             error({
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
+              onOk: () => signOut(),
             });
-            // signOut();
           }
         },
       }
@@ -205,23 +205,7 @@ export const ProtectedLayout = ({ children }: any) => {
     }
   }, [accountInfo]);
 
-  const { contextHolder, unaut } = useAppContext();
-
-  const showConfirm = () => {
-    error({
-      content: <div className="text-[18px]">Login pls</div>,
-      onOk() {
-        console.log("OK");
-      },
-      onCancel() {
-        console.log("Cancel");
-      },
-    });
-  };
-
-  console.log(unaut, "unaut");
-
-  // showConfirm();
+  const { contextHolder } = useAppContext();
 
   return (
     <Layout>
