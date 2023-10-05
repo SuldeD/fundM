@@ -138,7 +138,7 @@ export const ProtectedLayout = ({ children }: any) => {
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
             });
-            signOut();
+            // signOut();
           }
         },
       }
@@ -164,7 +164,7 @@ export const ProtectedLayout = ({ children }: any) => {
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
             });
-            signOut();
+            // signOut();
           }
         },
       }

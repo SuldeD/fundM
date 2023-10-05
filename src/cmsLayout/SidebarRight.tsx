@@ -109,7 +109,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
             });
-            signOut();
+            // signOut();
           }
         },
       }
@@ -159,7 +159,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
               title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
             });
-            signOut();
+            // signOut();
           }
         },
       }
