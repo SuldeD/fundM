@@ -60,7 +60,7 @@ export const Home = () => {
     },
   ];
   if (data) {
-    return null;
+    <div>test</div>;
   } else {
     return (
       <SimpleLayout>
