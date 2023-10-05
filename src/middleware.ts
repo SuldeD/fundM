@@ -28,7 +28,8 @@ const unprotectedRoutes: any = [
 ];
 
 async function middleware(req: any) {
-  const session = req?.cookies?.get("next-auth.session-token")?.value ? true :false;
+  const sessionToken = process.env.NODE_ENV === "production" ? req?.cookies?.get("__Secure-next-auth.session-token") : req?.cookies?.get("next-auth.session-token");
+  const session =  sessionToken?.value ? true :false; 
 
   if (!session && protectedRoutes.includes(req.nextUrl.pathname)) {
     const absoluteURL = new URL("/404", req.nextUrl.origin);

@@ -60,10 +60,8 @@ export const Home = () => {
     },
   ];
 
-  console.log(data, "session data");
-
   if (data) {
-    <div>test</div>;
+    return null;
   } else {
     return (
       <SimpleLayout>
