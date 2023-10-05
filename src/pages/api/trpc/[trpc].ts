@@ -10,11 +10,11 @@ export default createNextApiHandler({
   onError:
     process.env.NODE_ENV === "development"
       ? ({ path, error }) => {
-        const {setUnaut} = useAppContext()
+        // const {setUnaut} = useAppContext()
           console.error(
             `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
           );
-          error.message === "UNAUTHORIZED" && setUnaut(true)
+          // error.message === "UNAUTHORIZED" && setUnaut(true)
         }
       : undefined,
 });

@@ -1,4 +1,4 @@
-import { Modal, message } from "antd";
+import { message } from "antd";
 import { createContext, useContext, useState } from "react";
 
 interface AppContext {

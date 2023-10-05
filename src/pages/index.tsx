@@ -59,6 +59,9 @@ export const Home = () => {
       image: "/images/repayment.svg",
     },
   ];
+
+  console.log(data, "session data");
+
   if (data) {
     <div>test</div>;
   } else {
