@@ -1,4 +1,16 @@
-import { Layout, Row, Col, Avatar, Badge, Modal, Empty, Button } from "antd";
+import {
+  Layout,
+  Row,
+  Col,
+  Avatar,
+  Badge,
+  Modal,
+  Empty,
+  Button,
+  Drawer,
+  TabsProps,
+  Tabs,
+} from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "../styles/protectedLayout.module.css";
 import { LoanReqComponent } from "../components/loanRequest";
@@ -106,7 +118,8 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             setNotfication(data);
           } else {
             error({
-              title: "Амжилтгүй",
+              title:
+                "Таны аюулгүй байдлыг хангах үүднээс 15 минуутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
               content: <div>{data?.description || null}</div>,
               onOk: () => signOut(),
             });
@@ -180,6 +193,284 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
     }
   }, [accountInfo]);
 
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <div className="flex justify-center p-1">
+          <p>Бүгд</p>
+          <Badge
+            className="ms-2"
+            color={"#0300B4"}
+            count={statusData?.stat?.notification_count}
+          />
+        </div>
+      ),
+      children: (
+        <div className="mt-[-30px]">
+          {notfication?.activity_list?.length > 0 ? (
+            notfication?.activity_list?.map(
+              (
+                nt: {
+                  activity_code: string;
+                  description:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | React.PromiseLikeOfReactNode
+                    | null
+                    | undefined;
+                  create_date: string | any[];
+                },
+                idx: any
+              ) => (
+                <div className="mt-2 flex border-b p-[10px]" key={`${idx}`}>
+                  <div
+                    className={`flex h-[40px] w-[40px] justify-center rounded-[50%] pt-2 ${
+                      nt.activity_code == "wallet_bank"
+                        ? "bg-[#FF563029]"
+                        : "bg-[#22C55E29]"
+                    }`}
+                  >
+                    <img
+                      className="h-[22px] w-[22px]"
+                      src={
+                        nt.activity_code == "wallet_bank"
+                          ? "/images/notfication2.svg"
+                          : "/images/notficationIcon.svg"
+                      }
+                      alt="notfication"
+                    />
+                  </div>
+                  <div className="ms-[10px] w-[90%]">
+                    <p className="font-lato text-[15px] font-medium leading-[18px] text-[#0b0b0b]">
+                      {nt?.description}
+                    </p>
+                    <p className="my-1 font-lato text-[14px] font-normal text-sub">
+                      {nt?.create_date}
+                    </p>
+                  </div>
+                </div>
+              )
+            )
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
+          {notfication?.activity_list?.length > 0 &&
+          notfication?.activity_list_more ? (
+            <Button
+              type="primary"
+              className="mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center font-raleway text-[15px] leading-[18px]"
+              onClick={() => {
+                notfication?.activity_list?.length &&
+                  allData(`${notfication?.activity_list?.length + 10}`);
+              }}
+            >
+              Бүгдийг харах
+            </Button>
+          ) : (
+            <Button
+              type="default"
+              disabled
+              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
+            >
+              Бүгдийг харах
+            </Button>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <div className="flex justify-center">
+          <p>Уншаагүй</p>
+          <Badge
+            className="ms-2"
+            color={"#00B8D9"}
+            count={statusData?.stat?.notification_count}
+          />
+        </div>
+      ),
+      children: (
+        <div className="mt-[-30px]">
+          {notfication?.activity_list?.length > 0 ? (
+            notfication?.activity_list?.map(
+              (
+                nt: {
+                  activity_code: string;
+                  description:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | React.PromiseLikeOfReactNode
+                    | null
+                    | undefined;
+                  create_date: string | any[];
+                },
+                idx: any
+              ) => (
+                <div className="mt-2 flex border-b p-[10px]" key={`${idx}`}>
+                  <div
+                    className={`flex h-[40px] w-[40px] justify-center rounded-[50%] pt-2 ${
+                      nt.activity_code == "wallet_bank"
+                        ? "bg-[#FF563029]"
+                        : "bg-[#22C55E29]"
+                    }`}
+                  >
+                    <img
+                      className="h-[22px] w-[22px]"
+                      src={
+                        nt.activity_code == "wallet_bank"
+                          ? "/images/notfication2.svg"
+                          : "/images/notficationIcon.svg"
+                      }
+                      alt="notfication"
+                    />
+                  </div>
+                  <div className="ms-[10px] w-[90%]">
+                    <p className="font-lato text-[15px] font-medium leading-[18px] text-[#0b0b0b]">
+                      {nt?.description}
+                    </p>
+                    <p className="my-1 font-lato text-[14px] font-normal text-sub">
+                      {nt?.create_date}
+                    </p>
+                  </div>
+                </div>
+              )
+            )
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
+          {notfication?.activity_list?.length > 0 &&
+          notfication?.activity_list_more ? (
+            <Button
+              type="primary"
+              className="mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center font-raleway text-[15px] leading-[18px]"
+              onClick={() => {
+                notfication?.activity_list?.length &&
+                  allData(`${notfication?.activity_list?.length + 10}`);
+              }}
+            >
+              Бүгдийг харах
+            </Button>
+          ) : (
+            <Button
+              type="default"
+              disabled
+              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
+            >
+              Бүгдийг харах
+            </Button>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <div className="flex justify-center">
+          <p>Түүх</p>
+          <Badge
+            className="ms-2"
+            color={"#22C55E"}
+            count={statusData?.stat?.notification_count}
+          />
+        </div>
+      ),
+      children: (
+        <div className="mt-[-30px]">
+          {notfication?.activity_list?.length > 0 ? (
+            notfication?.activity_list?.map(
+              (
+                nt: {
+                  activity_code: string;
+                  description:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | React.PromiseLikeOfReactNode
+                    | null
+                    | undefined;
+                  create_date: string | any[];
+                },
+                idx: any
+              ) => (
+                <div className="mt-2 flex border-b p-[10px]" key={`${idx}`}>
+                  <div
+                    className={`flex h-[40px] w-[40px] justify-center rounded-[50%] pt-2 ${
+                      nt.activity_code == "wallet_bank"
+                        ? "bg-[#FF563029]"
+                        : "bg-[#22C55E29]"
+                    }`}
+                  >
+                    <img
+                      className="h-[22px] w-[22px]"
+                      src={
+                        nt.activity_code == "wallet_bank"
+                          ? "/images/notfication2.svg"
+                          : "/images/notficationIcon.svg"
+                      }
+                      alt="notfication"
+                    />
+                  </div>
+                  <div className="ms-[10px] w-[90%]">
+                    <p className="font-lato text-[15px] font-medium leading-[18px] text-[#0b0b0b]">
+                      {nt?.description}
+                    </p>
+                    <p className="my-1 font-lato text-[14px] font-normal text-sub">
+                      {nt?.create_date}
+                    </p>
+                  </div>
+                </div>
+              )
+            )
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
+          {notfication?.activity_list?.length > 0 &&
+          notfication?.activity_list_more ? (
+            <Button
+              type="primary"
+              className="mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center font-raleway text-[15px] leading-[18px]"
+              onClick={() => {
+                notfication?.activity_list?.length &&
+                  allData(`${notfication?.activity_list?.length + 10}`);
+              }}
+            >
+              Бүгдийг харах
+            </Button>
+          ) : (
+            <Button
+              type="default"
+              disabled
+              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
+            >
+              Бүгдийг харах
+            </Button>
+          )}
+        </div>
+      ),
+    },
+  ];
   return (
     <Sider
       className={styles["sidebar-left-main"]}
@@ -187,6 +478,25 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
       breakpoint="lg"
       collapsedWidth="0"
     >
+      {/* <Drawer
+        title={
+          <div className="my-2 font-lato text-[18px] font-semibold leading-[18px]">
+            Мэдэгдэл
+          </div>
+        }
+        width={520}
+        closable={false}
+        onClose={() => setOpen(false)}
+        open={open}
+      >
+        <Tabs
+          defaultActiveKey="1"
+          items={items}
+          className="mt-[-20px]"
+
+          // onChange={(e) => console.log(e, "EE")}
+        />
+      </Drawer> */}
       {open && (
         <div className="absolute right-[5%] top-[12%] z-50 max-h-[85vh] overflow-auto rounded-[8px] border bg-white p-[10px] drop-shadow-2xl ">
           <div className="my-2 text-center font-lato text-[18px] font-medium leading-[18px]">
