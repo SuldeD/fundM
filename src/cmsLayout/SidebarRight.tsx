@@ -52,6 +52,8 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
   //states
   const { myFundTabKey } = useAppContext();
   const [notfication, setNotfication] = useState<any>();
+  const [selectedNot, setSelectedNot] = useState<any>();
+  const [openNot, setOpenNot] = useState<boolean>(false);
 
   //constants
   const activeSavingOrders = useMemo(() => {
@@ -119,7 +121,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           } else {
             error({
               title:
-                "Таны аюулгүй байдлыг хангах үүднээс 15 минуутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
               content: <div>{data?.description || null}</div>,
               onOk: () => signOut(),
             });
@@ -169,10 +171,11 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             // );
           } else {
             error({
-              title: "Амжилтгүй",
+              title:
+                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
               content: <div>{data?.description || null}</div>,
+              onOk: () => signOut(),
             });
-            // signOut();
           }
         },
       }
@@ -192,6 +195,8 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
       }
     }
   }, [accountInfo]);
+
+  console.log(selectedNot, "selectedNot");
 
   const items: TabsProps["items"] = [
     {
@@ -322,14 +327,22 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                 },
                 idx: any
               ) => (
-                <div className="mt-2 flex border-b p-[10px]" key={`${idx}`}>
+                <div
+                  className="mt-2 flex cursor-pointer border-b p-[10px]"
+                  onClick={() => {
+                    setOpenNot(true);
+                    setSelectedNot(nt);
+                  }}
+                  key={`${idx}`}
+                >
                   <div
-                    className={`flex h-[40px] w-[40px] justify-center rounded-[50%] pt-2 ${
+                    className={`relative flex h-[40px] w-[40px] justify-center rounded-[50%] pt-2 ${
                       nt.activity_code == "wallet_bank"
                         ? "bg-[#FF563029]"
                         : "bg-[#22C55E29]"
                     }`}
                   >
+                    <div className="absolute left-[-10px] top-[16px] h-[4px] w-[4px] rounded-[50px] bg-[#118D87]" />
                     <img
                       className="h-[22px] w-[22px]"
                       src={
@@ -493,9 +506,29 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           defaultActiveKey="1"
           items={items}
           className="mt-[-20px]"
-
           // onChange={(e) => console.log(e, "EE")}
         />
+        <Drawer
+          title={
+            <div className="my-2 font-lato text-[18px] font-semibold leading-[18px]">
+              Text
+            </div>
+          }
+          width={520}
+          closable={false}
+          onClose={() => setOpenNot(false)}
+          open={openNot}
+        >
+          <p className="mb-5 font-lato text-[16px] font-medium leading-[18px] text-[#0b0b0b]">
+            {selectedNot?.title}
+          </p>
+          <p className="mb-5 font-lato text-[16px] font-medium leading-[18px] text-[#0b0b0b]">
+            {selectedNot?.description}
+          </p>
+          <p className=" font-lato text-[16px] font-normal text-sub">
+            {selectedNot?.create_date}
+          </p>
+        </Drawer>
       </Drawer> */}
       {open && (
         <div className="absolute right-[5%] top-[12%] z-50 max-h-[85vh] overflow-auto rounded-[8px] border bg-white p-[10px] drop-shadow-2xl ">

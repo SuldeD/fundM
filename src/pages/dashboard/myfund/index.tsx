@@ -7,14 +7,12 @@ import { numberToCurrency } from "app/utils/number.helpers";
 import { HeaderDashboard } from "app/components/header";
 import { useAppContext } from "app/context/appContext";
 import { useMemo, useState } from "react";
-import { Loaderr } from "app/components/Loader";
 import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
-import { ProtectedLayout } from "app/cmsLayout";
 
 export const MyFund = () => {
   const { myFundTabKey, setMyFundTabKey } = useAppContext();
-  const { data } = useSession();
+  const { status } = useSession();
 
   //queries
   const { data: requestSearch } = api.loan.reguestSearch.useQuery(
@@ -484,435 +482,419 @@ export const MyFund = () => {
     },
   ];
 
-  if (!data) {
+  if (status == "loading") {
     return null;
   } else {
     return (
-      <ProtectedLayout>
-        <Row justify="center" className={styles["myfund-main-row"]}>
-          <Col span={22}>
-            <Row gutter={[0, 20]}>
-              <HeaderDashboard
-                title={"Миний хүсэлтүүд"}
-                subTitle={
-                  "Харилцагч та өөрийн санхүүжилт өгөх болон зээл авах хүсэлтийн талаарх мэдээллээ доорх цэсээр харна уу."
-                }
+      <Row justify="center" className={styles["myfund-main-row"]}>
+        <Col span={22}>
+          <Row gutter={[0, 20]}>
+            <HeaderDashboard
+              title={"Миний хүсэлтүүд"}
+              subTitle={
+                "Харилцагч та өөрийн санхүүжилт өгөх болон зээл авах хүсэлтийн талаарх мэдээллээ доорх цэсээр харна уу."
+              }
+            />
+
+            <Col span={24}>
+              <Tabs
+                activeKey={myFundTabKey}
+                onChange={(key) => setMyFundTabKey(key)}
+                items={items}
+                tabBarGutter={0}
               />
+            </Col>
 
-              <Col span={24}>
-                <Tabs
-                  activeKey={myFundTabKey}
-                  onChange={(key) => setMyFundTabKey(key)}
-                  items={items}
-                  tabBarGutter={0}
-                />
-              </Col>
-
-              <Modal
-                open={open}
-                onCancel={() => setOpen(false)}
-                footer={null}
-                closeIcon={null}
-                title={
-                  <div className="text-center font-beau text-[16px] font-medium">
-                    {myFundTabKey == "1"
-                      ? "Зээлийн хүсэлт дэлгэрэнгүй"
-                      : "Санхүүжилт хүсэлт дэлгэрэнгүй"}
-                  </div>
-                }
-              >
-                {activeClass &&
-                  orders.map(
-                    (o: any, idx: number) =>
-                      o.id == activeClass && (
-                        <div key={`${idx}`}>
-                          <Col
-                            span={22}
-                            key={`${idx}`}
-                            className="mx-auto w-full"
-                          >
+            <Modal
+              open={open}
+              onCancel={() => setOpen(false)}
+              footer={null}
+              closeIcon={null}
+              title={
+                <div className="text-center font-beau text-[16px] font-medium">
+                  {myFundTabKey == "1"
+                    ? "Зээлийн хүсэлт дэлгэрэнгүй"
+                    : "Санхүүжилт хүсэлт дэлгэрэнгүй"}
+                </div>
+              }
+            >
+              {activeClass &&
+                orders.map(
+                  (o: any, idx: number) =>
+                    o.id == activeClass && (
+                      <div key={`${idx}`}>
+                        <Col
+                          span={22}
+                          key={`${idx}`}
+                          className="mx-auto w-full"
+                        >
+                          <Col className="mt-[20px]">
+                            <Row
+                              className={stylesDL["dloan-detail"]}
+                              gutter={[0, 22]}
+                            >
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        o.request_type == "saving"
+                                          ? stylesFD["foundation-detail-text"]
+                                          : stylesDL["dloan-detail-text"]
+                                      }
+                                    >
+                                      {myFundTabKey == "1"
+                                        ? "Үндсэн зээлийн хэмжээ"
+                                        : "Санхүүжилтын хэмжээ"}
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        stylesDL["dloan-detail-maxValue"]
+                                      }
+                                    >
+                                      {numberToCurrency(o.loan_amount)}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Хүүгийн ашиг
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          o.request_type == "saving"
+                                            ? stylesFD["foundation-rate-profit"]
+                                            : stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.ceil(
+                                            Number(o.loan_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Татвар
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            Number(o.loan_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration) *
+                                              0.1
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Зээлийн хүү (төгрөгөөр)
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          o.request_type == "saving"
+                                            ? stylesFD["foundation-rate-profit"]
+                                            : stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            Number(o.loan_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Нийт
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.ceil(
+                                            (o.loan_amount / 100) *
+                                              o.rate_day *
+                                              Number(o.duration) +
+                                              Number(o.loan_amount) +
+                                              (o.loan_amount / 100) *
+                                                Number(o.fee_percent)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "2" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Нийт
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            (o.loan_amount / 100) *
+                                              Number(o.rate_day) *
+                                              Number(o.duration) -
+                                              Number(o.loan_amount / 100) *
+                                                Number(o.rate_day) *
+                                                Number(o.duration) *
+                                                0.1 +
+                                              Number(o.loan_amount)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Хүүгийн хэмжээ (хувь)
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        stylesDL["dloan-detail-maxValue"]
+                                      }
+                                    >
+                                      {o.rate_month} %
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>
+                              <Col span={24}>
+                                <Row justify="space-between" align="middle">
+                                  <Col flex="none">
+                                    <div
+                                      className={stylesDL["dloan-detail-text"]}
+                                    >
+                                      Хугацаа
+                                    </div>
+                                  </Col>
+                                  <Col flex="none">
+                                    <div
+                                      className={
+                                        stylesDL["dloan-detail-maxValue"]
+                                      }
+                                    >
+                                      {o.duration} хоног
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Col>{" "}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Зээл олголтын шимтгэл
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          o.request_type == "saving"
+                                            ? stylesFD["foundation-rate-profit"]
+                                            : stylesDL["dloan-rate-profit"]
+                                        }
+                                      >
+                                        {numberToCurrency(
+                                          Math.round(
+                                            (o.loan_amount / 100) *
+                                              Number(o.fee_percent)
+                                          )
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                              {myFundTabKey == "1" && (
+                                <Col span={24}>
+                                  <Row justify="space-between" align="middle">
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-text"]
+                                        }
+                                      >
+                                        Зээлийн төлөлт хийх өдөр
+                                      </div>
+                                    </Col>
+                                    <Col flex="none">
+                                      <div
+                                        className={
+                                          stylesDL["dloan-detail-maxValue"]
+                                        }
+                                      >
+                                        {o.create_date.slice(0, 10)}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              )}
+                            </Row>
+                          </Col>
+                        </Col>
+                        {o.is_my_request == "1" && (
+                          <Col span={22} className="mx-auto w-full">
                             <Col className="mt-[20px]">
                               <Row
                                 className={stylesDL["dloan-detail"]}
                                 gutter={[0, 22]}
                               >
                                 <Col span={24}>
-                                  <Row justify="space-between" align="middle">
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          o.request_type == "saving"
-                                            ? stylesFD["foundation-detail-text"]
-                                            : stylesDL["dloan-detail-text"]
-                                        }
-                                      >
-                                        {myFundTabKey == "1"
-                                          ? "Үндсэн зээлийн хэмжээ"
-                                          : "Санхүүжилтын хэмжээ"}
-                                      </div>
-                                    </Col>
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          stylesDL["dloan-detail-maxValue"]
-                                        }
-                                      >
-                                        {numberToCurrency(o.loan_amount)}
-                                      </div>
-                                    </Col>
-                                  </Row>
+                                  <p className="font-tahoma text-[12px] font-normal text-[#0300B4]">
+                                    {myFundTabKey == "2"
+                                      ? "САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ"
+                                      : "ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ"}
+                                  </p>
+                                  <p className="pt-[5px] font-lato text-[10px] font-light">
+                                    Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны
+                                    хөрөнгийг итгэлцлийн үндсэн дээр гэрээ
+                                    байгуулан авч зах зээлийн эрсдэл үнэгүйдлээс
+                                    хамгаалж өндөр үр шим /ашиг/ олж өгөх
+                                    зорилгоор харилцан ашигтай хамтран ажиллах
+                                    үйлчилгээ юм. Итгэлцлийн хөрөнгө нь ямар ч
+                                    төрөл, хэлбэр, үнэлгээтэй байж болох ба
+                                    түүний үр шимийг хоёр тал өөрсдийн
+                                    хэрэгцээнд тулгуурлан харилцан ашигтай
+                                    ажиллах боломжийг олгодог санхүүгийн
+                                    хэрэгсэл юм.
+                                    <br />
+                                    Итгэлцлийн үйлчилгээний оролцогч талууд
+                                    <br />
+                                    Итгэмжлэгч – Хөрөнгөө удирдах, захиран
+                                    зарцуулах эрхээ гэрээний үндсэн дээр бусдад
+                                    шилжүүлж түүнээс үүсэх үр шимийг хүртэгч.
+                                    <br /> Хувь хүртэгч – Итгэмжлэгчтэй
+                                    байгуулсан гэрээний дагуу итгэмжлэгдсэн
+                                    хөрөнгийн үр шимийг хүртэгч. Гэхдээ энэ нь
+                                    итгэмжлэгдсэн хөрөнгийн эзэмшигч, захиран
+                                    зарцуулах эрх бүхий этгээд биш юм.
+                                    <br /> Итгэмжлэгдэгч – Хувь хүн, Бизнес
+                                    эрхлэгч, Аж ахуй нэгжийн аль нь ч байж болох
+                                    ба итгэмжлэгчтэй байгуулсан хөрөнгө удирдах
+                                    гэрээний дагуу хөрөнгийн үнэ цэнийг өсгөх,
+                                    хадгалах, үр өгөөж бий болгогч.
+                                  </p>
                                 </Col>
-                                {myFundTabKey == "2" && (
-                                  <Col span={24}>
-                                    <Row justify="space-between" align="middle">
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-text"]
-                                          }
-                                        >
-                                          Хүүгийн ашиг
-                                        </div>
-                                      </Col>
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            o.request_type == "saving"
-                                              ? stylesFD[
-                                                  "foundation-rate-profit"
-                                                ]
-                                              : stylesDL["dloan-rate-profit"]
-                                          }
-                                        >
-                                          {numberToCurrency(
-                                            Math.ceil(
-                                              Number(o.loan_amount / 100) *
-                                                Number(o.rate_day) *
-                                                Number(o.duration)
-                                            )
-                                          )}
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                )}
-                                {myFundTabKey == "2" && (
-                                  <Col span={24}>
-                                    <Row justify="space-between" align="middle">
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-text"]
-                                          }
-                                        >
-                                          Татвар
-                                        </div>
-                                      </Col>
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-rate-profit"]
-                                          }
-                                        >
-                                          {numberToCurrency(
-                                            Math.round(
-                                              Number(o.loan_amount / 100) *
-                                                Number(o.rate_day) *
-                                                Number(o.duration) *
-                                                0.1
-                                            )
-                                          )}
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                )}
-                                {myFundTabKey == "1" && (
-                                  <Col span={24}>
-                                    <Row justify="space-between" align="middle">
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-text"]
-                                          }
-                                        >
-                                          Зээлийн хүү (төгрөгөөр)
-                                        </div>
-                                      </Col>
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            o.request_type == "saving"
-                                              ? stylesFD[
-                                                  "foundation-rate-profit"
-                                                ]
-                                              : stylesDL["dloan-rate-profit"]
-                                          }
-                                        >
-                                          {numberToCurrency(
-                                            Math.round(
-                                              Number(o.loan_amount / 100) *
-                                                Number(o.rate_day) *
-                                                Number(o.duration)
-                                            )
-                                          )}
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                )}
-                                {myFundTabKey == "1" && (
-                                  <Col span={24}>
-                                    <Row justify="space-between" align="middle">
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-text"]
-                                          }
-                                        >
-                                          Нийт
-                                        </div>
-                                      </Col>
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-maxValue"]
-                                          }
-                                        >
-                                          {numberToCurrency(
-                                            Math.ceil(
-                                              (o.loan_amount / 100) *
-                                                o.rate_day *
-                                                Number(o.duration) +
-                                                Number(o.loan_amount) +
-                                                (o.loan_amount / 100) *
-                                                  Number(o.fee_percent)
-                                            )
-                                          )}
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                )}
-                                {myFundTabKey == "2" && (
-                                  <Col span={24}>
-                                    <Row justify="space-between" align="middle">
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-text"]
-                                          }
-                                        >
-                                          Нийт
-                                        </div>
-                                      </Col>
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-maxValue"]
-                                          }
-                                        >
-                                          {numberToCurrency(
-                                            Math.round(
-                                              (o.loan_amount / 100) *
-                                                Number(o.rate_day) *
-                                                Number(o.duration) -
-                                                Number(o.loan_amount / 100) *
-                                                  Number(o.rate_day) *
-                                                  Number(o.duration) *
-                                                  0.1 +
-                                                Number(o.loan_amount)
-                                            )
-                                          )}
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                )}
-                                <Col span={24}>
-                                  <Row justify="space-between" align="middle">
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          stylesDL["dloan-detail-text"]
-                                        }
-                                      >
-                                        Хүүгийн хэмжээ (хувь)
-                                      </div>
-                                    </Col>
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          stylesDL["dloan-detail-maxValue"]
-                                        }
-                                      >
-                                        {o.rate_month} %
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                </Col>
-                                <Col span={24}>
-                                  <Row justify="space-between" align="middle">
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          stylesDL["dloan-detail-text"]
-                                        }
-                                      >
-                                        Хугацаа
-                                      </div>
-                                    </Col>
-                                    <Col flex="none">
-                                      <div
-                                        className={
-                                          stylesDL["dloan-detail-maxValue"]
-                                        }
-                                      >
-                                        {o.duration} хоног
-                                      </div>
-                                    </Col>
-                                  </Row>
-                                </Col>{" "}
-                                {myFundTabKey == "1" && (
-                                  <Col span={24}>
-                                    <Row justify="space-between" align="middle">
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-text"]
-                                          }
-                                        >
-                                          Зээл олголтын шимтгэл
-                                        </div>
-                                      </Col>
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            o.request_type == "saving"
-                                              ? stylesFD[
-                                                  "foundation-rate-profit"
-                                                ]
-                                              : stylesDL["dloan-rate-profit"]
-                                          }
-                                        >
-                                          {numberToCurrency(
-                                            Math.round(
-                                              (o.loan_amount / 100) *
-                                                Number(o.fee_percent)
-                                            )
-                                          )}
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                )}
-                                {myFundTabKey == "1" && (
-                                  <Col span={24}>
-                                    <Row justify="space-between" align="middle">
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-text"]
-                                          }
-                                        >
-                                          Зээлийн төлөлт хийх өдөр
-                                        </div>
-                                      </Col>
-                                      <Col flex="none">
-                                        <div
-                                          className={
-                                            stylesDL["dloan-detail-maxValue"]
-                                          }
-                                        >
-                                          {o.create_date.slice(0, 10)}
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                )}
                               </Row>
                             </Col>
                           </Col>
-                          {o.is_my_request == "1" && (
-                            <Col span={22} className="mx-auto w-full">
-                              <Col className="mt-[20px]">
-                                <Row
-                                  className={stylesDL["dloan-detail"]}
-                                  gutter={[0, 22]}
-                                >
-                                  <Col span={24}>
-                                    <p className="font-tahoma text-[12px] font-normal text-[#0300B4]">
-                                      {myFundTabKey == "2"
-                                        ? "САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ"
-                                        : "ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ"}
-                                    </p>
-                                    <p className="pt-[5px] font-lato text-[10px] font-light">
-                                      Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны
-                                      хөрөнгийг итгэлцлийн үндсэн дээр гэрээ
-                                      байгуулан авч зах зээлийн эрсдэл
-                                      үнэгүйдлээс хамгаалж өндөр үр шим /ашиг/
-                                      олж өгөх зорилгоор харилцан ашигтай
-                                      хамтран ажиллах үйлчилгээ юм. Итгэлцлийн
-                                      хөрөнгө нь ямар ч төрөл, хэлбэр,
-                                      үнэлгээтэй байж болох ба түүний үр шимийг
-                                      хоёр тал өөрсдийн хэрэгцээнд тулгуурлан
-                                      харилцан ашигтай ажиллах боломжийг олгодог
-                                      санхүүгийн хэрэгсэл юм.
-                                      <br />
-                                      Итгэлцлийн үйлчилгээний оролцогч талууд
-                                      <br />
-                                      Итгэмжлэгч – Хөрөнгөө удирдах, захиран
-                                      зарцуулах эрхээ гэрээний үндсэн дээр
-                                      бусдад шилжүүлж түүнээс үүсэх үр шимийг
-                                      хүртэгч.
-                                      <br /> Хувь хүртэгч – Итгэмжлэгчтэй
-                                      байгуулсан гэрээний дагуу итгэмжлэгдсэн
-                                      хөрөнгийн үр шимийг хүртэгч. Гэхдээ энэ нь
-                                      итгэмжлэгдсэн хөрөнгийн эзэмшигч, захиран
-                                      зарцуулах эрх бүхий этгээд биш юм.
-                                      <br /> Итгэмжлэгдэгч – Хувь хүн, Бизнес
-                                      эрхлэгч, Аж ахуй нэгжийн аль нь ч байж
-                                      болох ба итгэмжлэгчтэй байгуулсан хөрөнгө
-                                      удирдах гэрээний дагуу хөрөнгийн үнэ
-                                      цэнийг өсгөх, хадгалах, үр өгөөж бий
-                                      болгогч.
-                                    </p>
-                                  </Col>
-                                </Row>
-                              </Col>
-                            </Col>
-                          )}
+                        )}
 
-                          <Col className="mx-auto mt-[20px]" span={22}>
-                            {activeClass && (
-                              <Button
-                                type="default"
-                                className={stylesDL["dloan-button-back"]}
-                                onClick={() => {
-                                  setSelectedId("");
-                                  setOpen(false);
-                                }}
-                              >
-                                <Col flex={"auto"}>
-                                  <div
-                                    className={
-                                      styles["dloan-change-button-text"]
-                                    }
-                                  >
-                                    Хаах
-                                  </div>
-                                </Col>
-                              </Button>
-                            )}
-                          </Col>
-                        </div>
-                      )
-                  )}
-              </Modal>
-            </Row>
-          </Col>
-        </Row>
-      </ProtectedLayout>
+                        <Col className="mx-auto mt-[20px]" span={22}>
+                          {activeClass && (
+                            <Button
+                              type="default"
+                              className={stylesDL["dloan-button-back"]}
+                              onClick={() => {
+                                setSelectedId("");
+                                setOpen(false);
+                              }}
+                            >
+                              <Col flex={"auto"}>
+                                <div
+                                  className={styles["dloan-change-button-text"]}
+                                >
+                                  Хаах
+                                </div>
+                              </Col>
+                            </Button>
+                          )}
+                        </Col>
+                      </div>
+                    )
+                )}
+            </Modal>
+          </Row>
+        </Col>
+      </Row>
     );
   }
 };

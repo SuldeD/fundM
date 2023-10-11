@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form, Input, Modal, message } from "antd";
+import { Col, Row, Button, Form, Input, Modal } from "antd";
 import styles from "../../styles/login.module.css";
 import React, { useRef, useState } from "react";
 import { api } from "app/utils/api";
@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import stylesL from "../../styles/dloan.module.css";
 import { useAppContext } from "app/context/appContext";
-import SimpleLayout from "app/layout";
 const { error, warning } = Modal;
 
 interface RegisterType {
@@ -224,7 +223,7 @@ export default function Forgot() {
     return null;
   } else {
     return (
-      <SimpleLayout><Row
+      <Row
         className={styles["login-background-image"]}
         justify="center"
         align={"middle"}
@@ -643,8 +642,7 @@ export default function Forgot() {
             </Col>
           </Row>
         </Modal>
-      </Row></SimpleLayout>
-      
+      </Row>
     );
   }
 }

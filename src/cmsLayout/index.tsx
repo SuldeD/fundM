@@ -136,7 +136,7 @@ export const ProtectedLayout = ({ children }: any) => {
           } else {
             error({
               title:
-                "Таны аюулгүй байдлыг хангах үүднээс 15 минуутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
               content: <div>{data?.description || null}</div>,
               onOk: () => signOut(),
             });
@@ -162,8 +162,10 @@ export const ProtectedLayout = ({ children }: any) => {
             setNotfication(data);
           } else {
             error({
-              title: "Амжилтгүй",
+              title:
+                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
               content: <div>{data?.description || null}</div>,
+              onOk: () => signOut(),
             });
             // signOut();
           }

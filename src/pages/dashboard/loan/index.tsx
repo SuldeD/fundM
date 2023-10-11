@@ -18,13 +18,12 @@ import moment from "moment";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import { useSession } from "next-auth/react";
-import { ProtectedLayout } from "app/cmsLayout";
+import { signOut, useSession } from "next-auth/react";
 
 export const Loan = () => {
   const termsRef: any = useRef();
   const router = useRouter();
-  const { data } = useSession();
+  const { status: layoutStatus } = useSession();
   const { error } = Modal;
 
   //mutate
@@ -168,8 +167,10 @@ export const Loan = () => {
               } else {
                 setLoadings(false);
                 error({
-                  title: "Амжилтгүй",
+                  title:
+                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
                   content: <div>{data?.description || null}</div>,
+                  onOk: () => signOut(),
                 });
               }
             },
@@ -204,8 +205,10 @@ export const Loan = () => {
               } else {
                 setLoadings(false);
                 error({
-                  title: "Амжилтгүй",
+                  title:
+                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
                   content: <div>{data?.description || null}</div>,
+                  onOk: () => signOut(),
                 });
               }
             },
@@ -247,10 +250,13 @@ export const Loan = () => {
                   setChecked(false);
                 } else {
                   error({
-                    title: "Амжилтгүй",
+                    title:
+                      "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
                     content: <div>{data?.description || null}</div>,
+                    onOk: () => signOut(),
                   });
                 }
+                минутаас;
               },
             }
           );
@@ -273,8 +279,10 @@ export const Loan = () => {
                   setChecked(false);
                 } else {
                   error({
-                    title: "Амжилтгүй",
+                    title:
+                      "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
                     content: <div>{data?.description || null}</div>,
+                    onOk: () => signOut(),
                   });
                 }
               },
@@ -292,805 +300,111 @@ export const Loan = () => {
     }
   }
 
-  if (!data) {
+  if (layoutStatus == "loading") {
     return null;
   } else {
     return (
-      <ProtectedLayout>
-        <Row
-          justify="center"
-          className={styles["dloan-main-row"]}
-          gutter={[0, 30]}
-        >
-          <Col span={22}>
-            <Row gutter={[0, 20]} justify="center">
-              <HeaderDashboard
-                title={"Зээл авах хүсэлт"}
-                subTitle={
-                  activeClass
-                    ? "Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах салбар нэгжид хандан нээлгэнэ үү."
-                    : "Харилцагч та миний хүсэлтүүд цэсээс нийт жагсаалтаа харах боломжтой."
-                }
-              />
-              {status == 0 ? (
-                <Col md={22}>
-                  <Row gutter={[22, 0]} justify="space-between" align="middle">
-                    <Col span={24}>
-                      <div className={styles["dloan-slider-input-title"]}>
-                        Зээлийн хэмжээ
-                      </div>
-                    </Col>
-                    <Col xs={24} lg={24} xl={8}>
-                      <InputNumber
-                        size="large"
-                        min={minValue}
-                        max={maxValue}
-                        value={inputValue}
-                        defaultValue={minValue}
-                        onChange={(e: any) => setInputValue(e)}
-                        formatter={(value) => numberToCurrency(value)}
-                        className={styles["dloan-slider-input"]}
-                      />
-                    </Col>
-                    <Col xs={24} lg={24} xl={16} style={{ padding: "0 20px" }}>
-                      <Row justify="space-between">
-                        <Col flex="none">
-                          <div className={styles["dloan-slider-price"]}>
-                            {numberToCurrency(minValue)}
-                          </div>
-                        </Col>
-                        <Col flex="none">
-                          <div className={styles["dloan-slider-price"]}>
-                            {numberToCurrency(maxValue)}
-                          </div>
-                        </Col>
-                      </Row>
-
-                      <div className="mt-3 flex justify-between">
-                        <div
-                          onClick={() =>
-                            minValue < inputValue &&
-                            setInputValue(
-                              maxValue < 10000000
-                                ? inputValue - 100000
-                                : maxValue >= 10000000 && maxValue <= 50000000
-                                ? inputValue - 500000
-                                : inputValue - 1000000
-                            )
-                          }
-                        >
-                          <MinusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
-                        </div>
-                        <Slider
-                          min={minValue}
-                          step={
-                            maxValue < 10000000
-                              ? 100000
-                              : maxValue >= 10000000 && maxValue <= 50000000
-                              ? 500000
-                              : 1000000
-                          }
-                          max={maxValue}
-                          className="w-[80%]"
-                          onChange={(e) => setInputValue(e)}
-                          value={
-                            typeof inputValue === "number" ? inputValue : 0
-                          }
-                        />
-                        <div
-                          onClick={() =>
-                            maxValue > inputValue &&
-                            setInputValue(
-                              maxValue < 10000000
-                                ? inputValue + 100000
-                                : maxValue >= 10000000 && maxValue <= 50000000
-                                ? inputValue + 500000
-                                : inputValue + 1000000
-                            )
-                          }
-                        >
-                          <PlusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
-                        </div>
-                      </div>
-                    </Col>
-                    <Col span={20} className="mt-[20px]">
-                      <Button
-                        type="primary"
-                        loading={loadings}
-                        className={styles["dloan-button-contiune"]}
-                        onClick={() => {
-                          !accountInfo?.bank_account
-                            ? error({
-                                title: "Амжилтгүй",
-                                content: (
-                                  <div>
-                                    Та хувийн мэдээлэлээ оруулах хэрэгтэй
-                                  </div>
-                                ),
-                              }) && router.push("/dashboard/profile/bank")
-                            : accountInfo?.bank_account?.is_verify == 0
-                            ? error({
-                                title: "Амжилтгүй",
-                                content: <div>Та дансаа баталгаажуулна уу</div>,
-                              }) && router.push("/dashboard/profile")
-                            : setIsVerifyOpen(true);
-                        }}
-                      >
-                        Зээлийн эрх нээлгэх
-                      </Button>
-                    </Col>
-                    <Modal
-                      centered
-                      closable={false}
-                      width="90%"
-                      title={
-                        <div className={styles["dloan-modal-title"]}>
-                          ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
-                        </div>
-                      }
-                      open={isModalOpen}
-                      footer={null}
-                    >
-                      <Row justify="center">
-                        <Col>
-                          <Col
-                            span={24}
-                            className="my-5 rounded-[9px] bg-bank p-[50px]"
-                          >
-                            <div dangerouslySetInnerHTML={{ __html: html }} />
-                          </Col>
-                          <Form form={form}>
-                            <Row justify="center" gutter={[0, 10]}>
-                              <Col xs={24} lg={20}>
-                                <Form.Item
-                                  name="agreement"
-                                  valuePropName="checked"
-                                  rules={[
-                                    {
-                                      validator: (_, value) =>
-                                        value
-                                          ? Promise.resolve()
-                                          : Promise.reject(
-                                              new Error(
-                                                "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
-                                              )
-                                            ),
-                                    },
-                                  ]}
-                                >
-                                  <Checkbox style={{ color: "green" }}>
-                                    <div
-                                      className={styles["dloan-checkbox-text"]}
-                                    >
-                                      Зээлийн үйлчилгээний нөхцөл
-                                    </div>
-                                  </Checkbox>
-                                </Form.Item>
-                              </Col>
-                              <Col xs={24} lg={20}>
-                                <Row
-                                  justify="space-between"
-                                  className="gap-3"
-                                  gutter={10}
-                                  wrap={false}
-                                >
-                                  <Button
-                                    className={styles["dloan-button-back"]}
-                                    onClick={() => setIsModalOpen(false)}
-                                  >
-                                    <div
-                                      className={
-                                        styles["dloan-button-back-text"]
-                                      }
-                                    >
-                                      Буцах
-                                    </div>
-                                  </Button>
-
-                                  <Button
-                                    type="primary"
-                                    className={styles["dloan-button-contiune"]}
-                                    onClick={() => {
-                                      form.validateFields();
-                                      setChecked(!checked);
-                                      setIsModalOpen(false);
-                                    }}
-                                    htmlType="submit"
-                                  >
-                                    Үргэлжлүүлэх
-                                  </Button>
-                                </Row>
-                              </Col>
-                            </Row>
-                          </Form>
-                        </Col>
-                      </Row>
-                    </Modal>
-
-                    <InputCode
-                      open={isVerifyOpen}
-                      onFinish={submit}
-                      setOpen={setIsVerifyOpen}
+      <Row
+        justify="center"
+        className={styles["dloan-main-row"]}
+        gutter={[0, 30]}
+      >
+        <Col span={22}>
+          <Row gutter={[0, 20]} justify="center">
+            <HeaderDashboard
+              title={"Зээл авах хүсэлт"}
+              subTitle={
+                activeClass
+                  ? "Харилцагч та зээлийн эрхийн хэмжээгээ өөрт ойр байрлах салбар нэгжид хандан нээлгэнэ үү."
+                  : "Харилцагч та миний хүсэлтүүд цэсээс нийт жагсаалтаа харах боломжтой."
+              }
+            />
+            {status == 0 ? (
+              <Col md={22}>
+                <Row gutter={[22, 0]} justify="space-between" align="middle">
+                  <Col span={24}>
+                    <div className={styles["dloan-slider-input-title"]}>
+                      Зээлийн хэмжээ
+                    </div>
+                  </Col>
+                  <Col xs={24} lg={24} xl={8}>
+                    <InputNumber
+                      size="large"
+                      min={minValue}
+                      max={maxValue}
+                      value={inputValue}
+                      defaultValue={minValue}
+                      onChange={(e: any) => setInputValue(e)}
+                      formatter={(value) => numberToCurrency(value)}
+                      className={styles["dloan-slider-input"]}
                     />
+                  </Col>
+                  <Col xs={24} lg={24} xl={16} style={{ padding: "0 20px" }}>
+                    <Row justify="space-between">
+                      <Col flex="none">
+                        <div className={styles["dloan-slider-price"]}>
+                          {numberToCurrency(minValue)}
+                        </div>
+                      </Col>
+                      <Col flex="none">
+                        <div className={styles["dloan-slider-price"]}>
+                          {numberToCurrency(maxValue)}
+                        </div>
+                      </Col>
+                    </Row>
 
-                    <Modal
-                      centered
-                      width={378}
-                      title={null}
-                      onCancel={() => {
-                        setIsCompleteOpenLoan(false);
-                        setChecked(false);
-                      }}
-                      open={isCompleteOpenLoan}
-                      footer={null}
-                    >
-                      <Row
-                        justify="center"
-                        gutter={[0, 30]}
-                        style={{ padding: "50px 0" }}
+                    <div className="mt-3 flex justify-between">
+                      <div
+                        onClick={() =>
+                          minValue < inputValue &&
+                          setInputValue(
+                            maxValue < 10000000
+                              ? inputValue - 100000
+                              : maxValue >= 10000000 && maxValue <= 50000000
+                              ? inputValue - 500000
+                              : inputValue - 1000000
+                          )
+                        }
                       >
-                        <Col span={24}>
-                          <Row justify="center">
-                            <Image
-                              width={56}
-                              src={"/images/check.svg"}
-                              preview={false}
-                              alt="Header Logo"
-                            />
-                          </Row>
-                        </Col>
-                        <Col span={16}>
-                          <div className={styles["dloan-modal-complete-text"]}>
-                            Таны зээлийн эрх үүсгэх хүсэлт амжилттай
-                            бүртгэгдлээ. ФандМи биржээс таны зээлийн эрхийн
-                            хэмжээг нээж өгөх болно.
-                          </div>
-                        </Col>
-                      </Row>
-                    </Modal>
-                  </Row>
-                </Col>
-              ) : (
-                <>
-                  <Row
-                    justify="center"
-                    gutter={[0, 20]}
-                    className={styles[activeClass ? "" : "dloan-change-div"]}
-                  >
-                    <Col md={22}>
-                      <Row
-                        gutter={[22, 10]}
-                        justify="space-between"
-                        align="middle"
+                        <MinusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
+                      </div>
+                      <Slider
+                        min={minValue}
+                        step={
+                          maxValue < 10000000
+                            ? 100000
+                            : maxValue >= 10000000 && maxValue <= 50000000
+                            ? 500000
+                            : 1000000
+                        }
+                        max={maxValue}
+                        className="w-[80%]"
+                        onChange={(e) => setInputValue(e)}
+                        value={typeof inputValue === "number" ? inputValue : 0}
+                      />
+                      <div
+                        onClick={() =>
+                          maxValue > inputValue &&
+                          setInputValue(
+                            maxValue < 10000000
+                              ? inputValue + 100000
+                              : maxValue >= 10000000 && maxValue <= 50000000
+                              ? inputValue + 500000
+                              : inputValue + 1000000
+                          )
+                        }
                       >
-                        <Col span={24}>
-                          <div className={styles["dloan-slider-input-title"]}>
-                            Зээлийн хэмжээ
-                          </div>
-                        </Col>
-                        <Col xs={24} lg={24} xl={8}>
-                          <InputNumber
-                            size="large"
-                            min={minValue}
-                            max={maxValue}
-                            value={inputValue}
-                            defaultValue={minValue}
-                            onChange={(e: any) => setInputValue(e)}
-                            formatter={(value) => numberToCurrency(value)}
-                            className={styles["dloan-slider-input"]}
-                          />
-                        </Col>
-                        <Col
-                          xs={24}
-                          lg={24}
-                          xl={16}
-                          style={{ padding: "0 20px" }}
-                        >
-                          <Row justify="space-between">
-                            <Col flex="none">
-                              <div className={styles["dloan-slider-price"]}>
-                                {numberToCurrency(minValue)}
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-slider-price"]}>
-                                {numberToCurrency(maxValue)}
-                              </div>
-                            </Col>
-                          </Row>
-
-                          <div className="mt-3 flex justify-between">
-                            <div
-                              onClick={() =>
-                                minValue < inputValue &&
-                                setInputValue(
-                                  maxValue < 10000000
-                                    ? inputValue - 100000
-                                    : maxValue >= 10000000 &&
-                                      maxValue <= 50000000
-                                    ? inputValue - 500000
-                                    : inputValue - 1000000
-                                )
-                              }
-                            >
-                              <MinusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
-                            </div>
-                            <Slider
-                              min={minValue}
-                              step={
-                                maxValue < 10000000
-                                  ? 100000
-                                  : maxValue >= 10000000 && maxValue <= 50000000
-                                  ? 500000
-                                  : 1000000
-                              }
-                              max={maxValue}
-                              className="w-[80%]"
-                              onChange={(e) => setInputValue(e)}
-                              value={
-                                typeof inputValue === "number" ? inputValue : 0
-                              }
-                            />
-                            <div
-                              onClick={() =>
-                                maxValue > inputValue &&
-                                setInputValue(
-                                  maxValue < 10000000
-                                    ? inputValue + 100000
-                                    : maxValue >= 10000000 &&
-                                      maxValue <= 50000000
-                                    ? inputValue + 500000
-                                    : inputValue + 1000000
-                                )
-                              }
-                            >
-                              <PlusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
-                            </div>
-                          </div>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col md={22}>
-                      <Row
-                        // @ts-ignore
-                        gutter={[22, { xs: 20, lg: 10 }]}
-                      >
-                        <Col xs={24} lg={8}>
-                          <Row gutter={[0, 10]}>
-                            <Col span={24}>
-                              <div
-                                className={styles["dloan-slider-input-title"]}
-                              >
-                                Зарласан хүү
-                              </div>
-                            </Col>
-                            <Col span={24}>
-                              <Row
-                                className={styles["dloan-rate-div"]}
-                                align="middle"
-                                justify="center"
-                              >
-                                <div className={styles["dloan-rate-text"]}>
-                                  {loan && loan?.loan_rate_month.slice(0, 4)} %
-                                </div>
-                              </Row>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col xs={24} lg={16}>
-                          <Row gutter={[0, 10]}>
-                            <Col span={24}>
-                              <div
-                                className={styles["dloan-slider-input-title"]}
-                              >
-                                Хугацаа сонгох
-                              </div>
-                            </Col>
-
-                            <Col span={24}>
-                              <Row wrap={true} gutter={30} align="middle">
-                                {dataTable &&
-                                  dataTable?.map((el: any, idx: any) => (
-                                    <Col
-                                      flex="none"
-                                      key={`data-${idx}`}
-                                      className="mb-[15px]"
-                                    >
-                                      <Button
-                                        onClick={() => setActiveDuration(idx)}
-                                        className={
-                                          styles[
-                                            activeDuration === idx
-                                              ? "dloan-button-active"
-                                              : "dloan-button"
-                                          ]
-                                        }
-                                      >
-                                        <div
-                                          className={
-                                            styles[
-                                              activeDuration === idx
-                                                ? "dloan-button-day-text-active"
-                                                : "dloan-button-day-text"
-                                            ]
-                                          }
-                                        >
-                                          {el.duration}
-                                        </div>
-                                        <div
-                                          className={
-                                            styles[
-                                              activeDuration === idx
-                                                ? "dloan-button-text-active"
-                                                : "dloan-button-text"
-                                            ]
-                                          }
-                                        >
-                                          хоног
-                                        </div>
-                                      </Button>
-                                    </Col>
-                                  ))}
-                              </Row>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Col>
-
-                    <Col md={22}>
-                      <Row className={styles["dloan-detail"]} gutter={[0, 22]}>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Үндсэн зээлийн хэмжээ
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {numberToCurrency(inputValue)}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Хүүгийн хэмжээ
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-rate-profit"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  numberToCurrency(
-                                    Math.ceil(
-                                      (inputValue / 100) *
-                                        rate *
-                                        Number(
-                                          dataTable[activeDuration]?.duration
-                                        )
-                                    )
-                                  )}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Зээл олголтын шимтгэл
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-rate-profit"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  numberToCurrency(
-                                    Math.ceil(
-                                      (inputValue / 100) *
-                                        Number(
-                                          dataTable[activeDuration]?.fee_percent
-                                        )
-                                    )
-                                  )}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Нийт зээлийн төлбөр
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  numberToCurrency(
-                                    Math.ceil(
-                                      (inputValue / 100) *
-                                        rate *
-                                        Number(
-                                          dataTable[activeDuration]?.duration
-                                        ) +
-                                        inputValue +
-                                        (inputValue / 100) *
-                                          Number(
-                                            dataTable[activeDuration]
-                                              ?.fee_percent
-                                          )
-                                    )
-                                  )}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Хугацаа
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  dataTable[activeDuration]?.duration}{" "}
-                                хоног
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Эргэн төлөгдөх хугацаа
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  moment()
-                                    .add(
-                                      dataTable[activeDuration]?.duration,
-                                      "days"
-                                    )
-                                    .calendar()}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col span={22}>
-                      <Row gutter={12} align="middle">
-                        <Col flex="none">
-                          <Checkbox
-                            ref={termsRef}
-                            onChange={(e) =>
-                              checked ? setChecked(true) : setChecked(false)
-                            }
-                            checked={checked}
-                          />
-                        </Col>
-                        <Col flex="none">
-                          <div className={styles["dloan-checkbox-text"]}>
-                            <a onClick={() => setIsModalOpen(true)}>
-                              Зээлийн үйлчилгээний нөхцөл
-                            </a>
-                          </div>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                  <Row
-                    justify="center"
-                    gutter={[0, 20]}
-                    className={styles[activeClass ? "dloan-change-div" : ""]}
-                  >
-                    <Col span={22}>
-                      <Row className={styles["dloan-detail"]} gutter={[0, 22]}>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Үндсэн зээлийн хэмжээ
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {numberToCurrency(inputValue)}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Хүүгийн хэмжээ
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-rate-profit"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  numberToCurrency(
-                                    Math.round(
-                                      (inputValue / 100) *
-                                        rate *
-                                        Number(
-                                          dataTable[activeDuration]?.duration
-                                        )
-                                    )
-                                  )}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Зээл олголтын шимтгэл
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-rate-profit"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  numberToCurrency(
-                                    Math.round(
-                                      (inputValue / 100) *
-                                        Number(
-                                          dataTable[activeDuration]?.fee_percent
-                                        )
-                                    )
-                                  )}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Нийт зээлийн төлбөр
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  numberToCurrency(
-                                    Math.ceil(
-                                      (inputValue / 100) *
-                                        rate *
-                                        Number(
-                                          dataTable[activeDuration]?.duration
-                                        ) +
-                                        inputValue +
-                                        (inputValue / 100) *
-                                          Number(
-                                            dataTable[activeDuration]
-                                              ?.fee_percent
-                                          )
-                                    )
-                                  )}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Хугацаа
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  dataTable[activeDuration]?.duration}{" "}
-                                хоног
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col span={24}>
-                          <Row justify="space-between" align="middle">
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-text"]}>
-                                Эргэн төлөгдөх хугацаа
-                              </div>
-                            </Col>
-                            <Col flex="none">
-                              <div className={styles["dloan-detail-maxValue"]}>
-                                {dataTable &&
-                                  typeof activeDuration == "number" &&
-                                  moment()
-                                    .add(
-                                      dataTable[activeDuration]?.duration,
-                                      "days"
-                                    )
-                                    .calendar()}
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col span={22}>
-                      <Row
-                        gutter={[0, 10]}
-                        justify="center"
-                        className={styles["dloan-border-div"]}
-                      >
-                        <Col span={24}>
-                          <div className={styles["dloan-change-title"]}>
-                            Зээлийн гэрээ
-                          </div>
-                        </Col>
-                        <Col span={24}>
-                          <div className={styles["dloan-contract-text"]}>
-                            Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны хөрөнгийг
-                            итгэлцлийн үндсэн дээр гэрээ байгуулан авч зах
-                            зээлийн эрсдэл үнэгүйдлээс хамгаалж өндөр үр шим
-                            /ашиг/ олж өгөх зорилгоор харилцан ашигтай хамтран
-                            ажиллах үйлчилгээ юм. Итгэлцлийн хөрөнгө нь ямар ч
-                            төрөл, хэлбэр, үнэлгээтэй байж болох ба түүний үр
-                            шимийг хоёр тал өөрсдийн хэрэгцээнд тулгуурлан
-                            харилцан ашигтай ажиллах боломжийг олгодог
-                            санхүүгийн хэрэгсэл юм. {<br />}Итгэлцлийн
-                            үйлчилгээний оролцогч талууд {<br />} Итгэмжлэгч –
-                            Хөрөнгөө удирдах, захиран зарцуулах эрхээ гэрээний
-                            үндсэн дээр бусдад шилжүүлж түүнээс үүсэх үр шимийг
-                            хүртэгч. {<br />} Хувь хүртэгч – Итгэмжлэгчтэй
-                            байгуулсан гэрээний дагуу итгэмжлэгдсэн хөрөнгийн үр
-                            шимийг хүртэгч. Гэхдээ энэ нь итгэмжлэгдсэн
-                            хөрөнгийн эзэмшигч, захиран зарцуулах эрх бүхий
-                            этгээд биш юм. {<br />} Итгэмжлэгдэгч – Хувь хүн,
-                            Бизнес эрхлэгч, Аж ахуй нэгжийн аль нь ч байж болох
-                            ба итгэмжлэгчтэй байгуулсан хөрөнгө удирдах гэрээний
-                            дагуу хөрөнгийн үнэ цэнийг өсгөх, хадгалах, үр өгөөж
-                            бий болгогч.
-                          </div>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                </>
-              )}
-            </Row>
-          </Col>
-          {status == 1 ? (
-            <Col span={24}>
-              <Row
-                justify={"center"}
-                align="top"
-                style={{ height: "100%" }}
-                className={styles[activeClass ? "" : "dloan-change-div"]}
-              >
-                <Col span={20}>
-                  <Button
-                    type="primary"
-                    loading={loadings}
-                    className={styles["dloan-button-contiune"]}
-                    onClick={() => {
-                      termsRef.current?.input.checked
-                        ? !accountInfo?.bank_account
+                        <PlusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={20} className="mt-[20px]">
+                    <Button
+                      type="primary"
+                      loading={loadings}
+                      className={styles["dloan-button-contiune"]}
+                      onClick={() => {
+                        !accountInfo?.bank_account
                           ? error({
                               title: "Амжилтгүй",
                               content: (
@@ -1102,219 +416,894 @@ export const Loan = () => {
                               title: "Амжилтгүй",
                               content: <div>Та дансаа баталгаажуулна уу</div>,
                             }) && router.push("/dashboard/profile")
-                          : setIsVerifyOpen(true)
-                        : setIsModalOpen(true);
-                    }}
+                          : setIsVerifyOpen(true);
+                      }}
+                    >
+                      Зээлийн эрх нээлгэх
+                    </Button>
+                  </Col>
+                  <Modal
+                    centered
+                    closable={false}
+                    width="90%"
+                    title={
+                      <div className={styles["dloan-modal-title"]}>
+                        ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
+                      </div>
+                    }
+                    open={isModalOpen}
+                    footer={null}
                   >
-                    Үргэлжлүүлэх
-                  </Button>
-                </Col>
-
-                <Modal
-                  centered
-                  closable={false}
-                  width="90%"
-                  title={
-                    <div className={styles["dloan-modal-title"]}>
-                      ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
-                    </div>
-                  }
-                  open={isModalOpen}
-                  footer={null}
-                >
-                  <Row justify="center">
-                    <Col>
-                      <Col
-                        span={24}
-                        className="my-5 rounded-[9px] bg-bank p-[50px]"
-                      >
-                        <div dangerouslySetInnerHTML={{ __html: html }} />
-                      </Col>
-                      <Form form={form}>
-                        <Row justify="center" gutter={[0, 10]}>
-                          <Col xs={24} lg={20}>
-                            <Form.Item
-                              name="agreement"
-                              valuePropName="checked"
-                              rules={[
-                                {
-                                  validator: (_, value) =>
-                                    value
-                                      ? Promise.resolve()
-                                      : Promise.reject(
-                                          new Error(
-                                            "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
-                                          )
-                                        ),
-                                },
-                              ]}
-                            >
-                              <Checkbox style={{ color: "green" }}>
-                                <div className={styles["dloan-checkbox-text"]}>
-                                  Зээлийн үйлчилгээний нөхцөл
-                                </div>
-                              </Checkbox>
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} lg={20}>
-                            <Row
-                              justify="space-between"
-                              className="gap-3"
-                              gutter={10}
-                              wrap={false}
-                            >
-                              <Button
-                                className={styles["dloan-button-back"]}
-                                onClick={() => setIsModalOpen(false)}
+                    <Row justify="center">
+                      <Col>
+                        <Col
+                          span={24}
+                          className="my-5 rounded-[9px] bg-bank p-[50px]"
+                        >
+                          <div dangerouslySetInnerHTML={{ __html: html }} />
+                        </Col>
+                        <Form form={form}>
+                          <Row justify="center" gutter={[0, 10]}>
+                            <Col xs={24} lg={20}>
+                              <Form.Item
+                                name="agreement"
+                                valuePropName="checked"
+                                rules={[
+                                  {
+                                    validator: (_, value) =>
+                                      value
+                                        ? Promise.resolve()
+                                        : Promise.reject(
+                                            new Error(
+                                              "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
+                                            )
+                                          ),
+                                  },
+                                ]}
                               >
-                                <div
-                                  className={styles["dloan-button-back-text"]}
+                                <Checkbox style={{ color: "green" }}>
+                                  <div
+                                    className={styles["dloan-checkbox-text"]}
+                                  >
+                                    Зээлийн үйлчилгээний нөхцөл
+                                  </div>
+                                </Checkbox>
+                              </Form.Item>
+                            </Col>
+                            <Col xs={24} lg={20}>
+                              <Row
+                                justify="space-between"
+                                className="gap-3"
+                                gutter={10}
+                                wrap={false}
+                              >
+                                <Button
+                                  className={styles["dloan-button-back"]}
+                                  onClick={() => setIsModalOpen(false)}
                                 >
-                                  Буцах
-                                </div>
-                              </Button>
+                                  <div
+                                    className={styles["dloan-button-back-text"]}
+                                  >
+                                    Буцах
+                                  </div>
+                                </Button>
 
-                              <Button
-                                type="primary"
-                                className={styles["dloan-button-contiune"]}
-                                onClick={() => {
-                                  form.validateFields();
-                                  setChecked(!checked);
-                                  setIsModalOpen(false);
-                                }}
-                                htmlType="submit"
-                              >
-                                Үргэлжлүүлэх
-                              </Button>
+                                <Button
+                                  type="primary"
+                                  className={styles["dloan-button-contiune"]}
+                                  onClick={() => {
+                                    form.validateFields();
+                                    setChecked(!checked);
+                                    setIsModalOpen(false);
+                                  }}
+                                  htmlType="submit"
+                                >
+                                  Үргэлжлүүлэх
+                                </Button>
+                              </Row>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Col>
+                    </Row>
+                  </Modal>
+
+                  <InputCode
+                    open={isVerifyOpen}
+                    onFinish={submit}
+                    setOpen={setIsVerifyOpen}
+                  />
+
+                  <Modal
+                    centered
+                    width={378}
+                    title={null}
+                    onCancel={() => {
+                      setIsCompleteOpenLoan(false);
+                      setChecked(false);
+                    }}
+                    open={isCompleteOpenLoan}
+                    footer={null}
+                  >
+                    <Row
+                      justify="center"
+                      gutter={[0, 30]}
+                      style={{ padding: "50px 0" }}
+                    >
+                      <Col span={24}>
+                        <Row justify="center">
+                          <Image
+                            width={56}
+                            src={"/images/check.svg"}
+                            preview={false}
+                            alt="Header Logo"
+                          />
+                        </Row>
+                      </Col>
+                      <Col span={16}>
+                        <div className={styles["dloan-modal-complete-text"]}>
+                          Таны зээлийн эрх үүсгэх хүсэлт амжилттай бүртгэгдлээ.
+                          ФандМи биржээс таны зээлийн эрхийн хэмжээг нээж өгөх
+                          болно.
+                        </div>
+                      </Col>
+                    </Row>
+                  </Modal>
+                </Row>
+              </Col>
+            ) : (
+              <>
+                <Row
+                  justify="center"
+                  gutter={[0, 20]}
+                  className={styles[activeClass ? "" : "dloan-change-div"]}
+                >
+                  <Col md={22}>
+                    <Row
+                      gutter={[22, 10]}
+                      justify="space-between"
+                      align="middle"
+                    >
+                      <Col span={24}>
+                        <div className={styles["dloan-slider-input-title"]}>
+                          Зээлийн хэмжээ
+                        </div>
+                      </Col>
+                      <Col xs={24} lg={24} xl={8}>
+                        <InputNumber
+                          size="large"
+                          min={minValue}
+                          max={maxValue}
+                          value={inputValue}
+                          defaultValue={minValue}
+                          onChange={(e: any) => setInputValue(e)}
+                          formatter={(value) => numberToCurrency(value)}
+                          className={styles["dloan-slider-input"]}
+                        />
+                      </Col>
+                      <Col
+                        xs={24}
+                        lg={24}
+                        xl={16}
+                        style={{ padding: "0 20px" }}
+                      >
+                        <Row justify="space-between">
+                          <Col flex="none">
+                            <div className={styles["dloan-slider-price"]}>
+                              {numberToCurrency(minValue)}
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-slider-price"]}>
+                              {numberToCurrency(maxValue)}
+                            </div>
+                          </Col>
+                        </Row>
+
+                        <div className="mt-3 flex justify-between">
+                          <div
+                            onClick={() =>
+                              minValue < inputValue &&
+                              setInputValue(
+                                maxValue < 10000000
+                                  ? inputValue - 100000
+                                  : maxValue >= 10000000 && maxValue <= 50000000
+                                  ? inputValue - 500000
+                                  : inputValue - 1000000
+                              )
+                            }
+                          >
+                            <MinusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
+                          </div>
+                          <Slider
+                            min={minValue}
+                            step={
+                              maxValue < 10000000
+                                ? 100000
+                                : maxValue >= 10000000 && maxValue <= 50000000
+                                ? 500000
+                                : 1000000
+                            }
+                            max={maxValue}
+                            className="w-[80%]"
+                            onChange={(e) => setInputValue(e)}
+                            value={
+                              typeof inputValue === "number" ? inputValue : 0
+                            }
+                          />
+                          <div
+                            onClick={() =>
+                              maxValue > inputValue &&
+                              setInputValue(
+                                maxValue < 10000000
+                                  ? inputValue + 100000
+                                  : maxValue >= 10000000 && maxValue <= 50000000
+                                  ? inputValue + 500000
+                                  : inputValue + 1000000
+                              )
+                            }
+                          >
+                            <PlusCircleOutlined className="cursor-pointer text-[20px] hover:text-primary" />
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col md={22}>
+                    <Row
+                      // @ts-ignore
+                      gutter={[22, { xs: 20, lg: 10 }]}
+                    >
+                      <Col xs={24} lg={8}>
+                        <Row gutter={[0, 10]}>
+                          <Col span={24}>
+                            <div className={styles["dloan-slider-input-title"]}>
+                              Зарласан хүү
+                            </div>
+                          </Col>
+                          <Col span={24}>
+                            <Row
+                              className={styles["dloan-rate-div"]}
+                              align="middle"
+                              justify="center"
+                            >
+                              <div className={styles["dloan-rate-text"]}>
+                                {loan && loan?.loan_rate_month.slice(0, 4)} %
+                              </div>
                             </Row>
                           </Col>
                         </Row>
-                      </Form>
-                    </Col>
-                  </Row>
-                </Modal>
+                      </Col>
+                      <Col xs={24} lg={16}>
+                        <Row gutter={[0, 10]}>
+                          <Col span={24}>
+                            <div className={styles["dloan-slider-input-title"]}>
+                              Хугацаа сонгох
+                            </div>
+                          </Col>
 
-                <InputCode
-                  open={isVerifyOpen}
-                  onFinish={submit}
-                  setOpen={setIsVerifyOpen}
-                />
+                          <Col span={24}>
+                            <Row wrap={true} gutter={30} align="middle">
+                              {dataTable &&
+                                dataTable?.map((el: any, idx: any) => (
+                                  <Col
+                                    flex="none"
+                                    key={`data-${idx}`}
+                                    className="mb-[15px]"
+                                  >
+                                    <Button
+                                      onClick={() => setActiveDuration(idx)}
+                                      className={
+                                        styles[
+                                          activeDuration === idx
+                                            ? "dloan-button-active"
+                                            : "dloan-button"
+                                        ]
+                                      }
+                                    >
+                                      <div
+                                        className={
+                                          styles[
+                                            activeDuration === idx
+                                              ? "dloan-button-day-text-active"
+                                              : "dloan-button-day-text"
+                                          ]
+                                        }
+                                      >
+                                        {el.duration}
+                                      </div>
+                                      <div
+                                        className={
+                                          styles[
+                                            activeDuration === idx
+                                              ? "dloan-button-text-active"
+                                              : "dloan-button-text"
+                                          ]
+                                        }
+                                      >
+                                        хоног
+                                      </div>
+                                    </Button>
+                                  </Col>
+                                ))}
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Col>
 
-                <Modal
-                  centered
-                  width={378}
-                  title={null}
-                  onCancel={() => {
-                    setIsCompleteOpenLoan(false);
-                    setChecked(false);
-                  }}
-                  open={isCompleteOpenLoan}
-                  footer={null}
-                >
-                  <Row
-                    justify="center"
-                    gutter={[0, 30]}
-                    style={{ padding: "50px 0" }}
-                  >
-                    <Col span={24}>
-                      <Row justify="center">
-                        <Image
-                          width={56}
-                          src={"/images/check.svg"}
-                          preview={false}
-                          alt="Header Logo"
+                  <Col md={22}>
+                    <Row className={styles["dloan-detail"]} gutter={[0, 22]}>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Үндсэн зээлийн хэмжээ
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {numberToCurrency(inputValue)}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Хүүгийн хэмжээ
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-rate-profit"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                numberToCurrency(
+                                  Math.ceil(
+                                    (inputValue / 100) *
+                                      rate *
+                                      Number(
+                                        dataTable[activeDuration]?.duration
+                                      )
+                                  )
+                                )}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Зээл олголтын шимтгэл
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-rate-profit"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                numberToCurrency(
+                                  Math.ceil(
+                                    (inputValue / 100) *
+                                      Number(
+                                        dataTable[activeDuration]?.fee_percent
+                                      )
+                                  )
+                                )}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Нийт зээлийн төлбөр
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                numberToCurrency(
+                                  Math.ceil(
+                                    (inputValue / 100) *
+                                      rate *
+                                      Number(
+                                        dataTable[activeDuration]?.duration
+                                      ) +
+                                      inputValue +
+                                      (inputValue / 100) *
+                                        Number(
+                                          dataTable[activeDuration]?.fee_percent
+                                        )
+                                  )
+                                )}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Хугацаа
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                dataTable[activeDuration]?.duration}{" "}
+                              хоног
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Эргэн төлөгдөх хугацаа
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                moment()
+                                  .add(
+                                    dataTable[activeDuration]?.duration,
+                                    "days"
+                                  )
+                                  .calendar()}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col span={22}>
+                    <Row gutter={12} align="middle">
+                      <Col flex="none">
+                        <Checkbox
+                          ref={termsRef}
+                          onChange={(e) =>
+                            checked ? setChecked(true) : setChecked(false)
+                          }
+                          checked={checked}
                         />
-                      </Row>
-                    </Col>
-                    <Col span={16}>
-                      <div className={styles["dloan-modal-complete-text"]}>
-                        Таны зээлийн эрх үүсгэх хүсэлт амжилттай бүртгэгдлээ.
-                        ФандМи биржээс таны зээлийн эрхийн хэмжээг нээж өгөх
-                        болно.
-                      </div>
-                    </Col>
-                  </Row>
-                </Modal>
-
-                <Modal
-                  centered
-                  width={378}
-                  title={null}
-                  onCancel={() => {
-                    setIsCompleteOpen(false);
-                    setActiveClass(!activeClass);
-                  }}
-                  open={isCompleteOpen}
-                  footer={null}
+                      </Col>
+                      <Col flex="none">
+                        <div className={styles["dloan-checkbox-text"]}>
+                          <a onClick={() => setIsModalOpen(true)}>
+                            Зээлийн үйлчилгээний нөхцөл
+                          </a>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <Row
+                  justify="center"
+                  gutter={[0, 20]}
+                  className={styles[activeClass ? "dloan-change-div" : ""]}
                 >
-                  <Row
-                    justify="center"
-                    gutter={[0, 30]}
-                    style={{ padding: "50px 0" }}
-                  >
-                    <Col span={24}>
-                      <Row justify="center">
-                        <Image
-                          width={56}
-                          src={"/images/check.svg"}
-                          preview={false}
-                          alt="Header Logo"
-                        />
-                      </Row>
-                    </Col>
-                    <Col span={16}>
-                      <div className={styles["dloan-modal-complete-text"]}>
-                        Таны{" "}
-                        <span className={styles["dloan-rate-profit"]}>
-                          {numberToCurrency(inputValue)}
-                        </span>{" "}
-                        төгрөг{" "}
-                        <span className={styles["dloan-modal-complete-number"]}>
-                          {dataTable &&
-                            typeof activeDuration == "number" &&
-                            // @ts-ignore
-                            dataTable[activeDuration]?.duration}
-                        </span>{" "}
-                        хоногийн хугацаатай{" "}
-                        <span className={styles["dloan-modal-complete-number"]}>
-                          {loan?.loan_rate_month} %
-                        </span>{" "}
-                        хувийн хүүтэй зээл авах хүсэлт амжилттай бүртгэгдлээ.
-                      </div>
-                    </Col>
-                  </Row>
-                </Modal>
-              </Row>
-              <Row
-                justify={"center"}
-                align="bottom"
-                style={{ height: "100%" }}
-                className={styles[activeClass ? "dloan-change-div" : ""]}
+                  <Col span={22}>
+                    <Row className={styles["dloan-detail"]} gutter={[0, 22]}>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Үндсэн зээлийн хэмжээ
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {numberToCurrency(inputValue)}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Хүүгийн хэмжээ
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-rate-profit"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                numberToCurrency(
+                                  Math.round(
+                                    (inputValue / 100) *
+                                      rate *
+                                      Number(
+                                        dataTable[activeDuration]?.duration
+                                      )
+                                  )
+                                )}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Зээл олголтын шимтгэл
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-rate-profit"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                numberToCurrency(
+                                  Math.round(
+                                    (inputValue / 100) *
+                                      Number(
+                                        dataTable[activeDuration]?.fee_percent
+                                      )
+                                  )
+                                )}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Нийт зээлийн төлбөр
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                numberToCurrency(
+                                  Math.ceil(
+                                    (inputValue / 100) *
+                                      rate *
+                                      Number(
+                                        dataTable[activeDuration]?.duration
+                                      ) +
+                                      inputValue +
+                                      (inputValue / 100) *
+                                        Number(
+                                          dataTable[activeDuration]?.fee_percent
+                                        )
+                                  )
+                                )}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Хугацаа
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                dataTable[activeDuration]?.duration}{" "}
+                              хоног
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="space-between" align="middle">
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-text"]}>
+                              Эргэн төлөгдөх хугацаа
+                            </div>
+                          </Col>
+                          <Col flex="none">
+                            <div className={styles["dloan-detail-maxValue"]}>
+                              {dataTable &&
+                                typeof activeDuration == "number" &&
+                                moment()
+                                  .add(
+                                    dataTable[activeDuration]?.duration,
+                                    "days"
+                                  )
+                                  .calendar()}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col span={22}>
+                    <Row
+                      gutter={[0, 10]}
+                      justify="center"
+                      className={styles["dloan-border-div"]}
+                    >
+                      <Col span={24}>
+                        <div className={styles["dloan-change-title"]}>
+                          Зээлийн гэрээ
+                        </div>
+                      </Col>
+                      <Col span={24}>
+                        <div className={styles["dloan-contract-text"]}>
+                          Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны хөрөнгийг
+                          итгэлцлийн үндсэн дээр гэрээ байгуулан авч зах зээлийн
+                          эрсдэл үнэгүйдлээс хамгаалж өндөр үр шим /ашиг/ олж
+                          өгөх зорилгоор харилцан ашигтай хамтран ажиллах
+                          үйлчилгээ юм. Итгэлцлийн хөрөнгө нь ямар ч төрөл,
+                          хэлбэр, үнэлгээтэй байж болох ба түүний үр шимийг хоёр
+                          тал өөрсдийн хэрэгцээнд тулгуурлан харилцан ашигтай
+                          ажиллах боломжийг олгодог санхүүгийн хэрэгсэл юм.{" "}
+                          {<br />}Итгэлцлийн үйлчилгээний оролцогч талууд{" "}
+                          {<br />} Итгэмжлэгч – Хөрөнгөө удирдах, захиран
+                          зарцуулах эрхээ гэрээний үндсэн дээр бусдад шилжүүлж
+                          түүнээс үүсэх үр шимийг хүртэгч. {<br />} Хувь хүртэгч
+                          – Итгэмжлэгчтэй байгуулсан гэрээний дагуу
+                          итгэмжлэгдсэн хөрөнгийн үр шимийг хүртэгч. Гэхдээ энэ
+                          нь итгэмжлэгдсэн хөрөнгийн эзэмшигч, захиран зарцуулах
+                          эрх бүхий этгээд биш юм. {<br />} Итгэмжлэгдэгч – Хувь
+                          хүн, Бизнес эрхлэгч, Аж ахуй нэгжийн аль нь ч байж
+                          болох ба итгэмжлэгчтэй байгуулсан хөрөнгө удирдах
+                          гэрээний дагуу хөрөнгийн үнэ цэнийг өсгөх, хадгалах,
+                          үр өгөөж бий болгогч.
+                        </div>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+              </>
+            )}
+          </Row>
+        </Col>
+        {status == 1 ? (
+          <Col span={24}>
+            <Row
+              justify={"center"}
+              align="top"
+              style={{ height: "100%" }}
+              className={styles[activeClass ? "" : "dloan-change-div"]}
+            >
+              <Col span={20}>
+                <Button
+                  type="primary"
+                  loading={loadings}
+                  className={styles["dloan-button-contiune"]}
+                  onClick={() => {
+                    termsRef.current?.input.checked
+                      ? !accountInfo?.bank_account
+                        ? error({
+                            title: "Амжилтгүй",
+                            content: (
+                              <div>Та хувийн мэдээлэлээ оруулах хэрэгтэй</div>
+                            ),
+                          }) && router.push("/dashboard/profile/bank")
+                        : accountInfo?.bank_account?.is_verify == 0
+                        ? error({
+                            title: "Амжилтгүй",
+                            content: <div>Та дансаа баталгаажуулна уу</div>,
+                          }) && router.push("/dashboard/profile")
+                        : setIsVerifyOpen(true)
+                      : setIsModalOpen(true);
+                  }}
+                >
+                  Үргэлжлүүлэх
+                </Button>
+              </Col>
+
+              <Modal
+                centered
+                closable={false}
+                width="90%"
+                title={
+                  <div className={styles["dloan-modal-title"]}>
+                    ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ
+                  </div>
+                }
+                open={isModalOpen}
+                footer={null}
               >
-                <Col span={20}>
-                  <Row align="middle">
-                    <Col flex="auto">
-                      <Button
-                        type="default"
-                        className={styles["dloan-button-back"]}
-                        onClick={() => router.push("/dashboard/myfund")}
-                      >
-                        <Col flex={"auto"}>
-                          <div className={styles["dloan-change-button-text"]}>
-                            Хаах
-                          </div>
-                        </Col>
-                      </Button>
+                <Row justify="center">
+                  <Col>
+                    <Col
+                      span={24}
+                      className="my-5 rounded-[9px] bg-bank p-[50px]"
+                    >
+                      <div dangerouslySetInnerHTML={{ __html: html }} />
                     </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Col>
-          ) : (
-            <></>
-          )}
-        </Row>
-      </ProtectedLayout>
+                    <Form form={form}>
+                      <Row justify="center" gutter={[0, 10]}>
+                        <Col xs={24} lg={20}>
+                          <Form.Item
+                            name="agreement"
+                            valuePropName="checked"
+                            rules={[
+                              {
+                                validator: (_, value) =>
+                                  value
+                                    ? Promise.resolve()
+                                    : Promise.reject(
+                                        new Error(
+                                          "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
+                                        )
+                                      ),
+                              },
+                            ]}
+                          >
+                            <Checkbox style={{ color: "green" }}>
+                              <div className={styles["dloan-checkbox-text"]}>
+                                Зээлийн үйлчилгээний нөхцөл
+                              </div>
+                            </Checkbox>
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} lg={20}>
+                          <Row
+                            justify="space-between"
+                            className="gap-3"
+                            gutter={10}
+                            wrap={false}
+                          >
+                            <Button
+                              className={styles["dloan-button-back"]}
+                              onClick={() => setIsModalOpen(false)}
+                            >
+                              <div className={styles["dloan-button-back-text"]}>
+                                Буцах
+                              </div>
+                            </Button>
+
+                            <Button
+                              type="primary"
+                              className={styles["dloan-button-contiune"]}
+                              onClick={() => {
+                                form.validateFields();
+                                setChecked(!checked);
+                                setIsModalOpen(false);
+                              }}
+                              htmlType="submit"
+                            >
+                              Үргэлжлүүлэх
+                            </Button>
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Col>
+                </Row>
+              </Modal>
+
+              <InputCode
+                open={isVerifyOpen}
+                onFinish={submit}
+                setOpen={setIsVerifyOpen}
+              />
+
+              <Modal
+                centered
+                width={378}
+                title={null}
+                onCancel={() => {
+                  setIsCompleteOpenLoan(false);
+                  setChecked(false);
+                }}
+                open={isCompleteOpenLoan}
+                footer={null}
+              >
+                <Row
+                  justify="center"
+                  gutter={[0, 30]}
+                  style={{ padding: "50px 0" }}
+                >
+                  <Col span={24}>
+                    <Row justify="center">
+                      <Image
+                        width={56}
+                        src={"/images/check.svg"}
+                        preview={false}
+                        alt="Header Logo"
+                      />
+                    </Row>
+                  </Col>
+                  <Col span={16}>
+                    <div className={styles["dloan-modal-complete-text"]}>
+                      Таны зээлийн эрх үүсгэх хүсэлт амжилттай бүртгэгдлээ.
+                      ФандМи биржээс таны зээлийн эрхийн хэмжээг нээж өгөх
+                      болно.
+                    </div>
+                  </Col>
+                </Row>
+              </Modal>
+
+              <Modal
+                centered
+                width={378}
+                title={null}
+                onCancel={() => {
+                  setIsCompleteOpen(false);
+                  setActiveClass(!activeClass);
+                }}
+                open={isCompleteOpen}
+                footer={null}
+              >
+                <Row
+                  justify="center"
+                  gutter={[0, 30]}
+                  style={{ padding: "50px 0" }}
+                >
+                  <Col span={24}>
+                    <Row justify="center">
+                      <Image
+                        width={56}
+                        src={"/images/check.svg"}
+                        preview={false}
+                        alt="Header Logo"
+                      />
+                    </Row>
+                  </Col>
+                  <Col span={16}>
+                    <div className={styles["dloan-modal-complete-text"]}>
+                      Таны{" "}
+                      <span className={styles["dloan-rate-profit"]}>
+                        {numberToCurrency(inputValue)}
+                      </span>{" "}
+                      төгрөг{" "}
+                      <span className={styles["dloan-modal-complete-number"]}>
+                        {dataTable &&
+                          typeof activeDuration == "number" &&
+                          // @ts-ignore
+                          dataTable[activeDuration]?.duration}
+                      </span>{" "}
+                      хоногийн хугацаатай{" "}
+                      <span className={styles["dloan-modal-complete-number"]}>
+                        {loan?.loan_rate_month} %
+                      </span>{" "}
+                      хувийн хүүтэй зээл авах хүсэлт амжилттай бүртгэгдлээ.
+                    </div>
+                  </Col>
+                </Row>
+              </Modal>
+            </Row>
+            <Row
+              justify={"center"}
+              align="bottom"
+              style={{ height: "100%" }}
+              className={styles[activeClass ? "dloan-change-div" : ""]}
+            >
+              <Col span={20}>
+                <Row align="middle">
+                  <Col flex="auto">
+                    <Button
+                      type="default"
+                      className={styles["dloan-button-back"]}
+                      onClick={() => router.push("/dashboard/myfund")}
+                    >
+                      <Col flex={"auto"}>
+                        <div className={styles["dloan-change-button-text"]}>
+                          Хаах
+                        </div>
+                      </Col>
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Col>
+        ) : (
+          <></>
+        )}
+      </Row>
     );
   }
 };

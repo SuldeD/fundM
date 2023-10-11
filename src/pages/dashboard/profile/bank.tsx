@@ -11,10 +11,9 @@ import { Loaderr } from "app/components/Loader";
 import { UploadChangeParam } from "antd/lib/upload/interface";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { api } from "app/utils/api";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Select from "react-select";
 import { useAppContext } from "app/context/appContext";
-import { ProtectedLayout } from "app/cmsLayout";
 
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -116,8 +115,10 @@ export default function Bank() {
           } else {
             setLoadingBtn(false);
             error({
-              title: "Амжилтгүй",
+              title:
+                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
               content: <div>{data?.description || null}</div>,
+              onOk: () => signOut(),
             });
           }
         },
@@ -154,8 +155,10 @@ export default function Bank() {
             } else {
               setLoadingBtn(false);
               error({
-                title: "Амжилтгүй",
+                title:
+                  "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
                 content: <div>{data?.description || null}</div>,
+                onOk: () => signOut(),
               });
             }
           },
@@ -194,187 +197,183 @@ export default function Bank() {
     return <Loaderr />;
   } else if (!accountInfo?.bank_account?.bank_name) {
     return (
-      <ProtectedLayout>
-        <div className="h-full w-full bg-[#fff] px-[30px] py-[40px]">
-          <HeaderDashboard
-            title={"Банкны данс холбох"}
-            subTitle={
-              "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-            }
-          />
+      <div className="h-full w-full bg-[#fff] px-[30px] py-[40px]">
+        <HeaderDashboard
+          title={"Банкны данс холбох"}
+          subTitle={
+            "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
+          }
+        />
 
-          <div
-            className={`${styles["profile-bankaccount-title"]} mt-3 pb-[8px]`}
-          >
-            Банк сонгох
-          </div>
-
-          <Select
-            defaultValue={option[0]}
-            onChange={(e: any) => setSelectedBank(e.value.toString())}
-            options={option}
-          />
-
-          <div
-            className={`${styles["profile-bankaccount-title"]} pb-[8px] pt-[16px]`}
-          >
-            Дансны дугаар оруулах
-          </div>
-          <input
-            onChange={(e) => setNumber(e.target.value)}
-            name="bank_number"
-            type="number"
-            className="w-full rounded-[4px] border border-[#ccc] bg-white px-[10px] py-[8px] font-[14px]"
-          />
-          <div className="mt-[40px] text-right">
-            <Button
-              type="primary"
-              loading={loadingBtn}
-              onClick={() => {
-                selectedBank.length > 0 && number.length > 0 && submit();
-              }}
-              className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
-            >
-              Баталгаажуулах код авах
-            </Button>
-          </div>
-
-          <Modal
-            centered
-            width={378}
-            title={
-              <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-                Баталгаажуулах код оруулах
-              </div>
-            }
-            closable={true}
-            onCancel={() => setOpenVerifyPass(false)}
-            open={isOpenVerifyPass}
-            footer={null}
-          >
-            <Row justify="center">
-              <Col span={20}>
-                <Row justify="center" gutter={[0, 20]}>
-                  <Col span={20} className="my-3 flex justify-between">
-                    {code.map(
-                      (
-                        num: string | number | readonly string[] | undefined,
-                        idx: React.Key | null | undefined
-                      ) => {
-                        return (
-                          <input
-                            key={idx}
-                            type="text"
-                            inputMode="numeric"
-                            className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
-                            maxLength={1}
-                            value={num}
-                            autoFocus={!code[0].length && idx === 0}
-                            onChange={(e) => processInput(e, idx)}
-                            onKeyUp={(e) => onKeyUp(e, idx)}
-                            ref={(ref) => inputs.current.push(ref)}
-                          />
-                        );
-                      }
-                    )}
-                  </Col>
-                  <Col span={20}>
-                    <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                      Бид таны бүртгүүлсэн банкны дансруу нэг удаагын
-                      баталгаажуулах код илгэлээ.
-                    </div>
-                  </Col>
-                  <Col span={20}>
-                    <Button
-                      type="primary"
-                      loading={loadingBtn}
-                      className={stylesL["dloan-modal-verify-button"]}
-                      onClick={() => {
-                        code.join("").length == 4 && submitVerify();
-                      }}
-                    >
-                      Баталгаажуулах
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Modal>
-
-          <Modal
-            centered
-            width={478}
-            title={
-              <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-                Гарын үсгийн зураг оруулах
-              </div>
-            }
-            closable={true}
-            onCancel={() => setOpenVerify(false)}
-            open={isOpenVerify}
-            footer={null}
-          >
-            <Row justify="center">
-              <Col span={20}>
-                <Row justify="center" gutter={[0, 20]}>
-                  <Upload
-                    beforeUpload={beforeUpload}
-                    listType="picture"
-                    showUploadList={false}
-                    onChange={handleChange}
-                    className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
-                  >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        className="h-[60px] w-[60px]"
-                      />
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
-                  <Row>
-                    <p className="text-center">
-                      {accountInfo?.account?.user_type == "org"
-                        ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
-                        : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
-                    </p>
-                  </Row>
-                  <Col span={24}>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        imageUrl.length > 0 && setOpenVerifyPass(true);
-                      }}
-                      className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
-                    >
-                       Үргэлжлүүлэх
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Modal>
-
-          <PopupModal
-            buttonClick={() => {
-              setCheck(false);
-              router.push("/dashboard/profile");
-            }}
-            buttonText={"Хаах"}
-            closableM={null}
-            closeModal={null}
-            customDiv={null}
-            customIconWidth={null}
-            iconPath={"/images/check"}
-            modalWidth={null}
-            open={check}
-            text={<p>Таны данс амжилттай холбогдлоо.</p>}
-            textAlign={"center"}
-          />
+        <div className={`${styles["profile-bankaccount-title"]} mt-3 pb-[8px]`}>
+          Банк сонгох
         </div>
-      </ProtectedLayout>
+
+        <Select
+          defaultValue={option[0]}
+          onChange={(e: any) => setSelectedBank(e.value.toString())}
+          options={option}
+        />
+
+        <div
+          className={`${styles["profile-bankaccount-title"]} pb-[8px] pt-[16px]`}
+        >
+          Дансны дугаар оруулах
+        </div>
+        <input
+          onChange={(e) => setNumber(e.target.value)}
+          name="bank_number"
+          type="number"
+          className="w-full rounded-[4px] border border-[#ccc] bg-white px-[10px] py-[8px] font-[14px]"
+        />
+        <div className="mt-[40px] text-right">
+          <Button
+            type="primary"
+            loading={loadingBtn}
+            onClick={() => {
+              selectedBank.length > 0 && number.length > 0 && submit();
+            }}
+            className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
+          >
+            Баталгаажуулах код авах
+          </Button>
+        </div>
+
+        <Modal
+          centered
+          width={378}
+          title={
+            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
+              Баталгаажуулах код оруулах
+            </div>
+          }
+          closable={true}
+          onCancel={() => setOpenVerifyPass(false)}
+          open={isOpenVerifyPass}
+          footer={null}
+        >
+          <Row justify="center">
+            <Col span={20}>
+              <Row justify="center" gutter={[0, 20]}>
+                <Col span={20} className="my-3 flex justify-between">
+                  {code.map(
+                    (
+                      num: string | number | readonly string[] | undefined,
+                      idx: React.Key | null | undefined
+                    ) => {
+                      return (
+                        <input
+                          key={idx}
+                          type="text"
+                          inputMode="numeric"
+                          className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
+                          maxLength={1}
+                          value={num}
+                          autoFocus={!code[0].length && idx === 0}
+                          onChange={(e) => processInput(e, idx)}
+                          onKeyUp={(e) => onKeyUp(e, idx)}
+                          ref={(ref) => inputs.current.push(ref)}
+                        />
+                      );
+                    }
+                  )}
+                </Col>
+                <Col span={20}>
+                  <div className="text-center font-raleway text-[12px] font-normal text-sub">
+                    Бид таны бүртгүүлсэн банкны дансруу нэг удаагын
+                    баталгаажуулах код илгэлээ.
+                  </div>
+                </Col>
+                <Col span={20}>
+                  <Button
+                    type="primary"
+                    loading={loadingBtn}
+                    className={stylesL["dloan-modal-verify-button"]}
+                    onClick={() => {
+                      code.join("").length == 4 && submitVerify();
+                    }}
+                  >
+                    Баталгаажуулах
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Modal>
+
+        <Modal
+          centered
+          width={478}
+          title={
+            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
+              Гарын үсгийн зураг оруулах
+            </div>
+          }
+          closable={true}
+          onCancel={() => setOpenVerify(false)}
+          open={isOpenVerify}
+          footer={null}
+        >
+          <Row justify="center">
+            <Col span={20}>
+              <Row justify="center" gutter={[0, 20]}>
+                <Upload
+                  beforeUpload={beforeUpload}
+                  listType="picture"
+                  showUploadList={false}
+                  onChange={handleChange}
+                  className="w-full rounded-[9px] border-[2px] border-dashed px-[20px] py-[30px] text-center"
+                >
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="avatar"
+                      className="h-[60px] w-[60px]"
+                    />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
+                <Row>
+                  <p className="text-center">
+                    {accountInfo?.account?.user_type == "org"
+                      ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
+                      : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
+                  </p>
+                </Row>
+                <Col span={24}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      imageUrl.length > 0 && setOpenVerifyPass(true);
+                    }}
+                    className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
+                  >
+                     Үргэлжлүүлэх
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Modal>
+
+        <PopupModal
+          buttonClick={() => {
+            setCheck(false);
+            router.push("/dashboard/profile");
+          }}
+          buttonText={"Хаах"}
+          closableM={null}
+          closeModal={null}
+          customDiv={null}
+          customIconWidth={null}
+          iconPath={"/images/check"}
+          modalWidth={null}
+          open={check}
+          text={<p>Таны данс амжилттай холбогдлоо.</p>}
+          textAlign={"center"}
+        />
+      </div>
     );
   } else {
     router.back();

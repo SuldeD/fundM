@@ -32,10 +32,10 @@ async function middleware(req: any) {
   const session =  sessionToken?.value ? true :false; 
 
   if (!session && protectedRoutes.includes(req.nextUrl.pathname)) {
-    const absoluteURL = new URL("/404", req.nextUrl.origin);
+    const absoluteURL = new URL("/", req.nextUrl.origin);
     return NextResponse.redirect(absoluteURL.toString());
   } else if (unprotectedRoutes.includes(req.nextUrl.pathname) && session) {
-    const absoluteURL = new URL("/dashboard/404", req.nextUrl.origin);
+    const absoluteURL = new URL("/dashboard", req.nextUrl.origin);
     return NextResponse.redirect(absoluteURL.toString());
   }
 }
