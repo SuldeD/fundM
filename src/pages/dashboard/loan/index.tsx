@@ -256,7 +256,6 @@ export const Loan = () => {
                     onOk: () => signOut(),
                   });
                 }
-                минутаас;
               },
             }
           );
