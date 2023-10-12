@@ -448,7 +448,7 @@ export default function Forgot() {
                               onClick={() =>
                                 setRegisterData((prevData) => ({
                                   ...prevData,
-                                  answer: "",
+                                  phone: "",
                                 }))
                               }
                               className="h-[40px] w-[45%] rounded-[9px] text-white"
