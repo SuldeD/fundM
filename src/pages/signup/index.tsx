@@ -148,7 +148,7 @@ export default function Signup() {
 
     // Validate that the first two characters are Cyrillic letters
     const firstTwoCharacters = values.register.substring(0, 2);
-    const cyrillicPattern = /^[а-яөүА-ЯӨҮ\s]+$/; // Cyrillic letter pattern
+    const cyrillicPattern = /^[а-яёөүА-ЯЁӨҮ\s]+$/;
 
     if (
       search != "org" &&
