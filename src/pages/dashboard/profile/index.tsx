@@ -23,8 +23,6 @@ import { signOut, useSession } from "next-auth/react";
 import PopupModal from "app/components/modal";
 import { useAppContext } from "app/context/appContext";
 
-const { Panel } = Collapse;
-
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
@@ -78,7 +76,8 @@ export const Profile = () => {
   );
 
   const loanReq = useMemo(() => {
-    return loanSearch?.loan_requests;
+    console.log(loanSearch?.loan_requests);
+    return [];
   }, [loanSearch]);
 
   let request_id = -1;
@@ -493,10 +492,10 @@ export const Profile = () => {
   const IsGender = useMemo(() => {
     const IsGenderCheck = accountInfo?.account?.register?.slice(-2, -1);
 
-    if (["0", "2", "4", "6", "8"].includes(IsGenderCheck)) {
-      return "2";
-    } else if (accountInfo?.account?.register > 10) {
+    if (accountInfo?.account?.user_type == "org") {
       return "0";
+    } else if (["0", "2", "4", "6", "8"].includes(IsGenderCheck)) {
+      return "2";
     } else {
       if (["1", "3", "5", "7", "9"].includes(IsGenderCheck)) {
         return "1";
@@ -859,150 +858,150 @@ export const Profile = () => {
         </Col>
       ),
     },
-    {
-      key: "3",
-      label: "Тусламж",
-      children: (
-        <Col span={24}>
-          <Collapse
-            onChange={() => {}}
-            bordered={false}
-            expandIconPosition="end"
-          >
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Fund me биржийг хэрхэн ашиглаж эхлэх вэ?
-                </div>
-              }
-              key="1"
-            >
-              <p>adasd</p>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Хэрхэн зээл авах вэ?
-                </div>
-              }
-              key="2"
-            >
-              <p>asdasd</p>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Хэрхэн санхүүжилт авах вэ?
-                </div>
-              }
-              key="3"
-            >
-              <Col span={24}>
-                <Row justify="end" gutter={[0, 10]}>
-                  <Col
-                    span={22}
-                    className={styles["profile-collapse-content-border"]}
-                  >
-                    <div className={styles["profile-collapse-content-text"]}>
-                      Зээлийн эрх хэрхэн тогтоолгох вэ?
-                    </div>
-                  </Col>
-                  <Col
-                    span={22}
-                    className={styles["profile-collapse-content-border"]}
-                  >
-                    <div className={styles["profile-collapse-content-text"]}>
-                      Зээл авах заавар
-                    </div>
-                  </Col>
-                  <Col
-                    span={22}
-                    className={styles["profile-collapse-content-border"]}
-                  >
-                    <div className={styles["profile-collapse-content-text"]}>
-                      Авсан зээлээ хэрхэн эргэн төлөх вэ?
-                    </div>
-                  </Col>
-                  <Col
-                    span={22}
-                    className={styles["profile-collapse-content-border"]}
-                  >
-                    <div className={styles["profile-collapse-content-text"]}>
-                      Авсан санхүүжилтээ сунгах заавар
-                    </div>
-                  </Col>
-                </Row>
-              </Col>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Хувийн мэдээллээ хэрхэн шинэчлэх вэ?
-                </div>
-              }
-              key="4"
-            >
-              <p>asdasd</p>
-            </Panel>
-          </Collapse>
-        </Col>
-      ),
-    },
-    {
-      key: "4",
-      label: "Үйлчилгээний нөхцөл",
-      children: (
-        <Col span={24}>
-          <Collapse
-            onChange={() => {}}
-            bordered={false}
-            expandIconPosition="end"
-            background-color="#FFF"
-          >
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Нэвтрэх нууц үг солих
-                </div>
-              }
-              key="1"
-            >
-              <p>adasd</p>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Fund me код солих
-                </div>
-              }
-              key="2"
-            >
-              <p>asdasd</p>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Fund me код сэргээх
-                </div>
-              }
-              key="3"
-            >
-              <p>asdasd</p>
-            </Panel>
-            <Panel
-              header={
-                <div className={styles["profile-tabs-2-collapse-title"]}>
-                  Fund Me нууцлалын горим
-                </div>
-              }
-              key="4"
-            >
-              <p>asdasd</p>
-            </Panel>
-          </Collapse>
-        </Col>
-      ),
-    },
+    // {
+    //   key: "3",
+    //   label: "Тусламж",
+    //   children: (
+    //     <Col span={24}>
+    //       <Collapse
+    //         onChange={() => {}}
+    //         bordered={false}
+    //         expandIconPosition="end"
+    //       >
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Fund me биржийг хэрхэн ашиглаж эхлэх вэ?
+    //             </div>
+    //           }
+    //           key="1"
+    //         >
+    //           <p>adasd</p>
+    //         </Panel>
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Хэрхэн зээл авах вэ?
+    //             </div>
+    //           }
+    //           key="2"
+    //         >
+    //           <p>asdasd</p>
+    //         </Panel>
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Хэрхэн санхүүжилт авах вэ?
+    //             </div>
+    //           }
+    //           key="3"
+    //         >
+    //           <Col span={24}>
+    //             <Row justify="end" gutter={[0, 10]}>
+    //               <Col
+    //                 span={22}
+    //                 className={styles["profile-collapse-content-border"]}
+    //               >
+    //                 <div className={styles["profile-collapse-content-text"]}>
+    //                   Зээлийн эрх хэрхэн тогтоолгох вэ?
+    //                 </div>
+    //               </Col>
+    //               <Col
+    //                 span={22}
+    //                 className={styles["profile-collapse-content-border"]}
+    //               >
+    //                 <div className={styles["profile-collapse-content-text"]}>
+    //                   Зээл авах заавар
+    //                 </div>
+    //               </Col>
+    //               <Col
+    //                 span={22}
+    //                 className={styles["profile-collapse-content-border"]}
+    //               >
+    //                 <div className={styles["profile-collapse-content-text"]}>
+    //                   Авсан зээлээ хэрхэн эргэн төлөх вэ?
+    //                 </div>
+    //               </Col>
+    //               <Col
+    //                 span={22}
+    //                 className={styles["profile-collapse-content-border"]}
+    //               >
+    //                 <div className={styles["profile-collapse-content-text"]}>
+    //                   Авсан санхүүжилтээ сунгах заавар
+    //                 </div>
+    //               </Col>
+    //             </Row>
+    //           </Col>
+    //         </Panel>
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Хувийн мэдээллээ хэрхэн шинэчлэх вэ?
+    //             </div>
+    //           }
+    //           key="4"
+    //         >
+    //           <p>asdasd</p>
+    //         </Panel>
+    //       </Collapse>
+    //     </Col>
+    //   ),
+    // },
+    // {
+    //   key: "4",
+    //   label: "Үйлчилгээний нөхцөл",
+    //   children: (
+    //     <Col span={24}>
+    //       <Collapse
+    //         onChange={() => {}}
+    //         bordered={false}
+    //         expandIconPosition="end"
+    //         background-color="#FFF"
+    //       >
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Нэвтрэх нууц үг солих
+    //             </div>
+    //           }
+    //           key="1"
+    //         >
+    //           <p>adasd</p>
+    //         </Panel>
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Fund me код солих
+    //             </div>
+    //           }
+    //           key="2"
+    //         >
+    //           <p>asdasd</p>
+    //         </Panel>
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Fund me код сэргээх
+    //             </div>
+    //           }
+    //           key="3"
+    //         >
+    //           <p>asdasd</p>
+    //         </Panel>
+    //         <Panel
+    //           header={
+    //             <div className={styles["profile-tabs-2-collapse-title"]}>
+    //               Fund Me нууцлалын горим
+    //             </div>
+    //           }
+    //           key="4"
+    //         >
+    //           <p>asdasd</p>
+    //         </Panel>
+    //       </Collapse>
+    //     </Col>
+    //   ),
+    // },
   ];
 
   if (!data) {

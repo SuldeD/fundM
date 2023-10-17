@@ -20,13 +20,18 @@ export const SidebarLeftComponent = ({ setOpen }: any) => {
   const items = [
     {
       key: "/dashboard",
-      label: <Link href="/dashboard">Дашбоард</Link>,
+      label: <Link href="/dashboard">Нүүр хуудас</Link>,
       icon: <img src="/images/menu.png" style={{ width: 22 }} />,
     },
     {
-      key: "/dashboard/fund",
-      label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
-      icon: <img src="/images/stats.png" style={{ width: 22 }} />,
+      key: "/dashboard/foundation",
+      label: <Link href="/dashboard/foundation">Санхүүжилт өгөх</Link>,
+      icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
+    },
+    {
+      key: "/dashboard/loan",
+      label: <Link href="/dashboard/loan">Зээл авах </Link>,
+      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
     },
     {
       key: "/dashboard/myfund",
@@ -34,19 +39,15 @@ export const SidebarLeftComponent = ({ setOpen }: any) => {
       icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
     },
     {
+      key: "/dashboard/fund",
+      label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
+      icon: <img src="/images/stats.png" style={{ width: 22 }} />,
+    },
+
+    {
       key: "/dashboard/history",
-      label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
+      label: <Link href="/dashboard/history">Түүх</Link>,
       icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/loan",
-      label: <Link href="/dashboard/loan">Зээл авах хүсэлт</Link>,
-      icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
-    },
-    {
-      key: "/dashboard/foundation",
-      label: <Link href="/dashboard/foundation">Санхүүжилт өгөх хүсэлт</Link>,
-      icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
     },
   ];
 

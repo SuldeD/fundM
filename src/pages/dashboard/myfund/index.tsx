@@ -349,70 +349,6 @@ export const MyFund = () => {
 
   const items = [
     {
-      key: "1",
-      label: "Зээл авах хүсэлт",
-      children: (
-        <Col span={24}>
-          <Row
-            gutter={[0, 30]}
-            justify="space-between"
-            className={styles["myfund-tabs-content-border"]}
-          >
-            <Col flex="none">
-              <div className={styles["myfund-tabs-content-title"]}>
-                Оруулсан хүсэлтийн хэмжээ
-              </div>
-              <div className={styles["myfund-tabs-1-content-money"]}>
-                {numberToCurrency(sumMyLoan)}
-              </div>
-            </Col>
-            <Col flex="none">
-              <div className={styles["myfund-tabs-content-title"]}>
-                Биржийн хүү
-              </div>
-              <div className={styles["myfund-tabs-content-rate"]}>
-                {myLoanOrders && myLoanOrders[0]?.rate_month
-                  ? myLoanOrders[0]?.rate_month
-                  : "0"}{" "}
-                %
-              </div>
-            </Col>
-            <Col flex="none">
-              <div className={styles["myfund-tabs-content-title"]}>Биелэлт</div>
-              <div className={styles["myfund-tabs-content-rate"]}>
-                {myLoanOrders.length > 0
-                  ? Math.round(myLoanOrdersSum / myLoanOrders.length)
-                  : 0}{" "}
-                %
-              </div>
-            </Col>
-            <Col flex="none">
-              <div className={styles["myfund-tabs-content-title"]}>
-                Биелээгүй мөнгөн дүн
-              </div>
-              <div className={styles["myfund-tabs-content-rate"]}>
-                {myLoanOrders.length > 0
-                  ? numberToCurrency(sumMyLoanBalance)
-                  : numberToCurrency(0)}
-              </div>
-            </Col>
-            <Col span={24}>
-              <Table
-                scroll={{ x: 430 }}
-                columns={columns}
-                pagination={{
-                  pageSize: 10,
-                  position: ["bottomCenter"],
-                }}
-                dataSource={myLoanOrders?.reverse()}
-                rowKey={"create_date"}
-              />
-            </Col>
-          </Row>
-        </Col>
-      ),
-    },
-    {
       key: "2",
       label: "Санхүүжилт өгөх хүсэлт",
       children: (
@@ -478,6 +414,70 @@ export const MyFund = () => {
             </Row>
           </Col>
         </Row>
+      ),
+    },
+    {
+      key: "1",
+      label: "Зээл авах хүсэлт",
+      children: (
+        <Col span={24}>
+          <Row
+            gutter={[0, 30]}
+            justify="space-between"
+            className={styles["myfund-tabs-content-border"]}
+          >
+            <Col flex="none">
+              <div className={styles["myfund-tabs-content-title"]}>
+                Оруулсан хүсэлтийн хэмжээ
+              </div>
+              <div className={styles["myfund-tabs-1-content-money"]}>
+                {numberToCurrency(sumMyLoan)}
+              </div>
+            </Col>
+            <Col flex="none">
+              <div className={styles["myfund-tabs-content-title"]}>
+                Биржийн хүү
+              </div>
+              <div className={styles["myfund-tabs-content-rate"]}>
+                {myLoanOrders && myLoanOrders[0]?.rate_month
+                  ? myLoanOrders[0]?.rate_month
+                  : "0"}{" "}
+                %
+              </div>
+            </Col>
+            <Col flex="none">
+              <div className={styles["myfund-tabs-content-title"]}>Биелэлт</div>
+              <div className={styles["myfund-tabs-content-rate"]}>
+                {myLoanOrders.length > 0
+                  ? Math.round(myLoanOrdersSum / myLoanOrders.length)
+                  : 0}{" "}
+                %
+              </div>
+            </Col>
+            <Col flex="none">
+              <div className={styles["myfund-tabs-content-title"]}>
+                Биелээгүй мөнгөн дүн
+              </div>
+              <div className={styles["myfund-tabs-content-rate"]}>
+                {myLoanOrders.length > 0
+                  ? numberToCurrency(sumMyLoanBalance)
+                  : numberToCurrency(0)}
+              </div>
+            </Col>
+            <Col span={24}>
+              <Table
+                scroll={{ x: 430 }}
+                columns={columns}
+                pagination={{
+                  pageSize: 10,
+                  position: ["bottomCenter"],
+                }}
+                dataSource={myLoanOrders?.reverse()}
+                rowKey={"create_date"}
+              />
+            </Col>
+          </Row>
+        </Col>
       ),
     },
   ];

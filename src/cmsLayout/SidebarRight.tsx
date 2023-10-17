@@ -7,9 +7,7 @@ import {
   Modal,
   Empty,
   Button,
-  Drawer,
   TabsProps,
-  Tabs,
 } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "../styles/protectedLayout.module.css";
@@ -185,18 +183,16 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
   const IsGender = useMemo(() => {
     const IsGenderCheck = accountInfo?.account?.register?.slice(-2, -1);
 
-    if (["0", "2", "4", "6", "8"].includes(IsGenderCheck)) {
-      return "2";
-    } else if (accountInfo?.account?.register > 10) {
+    if (accountInfo?.account?.user_type == "org") {
       return "0";
+    } else if (["0", "2", "4", "6", "8"].includes(IsGenderCheck)) {
+      return "2";
     } else {
       if (["1", "3", "5", "7", "9"].includes(IsGenderCheck)) {
         return "1";
       }
     }
   }, [accountInfo]);
-
-  console.log(selectedNot, "selectedNot");
 
   const items: TabsProps["items"] = [
     {

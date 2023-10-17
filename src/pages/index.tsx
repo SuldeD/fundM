@@ -90,8 +90,8 @@ export const Home = () => {
                   className="h-[254px] w-[254px]"
                 />
                 <img
-                  src="/images/about-2.png"
-                  className="absolute right-0 mt-[11px] h-[185px] w-[185px]"
+                  src="/images/about-2.webp"
+                  className="absolute right-0 mt-[11px] h-[185px] w-[185px] rounded-bl-[50px]"
                 />
               </div>
               <img src="/images/about-3.png" className="h-[453px] w-[254px]" />
