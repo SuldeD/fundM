@@ -17,6 +17,8 @@ import { prisma } from "app/server/db";
 import { IncomingMessage } from "http";
 import ws from "ws";
 import { NodeHTTPCreateContextFnOptions } from "@trpc/server/dist/adapters/node-http";
+import { Modal } from "antd";
+import { signOut } from "next-auth/react";
 
 
 /**
@@ -117,7 +119,14 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
+  const {error} = Modal
   if (!ctx.session || !ctx.session.user) {
+    error({
+      title:
+      "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+      onOk: () => signOut(),
+    });
+    console.log("UNAUTHORIZED","code")
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({

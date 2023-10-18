@@ -167,10 +167,8 @@ export const Loan = () => {
               } else {
                 setLoadings(false);
                 error({
-                  title:
-                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                  title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
-                  onOk: () => signOut(),
                 });
               }
             },
@@ -205,10 +203,8 @@ export const Loan = () => {
               } else {
                 setLoadings(false);
                 error({
-                  title:
-                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                  title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
-                  onOk: () => signOut(),
                 });
               }
             },
@@ -250,10 +246,8 @@ export const Loan = () => {
                   setChecked(false);
                 } else {
                   error({
-                    title:
-                      "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                    title: "Амжилтгүй",
                     content: <div>{data?.description || null}</div>,
-                    onOk: () => signOut(),
                   });
                 }
               },
@@ -278,10 +272,8 @@ export const Loan = () => {
                   setChecked(false);
                 } else {
                   error({
-                    title:
-                      "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                    title: "Амжилтгүй",
                     content: <div>{data?.description || null}</div>,
-                    onOk: () => signOut(),
                   });
                 }
               },

@@ -184,10 +184,8 @@ export const FundHistory = () => {
                       setOpen(true);
                     } else {
                       error({
-                        title:
-                          "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                        title: "Амжилтгүй",
                         content: <div>{data?.description || null}</div>,
-                        onOk: () => signOut(),
                       });
                     }
                   },
@@ -427,10 +425,8 @@ export const FundHistory = () => {
             setIsCompleteOpen(true);
           } else {
             error({
-              title:
-                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+              title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
-              onOk: () => signOut(),
             });
           }
         },
@@ -465,10 +461,8 @@ export const FundHistory = () => {
             downloadLink.click();
           } else {
             error({
-              title:
-                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+              title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
-              onOk: () => signOut(),
             });
           }
         },

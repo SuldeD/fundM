@@ -76,8 +76,7 @@ export const Profile = () => {
   );
 
   const loanReq = useMemo(() => {
-    console.log(loanSearch?.loan_requests);
-    return [];
+    return loanSearch?.loan_requests;
   }, [loanSearch]);
 
   let request_id = -1;
@@ -215,10 +214,8 @@ export const Profile = () => {
                 success(data.description);
               } else {
                 error({
-                  title:
-                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                  title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
-                  onOk: () => signOut(),
                 });
               }
             },
@@ -267,10 +264,8 @@ export const Profile = () => {
             success(data?.description);
           } else {
             error({
-              title:
-                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+              title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
-              onOk: () => signOut(),
             });
           }
         },
@@ -324,10 +319,8 @@ export const Profile = () => {
                 success(data.description);
               } else {
                 error({
-                  title:
-                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                  title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
-                  onOk: () => signOut(),
                 });
               }
             },
@@ -366,10 +359,8 @@ export const Profile = () => {
                 success(data.description);
               } else {
                 error({
-                  title:
-                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                  title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
-                  onOk: () => signOut(),
                 });
               }
             },
@@ -408,10 +399,8 @@ export const Profile = () => {
                 success(data.description);
               } else {
                 error({
-                  title:
-                    "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                  title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
-                  onOk: () => signOut(),
                 });
               }
             },
@@ -442,10 +431,8 @@ export const Profile = () => {
             success(data.description);
           } else {
             error({
-              title:
-                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+              title: "Амжилтгүй",
               content: <div>{data?.description || null}</div>,
-              onOk: () => signOut(),
             });
           }
         },
@@ -477,10 +464,8 @@ export const Profile = () => {
             } else {
               setLoadingBtn(false);
               error({
-                title:
-                  "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                title: "Амжилтгүй",
                 content: <div>{data?.description || null}</div>,
-                onOk: () => signOut(),
               });
             }
           },
