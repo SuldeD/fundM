@@ -1272,7 +1272,7 @@ export const Profile = () => {
                 </Col>
                 <Col span={20}>
                   <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                    Бид таны бүртгүүлсэн утасны дугаар руу нэг удаагын
+                    Бид таны бүртгүүлсэн дансны дугаар руу нэг удаагын
                     баталгаажуулах код илгэлээ.
                   </div>
                 </Col>

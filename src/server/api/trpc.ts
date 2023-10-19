@@ -121,12 +121,6 @@ export const publicProcedure = t.procedure;
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   const {error} = Modal
   if (!ctx.session || !ctx.session.user) {
-    error({
-      title:
-      "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
-      onOk: () => signOut(),
-    });
-    console.log("UNAUTHORIZED","code")
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
