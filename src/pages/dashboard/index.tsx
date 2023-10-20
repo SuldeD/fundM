@@ -52,7 +52,7 @@ export const Dashboard = () => {
 
   const columns = [
     {
-      title: "№",
+      title: " ",
       dataIndex: "id",
       key: "request_id",
       align: "center",
@@ -63,9 +63,7 @@ export const Dashboard = () => {
             <div className={styles["loanReq-start"]}>
               <Image width={23} src="/images/star.svg" preview={false} />
             </div>
-          ) : (
-            id
-          )}
+          ) : null}
         </div>
       ),
     },
