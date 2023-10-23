@@ -768,7 +768,7 @@ export const Loan = () => {
                         <Row justify="space-between" align="middle">
                           <Col flex="none">
                             <div className={styles["dloan-detail-text"]}>
-                              Зээл олголтын шимтгэл
+                              Үйлчилгээний шимтгэл
                             </div>
                           </Col>
                           <Col flex="none">

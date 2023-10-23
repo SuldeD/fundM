@@ -404,7 +404,7 @@ export const MyFund = () => {
                   scroll={{ x: 430 }}
                   columns={columns1}
                   pagination={{
-                    pageSize: 10,
+                    pageSize: 8,
                     position: ["bottomCenter"],
                   }}
                   dataSource={mySavingOrders?.reverse()}
@@ -469,7 +469,7 @@ export const MyFund = () => {
                 scroll={{ x: 430 }}
                 columns={columns}
                 pagination={{
-                  pageSize: 10,
+                  pageSize: 8,
                   position: ["bottomCenter"],
                 }}
                 dataSource={myLoanOrders?.reverse()}

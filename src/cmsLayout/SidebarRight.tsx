@@ -119,7 +119,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           } else {
             error({
               title:
-                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идэвхгүй байсан тул таны холболтыг салгалаа.",
               content: <div>{data?.description || null}</div>,
               onOk: () => signOut(),
             });

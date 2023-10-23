@@ -318,7 +318,7 @@ export const FundHistory = () => {
                 <div className={styles["fund-tabs-content-rate"]}>
                   {mySavingOrders && mySavingOrders[0]?.loan_rate_month
                     ? Math.round(mySavingOrders[0]?.loan_rate_month * 10) / 10
-                    : "0"}
+                    : ""}
                   0 %
                 </div>
               </Col>
@@ -337,7 +337,7 @@ export const FundHistory = () => {
               scroll={{ x: 430 }}
               columns={columns1}
               pagination={{
-                pageSize: 10,
+                pageSize: 8,
                 position: ["bottomCenter"],
               }}
               dataSource={mySavingOrders?.reverse()}
@@ -372,7 +372,7 @@ export const FundHistory = () => {
                 <div className={styles["fund-tabs-content-rate"]}>
                   {myLoanOrders && myLoanOrders[0]?.loan_rate_month
                     ? Math.round(myLoanOrders[0]?.loan_rate_month * 10) / 10
-                    : "0"}
+                    : ""}
                   0 %
                 </div>
               </Col>
@@ -391,7 +391,7 @@ export const FundHistory = () => {
               scroll={{ x: 430 }}
               columns={columns}
               pagination={{
-                pageSize: 10,
+                pageSize: 8,
                 position: ["bottomCenter"],
               }}
               dataSource={myLoanOrders?.reverse()}
