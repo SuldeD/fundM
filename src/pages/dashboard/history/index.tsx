@@ -241,9 +241,7 @@ const History = () => {
                   pageSize: 8,
                   position: ["bottomCenter"],
                 }}
-                dataSource={
-                  filterData ? filterData?.reverse() : dataTable?.reverse()
-                }
+                dataSource={filterData ? filterData : dataTable}
                 rowKey={"create_date"}
               />
             </Col>

@@ -38,36 +38,34 @@ export const List = () => {
   }, [requestSearch]);
 
   const mySavingOrders = useMemo(() => {
-    return requestSearch?.requests?.filter(
+    const arr: any = [];
+    const filteredData = orders?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" && el.request_type == "saving"
-    )
-      ? requestSearch?.requests?.filter(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "saving"
-        )
-      : [];
+    );
+    filteredData?.map((el: any, idx: number) =>
+      arr.push({ ...el, idx: idx + 1 })
+    );
+    return arr;
   }, [requestSearch]);
 
   const myLoanOrders = useMemo(() => {
-    return requestSearch?.requests?.filter(
+    const arr: any = [];
+    const filteredData = orders?.filter(
       (el: any) =>
         el.filled_percent.slice(0, 3) != "100" && el.request_type == "wallet"
-    )
-      ? requestSearch?.requests?.filter(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "wallet"
-        )
-      : [];
+    );
+    filteredData?.map((el: any, idx: number) =>
+      arr.push({ ...el, idx: idx + 1 })
+    );
+    return arr;
   }, [requestSearch]);
 
   const columns: any[] = [
     {
       title: "Дараалал",
-      dataIndex: "id",
-      key: "request_id",
+      dataIndex: "idx",
+      key: "requst_id",
       align: "center",
       width: "6%",
       render: (id: string, data: any) => (
@@ -186,7 +184,7 @@ export const List = () => {
   const columns1: any[] = [
     {
       title: "Дараалал",
-      dataIndex: "id",
+      dataIndex: "idx",
       key: "request_id",
       align: "center",
       width: "6%",

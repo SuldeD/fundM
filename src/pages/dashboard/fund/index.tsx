@@ -49,29 +49,26 @@ export const FundHistory = () => {
 
   const mySavingOrders = useMemo(() => {
     const arr: any = [];
-    loanSearch?.loan_requests?.map(
-      (el: any, idx: number) =>
-        el.product_type_code == "saving" && arr.push({ ...el, idx: idx + 1 })
+    const filteredData = orders?.filter(
+      (el: any) => el.product_type_code == "saving"
     );
-
+    filteredData?.map((el: any, idx: number) =>
+      arr.push({ ...el, idx: idx + 1 })
+    );
     return arr;
   }, [loanSearch]);
-
-  // const mySavingOrders = useMemo(() => {
-  //   return loanSearch?.loan_requests
-  //     ?.reverse()
-  //     .filter((el: any) => el.product_type_code == "saving");
-  // }, [loanSearch]);
 
   const myLoanOrders = useMemo(() => {
     const arr: any = [];
-    loanSearch?.loan_requests?.map(
-      (el: any, idx: number) =>
-        el.product_type_code == "loan" && arr.push({ ...el, idx: idx + 1 })
+    const filteredData = orders?.filter(
+      (el: any) => el.product_type_code == "loan"
+    );
+    filteredData?.map((el: any, idx: number) =>
+      arr.push({ ...el, idx: idx + 1 })
     );
 
     return arr;
-  }, [loanSearch]);
+  }, [orders]);
 
   const sumMyLoan = useMemo(() => {
     if (!loanSearch || !loanSearch.loan_requests) {
@@ -354,7 +351,7 @@ export const FundHistory = () => {
                 pageSize: 8,
                 position: ["bottomCenter"],
               }}
-              dataSource={mySavingOrders?.reverse()}
+              dataSource={mySavingOrders}
               rowKey={"create_date"}
             />
           </Col>
@@ -408,7 +405,7 @@ export const FundHistory = () => {
                 pageSize: 8,
                 position: ["bottomCenter"],
               }}
-              dataSource={myLoanOrders?.reverse()}
+              dataSource={myLoanOrders}
               rowKey={"create_date"}
             />
           </Col>

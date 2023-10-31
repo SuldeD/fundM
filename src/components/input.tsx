@@ -97,9 +97,9 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
                             key={idx}
                             type="text"
                             inputMode="numeric"
-                            className="w-[40px] rounded-[9px] border border-[#1375ED] p-2 text-center"
+                            className="w-[40px] rounded-[9px] border border-[#1375ED] pb-2 pt-3 text-center"
                             maxLength={1}
-                            value={num}
+                            value={num ? "*" : num}
                             autoFocus={!code[0].length && idx === 0}
                             onChange={(e) => processInput(e, idx)}
                             onKeyUp={(e) => onKeyUp(e, idx)}

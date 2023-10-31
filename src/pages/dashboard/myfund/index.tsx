@@ -38,26 +38,29 @@ export const MyFund = () => {
 
   const mySavingOrders = useMemo(() => {
     const arr: any = [];
-    requestSearch?.requests?.map(
-      (el: any, idx: number) =>
+    const filteredData = orders?.filter(
+      (el: any) =>
         el.filled_percent.slice(0, 3) != "100" &&
         el.request_type == "saving" &&
-        el.is_my_request == "1" &&
-        arr.push({ ...el, idx: idx + 1 })
+        el.is_my_request == "1"
+    );
+    filteredData?.map((el: any, idx: number) =>
+      arr.push({ ...el, idx: idx + 1 })
     );
     return arr;
   }, [requestSearch]);
 
   const myLoanOrders = useMemo(() => {
     const arr: any = [];
-    requestSearch?.requests?.map(
-      (el: any, idx: number) =>
+    const filteredData = orders?.filter(
+      (el: any) =>
         el.filled_percent.slice(0, 3) != "100" &&
         el.request_type == "wallet" &&
-        el.is_my_request == "1" &&
-        arr.push({ ...el, idx: idx + 1 })
+        el.is_my_request == "1"
     );
-
+    filteredData?.map((el: any, idx: number) =>
+      arr.push({ ...el, idx: idx + 1 })
+    );
     return arr;
   }, [requestSearch]);
 
@@ -66,13 +69,36 @@ export const MyFund = () => {
       return 0;
     }
     let num = 0;
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "wallet" &&
+        el.is_my_request == "1"
+      ) {
+        num += Number(el.loan_amount);
+        return true;
+      }
+      return false;
+    });
     return Math.round(num);
   }, [requestSearch]);
+
   const sumMyLoanBalance = useMemo(() => {
     if (!requestSearch || !requestSearch.requests) {
       return 0;
     }
     let num = 0;
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "wallet" &&
+        el.is_my_request == "1"
+      ) {
+        num += Number(el.balance_amount);
+        return true;
+      }
+      return false;
+    });
     return Math.round(num);
   }, [requestSearch]);
 
@@ -81,7 +107,17 @@ export const MyFund = () => {
       return 0;
     }
     let num = 0;
-
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "saving" &&
+        el.is_my_request == "1"
+      ) {
+        num += Number(el.loan_amount);
+        return true;
+      }
+      return false;
+    });
     return Math.round(num);
   }, [requestSearch]);
 
@@ -90,7 +126,17 @@ export const MyFund = () => {
       return 0;
     }
     let num = 0;
-
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "saving" &&
+        el.is_my_request == "1"
+      ) {
+        num += Number(el.balance_amount);
+        return true;
+      }
+      return false;
+    });
     return Math.round(num);
   }, [requestSearch]);
 
@@ -98,11 +144,38 @@ export const MyFund = () => {
     if (!requestSearch || !requestSearch.requests) {
       return 0;
     }
-
     let num = 0;
-
+    const filteredRequests = requestSearch.requests.filter((el: any) => {
+      if (
+        el.filled_percent.slice(0, 3) !== "100" &&
+        el.request_type === "wallet" &&
+        el.is_my_request == "1"
+      ) {
+        num += parseFloat(el.filled_percent); // Accumulate filled_percent
+        return true; // Include this request in the filtered list
+      }
+      return false; // Exclude this request from the filtered list
+    });
     return num; // Return the accumulated sum of filled_percent values
   }, [requestSearch]);
+
+  // const mySavingOrdersSum = useMemo(() => {
+  //   if (!requestSearch || !requestSearch.requests) {
+  //     return 0; // Return 0 if the data is not available
+  //   }
+  //   let num = 0;
+  //   const filteredRequests = requestSearch.requests.filter((el: any) => {
+  //     if (
+  //       el.filled_percent.slice(0, 3) !== "100" &&
+  //       el.request_type === "saving"
+  //     ) {
+  //       num += parseFloat(el.filled_percent); // Accumulate filled_percent
+  //       return true; // Include this request in the filtered list
+  //     }
+  //     return false; // Exclude this request from the filtered list
+  //   });
+  //   return num; // Return the accumulated sum of filled_percent values
+  // }, [requestSearch]);
 
   const columns: any[] = [
     {
@@ -323,7 +396,7 @@ export const MyFund = () => {
                   Биелээгүй мөнгөн дүн
                 </div>
                 <div className={styles["myfund-tabs-content-rate"]}>
-                  {mySavingOrders.length > 0
+                  {sumMySavingBalance > 0
                     ? numberToCurrency(sumMySavingBalance)
                     : numberToCurrency(sumMySaving)}
                 </div>
@@ -336,7 +409,7 @@ export const MyFund = () => {
                     pageSize: 8,
                     position: ["bottomCenter"],
                   }}
-                  dataSource={mySavingOrders?.reverse()}
+                  dataSource={mySavingOrders}
                   rowKey={"create_date"}
                 />
               </Col>
