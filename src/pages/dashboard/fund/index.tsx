@@ -49,12 +49,10 @@ export const FundHistory = () => {
 
   const mySavingOrders = useMemo(() => {
     const arr: any = [];
-    loanSearch?.loan_requests
-      ?.reverse()
-      .map(
-        (el: any, idx: number) =>
-          el.product_type_code == "saving" && arr.push({ ...el, idx: idx + 1 })
-      );
+    loanSearch?.loan_requests?.map(
+      (el: any, idx: number) =>
+        el.product_type_code == "saving" && arr.push({ ...el, idx: idx + 1 })
+    );
 
     return arr;
   }, [loanSearch]);
@@ -67,12 +65,10 @@ export const FundHistory = () => {
 
   const myLoanOrders = useMemo(() => {
     const arr: any = [];
-    loanSearch?.loan_requests
-      ?.reverse()
-      .map(
-        (el: any, idx: number) =>
-          el.product_type_code == "loan" && arr.push({ ...el, idx: idx + 1 })
-      );
+    loanSearch?.loan_requests?.map(
+      (el: any, idx: number) =>
+        el.product_type_code == "loan" && arr.push({ ...el, idx: idx + 1 })
+    );
 
     return arr;
   }, [loanSearch]);
