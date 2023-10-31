@@ -21,7 +21,7 @@ export const MyFund = () => {
       order_up: "1",
       page: "1",
       page_size: "30",
-      filter_type: "my",
+      filter_type: "active",
     },
     { refetchOnWindowFocus: false }
   );
@@ -31,34 +31,34 @@ export const MyFund = () => {
   const [open, setOpen] = useState<boolean>(false);
 
   //constants
+
   const orders = useMemo(() => {
     return requestSearch?.requests;
   }, [requestSearch]);
 
   const mySavingOrders = useMemo(() => {
-    return requestSearch?.requests?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" && el.request_type == "saving"
-    )
-      ? requestSearch?.requests?.filter(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "saving"
-        )
-      : [];
+    const arr: any = [];
+    requestSearch?.requests?.map(
+      (el: any, idx: number) =>
+        el.filled_percent.slice(0, 3) != "100" &&
+        el.request_type == "saving" &&
+        el.is_my_request == "1" &&
+        arr.push({ ...el, idx: idx + 1 })
+    );
+    return arr;
   }, [requestSearch]);
 
   const myLoanOrders = useMemo(() => {
-    return requestSearch?.requests?.filter(
-      (el: any) =>
-        el.filled_percent.slice(0, 3) != "100" && el.request_type == "wallet"
-    )
-      ? requestSearch?.requests?.filter(
-          (el: any) =>
-            el.filled_percent.slice(0, 3) != "100" &&
-            el.request_type == "wallet"
-        )
-      : [];
+    const arr: any = [];
+    requestSearch?.requests?.map(
+      (el: any, idx: number) =>
+        el.filled_percent.slice(0, 3) != "100" &&
+        el.request_type == "wallet" &&
+        el.is_my_request == "1" &&
+        arr.push({ ...el, idx: idx + 1 })
+    );
+
+    return arr;
   }, [requestSearch]);
 
   const sumMyLoan = useMemo(() => {
@@ -66,16 +66,6 @@ export const MyFund = () => {
       return 0;
     }
     let num = 0;
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) !== "100" &&
-        el.request_type === "wallet"
-      ) {
-        num += Number(el.loan_amount);
-        return true;
-      }
-      return false;
-    });
     return Math.round(num);
   }, [requestSearch]);
   const sumMyLoanBalance = useMemo(() => {
@@ -83,16 +73,6 @@ export const MyFund = () => {
       return 0;
     }
     let num = 0;
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) !== "100" &&
-        el.request_type === "wallet"
-      ) {
-        num += Number(el.balance_amount);
-        return true;
-      }
-      return false;
-    });
     return Math.round(num);
   }, [requestSearch]);
 
@@ -101,34 +81,15 @@ export const MyFund = () => {
       return 0;
     }
     let num = 0;
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) !== "100" &&
-        el.request_type === "saving"
-      ) {
-        num += Number(el.loan_amount);
-        return true;
-      }
-      return false;
-    });
 
     return Math.round(num);
   }, [requestSearch]);
+
   const sumMySavingBalance = useMemo(() => {
     if (!requestSearch || !requestSearch.requests) {
       return 0;
     }
     let num = 0;
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) !== "100" &&
-        el.request_type === "saving"
-      ) {
-        num += Number(el.balance_amount);
-        return true;
-      }
-      return false;
-    });
 
     return Math.round(num);
   }, [requestSearch]);
@@ -140,45 +101,13 @@ export const MyFund = () => {
 
     let num = 0;
 
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) !== "100" &&
-        el.request_type === "wallet"
-      ) {
-        num += parseFloat(el.filled_percent); // Accumulate filled_percent
-        return true; // Include this request in the filtered list
-      }
-      return false; // Exclude this request from the filtered list
-    });
-
-    return num; // Return the accumulated sum of filled_percent values
-  }, [requestSearch]);
-
-  const mySavingOrdersSum = useMemo(() => {
-    if (!requestSearch || !requestSearch.requests) {
-      return 0; // Return 0 if the data is not available
-    }
-
-    let num = 0;
-
-    const filteredRequests = requestSearch.requests.filter((el: any) => {
-      if (
-        el.filled_percent.slice(0, 3) !== "100" &&
-        el.request_type === "saving"
-      ) {
-        num += parseFloat(el.filled_percent); // Accumulate filled_percent
-        return true; // Include this request in the filtered list
-      }
-      return false; // Exclude this request from the filtered list
-    });
-
     return num; // Return the accumulated sum of filled_percent values
   }, [requestSearch]);
 
   const columns: any[] = [
     {
-      title: "Дараалал",
-      dataIndex: "id",
+      title: "№",
+      dataIndex: "idx",
       key: "IsActive",
       align: "center",
       width: "6%",
@@ -263,8 +192,8 @@ export const MyFund = () => {
 
   const columns1: any[] = [
     {
-      title: "Дараалал",
-      dataIndex: "id",
+      title: "№",
+      dataIndex: "idx",
       key: "IsActive",
       align: "center",
       width: "6%",
@@ -472,7 +401,7 @@ export const MyFund = () => {
                   pageSize: 8,
                   position: ["bottomCenter"],
                 }}
-                dataSource={myLoanOrders?.reverse()}
+                dataSource={myLoanOrders}
                 rowKey={"create_date"}
               />
             </Col>

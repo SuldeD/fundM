@@ -31,7 +31,12 @@ const History = () => {
   const [value, setValue] = useState<any>(null);
 
   const dataTable = useMemo(() => {
-    return loanSearch?.loan_requests;
+    const arr: any = [];
+    loanSearch?.loan_requests?.map((el: any, idx: number) =>
+      arr.push({ ...el, idx: idx + 1 })
+    );
+
+    return arr;
   }, [loanSearch]);
 
   const onOpenChange = (open: any) => {
@@ -74,7 +79,7 @@ const History = () => {
   const columns: any[] = [
     {
       title: "№",
-      dataIndex: "request_id",
+      dataIndex: "idx",
       key: "request_id",
       width: "6%",
       render: (request_id: string) => (

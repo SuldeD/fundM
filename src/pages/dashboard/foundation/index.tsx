@@ -19,7 +19,7 @@ import moment from "moment";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export const Foundation = () => {
   const { status: layoutStatus } = useSession();

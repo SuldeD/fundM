@@ -48,15 +48,33 @@ export const FundHistory = () => {
   }, [loanSearch]);
 
   const mySavingOrders = useMemo(() => {
-    return loanSearch?.loan_requests
+    const arr: any = [];
+    loanSearch?.loan_requests
       ?.reverse()
-      .filter((el: any) => el.product_type_code == "saving");
+      .map(
+        (el: any, idx: number) =>
+          el.product_type_code == "saving" && arr.push({ ...el, idx: idx + 1 })
+      );
+
+    return arr;
   }, [loanSearch]);
 
+  // const mySavingOrders = useMemo(() => {
+  //   return loanSearch?.loan_requests
+  //     ?.reverse()
+  //     .filter((el: any) => el.product_type_code == "saving");
+  // }, [loanSearch]);
+
   const myLoanOrders = useMemo(() => {
-    return loanSearch?.loan_requests
+    const arr: any = [];
+    loanSearch?.loan_requests
       ?.reverse()
-      .filter((el: any) => el.product_type_code == "loan");
+      .map(
+        (el: any, idx: number) =>
+          el.product_type_code == "loan" && arr.push({ ...el, idx: idx + 1 })
+      );
+
+    return arr;
   }, [loanSearch]);
 
   const sumMyLoan = useMemo(() => {
@@ -93,7 +111,7 @@ export const FundHistory = () => {
   const columns: any[] = [
     {
       title: "№",
-      dataIndex: "request_id",
+      dataIndex: "idx",
       key: "is_status",
       width: "6%",
       render: (id: string) => (
@@ -208,7 +226,7 @@ export const FundHistory = () => {
   const columns1: any[] = [
     {
       title: "№",
-      dataIndex: "request_id",
+      dataIndex: "idx",
       key: "is_status",
       width: "6%",
       render: (id: string) => (

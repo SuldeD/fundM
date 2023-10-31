@@ -8,10 +8,8 @@ import { HeaderDashboard } from "app/components/header";
 import { useAppContext } from "app/context/appContext";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { Loaderr } from "app/components/Loader";
 import { api } from "app/utils/api";
 import { useSession } from "next-auth/react";
-import { ProtectedLayout } from "app/cmsLayout";
 
 export const List = () => {
   const router = useRouter();
