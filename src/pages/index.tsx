@@ -126,9 +126,6 @@ export const Home = () => {
           ))}
         </div>
         <div className="relative">
-          {/* <div className=" absolute left-0 top-[-180px]">
-          <img src="/images/medium-left-vector.png" />
-        </div> */}
           <div className=" bg-black bg-[url('/images/fundNow-bg.png')] bg-cover bg-top bg-no-repeat py-[100px]">
             <div className="container mx-auto justify-between px-[20px] md:flex">
               <div className="max-w-3xl items-center text-[22px] font-bold leading-[27px] text-[#fff]">
@@ -143,9 +140,6 @@ export const Home = () => {
               </button>
             </div>
           </div>
-          {/* <div className="absolute right-0 top-[100px]">
-          <img src="/images/vector-4.png" />
-        </div> */}
         </div>
         <div className="py-[100px] pt-[60px]">
           <div className="text-center text-[22px] font-bold leading-[27px] text-[#1a2155]">
@@ -174,7 +168,7 @@ export const Home = () => {
             ))}
           </div>
         </div>
-        <div className="relative bg-[#E4E4E4]" id="app">
+        {/* <div className="relative bg-[#E4E4E4]" id="app">
           <div className="container mx-auto py-[78px]">
             <div className="w-full p-[20px] lg:w-[430px]">
               <div className="text-[28px] font-bold leading-[34px] text-[#1a2155] ">
@@ -227,11 +221,9 @@ export const Home = () => {
               <img width="100%" src="/images/phone.png" />
             </div>
 
-            {/* <div className="absolute left-0">
-            <img width="100%" src="/images/vector-5.png" />
-          </div> */}
+     
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }

@@ -589,7 +589,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                   allData(`${notfication?.activity_list?.length + 10}`);
               }}
             >
-              Бүгдийг харах
+              Дараах
             </Button>
           ) : (
             <Button
@@ -597,7 +597,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
               disabled
               className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
             >
-              Бүгдийг харах
+              Дараах
             </Button>
           )}
         </div>

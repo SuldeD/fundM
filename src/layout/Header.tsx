@@ -25,20 +25,12 @@ export const HeaderComponent = () => {
       label: <Link href="/">Нүүр</Link>,
     },
     {
-      key: "/about-us",
-      label: <Link href="/about-us">Бидний тухай</Link>,
-    },
-    {
       key: "/finance",
       label: <Link href="/finance">Санхүүжилт өгөх</Link>,
     },
     {
       key: "/loan",
       label: <Link href="/loan">Зээл авах</Link>,
-    },
-    {
-      key: "/#app",
-      label: <Link href="/#app">Апп татах</Link>,
     },
     {
       key: "/#contact",
@@ -63,12 +55,6 @@ export const HeaderComponent = () => {
       link: "/",
     },
     {
-      image: "/images/man.png",
-      key: "2",
-      label: <Link href="/about-us">Бидний тухай</Link>,
-      link: "/about-us",
-    },
-    {
       image: "/images/finance.png",
       key: "3",
       label: <Link href="/finance">Санхүүжилт өгөх</Link>,
@@ -79,12 +65,6 @@ export const HeaderComponent = () => {
       key: "4",
       label: <Link href="/loan">Зээл авах</Link>,
       link: "/loan",
-    },
-    {
-      image: "/images/user-interface.png",
-      key: "5",
-      label: <Link href="/#app">Апп татах</Link>,
-      link: "/#app",
     },
     {
       image: "/images/contact-book.png",
@@ -138,11 +118,7 @@ export const HeaderComponent = () => {
                   <Popover
                     placement="top"
                     open={openWeb}
-                    title={
-                      <div className="border-b pb-3 text-center">
-                        БҮРТГҮҮЛЭХ
-                      </div>
-                    }
+                    title={null}
                     content={
                       <div className="">
                         <Button

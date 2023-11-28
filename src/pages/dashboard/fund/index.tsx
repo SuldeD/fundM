@@ -47,6 +47,8 @@ export const FundHistory = () => {
     return loanSearch?.loan_requests;
   }, [loanSearch]);
 
+  console.log(orders, "or");
+
   const mySavingOrders = useMemo(() => {
     const arr: any = [];
     const filteredData = orders?.filter(
@@ -103,8 +105,8 @@ export const FundHistory = () => {
 
   const columns: any[] = [
     {
-      title: "№",
-      dataIndex: "idx",
+      title: "Хоног",
+      dataIndex: "loan_day",
       key: "is_status",
       width: "6%",
       render: (id: string) => (
@@ -112,8 +114,8 @@ export const FundHistory = () => {
       ),
     },
     {
-      title: "Зээлийн хэмжээ",
-      dataIndex: "this_month_unpaid_amount",
+      title: "Авсан зээл",
+      dataIndex: "loan_amount",
       key: "loan_amount",
       align: "center",
       width: "23%",
@@ -124,46 +126,33 @@ export const FundHistory = () => {
       ),
     },
     {
-      title: "Төрөл",
-      dataIndex: "product_type_code",
+      title: "Эргэн төлөх дүн",
+      dataIndex: "this_month_unpaid_amount",
       key: "type",
       align: "center",
       width: "23%",
-      render: (type: string) =>
-        type == "saving" ? (
-          <div className={stylesList["dashboard-list-item-type-2"]}>
-            Өгсөн санхүүжилт
-          </div>
-        ) : (
-          <div className={stylesList["dashboard-list-item-type-1"]}>
-            Авсан зээл
-          </div>
-        ),
-    },
-    {
-      title: "Хүү",
-      dataIndex: "loan_rate_month",
-      key: "rate",
-      align: "center",
-      width: "15%",
-      render: (rate: number) => (
-        <div className={styles["fund-tabs-content-table-number"]}>
-          {Math.round(rate * 10) / 10}0 %
+      render: (loan_amount: number) => (
+        <div
+          style={{ color: "#ff0000" }}
+          className={styles["fund-tabs-content-table-number"]}
+        >
+          {numberToCurrency(Math.ceil(loan_amount))}
         </div>
       ),
     },
     {
-      title: "Эхэлсэн өдөр",
-      dataIndex: "create_date",
-      key: "day",
+      title: "Эргэн төлөх хугацаа",
+      dataIndex: "this_month_pay_date",
+      key: "rate",
       align: "center",
       width: "23%",
       render: (day: string) => (
         <div className={styles["fund-tabs-content-table-number"]}>{day}</div>
       ),
     },
+
     {
-      title: " ",
+      title: "Дэлгэрэнгүй",
       dataIndex: "request_id",
       key: "request_id",
       width: "10%",
@@ -218,8 +207,8 @@ export const FundHistory = () => {
   ];
   const columns1: any[] = [
     {
-      title: "№",
-      dataIndex: "idx",
+      title: "Хоног",
+      dataIndex: "loan_day",
       key: "is_status",
       width: "6%",
       render: (id: string) => (
@@ -239,46 +228,44 @@ export const FundHistory = () => {
       ),
     },
     {
-      title: "Төрөл",
-      dataIndex: "product_type_code",
+      title: "Эргэн төлөгдөх дүн",
+      dataIndex: "loan_amount",
       key: "type",
       align: "center",
       width: "23%",
-      render: (type: string) =>
-        type == "saving" ? (
-          <div className={stylesList["dashboard-list-item-type-2"]}>
-            Өгсөн санхүүжилт
-          </div>
-        ) : (
-          <div className={stylesList["dashboard-list-item-type-1"]}>
-            Авсан зээл
-          </div>
-        ),
-    },
-    {
-      title: "Хүү",
-      dataIndex: "loan_rate_month",
-      key: "rate",
-      align: "center",
-      width: "15%",
-      render: (rate: number) => (
-        <div className={styles["fund-tabs-content-table-number"]}>
-          {Math.round(rate * 10) / 10}0 %
+      render: (loan_amount: number, o: any) => (
+        <div
+          style={{ color: "#39da00" }}
+          className={styles["fund-tabs-content-table-number"]}
+        >
+          {numberToCurrency(
+            Math.round(
+              (loan_amount / 100) *
+                (Math.round(o.loan_rate_day * 10) / 10) *
+                Number(o.loan_day) -
+                Number(o.loan_amount / 100) *
+                  (Math.round(o.loan_rate_day * 10) / 10) *
+                  Number(o.loan_day) *
+                  0.1 +
+                Number(o.loan_amount)
+            )
+          )}
         </div>
       ),
     },
     {
-      title: "Эхэлсэн өдөр",
-      dataIndex: "create_date",
-      key: "day",
+      title: "Эргэн төлөгдөх хугацаа",
+      dataIndex: "loan_end_date",
+      key: "rate",
       align: "center",
-      width: "23%",
-      render: (day: string) => (
+      width: "15%",
+      render: (day: number) => (
         <div className={styles["fund-tabs-content-table-number"]}>{day}</div>
       ),
     },
+
     {
-      title: " ",
+      title: "Дэлгэрэнгүй",
       dataIndex: "request_id",
       key: "request_id",
       width: "10%",

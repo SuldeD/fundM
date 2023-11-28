@@ -536,23 +536,6 @@ export const Profile = () => {
                           : "https://www.svgrepo.com/show/54329/office-block.svg"
                       }
                     />
-
-                    {/* {imageUrl ? (
-                      <div className="relative">
-                        <img
-                          src={imageUrl}
-                          alt="avatar"
-                          className="h-[100%] w-[100%] "
-                        />
-                        <img
-                          src="/images/camera.svg"
-                          className="absolute right-[-10px] top-0 z-50 rounded-[50%] bg-white p-1"
-                          alt="cemera"
-                        />
-                      </div>
-                    ) : (
-                      uploadButton
-                    )} */}
                   </Upload>
                 </Col>
                 <Col flex="none">
@@ -560,7 +543,7 @@ export const Profile = () => {
                     <Col span={24}>
                       <div className={styles["profile-bankaccount-title"]}>
                         {accountInfo?.account?.user_type == "org"
-                          ? "Захиралын нэр"
+                          ? "Удирдлагын нэр"
                           : "Овог"}
                       </div>
                     </Col>
@@ -596,7 +579,7 @@ export const Profile = () => {
                     <Col span={24}>
                       <div className={styles["profile-bankaccount-title"]}>
                         {accountInfo?.account?.user_type == "org"
-                          ? "Байгууллагын регисирын дугаар"
+                          ? "Байгууллагын регистр"
                           : "Регисирын дугаар"}
                       </div>
                     </Col>
@@ -1069,7 +1052,7 @@ export const Profile = () => {
           {clickedEdit == 2 && (
             <div className="mt-5">
               <label className="text-sm font-normal text-black text-opacity-50">
-                Одоогын нууц үг оруулах
+                Хуучин нууц үг оруулах
               </label>{" "}
               <Input.Password
                 className="mb-5 mt-3  h-[38px] w-full rounded-[9px] border px-2 py-1"
@@ -1105,7 +1088,7 @@ export const Profile = () => {
           {clickedEdit == 3 && (
             <div className="mt-5">
               <label className="text-sm font-normal text-black text-opacity-50">
-                Одоогын FundMe код оруулах
+                Одоогийн FundMe код оруулах
               </label>{" "}
               <Input.Password
                 className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"

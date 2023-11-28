@@ -863,7 +863,7 @@ export const Loan = () => {
                         <Checkbox
                           ref={termsRef}
                           onChange={(e) =>
-                            checked ? setChecked(true) : setChecked(false)
+                            checked ? setChecked(true) : setIsModalOpen(true)
                           }
                           checked={checked}
                         />

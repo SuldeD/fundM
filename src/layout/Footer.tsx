@@ -16,17 +16,11 @@ export const FooterComponent = () => {
               <Col span={24}>
                 <div className={style["title-text"]}>FundMe</div>
                 <ul className={`${style["paragraph-text"]} list-disc`}>
-                  <Link href="/about-us">
-                    <li>Бидний тухай</li>
-                  </Link>
                   <Link href="/finance">
                     <li>Санхүүжилт өгөх</li>
                   </Link>
                   <Link href="/loan">
                     <li>Зээл авах</li>
-                  </Link>
-                  <Link href="/#app">
-                    <li>АПП татах</li>
                   </Link>
                 </ul>
               </Col>
