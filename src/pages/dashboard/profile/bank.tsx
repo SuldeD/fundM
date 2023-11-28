@@ -276,7 +276,7 @@ export default function Bank() {
                 </Col>
                 <Col span={20}>
                   <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                    Бид таны бүртгүүлсэн банкны дансруу нэг удаагын
+                    Бид таны бүртгүүлсэн банкны дансруу нэг удаагийн
                     баталгаажуулах код илгэлээ.
                   </div>
                 </Col>

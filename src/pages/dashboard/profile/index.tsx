@@ -1088,7 +1088,7 @@ export const Profile = () => {
           {clickedEdit == 3 && (
             <div className="mt-5">
               <label className="text-sm font-normal text-black text-opacity-50">
-                Одоогийн FundMe код оруулах
+                Хуучин FundMe код оруулах
               </label>{" "}
               <Input.Password
                 className="mb-5 mt-3 h-[38px] w-full rounded-[9px] border px-2 py-1"
@@ -1255,7 +1255,7 @@ export const Profile = () => {
                 </Col>
                 <Col span={20}>
                   <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                    Бид таны бүртгүүлсэн дансны дугаар руу нэг удаагын
+                    Бид таны бүртгүүлсэн дансны дугаар руу нэг удаагийн
                     баталгаажуулах код илгэлээ.
                   </div>
                 </Col>

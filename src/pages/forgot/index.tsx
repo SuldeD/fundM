@@ -567,7 +567,7 @@ export default function Forgot() {
                                     htmlType="submit"
                                     className={`h-[40px] w-full overflow-hidden rounded-[9px] bg-primary`}
                                   >
-                                    Нэг удаагын код авах
+                                    Нэг удаагийн код авах
                                   </Button>
                                 </Form.Item>
                               </div>
@@ -623,7 +623,7 @@ export default function Forgot() {
                 </Col>
                 <Col span={20}>
                   <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                    Бид таны бүртгүүлсэн банкны дансруу нэг удаагын
+                    Бид таны бүртгүүлсэн банкны дансруу нэг удаагийн
                     баталгаажуулах код илгэлээ.
                   </div>
                 </Col>

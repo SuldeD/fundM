@@ -525,7 +525,7 @@ export default function Signup() {
                               htmlType="submit"
                               className={`h-[40px] w-full rounded-[9px] bg-primary`}
                             >
-                              Нэг удаагын код авах
+                              Нэг удаагийн код авах
                             </Button>
                           </Form.Item>
                         </Col>
@@ -569,7 +569,7 @@ export default function Signup() {
                       <Row gutter={[0, 13]}>
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
-                            Нэг удаагын код оруулах
+                            Нэг удаагийн код оруулах
                           </div>
                         </Col>
                         <Col span={24}>
@@ -578,7 +578,7 @@ export default function Signup() {
                             rules={[
                               {
                                 required: true,
-                                message: "Нэг удаагын код оруулана уу!",
+                                message: "Нэг удаагийн код оруулана уу!",
                               },
                             ]}
                           >

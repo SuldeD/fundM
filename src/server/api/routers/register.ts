@@ -2,12 +2,16 @@ import { loanServiceHeaders } from "app/contants";
 import { createTRPCRouter, publicProcedure } from "app/server/api/trpc";
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import z from "zod";
+// import Cookie from "cookie-universal";
+// const cookies = Cookie();
+// console.log(cookies.get("next-auth.csrf-token"), "asd");
 
 export const registerRouter = createTRPCRouter({
   phoneSignUp: publicProcedure
     .input(z.object({ phone: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { phone } = input;
+
       const body = encrypt(
         JSON.stringify({
           phone,
