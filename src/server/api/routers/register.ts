@@ -104,7 +104,7 @@ export const registerRouter = createTRPCRouter({
           tmp_user_id,
           password,
           pin_code,
-          security_question_id : "1",
+          security_question_id: "1",
           question: "Хүүхэд байх дуртай хоол чинь юу вэ?",
           answer: "mantuun buuz",
           transaction_password,

@@ -462,7 +462,7 @@ export default function Signup() {
                               htmlType="submit"
                               className={`h-[40px] w-full rounded-[9px] bg-primary`}
                             >
-                              Нэг удаагын код авах
+                              Нэг удаагийн код авах
                             </Button>
                           </Form.Item>
                         </Col>

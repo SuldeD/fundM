@@ -32,19 +32,6 @@ export const HeaderComponent = () => {
       key: "/loan",
       label: <Link href="/loan">Зээл авах</Link>,
     },
-    {
-      key: "/#contact",
-      label: (
-        <Link
-          href="/#contact"
-          onClick={() => {
-            window.scrollTo(0, 0);
-          }}
-        >
-          Холбоо барих
-        </Link>
-      ),
-    },
   ];
 
   const phoneItems = [

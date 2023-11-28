@@ -20,16 +20,19 @@ const unprotectedRoutes: any = [
   "/signup/question",
   "/signup/transaction-password",
   "/",
-  "/about-us",
-  "/finance",
+  // "/about-us",
+  // "/finance",
   "/loan",
-  "/#app",
-  "/#contact",
+  // "/#app",
+  // "/#contact",
 ];
 
 async function middleware(req: any) {
-  const sessionToken = process.env.NODE_ENV === "production" ? req?.cookies?.get("__Secure-next-auth.session-token") : req?.cookies?.get("next-auth.session-token");
-  const session =  sessionToken?.value ? true :false; 
+  const sessionToken =
+    process.env.NODE_ENV === "production"
+      ? req?.cookies?.get("__Secure-next-auth.session-token")
+      : req?.cookies?.get("next-auth.session-token");
+  const session = sessionToken?.value ? true : false;
 
   if (!session && protectedRoutes.includes(req.nextUrl.pathname)) {
     const absoluteURL = new URL("/", req.nextUrl.origin);
