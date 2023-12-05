@@ -7,8 +7,6 @@ import Head from "next/head";
 import mnMN from "antd/locale/mn_MN";
 import { ConfigProvider, App as AntdApp } from "antd";
 import { AppWrapper } from "app/context/appContext";
-// import { ProtectedLayout } from "app/cmsLayout";
-// import SimpleLayout from "app/layout";
 import MainLayout from "app/components/mainLayout";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -34,15 +32,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
             locale={mnMN}
           >
             <AppWrapper>
-              {/* {status == "authenticated" ? (
-                <ProtectedLayout>
-                  <Component {...pageProps} />
-                </ProtectedLayout>
-              ) : (
-                <SimpleLayout>
-                  <Component {...pageProps} />
-                </SimpleLayout>
-              )} */}
               <MainLayout>
                 <Component {...pageProps} />
               </MainLayout>

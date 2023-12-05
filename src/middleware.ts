@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes: any = [
   "/dashboard",
@@ -27,7 +27,7 @@ const unprotectedRoutes: any = [
   // "/#contact",
 ];
 
-async function middleware(req: any) {
+async function middleware(req: NextRequest) {
   const sessionToken =
     process.env.NODE_ENV === "production"
       ? req?.cookies?.get("__Secure-next-auth.session-token")

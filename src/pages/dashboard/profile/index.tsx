@@ -580,7 +580,7 @@ export const Profile = () => {
                       <div className={styles["profile-bankaccount-title"]}>
                         {accountInfo?.account?.user_type == "org"
                           ? "Байгууллагын регистр"
-                          : "Регисирын дугаар"}
+                          : "Регистрийн дугаар"}
                       </div>
                     </Col>
                     {accountInfo?.account?.user_type == "org" ? (

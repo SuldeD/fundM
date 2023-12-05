@@ -17,9 +17,6 @@ import { prisma } from "app/server/db";
 import { IncomingMessage } from "http";
 import ws from "ws";
 import { NodeHTTPCreateContextFnOptions } from "@trpc/server/dist/adapters/node-http";
-import { Modal } from "antd";
-import { signOut } from "next-auth/react";
-
 
 /**
  * 1. CONTEXT
@@ -31,6 +28,7 @@ import { signOut } from "next-auth/react";
 
 type CreateContextOptions = {
   session: Session | null;
+  deviceId: any;
 };
 // const ee = new EventEmitter();
 /**
@@ -47,8 +45,11 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    deviceId: opts?.deviceId,
   };
 };
+
+// 6b76bf84-9b5a-415f-a88a-6d74e8c4e2d9
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -63,12 +64,19 @@ export const createTRPCContext = async (
 ) => {
   const { req, res } = opts;
 
-  // Get the session from the server using the getServerSession wrapper function
-
   const session = await getServerAuthSession({ req, res });
+
+  const devId =
+    process.env.NODE_ENV === "production"
+      ? (req?.headers?.cookie?.match(/__Host-next-auth\.csrf-token=([^;]*)/) ||
+          [])[1]
+      : (req?.headers?.cookie?.match(/next-auth\.csrf-token=([^;]*)/) || [])[1];
+
+  // 0dd1c441f9d6a65bc9871f751f95b21035f239402d160ea9e86ca0761b40183e%7Cac4d45e21869faa20dd693dff74daf134a4151e3a78df104f58c7072f83e7392
 
   return createInnerTRPCContext({
     session,
+    deviceId: devId,
   });
 };
 
@@ -115,11 +123,21 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
+
+// const storedDeviceId = opts.ctx.req.session.deviceId; // Adjust this based on your session management
+
+// // If not stored, generate a new device ID
+// const deviceId = storedDeviceId || generateDeviceId();
+
+// // If not stored, save the device ID to the session or database
+// if (!storedDeviceId) {
+//   opts.ctx.req.session.deviceId = deviceId; // Adjust this based on your session management
+// }
+
 export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  const {error} = Modal
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
@@ -140,5 +158,3 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
-

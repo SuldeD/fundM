@@ -2,16 +2,12 @@ import { loanServiceHeaders } from "app/contants";
 import { createTRPCRouter, publicProcedure } from "app/server/api/trpc";
 import { decrypt, encrypt } from "app/utils/aes.helper";
 import z from "zod";
-// import Cookie from "cookie-universal";
-// const cookies = Cookie();
-// console.log(cookies.get("next-auth.csrf-token"), "asd");
 
 export const registerRouter = createTRPCRouter({
   phoneSignUp: publicProcedure
     .input(z.object({ phone: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { phone } = input;
-
       const body = encrypt(
         JSON.stringify({
           phone,
@@ -23,6 +19,7 @@ export const registerRouter = createTRPCRouter({
         body: body,
         headers: {
           ...loanServiceHeaders,
+          "Device-Id": ctx?.deviceId,
         },
       });
       const raw2 = await res2.json();
@@ -38,7 +35,7 @@ export const registerRouter = createTRPCRouter({
         pin_code: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { phone, pin_code, tmp_user_id } = input;
 
       const body = encrypt(
@@ -56,9 +53,11 @@ export const registerRouter = createTRPCRouter({
           body: body,
           headers: {
             ...loanServiceHeaders,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
+
       const raw2 = await res2.json();
       const accountStatus = decrypt(raw2);
       return accountStatus;
@@ -83,7 +82,7 @@ export const registerRouter = createTRPCRouter({
         user_type: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         phone,
         username,
@@ -125,6 +124,7 @@ export const registerRouter = createTRPCRouter({
         body: body,
         headers: {
           ...loanServiceHeaders,
+          "Device-Id": ctx?.deviceId,
         },
       });
       console.log(res2, "res2");
@@ -149,7 +149,7 @@ export const registerRouter = createTRPCRouter({
         email: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         phone,
         username,
@@ -185,6 +185,7 @@ export const registerRouter = createTRPCRouter({
         body: body,
         headers: {
           ...loanServiceHeaders,
+          "Device-Id": ctx?.deviceId,
         },
       });
       console.log(res2, "res2");
@@ -193,7 +194,7 @@ export const registerRouter = createTRPCRouter({
       return accountStatus;
     }),
 
-  helpQuestion: publicProcedure.query(async ({}) => {
+  helpQuestion: publicProcedure.query(async ({ ctx }) => {
     const res2 = await fetch(
       `${process.env.BACKEND_URL}/help/security/question/list`,
       {
@@ -201,6 +202,7 @@ export const registerRouter = createTRPCRouter({
         credentials: "same-origin",
         headers: {
           ...loanServiceHeaders,
+          "Device-Id": ctx?.deviceId,
         },
       }
     );
@@ -218,7 +220,7 @@ export const registerRouter = createTRPCRouter({
         user_type: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { phone, pin_code, tmp_user_id, user_type } = input;
 
       const body = encrypt(
@@ -237,6 +239,7 @@ export const registerRouter = createTRPCRouter({
           body: body,
           headers: {
             ...loanServiceHeaders,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );

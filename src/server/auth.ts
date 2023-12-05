@@ -61,7 +61,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     session: async ({ session, token, user }) => {
-      console.log(session,"this is session");
+      console.log(session, "this is session");
 
       return {
         ...session,
@@ -104,6 +104,10 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
+        const devId =
+          process.env.NODE_ENV === "production"
+            ? req.headers?.cookie?.match(/__Host-next-auth\.csrf-token=([^;]*)/)
+            : req.headers?.cookie?.match(/next-auth\.csrf-token=([^;]*)/);
         const body = encrypt(
           JSON.stringify({
             phone: credentials!.username,
@@ -116,7 +120,10 @@ export const authOptions: NextAuthOptions = {
           method: "POST",
           body: body,
           credentials: "same-origin",
-          headers: loanServiceHeaders,
+          headers: {
+            ...loanServiceHeaders,
+            "Device-Id": devId[1],
+          },
         });
         const cookie = res.headers.get("Set-Cookie");
         const token = res.headers.get("Session-Token");
@@ -133,6 +140,7 @@ export const authOptions: NextAuthOptions = {
                 ...loanServiceHeaders,
                 Cookie: cookie!,
                 "Session-Token": token!,
+                "Device-Id": devId[1],
               },
             }
           );
@@ -195,6 +203,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   pages: {
     error: "/login",
     signIn: "/login",
@@ -207,7 +216,5 @@ export const getServerAuthSession = (ctx: {
   req: GetServerSidePropsContext["req"] | any;
   res: GetServerSidePropsContext["res"] | any;
 }) => {
-
-
   return getServerSession(ctx.req, ctx.res, authOptions);
 };

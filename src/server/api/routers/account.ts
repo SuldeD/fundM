@@ -14,6 +14,7 @@ export const accountRouter = createTRPCRouter({
         ...loanServiceHeaders,
         Cookie: token!.id_token!,
         "Session-Token": token!.access_token!,
+        "Device-Id": ctx?.deviceId,
       },
     });
     const raw2 = await res2.json();
@@ -30,6 +31,7 @@ export const accountRouter = createTRPCRouter({
         ...loanServiceHeaders,
         Cookie: token!.id_token!,
         "Session-Token": token!.access_token!,
+        "Device-Id": ctx?.deviceId,
       },
     });
     const raw2 = await res2.json();
@@ -47,6 +49,7 @@ export const accountRouter = createTRPCRouter({
         ...loanServiceHeaders,
         Cookie: token!.id_token!,
         "Session-Token": token!.access_token!,
+        "Device-Id": ctx?.deviceId,
       },
     });
     const raw2 = await res2.json();

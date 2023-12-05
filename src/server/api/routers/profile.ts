@@ -36,6 +36,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -74,6 +75,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -109,6 +111,7 @@ export const profileRouter = createTRPCRouter({
           ...loanServiceHeaders,
           Cookie: token!.id_token!,
           "Session-Token": token!.access_token!,
+          "Device-Id": ctx?.deviceId,
         },
       });
       const raw2 = await res2.json();
@@ -144,6 +147,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -182,6 +186,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -199,15 +204,15 @@ export const profileRouter = createTRPCRouter({
         register: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
-      const { phone, username,register } = input;
+    .mutation(async ({ input, ctx }) => {
+      const { phone, username, register } = input;
 
       const body = encrypt(
         JSON.stringify({
           phone,
           username,
           register,
-          security_question_id : "1",
+          security_question_id: "1",
           question: "Хүүхэд байх дуртай хоол чинь юу вэ?",
           answer: "mantuun buuz",
         })
@@ -220,6 +225,7 @@ export const profileRouter = createTRPCRouter({
           body: body,
           headers: {
             ...loanServiceHeaders,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -239,20 +245,14 @@ export const profileRouter = createTRPCRouter({
         new_password: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
-      const {
-        pin_code,
-        username,    
-        register,
-        new_password,
-        forgot_id,
-      } = input;
+    .mutation(async ({ input, ctx }) => {
+      const { pin_code, username, register, new_password, forgot_id } = input;
 
       const body = encrypt(
         JSON.stringify({
           pin_code,
           username,
-          security_question_id : "1",
+          security_question_id: "1",
           answer: "mantuun buuz",
           register,
           new_password,
@@ -267,6 +267,7 @@ export const profileRouter = createTRPCRouter({
           body: body,
           headers: {
             ...loanServiceHeaders,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -303,6 +304,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -339,6 +341,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -361,7 +364,7 @@ export const profileRouter = createTRPCRouter({
 
       const body = encrypt(
         JSON.stringify({
-          security_question_id : "1",
+          security_question_id: "1",
           answer: "mantuun buuz",
           username,
           register,
@@ -377,6 +380,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );
@@ -389,7 +393,6 @@ export const profileRouter = createTRPCRouter({
   forgotTransPassConfirm: protectedProcedure
     .input(
       z.object({
-
         username: z.string(),
         register: z.string(),
         forgot_id: z.string(),
@@ -399,18 +402,11 @@ export const profileRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
-      const {
-    
-        username,
-        register,
-        forgot_id,
-        new_password,
-        pin_code,
-      } = input;
+      const { username, register, forgot_id, new_password, pin_code } = input;
 
       const body = encrypt(
         JSON.stringify({
-          security_question_id : "1",
+          security_question_id: "1",
           answer: "mantuun buuz",
           username,
           register,
@@ -429,6 +425,7 @@ export const profileRouter = createTRPCRouter({
             ...loanServiceHeaders,
             Cookie: token!.id_token!,
             "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
           },
         }
       );

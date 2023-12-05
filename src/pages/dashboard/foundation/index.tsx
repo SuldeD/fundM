@@ -226,7 +226,7 @@ export const Foundation = () => {
                         onClick={() =>
                           minValue < inputValue &&
                           setInputValue(
-                            maxValue < 10000000
+                            maxValue <= 10000000
                               ? inputValue - 100000
                               : maxValue >= 10000000 && maxValue <= 50000000
                               ? inputValue - 500000
@@ -239,7 +239,7 @@ export const Foundation = () => {
                       <Slider
                         min={minValue}
                         step={
-                          maxValue < 10000000
+                          maxValue <= 10000000
                             ? 100000
                             : maxValue >= 10000000 && maxValue <= 50000000
                             ? 500000
@@ -254,7 +254,7 @@ export const Foundation = () => {
                         onClick={() =>
                           maxValue > inputValue &&
                           setInputValue(
-                            maxValue < 10000000
+                            maxValue <= 10000000
                               ? inputValue + 100000
                               : maxValue >= 10000000 && maxValue <= 50000000
                               ? inputValue + 500000

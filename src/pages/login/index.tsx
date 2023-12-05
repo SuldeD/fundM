@@ -92,6 +92,7 @@ export default function Login({
                           className={styles["signup-button"]}
                           type="dashed"
                           disabled={status == "loading"}
+                          onClick={() => router.push("/signup?s=org")}
                         >
                           Бүртгүүлэх
                         </Button>

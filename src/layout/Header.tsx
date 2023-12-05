@@ -240,11 +240,7 @@ export const HeaderComponent = () => {
                         <Popover
                           open={openPhone}
                           placement="bottom"
-                          title={
-                            <div className="border-b pb-3 text-center">
-                              БҮРТГҮҮЛЭХ
-                            </div>
-                          }
+                          title={null}
                           content={
                             <div className="">
                               <Button

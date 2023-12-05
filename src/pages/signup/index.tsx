@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form, Input, Modal } from "antd";
+import { Col, Row, Button, Form, Input, Modal, Image } from "antd";
 import styles from "app/styles/login.module.css";
 import { useRef, useState } from "react";
 import { api } from "app/utils/api";
@@ -7,9 +7,9 @@ import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { useAppContext } from "app/context/appContext";
-import SimpleLayout from "app/layout";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
-const { error, warning } = Modal;
+const { error, warning, info, confirm } = Modal;
 
 interface RegisterType {
   phone: string;
@@ -201,7 +201,7 @@ export default function Signup() {
         content: (
           <div>
             {search == "org"
-              ? "Та Захирлын нэрийг кирилл үсэгээр оруулана уу!"
+              ? "Та Удирдлагын нэрийг кирилл үсэгээр оруулана уу!"
               : "Та Овогоо кирилл үсэгээр оруулана уу!"}
           </div>
         ),
@@ -392,6 +392,30 @@ export default function Signup() {
       setCode2(newCode);
       inputs2.current[slot - 1].focus();
     }
+  };
+
+  const showInfo = () => {
+    info({
+      content:
+        "Та өөрийн байгууллагын БАНКИН ДЭЭРХ БҮРТГЭЛТЭЙ ДАНСНЫ НЭРЭЭ шалгаад оруулна уу. /Жич: зарим тохиолдолд банкны бүртгэл дээр байгууллагын улсын бүртгэл дээр байгаа ХХК, ҮЦХ гэх мэт товчлол байхгүй байдгийн анхаарна уу!!!",
+      icon: <ExclamationCircleFilled />,
+      title: "Байгууллагын нэр",
+      okText: "Хаах",
+    });
+  };
+
+  const showInfo2 = (values: any) => {
+    confirm({
+      content:
+        "Та өөрийн байгууллагын БАНКИН ДЭЭРХ БҮРТГЭЛТЭЙ ДАНСНЫ НЭРЭЭ шалгаад оруулна уу. /Жич: зарим тохиолдолд банкны бүртгэл дээр байгууллагын улсын бүртгэл дээр байгаа ХХК, ҮЦХ гэх мэт товчлол байхгүй байдгийн анхаарна уу!!!",
+      icon: <ExclamationCircleFilled />,
+      title: "Байгууллагын нэр",
+      okText: "Үргэлжлүүлэх",
+      cancelText: "Буцах",
+      onOk() {
+        validateRegister(values);
+      },
+    });
   };
 
   const { data } = useSession();
@@ -656,12 +680,13 @@ export default function Signup() {
                       className="login-form"
                       autoComplete="off"
                       layout="vertical"
-                      onFinish={validateRegister}
+                      onFinish={showInfo2}
+                      // onFinish={validateRegister}
                     >
                       <Row gutter={[0, 13]}>
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
-                            {search == "org" ? "Захирлын нэр" : "Овог"}
+                            {search == "org" ? "Удирдлагын нэр" : "Овог"}
                           </div>
                         </Col>
                         <Col span={24}>
@@ -671,7 +696,7 @@ export default function Signup() {
                               {
                                 required: true,
                                 message:
-                                  search == "org" ? "Захирлын нэр!" : "Овог!",
+                                  search == "org" ? "Удирдлагын нэр!" : "Овог!",
                               },
                             ]}
                           >
@@ -698,17 +723,32 @@ export default function Signup() {
                               },
                             ]}
                           >
-                            <Input
-                              className={styles["input-style"]}
-                              autoFocus
-                            />
+                            <div className="relative">
+                              <Input
+                                className={styles["input-style"]}
+                                autoFocus
+                              />
+
+                              <div className="absolute right-2 top-[15px]">
+                                <Image
+                                  width={25}
+                                  onClick={() => {
+                                    showInfo();
+                                  }}
+                                  src={"/images/info-icon.png"}
+                                  preview={false}
+                                  className="cursor-pointer"
+                                  alt="Information"
+                                />
+                              </div>
+                            </div>
                           </Form.Item>
                         </Col>
 
                         <Col span={24}>
                           <div className={styles["phone-number-label"]}>
                             {search == "org"
-                              ? "Байгууллагын регистрийн дугаар"
+                              ? "Байгууллагын регистр"
                               : "Регистрийн дугаар"}
                           </div>
                         </Col>
@@ -720,7 +760,7 @@ export default function Signup() {
                                 required: true,
                                 message:
                                   search == "org"
-                                    ? "Байгууллагын регистрийн дугаар!"
+                                    ? "Байгууллагын регистр!"
                                     : "Регистрийн дугаар!",
                               },
                             ]}

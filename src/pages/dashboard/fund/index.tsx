@@ -2,14 +2,12 @@ import { Row, Col, Tabs, Table, Image, Button, Modal, message } from "antd";
 import styles from "app/styles/fund.module.css";
 import stylesDL from "app/styles/dloan.module.css";
 import stylesFD from "app/styles/foundation.module.css";
-import stylesList from "app/styles/dashboard.module.css";
 import { numberToCurrency } from "app/utils/number.helpers";
 import { HeaderDashboard } from "app/components/header";
 import { useMemo, useState } from "react";
 import { api } from "app/utils/api";
 import InputCode from "app/components/input";
-import { ProtectedLayout } from "app/cmsLayout";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export const FundHistory = () => {
   const { error } = Modal;
@@ -46,8 +44,6 @@ export const FundHistory = () => {
   const orders = useMemo(() => {
     return loanSearch?.loan_requests;
   }, [loanSearch]);
-
-  console.log(orders, "or");
 
   const mySavingOrders = useMemo(() => {
     const arr: any = [];

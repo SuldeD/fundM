@@ -4,7 +4,7 @@ export const loanServiceHeaders = {
   "Client-Timezone": "1",
   "App-Version": "1",
   "OS-Version": "1",
-  "Device-Id": "1",
+  // "Device-Id": "1",
   "Device-Name": "",
   "Device-Type": "1",
   "App-Id": "fundme",

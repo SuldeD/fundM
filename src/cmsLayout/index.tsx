@@ -210,6 +210,10 @@ export const ProtectedLayout = ({ children }: any) => {
 
   const { contextHolder } = useAppContext();
 
+  useEffect(() => {
+    setIsModalOpen(true);
+  }, [statusData]);
+
   return (
     <Layout>
       <PopupModal
