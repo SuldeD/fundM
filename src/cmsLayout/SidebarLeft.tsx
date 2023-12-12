@@ -104,7 +104,7 @@ export const SidebarLeftComponent = ({ setOpen }: any) => {
                           alt="exit icon"
                         />
                       </Col>
-                      <Col>
+                      <Col flex="none">
                         <div className={style["sidebar-left-exit-button-text"]}>
                           Гарах
                         </div>

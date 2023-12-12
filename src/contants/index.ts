@@ -9,4 +9,5 @@ export const loanServiceHeaders = {
   "Device-Type": "1",
   "App-Id": "fundme",
   Language: "mn",
+  Location: "1",
 };

@@ -1,4 +1,4 @@
-import { Col, Modal, Row, message, Button } from "antd";
+import { Col, Modal, Row, message, Button, Image } from "antd";
 import { HeaderDashboard } from "app/components/header";
 import React, { useMemo, useRef, useState } from "react";
 import styles from "app/styles/profile.module.css";
@@ -163,17 +163,19 @@ export default function Bank() {
     }
   }
 
-  const handleChange: UploadProps["onChange"] = (
-    info: UploadChangeParam<UploadFile>
-  ) => {
+  const handleChange = (info: any) => {
     getBase64(info.file.originFileObj);
   };
 
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div className="h-[40px] w-[60px]" style={{ marginTop: 8 }}>
-        Upload
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Файлыг энд чирж оруулах эсвэл browser
       </div>
     </div>
   );
@@ -239,8 +241,13 @@ export default function Bank() {
           centered
           width={378}
           title={
-            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-              Баталгаажуулах код оруулах
+            <div className={stylesL["dloan-modal-verify-title"]}>
+              <Image
+                width="40%"
+                src={imageUrl.length > 0 ? "/bank.svg" : "/verify.svg"}
+                preview={false}
+                alt="emailphone"
+              />
             </div>
           }
           closable={true}
@@ -249,6 +256,11 @@ export default function Bank() {
           footer={null}
         >
           <Row justify="center">
+            <div className="text-center font-raleway text-[18px] font-bold">
+              {imageUrl.length > 0
+                ? "Данс баталгаажуулах код"
+                : "Баталгаажуулах код оруулах"}
+            </div>
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
                 <Col span={20} className="my-3 flex justify-between">
@@ -275,9 +287,10 @@ export default function Bank() {
                   )}
                 </Col>
                 <Col span={20}>
-                  <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                    Бид таны бүртгүүлсэн банкны дансруу нэг удаагийн
-                    баталгаажуулах код илгэлээ.
+                  <div className="font- text-center font-raleway text-[12px] font-normal text-sub">
+                    Бид таны бүртгүүлсэн банкны данс руу баталгаажуулах код
+                    бүхий гүйлгээ хийсэн. Тухай гүйлгээний утга дээр ирсэн 4
+                    оронтой кодыг оруулна уу!!!
                   </div>
                 </Col>
                 <Col span={20}>
@@ -301,8 +314,13 @@ export default function Bank() {
           centered
           width={478}
           title={
-            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-              Гарын үсгийн зураг оруулах
+            <div className={stylesL["dloan-modal-verify-title"]}>
+              <Image
+                width="40%"
+                src="/contract.svg"
+                preview={false}
+                alt="emailphone"
+              />
             </div>
           }
           closable={true}
@@ -311,10 +329,16 @@ export default function Bank() {
           footer={null}
         >
           <Row justify="center">
+            <div className="mb-4 text-center font-raleway text-[18px] font-bold">
+              {accountInfo?.account?.user_type === "user"
+                ? "Гарын үсгийн зураг оруулах"
+                : "Гарын үсэг, тамга оруулах"}
+            </div>
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
                 <Upload
                   beforeUpload={beforeUpload}
+                  customRequest={() => {}}
                   listType="picture"
                   showUploadList={false}
                   onChange={handleChange}
@@ -330,22 +354,24 @@ export default function Bank() {
                     uploadButton
                   )}
                 </Upload>
+
                 <Row>
                   <p className="text-center">
                     {accountInfo?.account?.user_type == "org"
                       ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
-                      : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
+                      : "Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж оруулна уу!"}
                   </p>
                 </Row>
                 <Col span={24}>
                   <Button
                     type="primary"
+                    loading={loadingBtn}
                     onClick={() => {
                       imageUrl.length > 0 && setOpenVerifyPass(true);
                     }}
                     className={`${stylesL["dloan-modal-verify-button"]} mt-[20px`}
                   >
-                     Үргэлжлүүлэх
+                    Үргэлжлүүлэх
                   </Button>
                 </Col>
               </Row>
@@ -363,10 +389,15 @@ export default function Bank() {
           closeModal={null}
           customDiv={null}
           customIconWidth={null}
-          iconPath={"/images/check"}
+          iconPath={"json"}
           modalWidth={null}
           open={check}
-          text={<p>Таны данс амжилттай холбогдлоо.</p>}
+          text={
+            <p>
+              Харилцах банкны данс амжилттай холбогдлоо. Та манай бүтээгдэхүүн
+              үйлчилгээг авахад бэлэн боллоо.
+            </p>
+          }
           textAlign={"center"}
         />
       </div>

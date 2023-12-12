@@ -62,8 +62,8 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
           title={
             <div className={styles["dloan-modal-verify-title"]}>
               <Image
-                width="50%"
-                src={"/logo.svg"}
+                width="40%"
+                src={"/fundme.svg"}
                 preview={false}
                 alt="Header Logo"
               />
@@ -72,6 +72,7 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
           closable={true}
           open={open}
           footer={null}
+          closeIcon={false}
           onCancel={() => {
             setOpen(false);
             setCode([...Array(length)].map(() => ""));
@@ -86,6 +87,9 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
                 }}
               >
                 <Row justify="center" gutter={[0, 20]}>
+                  <p className="font-raleway text-[18px] font-bold">
+                    FundMe пин код оруулна уу!
+                  </p>
                   <Col span={20} className="flex justify-between">
                     {code.map(
                       (

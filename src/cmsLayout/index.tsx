@@ -49,11 +49,6 @@ export const ProtectedLayout = ({ children }: any) => {
       refetchOnWindowFocus: false,
     });
 
-  // const { data: termConfirm, refetch: requestTermOfServiceConfirm } =
-  //   api.term.termOfServiceConfirm.useQuery(undefined, {
-  //     enabled: false,
-  //   });
-
   const { data: getContent } = api.term.getContent.useQuery(
     { code: "term_of_services" },
     {
@@ -63,6 +58,8 @@ export const ProtectedLayout = ({ children }: any) => {
 
   //mutates
   const { mutate } = api.other.notficationSearch.useMutation();
+
+  const mutateTerm = api.term.termOfServiceConfirm.useMutation();
 
   //states
   const [open, setOpen] = useState<boolean>(false);
@@ -185,9 +182,21 @@ export const ProtectedLayout = ({ children }: any) => {
   const handleOk = async () => {
     await form.validateFields();
     toggleChecked();
-    setIsModalOpen(false);
-    setOpen(true);
-    // termConfirm();
+
+    mutateTerm.mutate(undefined, {
+      onSuccess: (
+        /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+      ) => {
+        console.log(data, "data");
+
+        if (data?.success) {
+          requestStatus();
+          if (accountInfo?.account?.user_type === "user") {
+            setOpen(true);
+          }
+        }
+      },
+    });
   };
 
   const close = () => {
@@ -217,8 +226,8 @@ export const ProtectedLayout = ({ children }: any) => {
   return (
     <Layout>
       <PopupModal
-        modalWidth={"70%"}
-        open={statusData?.stat?.valid_dan == 0 && isModalOpen}
+        modalWidth={"90%"}
+        open={statusData?.stat?.term_of_service_confirm == 0 && isModalOpen}
         closeModal={() => setIsModalOpen(false)}
         buttonText={null}
         iconPath={null}
@@ -232,65 +241,66 @@ export const ProtectedLayout = ({ children }: any) => {
         textAlign={"start"}
         buttonClick={null}
         text={
-          <>
-            <Col span={24} className="my-5 rounded-[9px] bg-bank p-[50px] ">
-              <div dangerouslySetInnerHTML={{ __html: html }} />
-            </Col>
-            <Form form={form}>
-              <Row justify="center">
-                <Col span={24}>
-                  <Form.Item
-                    name="agreement"
-                    valuePropName="checked"
-                    rules={[
-                      {
-                        validator: (_, value) =>
-                          value
-                            ? Promise.resolve()
-                            : Promise.reject(
-                                new Error(
-                                  "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
-                                )
-                              ),
-                      },
-                    ]}
+          <Form form={form}>
+            <Row justify="center">
+              <Col
+                xs={24}
+                lg={20}
+                className="my-5 justify-center rounded-[9px] bg-bank p-[50px]"
+              >
+                <div dangerouslySetInnerHTML={{ __html: html }} />
+              </Col>
+              <Col xs={24} lg={20}>
+                <Form.Item
+                  name="agreement"
+                  valuePropName="checked"
+                  rules={[
+                    {
+                      validator: (_, value) =>
+                        value
+                          ? Promise.resolve()
+                          : Promise.reject(
+                              new Error(
+                                "Та үйлчилгээний нөхцөл зөвшөөрөөгүй байна."
+                              )
+                            ),
+                    },
+                  ]}
+                >
+                  <Checkbox>
+                    <div className={styles["foundation-checkbox-text"]}>
+                      ҮЙЛЧИЛГЭЭНИЙ ЕРӨНХИЙ НӨХЦӨЛ
+                    </div>
+                  </Checkbox>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} lg={20}>
+                <Row
+                  justify="space-between"
+                  wrap={false}
+                  className="w-full gap-3"
+                >
+                  <Button
+                    className={styles["foundation-button-back"]}
+                    onClick={() => setIsModalOpen(false)}
                   >
-                    <Checkbox>
-                      <div className={styles["foundation-checkbox-text"]}>
-                        ҮЙЛЧИЛГЭЭНИЙ ЕРӨНХИЙ НӨХЦӨЛ
-                      </div>
-                    </Checkbox>
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Row justify="space-between">
-                    <Col flex="none">
-                      <Button
-                        className={styles["foundation-button-back"]}
-                        onClick={() => setIsModalOpen(false)}
-                      >
-                        <div className={styles["foundation-button-back-text"]}>
-                          Буцах
-                        </div>
-                      </Button>
-                    </Col>
-                    <Col flex="none">
-                      <Form.Item>
-                        <Button
-                          type="primary"
-                          className={styles["foundation-button-contiune"]}
-                          onClick={handleOk}
-                          htmlType="submit"
-                        >
-                          Үргэлжлүүлэх
-                        </Button>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Form>
-          </>
+                    <div className={styles["foundation-button-back-text"]}>
+                      Буцах
+                    </div>
+                  </Button>
+                  <Button
+                    type="primary"
+                    className={styles["foundation-button-contiune"]}
+                    onClick={handleOk}
+                    htmlType="submit"
+                  >
+                    Үргэлжлүүлэх
+                  </Button>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
         }
       />
       {!isModalOpen && (

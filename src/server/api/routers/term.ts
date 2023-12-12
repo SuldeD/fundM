@@ -5,12 +5,12 @@ import { getAccountToken } from "./account";
 import z from "zod";
 
 export const termRouter = createTRPCRouter({
-  termOfServiceConfirm: protectedProcedure.query(async ({ ctx }) => {
+  termOfServiceConfirm: protectedProcedure.mutation(async ({ ctx }) => {
     const token = await getAccountToken(ctx);
     const res2 = await fetch(
       `${process.env.BACKEND_URL}/account/term/of/service/confirm`,
       {
-        method: "GET",
+        method: "POST",
         credentials: "same-origin",
         headers: {
           ...loanServiceHeaders,

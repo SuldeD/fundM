@@ -4,11 +4,12 @@ import {
   Col,
   Tabs,
   Upload,
-  Collapse,
   Modal,
   Button,
   Input,
   message,
+  Image,
+  Statistic,
 } from "antd";
 import styles from "app/styles/profile.module.css";
 import modalstyles from "app/styles/modal.module.css";
@@ -19,7 +20,7 @@ import { useRouter } from "next/router";
 import stylesL from "app/styles/dloan.module.css";
 import { api } from "app/utils/api";
 import InputCode from "app/components/input";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import PopupModal from "app/components/modal";
 import { useAppContext } from "app/context/appContext";
 
@@ -41,6 +42,7 @@ export const Profile = () => {
   const router = useRouter();
   const { error, warning } = Modal;
   const { success } = useAppContext();
+  const { Countdown } = Statistic;
 
   //mutates
   const { mutate: addEmail } = api.profile.addEmail.useMutation();
@@ -55,9 +57,10 @@ export const Profile = () => {
   const { mutate: addBankVerMutate } = api.profile.addBankVerify.useMutation();
 
   //queries
-  const { data: accountInfo } = api.account.accountInfo.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-  });
+  const { data: accountInfo, refetch: requestInfo } =
+    api.account.accountInfo.useQuery(undefined, {
+      refetchOnWindowFocus: false,
+    });
   const { data: dan } = api.account.accountStatusDan.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
@@ -108,6 +111,7 @@ export const Profile = () => {
   const [formToken, setFormToken] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
+  const [reDate, setReDate] = useState<boolean>(false);
   const [check, setCheck] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<any>("");
@@ -115,14 +119,20 @@ export const Profile = () => {
   useRef<(HTMLInputElement | null)[]>([]);
   const length = 4;
   const [code, setCode] = useState<any>([...Array(length)].map(() => ""));
+  const [codePhone, setCodePhone] = useState<any>(
+    [...Array(length)].map(() => "")
+  );
 
   //functions
   function getBase64(file: any) {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
+    const reader = new FileReader();
+
+    if (file && file.type.match("image.*")) {
+      reader.readAsDataURL(file);
+    }
 
     reader.onload = function () {
-      setImageUrl(reader.result?.toString());
+      setImageUrl(reader?.result?.toString());
       setLoading(false);
     };
     reader.onerror = function (error) {
@@ -162,7 +172,7 @@ export const Profile = () => {
           marginTop: 8,
         }}
       >
-        Upload
+        Файлыг энд чирж оруулах эсвэл browser
       </div>
     </div>
   );
@@ -181,7 +191,9 @@ export const Profile = () => {
       } else {
         warning({
           title: "Амжилтгүй",
-          content: <div>Хүчинтэй имэйл хаяг оруулна уу !</div>,
+          content: (
+            <div>Та өөрийн шинээр бүртгүүлэх утасны дугаараа оруулна уу!</div>
+          ),
         });
       }
     } else if (clickedEdit == 1) {
@@ -205,13 +217,19 @@ export const Profile = () => {
               /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
             ) => {
               if (data.success) {
-                setEditNumber("");
                 setIsOpen(false);
                 setOpen(false);
-                setOpenVerify(true);
+                setCodePhone(code.toString());
+                setIsOpenVerifyPass(true);
                 setChangeId(data.change_phone_id);
                 setFormToken(data.form_token);
-                success(data.description);
+                success(
+                  `Таны ${editNumber} дугаар руу баталгаажуулах код амжилттай илгээгдлээ.`
+                );
+                localStorage.setItem(
+                  "targetDate",
+                  `${Date.now() + 300 * 1000}`
+                );
               } else {
                 error({
                   title: "Амжилтгүй",
@@ -228,16 +246,15 @@ export const Profile = () => {
               /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
             ) => {
               if (data.success) {
+                requestInfo();
                 setEditEmail("");
                 setIsOpen(false);
                 setOpen(false);
                 success(data.description);
               } else {
                 error({
-                  title:
-                    "Таны аюулгүй байдлыг хангах үүднээс 15 минминутаасуутаас дээш хугацаанд идвэхгүй байсан тул таны холболтыг салгалаа.",
+                  title: "Амжилтгүй",
                   content: <div>{data?.description || null}</div>,
-                  onOk: () => signOut(),
                 });
               }
             },
@@ -257,10 +274,11 @@ export const Profile = () => {
           /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
         ) => {
           if (data.success) {
+            requestInfo();
             setIsOpenVerifyPass(false);
             setChangeId("");
             setFormToken("");
-            setCode("");
+            setCode([...Array(length)].map(() => ""));
             success(data?.description);
           } else {
             error({
@@ -396,6 +414,10 @@ export const Profile = () => {
                 setForgotId(data?.forgot_id);
                 setOpen(false);
                 setIsOpenVerifyPass(true);
+                localStorage.setItem(
+                  "targetDate",
+                  `${Date.now() + 300 * 1000}`
+                );
                 success(data.description);
               } else {
                 error({
@@ -629,6 +651,7 @@ export const Profile = () => {
                         type="text"
                         disabled
                         defaultValue={accountInfo?.account?.phone}
+                        value={accountInfo?.account?.phone}
                         className="w-[160px] overflow-hidden border-b border-[#000] bg-[#fff] pe-[25px] ps-[5px]"
                       />
                       <img
@@ -653,6 +676,7 @@ export const Profile = () => {
                       <input
                         type="text"
                         disabled
+                        value={accountInfo?.account?.email}
                         defaultValue={accountInfo?.account?.email}
                         className="w-[160px] overflow-hidden border-b border-[#000] bg-[#fff] pe-[25px] ps-[5px]"
                       />
@@ -826,150 +850,6 @@ export const Profile = () => {
         </Col>
       ),
     },
-    // {
-    //   key: "3",
-    //   label: "Тусламж",
-    //   children: (
-    //     <Col span={24}>
-    //       <Collapse
-    //         onChange={() => {}}
-    //         bordered={false}
-    //         expandIconPosition="end"
-    //       >
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Fund me биржийг хэрхэн ашиглаж эхлэх вэ?
-    //             </div>
-    //           }
-    //           key="1"
-    //         >
-    //           <p>adasd</p>
-    //         </Panel>
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Хэрхэн зээл авах вэ?
-    //             </div>
-    //           }
-    //           key="2"
-    //         >
-    //           <p>asdasd</p>
-    //         </Panel>
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Хэрхэн санхүүжилт авах вэ?
-    //             </div>
-    //           }
-    //           key="3"
-    //         >
-    //           <Col span={24}>
-    //             <Row justify="end" gutter={[0, 10]}>
-    //               <Col
-    //                 span={22}
-    //                 className={styles["profile-collapse-content-border"]}
-    //               >
-    //                 <div className={styles["profile-collapse-content-text"]}>
-    //                   Зээлийн эрх хэрхэн тогтоолгох вэ?
-    //                 </div>
-    //               </Col>
-    //               <Col
-    //                 span={22}
-    //                 className={styles["profile-collapse-content-border"]}
-    //               >
-    //                 <div className={styles["profile-collapse-content-text"]}>
-    //                   Зээл авах заавар
-    //                 </div>
-    //               </Col>
-    //               <Col
-    //                 span={22}
-    //                 className={styles["profile-collapse-content-border"]}
-    //               >
-    //                 <div className={styles["profile-collapse-content-text"]}>
-    //                   Авсан зээлээ хэрхэн эргэн төлөх вэ?
-    //                 </div>
-    //               </Col>
-    //               <Col
-    //                 span={22}
-    //                 className={styles["profile-collapse-content-border"]}
-    //               >
-    //                 <div className={styles["profile-collapse-content-text"]}>
-    //                   Авсан санхүүжилтээ сунгах заавар
-    //                 </div>
-    //               </Col>
-    //             </Row>
-    //           </Col>
-    //         </Panel>
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Хувийн мэдээллээ хэрхэн шинэчлэх вэ?
-    //             </div>
-    //           }
-    //           key="4"
-    //         >
-    //           <p>asdasd</p>
-    //         </Panel>
-    //       </Collapse>
-    //     </Col>
-    //   ),
-    // },
-    // {
-    //   key: "4",
-    //   label: "Үйлчилгээний нөхцөл",
-    //   children: (
-    //     <Col span={24}>
-    //       <Collapse
-    //         onChange={() => {}}
-    //         bordered={false}
-    //         expandIconPosition="end"
-    //         background-color="#FFF"
-    //       >
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Нэвтрэх нууц үг солих
-    //             </div>
-    //           }
-    //           key="1"
-    //         >
-    //           <p>adasd</p>
-    //         </Panel>
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Fund me код солих
-    //             </div>
-    //           }
-    //           key="2"
-    //         >
-    //           <p>asdasd</p>
-    //         </Panel>
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Fund me код сэргээх
-    //             </div>
-    //           }
-    //           key="3"
-    //         >
-    //           <p>asdasd</p>
-    //         </Panel>
-    //         <Panel
-    //           header={
-    //             <div className={styles["profile-tabs-2-collapse-title"]}>
-    //               Fund Me нууцлалын горим
-    //             </div>
-    //           }
-    //           key="4"
-    //         >
-    //           <p>asdasd</p>
-    //         </Panel>
-    //       </Collapse>
-    //     </Col>
-    //   ),
-    // },
   ];
 
   if (!data) {
@@ -979,19 +859,25 @@ export const Profile = () => {
       <Row justify="center" className={styles["profile-main-row"]}>
         <Modal
           title={
-            <div className="text-center">
-              {clickedEdit == 0
-                ? "Утасны дугаар өөрчлөх"
-                : clickedEdit == 1
-                ? "Имэйл хаяг өөрчлөх"
-                : clickedEdit == 2
-                ? "Нэвтрэх нууц үг солих"
-                : clickedEdit == 3
-                ? "Fund me код солих"
-                : clickedEdit == 4 && "Fund me код шинээр үүсгэх"}
+            <div className={stylesL["dloan-modal-verify-title"]}>
+              <Image
+                width="40%"
+                src={
+                  clickedEdit == 0
+                    ? "/phone.svg"
+                    : clickedEdit == 1
+                    ? "/email.svg"
+                    : clickedEdit == 2
+                    ? "/pass.svg"
+                    : "/fundme.svg"
+                }
+                preview={false}
+                alt="emailphone"
+              />
             </div>
           }
           centered
+          closable={true}
           open={open}
           width={378}
           closeIcon={false}
@@ -1049,6 +935,17 @@ export const Profile = () => {
             setFundPassNew("");
           }}
         >
+          <div className="text-center font-raleway text-[18px] font-bold">
+            {clickedEdit == 0
+              ? "Утасны дугаар өөрчлөх"
+              : clickedEdit == 1
+              ? "Имэйл хаяг өөрчлөх"
+              : clickedEdit == 2
+              ? "Нэвтрэх нууц үг солих"
+              : clickedEdit == 3
+              ? "Fund me код солих"
+              : clickedEdit == 4 && "Fund me код шинээр үүсгэх"}
+          </div>
           {clickedEdit == 2 && (
             <div className="mt-5">
               <label className="text-sm font-normal text-black text-opacity-50">
@@ -1218,8 +1115,13 @@ export const Profile = () => {
           centered
           width={378}
           title={
-            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-              Баталгаажуулах код оруулах
+            <div className={stylesL["dloan-modal-verify-title"]}>
+              <Image
+                width="40%"
+                src={imageUrl.length > 0 ? "/bank.svg" : "/verify.svg"}
+                preview={false}
+                alt="emailphone"
+              />
             </div>
           }
           closable={true}
@@ -1228,10 +1130,15 @@ export const Profile = () => {
           footer={null}
         >
           <Row justify="center">
+            <div className="text-center font-raleway text-[18px] font-bold">
+              {imageUrl.length > 0
+                ? "Данс баталгаажуулах код"
+                : "Баталгаажуулах код оруулах"}
+            </div>
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
-                <Col span={20} className="my-3 flex justify-between">
-                  {code.map(
+                <Col span={20} className="mt-3 flex justify-between">
+                  {code?.map(
                     (
                       num: string | number | readonly string[] | undefined,
                       idx: React.Key | null | undefined
@@ -1253,31 +1160,121 @@ export const Profile = () => {
                     }
                   )}
                 </Col>
+                {imageUrl.length == 0 && (
+                  <Col>
+                    <Countdown
+                      value={Number(localStorage.getItem("targetDate"))}
+                      format="mm:ss"
+                      onFinish={() => {
+                        setReDate(true);
+                        console.log("finish");
+                      }}
+                      valueStyle={{
+                        fontFamily: "Lato",
+                        fontWeight: 500,
+                        fontSize: 24,
+                        color: reDate ? "#FF0000" : "",
+                        fontStyle: "normal",
+                      }}
+                    />
+                  </Col>
+                )}
+
                 <Col span={20}>
-                  <div className="text-center font-raleway text-[12px] font-normal text-sub">
-                    Бид таны бүртгүүлсэн дансны дугаар руу нэг удаагийн
-                    баталгаажуулах код илгэлээ.
+                  <div className="font- text-center font-raleway text-[12px] font-normal text-sub">
+                    {imageUrl.length > 0
+                      ? "Бид таны бүртгүүлсэн банкны данс руу баталгаажуулах код бүхий гүйлгээ хийсэн. Тухай гүйлгээний утга дээр ирсэн 4 оронтой кодыг оруулна уу!!!"
+                      : "Бид таны бүртгэлтэй гар утасны дугаар луу нэг удаагийн баталгаажуулах код илгээлээ."}
                   </div>
                 </Col>
+                {imageUrl.length == 0 && (
+                  <Col>
+                    <div
+                      className={reDate ? "cursor-pointer" : "text-sub"}
+                      onClick={() => {
+                        reDate && clickedEdit == 0
+                          ? changePhone(
+                              { phone: editNumber, password: codePhone },
+                              {
+                                onSuccess: (
+                                  /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
+                                ) => {
+                                  if (data.success) {
+                                    setReDate(false);
+                                    setChangeId(data.change_phone_id);
+                                    setFormToken(data.form_token);
+                                    success(
+                                      `Таны ${editNumber} дугаар руу баталгаажуулах код амжилттай илгээгдлээ.`
+                                    );
+                                    localStorage.setItem(
+                                      "targetDate",
+                                      `${Date.now() + 300 * 1000}`
+                                    );
+                                  } else {
+                                    error({
+                                      title: "Амжилтгүй",
+                                      content: (
+                                        <div>{data?.description || null}</div>
+                                      ),
+                                    });
+                                  }
+                                },
+                              }
+                            )
+                          : forgotTransPass(
+                              {
+                                register: accountInfo?.account?.register,
+                                username: accountInfo?.account?.first_name,
+                              },
+                              {
+                                onSuccess: (
+                                  /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: any
+                                ) => {
+                                  if (data.success) {
+                                    setForgotId(data?.forgot_id);
+                                    setReDate(false);
+                                    localStorage.setItem(
+                                      "targetDate",
+                                      `${Date.now() + 300 * 1000}`
+                                    );
+                                    success(data.description);
+                                  } else {
+                                    error({
+                                      title: "Амжилтгүй",
+                                      content: (
+                                        <div>{data?.description || null}</div>
+                                      ),
+                                    });
+                                  }
+                                },
+                              }
+                            );
+                      }}
+                    >
+                      Дахин код авах
+                    </div>
+                  </Col>
+                )}
                 <Col span={20}>
                   <Button
                     type="primary"
                     loading={loadingBtn}
                     className={stylesL["dloan-modal-verify-button"]}
-                    onClick={() =>
-                      code.join("").length == 4
-                        ? clickedEdit
-                          ? clickedEdit == 0
-                            ? verifyPass()
-                            : verifyTransPass()
-                          : submitVerify()
+                    onClick={() => {
+                      console.log(
+                        clickedEdit ? (clickedEdit == 0 ? "0" : "1") : "asd"
+                      );
+                      return code.join("").length == 4
+                        ? imageUrl.length > 1
+                          ? submitVerify()
+                          : clickedEdit == 0
+                          ? verifyPass()
+                          : verifyTransPass()
                         : error({
                             title: "Амжилтгүй",
-                            content: (
-                              <div>Хүчинтэй утасны дугаар оруулна уу !</div>
-                            ),
-                          })
-                    }
+                            content: <div>Хүчинтэй код оруулна уу !</div>,
+                          });
+                    }}
                   >
                     Баталгаажуулах
                   </Button>
@@ -1291,8 +1288,13 @@ export const Profile = () => {
           centered
           width={478}
           title={
-            <div className="mx-auto my-[20px] w-[50%] text-center font-raleway text-[18px] font-bold">
-              Гарын үсгийн зураг оруулах
+            <div className={stylesL["dloan-modal-verify-title"]}>
+              <Image
+                width="40%"
+                src="/contract.svg"
+                preview={false}
+                alt="emailphone"
+              />
             </div>
           }
           closable={true}
@@ -1301,6 +1303,11 @@ export const Profile = () => {
           footer={null}
         >
           <Row justify="center">
+            <div className="mb-4 text-center font-raleway text-[18px] font-bold">
+              {accountInfo?.account?.user_type === "user"
+                ? "Гарын үсгийн зураг оруулах"
+                : "Гарын үсэг, тамга оруулах"}
+            </div>
             <Col span={20}>
               <Row justify="center" gutter={[0, 20]}>
                 <Upload
@@ -1326,7 +1333,7 @@ export const Profile = () => {
                   <p className="text-center">
                     {accountInfo?.account?.user_type == "org"
                       ? "ААН бол захиралын гарын үсэг болон байгууллагын тамгыг цаасан дээр гаргацтай тод дарж зургийг дарж оруулна уу!"
-                      : " Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж  оруулна уу"}
+                      : "Та гарын үсгээг цаасан дээр гаргацтай тод зурж зургийг дарж оруулна уу!"}
                   </p>
                 </Row>
                 <Col span={24}>
@@ -1358,10 +1365,15 @@ export const Profile = () => {
           closeModal={null}
           customDiv={null}
           customIconWidth={null}
-          iconPath={"/images/check"}
+          iconPath={"json"}
           modalWidth={null}
           open={check}
-          text={<p>Таны данс амжилттай холбогдлоо.</p>}
+          text={
+            <p>
+              Харилцах банкны данс амжилттай холбогдлоо. Та манай бүтээгдэхүүн
+              үйлчилгээг авахад бэлэн боллоо.
+            </p>
+          }
           textAlign={"center"}
         />
 

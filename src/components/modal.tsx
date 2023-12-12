@@ -1,5 +1,7 @@
 import { Button, Col, Image, Modal, Row } from "antd";
 import styles from "../styles/modal.module.css";
+import LottiePlayer from "lottie-react";
+import animation from "../../public/check1.json";
 
 export default function PopupModal({
   // @ts-ignore
@@ -39,7 +41,14 @@ export default function PopupModal({
       <Row justify="center" gutter={[0, 30]} className="py-[20px]">
         <Col span={24}>
           <Row justify="center">
-            {iconPath && (
+            {iconPath === "json" ? (
+              <LottiePlayer
+                animationData={animation}
+                loop={false}
+                width={customIconWidth ? customIconWidth : 180}
+                height={44}
+              />
+            ) : (
               <Image
                 width={customIconWidth ? customIconWidth : 180}
                 height={44}

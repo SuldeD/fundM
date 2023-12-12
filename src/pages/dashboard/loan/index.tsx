@@ -712,7 +712,11 @@ export const Loan = () => {
                                           ]
                                         }
                                       >
-                                        хоног
+                                        {el?.duration_type === "M"
+                                          ? "сар"
+                                          : el?.duration_type === "D"
+                                          ? "хоног"
+                                          : ""}
                                       </div>
                                     </Button>
                                   </Col>
@@ -859,7 +863,7 @@ export const Loan = () => {
                   </Col>
                   <Col span={22}>
                     <Row gutter={12} align="middle">
-                      <Col flex="none">
+                      {/* <Col flex="none">
                         <Checkbox
                           ref={termsRef}
                           onChange={(e) =>
@@ -867,7 +871,7 @@ export const Loan = () => {
                           }
                           checked={checked}
                         />
-                      </Col>
+                      </Col> */}
                       <Col flex="none">
                         <div className={styles["dloan-checkbox-text"]}>
                           <a onClick={() => setIsModalOpen(true)}>
@@ -1072,7 +1076,7 @@ export const Loan = () => {
                   loading={loadings}
                   className={styles["dloan-button-contiune"]}
                   onClick={() => {
-                    termsRef.current?.input.checked
+                    checked
                       ? !accountInfo?.bank_account
                         ? error({
                             title: "Амжилтгүй",
@@ -1132,7 +1136,12 @@ export const Loan = () => {
                               },
                             ]}
                           >
-                            <Checkbox style={{ color: "green" }}>
+                            <Checkbox
+                              style={{ color: "green" }}
+                              onChange={() => {
+                                setChecked(!checked);
+                              }}
+                            >
                               <div className={styles["dloan-checkbox-text"]}>
                                 Зээлийн үйлчилгээний нөхцөл
                               </div>
@@ -1160,7 +1169,7 @@ export const Loan = () => {
                               className={styles["dloan-button-contiune"]}
                               onClick={() => {
                                 form.validateFields();
-                                setChecked(!checked);
+                                // setChecked(!checked);
                                 setIsModalOpen(false);
                               }}
                               htmlType="submit"

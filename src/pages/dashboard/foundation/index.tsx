@@ -166,9 +166,11 @@ export const Foundation = () => {
   }
   const handleOk = async () => {
     await form.validateFields();
-    setChecked(!checked);
+    // setChecked(!checked);
     setIsModalOpen(false);
   };
+
+  console.log(saving, "saving");
 
   if (layoutStatus == "loading") {
     return null;
@@ -344,7 +346,13 @@ export const Foundation = () => {
                                       ]
                                     }
                                   >
-                                    хоног
+                                    {el?.duration_type === "M"
+                                      ? "сар"
+                                      : el?.duration_type === "D"
+                                      ? "хоног"
+                                      : el?.duration_type === "D"
+                                      ? "жил"
+                                      : ""}
                                   </div>
                                 </Button>
                               </Col>
@@ -483,7 +491,7 @@ export const Foundation = () => {
               </Col>
               <Col span={22}>
                 <Row gutter={12} align="middle">
-                  <Col flex="none">
+                  {/* <Col flex="none">
                     <Checkbox
                       ref={termsRef}
                       onChange={(e) =>
@@ -491,7 +499,7 @@ export const Foundation = () => {
                       }
                       checked={checked}
                     />
-                  </Col>
+                  </Col> */}
                   <Col flex="none">
                     <div className={styles["foundation-checkbox-text"]}>
                       <a onClick={() => setIsModalOpen(true)}>
@@ -632,7 +640,7 @@ export const Foundation = () => {
                 type="primary"
                 className={styles["foundation-button-contiune"]}
                 onClick={() => {
-                  termsRef.current?.input.checked
+                  checked
                     ? !accountInfo?.bank_account
                       ? error({
                           title: "Амжилтгүй",
@@ -692,7 +700,11 @@ export const Foundation = () => {
                             },
                           ]}
                         >
-                          <Checkbox>
+                          <Checkbox
+                            onChange={() => {
+                              setChecked(!checked);
+                            }}
+                          >
                             <div className={styles["foundation-checkbox-text"]}>
                               Санхүүжилтын үйлчилгээний нөхцөл
                             </div>
