@@ -84,10 +84,10 @@ export default function Login({
                 >
                   Нууц үгээ мартсан уу ?
                 </p>
-                <div className="mt-[42px] flex justify-between">
+                <div className="mt-[24px] flex justify-between">
                   <Col span={24}>
-                    <Row justify="space-between" gutter={25}>
-                      <Col span={12}>
+                    <Row justify="space-between" gutter={10}>
+                      {/* <Col span={12}>
                         <Button
                           className={styles["signup-button"]}
                           type="dashed"
@@ -96,8 +96,8 @@ export default function Login({
                         >
                           Бүртгүүлэх
                         </Button>
-                      </Col>
-                      <Col span={12}>
+                      </Col> */}
+                      <Col span={24}>
                         <Button
                           type="primary"
                           htmlType="submit"

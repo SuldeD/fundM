@@ -295,7 +295,7 @@ export const ProtectedLayout = ({ children }: any) => {
                     onClick={handleOk}
                     htmlType="submit"
                   >
-                    Үргэлжлүүлэх
+                    Зөвшөөрөх
                   </Button>
                 </Row>
               </Col>

@@ -1174,7 +1174,7 @@ export const Loan = () => {
                               }}
                               htmlType="submit"
                             >
-                              Үргэлжлүүлэх
+                              Зөвшөөрөх
                             </Button>
                           </Row>
                         </Col>

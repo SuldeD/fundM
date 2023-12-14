@@ -1,4 +1,4 @@
-import { Col, Row, Button, Form, Input, Modal, Image } from "antd";
+import { Col, Row, Button, Form, Input, Modal, Image, Statistic } from "antd";
 import styles from "app/styles/login.module.css";
 import { useRef, useState } from "react";
 import { api } from "app/utils/api";
@@ -38,6 +38,8 @@ export default function Signup() {
   const mutationSignUp = api.register.signUp.useMutation();
   const mutationSignUpOrg = api.register.signUpOrg.useMutation();
 
+  const { Countdown } = Statistic;
+
   const [registerData, setRegisterData] = useState<RegisterType>({
     phone: "",
     username: "",
@@ -52,6 +54,7 @@ export default function Signup() {
     user_type: "user",
   });
   const [loading, setLoading] = useState<string>("");
+  const [reDate, setReDate] = useState<boolean>(false);
 
   const onFinishPhone = async (values: any) => {
     setLoading("loading");
@@ -70,6 +73,7 @@ export default function Signup() {
             success(
               `Таны ${values.phone_number} дугаар руу баталгаажуулах код амжилттай илгээгдлээ.`
             );
+            localStorage.setItem("targetDate", `${Date.now() + 300 * 1000}`);
             setRegisterData((prevData) => ({
               ...prevData,
               phone: values.phone_number,
@@ -90,6 +94,7 @@ export default function Signup() {
   };
 
   const onFinishPhoneVer = async (values: any) => {
+    // setReDate(true);
     search == "org"
       ? orgSignUpVerify.mutate(
           {
@@ -611,7 +616,77 @@ export default function Signup() {
                               maxLength={4}
                               autoFocus
                             />
+                            {/* <div className="mt-4 text-center font-lato text-[12px] font-normal text-white">
+                              Та өөрийн бүртгэл үүсгэж байгаа утасны дугаар дээр
+                              ирсэн 4 оронтой кодийг оруулна уу.
+                            </div>{" "} */}
                           </Form.Item>
+                          <Col className="me-3 flex w-full items-end justify-end">
+                            <div
+                              className={
+                                reDate
+                                  ? "cursor-pointer text-white"
+                                  : "text-gray-400"
+                              }
+                              onClick={() => {
+                                reDate &&
+                                  mutate(
+                                    { phone: registerData.phone },
+                                    {
+                                      onSuccess: (data) => {
+                                        if (data.success) {
+                                          success(
+                                            `Таны ${registerData.phone} дугаар руу баталгаажуулах код амжилттай илгээгдлээ.`
+                                          );
+                                          localStorage.setItem(
+                                            "targetDate",
+                                            `${Date.now() + 300 * 1000}`
+                                          );
+                                          setRegisterData((prevData) => ({
+                                            ...prevData,
+                                            phone: registerData.phone,
+                                            username: registerData.phone,
+                                            tmp_user_id: data.tmp_user_id,
+                                          }));
+                                          setLoading("");
+                                          setReDate(false);
+                                        } else {
+                                          error({
+                                            title: "Амжилтгүй",
+                                            content: (
+                                              <div>
+                                                {data?.description || null}
+                                              </div>
+                                            ),
+                                          });
+                                          setLoading("");
+                                        }
+                                      },
+                                    }
+                                  );
+                              }}
+                            >
+                              Дахин код авах
+                            </div>
+                          </Col>
+                          <div className="mt-0 flex w-full justify-center">
+                            <Countdown
+                              value={Number(localStorage.getItem("targetDate"))}
+                              format="mm:ss"
+                              className="mx-auto"
+                              onFinish={() => {
+                                setReDate(true);
+                                console.log("finish");
+                              }}
+                              valueStyle={{
+                                fontFamily: "Lato",
+                                fontWeight: 500,
+                                fontSize: 34,
+                                color: reDate ? "#FF0000" : "white",
+                                fontStyle: "normal",
+                              }}
+                            />
+                          </div>
                         </Col>
 
                         <Col span={24}>
