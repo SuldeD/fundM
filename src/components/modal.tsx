@@ -1,7 +1,8 @@
 import { Button, Col, Image, Modal, Row } from "antd";
 import styles from "../styles/modal.module.css";
 import LottiePlayer from "lottie-react";
-import animation from "../../public/check1.json";
+import animation from "../../public/check.json";
+import animation2 from "../../public/warn.json";
 
 export default function PopupModal({
   // @ts-ignore
@@ -48,6 +49,10 @@ export default function PopupModal({
                 width={customIconWidth ? customIconWidth : 180}
                 height={44}
               />
+            ) : iconPath === "json2" ? (
+              <div className="w-[160px]">
+                <LottiePlayer animationData={animation2} loop={false} />
+              </div>
             ) : (
               <Image
                 width={customIconWidth ? customIconWidth : 180}

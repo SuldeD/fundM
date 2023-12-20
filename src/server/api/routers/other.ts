@@ -8,16 +8,16 @@ export const otherRouter = createTRPCRouter({
   notificationChange: protectedProcedure
     .input(
       z.object({
-        notification_count: z.string(),
+        activityId: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const token = await getAccountToken(ctx);
-      const { notification_count } = input;
+      const { activityId } = input;
 
       const body = encrypt(
         JSON.stringify({
-          notification_count,
+          activity_id: activityId,
           mass_push_count: "0",
         })
       );

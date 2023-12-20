@@ -12,18 +12,18 @@ import {
 import styles from "app/styles/foundation.module.css";
 import stylesL from "app/styles/dloan.module.css";
 import { useRouter } from "next/router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { numberToCurrency } from "app/utils/number.helpers";
 import { HeaderDashboard } from "app/components/header";
 import moment from "moment";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import PopupModal from "app/components/modal";
 
 export const Foundation = () => {
   const { status: layoutStatus } = useSession();
-  const termsRef: any = useRef();
   const router = useRouter();
   const [form] = Form.useForm();
   const { error } = Modal;
@@ -35,6 +35,7 @@ export const Foundation = () => {
   const { mutate: loanReqMutate } = api.loan.loanRequest.useMutation();
   const { mutate: loanReqConfirmMut } =
     api.loan.loanRequestConfirm.useMutation();
+  const { mutate } = api.other.notficationSearch.useMutation();
   const { data: loanData } = api.loan.loanList.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
@@ -56,6 +57,10 @@ export const Foundation = () => {
   const [activeDuration, setActiveDuration] = useState<number>(0);
   const [foundationBankData, setFoundationBankData] = useState<any>();
   const [checked, setChecked] = useState<boolean>(false);
+  const [success, setSuccess] = useState<any>("");
+
+  const [notfication, setNotfication] = useState<any>();
+  const [reqId, setReqId] = useState<string>("");
 
   //constants
   const saving = useMemo(() => {
@@ -120,6 +125,7 @@ export const Foundation = () => {
             description: any;
           }) => {
             if (data.success) {
+              setReqId(request_id);
               setIsVerifyOpen(false);
               setIsCompleteOpen(true);
               repayment(
@@ -170,7 +176,51 @@ export const Foundation = () => {
     setIsModalOpen(false);
   };
 
-  console.log(saving, "saving");
+  const fetchData = async () => {
+    try {
+      mutate(
+        {
+          order: "date",
+          order_up: "1",
+          page: "1",
+          page_size: "20",
+        },
+        {
+          onSuccess: (
+            /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+          ) => {
+            if (data?.success) {
+              setNotfication(data);
+            } else {
+              error({
+                title:
+                  "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идэвхгүй байсан тул таны холболтыг салгалаа.",
+                content: <div>{data?.description || null}</div>,
+                onOk: () => signOut(),
+              });
+            }
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  setInterval(fetchData, 120000);
+
+  useEffect(() => {
+    console.log(reqId, "reqId");
+    console.log("work");
+
+    const dt = notfication?.activity_list?.find((e: any) => {
+      return e?.activity_code == "check_paybill";
+    });
+    if (reqId && dt && reqId == dt?.request_id) {
+      setIsCompleteOpen(false);
+      setSuccess(dt);
+    }
+  }, [notfication]);
 
   if (layoutStatus == "loading") {
     return null;
@@ -822,7 +872,7 @@ export const Foundation = () => {
                       alt=""
                       onClick={() => {
                         message.success("Copy to clipboard");
-                        navigator.clipboard.writeText(
+                        navigator?.clipboard?.writeText(
                           foundationBankData?.product?.account_num
                         );
                       }}
@@ -846,7 +896,7 @@ export const Foundation = () => {
                       alt=""
                       onClick={() => {
                         message.success("Copy to clipboard");
-                        navigator.clipboard.writeText(
+                        navigator?.clipboard?.writeText(
                           foundationBankData?.product?.now_month_pay_amount
                         );
                       }}
@@ -872,7 +922,7 @@ export const Foundation = () => {
                       alt=""
                       onClick={() => {
                         message.success("Copy to clipboard");
-                        navigator.clipboard.writeText(
+                        navigator?.clipboard?.writeText(
                           foundationBankData?.product?.transaction_description
                         );
                       }}
@@ -897,6 +947,23 @@ export const Foundation = () => {
                 </div>
               </div>
             </Modal>
+
+            <PopupModal
+              buttonClick={() => {
+                setSuccess("");
+                router.push("/dashboard/myfund");
+              }}
+              buttonText={"Хаах"}
+              closableM={null}
+              closeModal={null}
+              customDiv={null}
+              customIconWidth={null}
+              iconPath={"json"}
+              modalWidth={null}
+              open={success?.description?.length > 0}
+              text={<p className="text-center">{success?.description}</p>}
+              textAlign={"center"}
+            />
           </Row>
         </Col>
       </Row>

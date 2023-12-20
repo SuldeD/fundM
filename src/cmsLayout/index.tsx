@@ -20,10 +20,11 @@ import style from "app/styles/Header.module.css";
 import { signOut } from "next-auth/react";
 import { api } from "app/utils/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import { MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAppContext } from "app/context/appContext";
+import moment from "moment";
 const { Header } = Layout;
 const { Content } = Layout;
 
@@ -63,9 +64,9 @@ export const ProtectedLayout = ({ children }: any) => {
 
   //states
   const [open, setOpen] = useState<boolean>(false);
-  const [openNotf, setOpenNotf] = useState<boolean>(false);
   const [openDra, setOpenDra] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
+  const [warningM, setWarning] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
   const [notfication, setNotfication] = useState<any>();
   const [openNot, setOpenNot] = useState<boolean>(false);
@@ -122,7 +123,7 @@ export const ProtectedLayout = ({ children }: any) => {
         order: "date",
         order_up: "1",
         page: "1",
-        page_size: "10",
+        page_size: "20",
       },
       {
         onSuccess: (
@@ -141,7 +142,7 @@ export const ProtectedLayout = ({ children }: any) => {
         },
       }
     );
-  }, [statusData?.stat?.notification_count]);
+  }, [accountInfo]);
 
   const allData = useCallback((page_size: string) => {
     mutate(
@@ -203,6 +204,23 @@ export const ProtectedLayout = ({ children }: any) => {
     setOpenDra(false);
   };
 
+  const notficationWarning = useMemo(() => {
+    const dt = notfication?.activity_list?.find((e: any) => {
+      return e.activity_code === "lost_amount";
+    });
+
+    const currentDate = moment();
+    const formattedDate = currentDate.format("YYYY-MM-DD");
+
+    const regex = /^(\d{4}-\d{2}-\d{2})/;
+    const match = dt?.create_date?.match(regex);
+
+    if (match?.length > 0 && formattedDate == match[0]) {
+      setWarning(true);
+    }
+    return dt;
+  }, [html]);
+
   const IsGender = useMemo(() => {
     const IsGenderCheck = accountInfo?.account?.register?.slice(-2, -1);
 
@@ -221,7 +239,7 @@ export const ProtectedLayout = ({ children }: any) => {
 
   useEffect(() => {
     setIsModalOpen(true);
-  }, [statusData]);
+  }, [statusData, accountInfo]);
 
   return (
     <Layout>
@@ -320,6 +338,30 @@ export const ProtectedLayout = ({ children }: any) => {
           }
         />
       )}
+
+      <PopupModal
+        buttonClick={() => {
+          setWarning(false);
+        }}
+        buttonText={"Хаах"}
+        closableM={null}
+        closeModal={null}
+        customDiv={null}
+        customIconWidth={null}
+        iconPath={"json2"}
+        modalWidth={null}
+        open={warningM}
+        text={
+          <div>
+            <p className="mb-4 text-center text-[18px] font-bold text-primary">
+              Анхааруулга!
+            </p>
+            <p className="text-center">{notficationWarning?.description}</p>
+          </div>
+        }
+        textAlign={"center"}
+      />
+
       <SidebarLeftComponent setOpen={setOpenNot} />
 
       <Layout onClick={() => setOpenNot(false)}>
@@ -336,10 +378,10 @@ export const ProtectedLayout = ({ children }: any) => {
                 <Row
                   align="middle"
                   justify="center"
-                  onClick={() => setOpenNotf(!openNotf)}
+                  onClick={() => setOpen(true)}
                   className={`${styles["sidebar-right-notification-div"]} cursor-pointer`}
                 >
-                  <Badge count={statusData?.stat?.notification_count}>
+                  <Badge count={notfication?.msg?.unread_count}>
                     <Avatar
                       src={"/images/notification.svg"}
                       className="h-[45px] w-[45px] rounded-[10px] bg-[#F4F6FA] p-[11px]"
@@ -437,89 +479,7 @@ export const ProtectedLayout = ({ children }: any) => {
           {children}
         </Content>
       </Layout>
-      {openNotf && (
-        <div className="absolute right-[2%] top-[8%] z-50 max-h-[95vh] overflow-auto rounded-[8px] border bg-white p-[10px] drop-shadow-2xl lg:hidden ">
-          <div className="flex justify-between">
-            <div className="my-2 w-[60%] text-end font-lato text-[18px] font-medium leading-[18px]">
-              Мэдэгдэл
-            </div>
-            <CloseOutlined
-              className="me-2 scale-125"
-              onClick={() => setOpenNotf(false)}
-            />
-          </div>
 
-          {notfication?.activity_list?.length > 0 ? (
-            notfication?.activity_list?.map(
-              (
-                nt: {
-                  activity_code: string;
-                  description:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<
-                        any,
-                        string | React.JSXElementConstructor<any>
-                      >
-                    | Iterable<React.ReactNode>
-                    | React.ReactPortal
-                    | React.PromiseLikeOfReactNode
-                    | null
-                    | undefined;
-                  create_date: string | any[];
-                },
-                idx: any
-              ) => (
-                <div className="flex  border-b p-[10px]" key={`${idx}`}>
-                  <div className="flex h-[40px] w-[40px] justify-center rounded-[50%] bg-bank pt-2">
-                    <img
-                      className="h-[22px] w-[22px] text-white"
-                      src={
-                        nt.activity_code == "wallet_bank"
-                          ? "/images/notfication2.svg"
-                          : "/images/notficationIcon.svg"
-                      }
-                      alt="notfication"
-                    />
-                  </div>
-                  <div className="ms-[10px] w-[90%]">
-                    <p className="font-lato text-[14px] font-medium leading-[18px] text-[#1A2155]">
-                      {nt?.description}
-                    </p>
-                    <p className="font-lato text-[12px] font-medium text-sub">
-                      {nt?.create_date}
-                    </p>
-                  </div>
-                </div>
-              )
-            )
-          ) : (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-          )}
-          {notfication?.activity_list?.length > 0 &&
-          notfication?.activity_list_more ? (
-            <Button
-              type="primary"
-              className="mx-auto mt-[20px] flex bg-primary text-center font-raleway text-[14px] leading-[18px]"
-              onClick={() => {
-                notfication?.activity_list?.length &&
-                  allData(`${notfication?.activity_list?.length + 10}`);
-              }}
-            >
-              Бүгдийг харах
-            </Button>
-          ) : (
-            <Button
-              type="default"
-              disabled
-              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
-            >
-              Бүгдийг харах
-            </Button>
-          )}
-        </div>
-      )}
       <SidebarRightComponent
         setOpen={setOpenNot}
         open={openNot}

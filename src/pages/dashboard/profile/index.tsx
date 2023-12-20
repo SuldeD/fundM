@@ -1167,7 +1167,6 @@ export const Profile = () => {
                       format="mm:ss"
                       onFinish={() => {
                         setReDate(true);
-                        console.log("finish");
                       }}
                       valueStyle={{
                         fontFamily: "Lato",
@@ -1221,7 +1220,8 @@ export const Profile = () => {
                                 },
                               }
                             )
-                          : forgotTransPass(
+                          : reDate &&
+                            forgotTransPass(
                               {
                                 register: accountInfo?.account?.register,
                                 username: accountInfo?.account?.first_name,
@@ -1260,6 +1260,7 @@ export const Profile = () => {
                     type="primary"
                     loading={loadingBtn}
                     className={stylesL["dloan-modal-verify-button"]}
+                    disabled={reDate}
                     onClick={() => {
                       console.log(
                         clickedEdit ? (clickedEdit == 0 ? "0" : "1") : "asd"
