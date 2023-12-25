@@ -16,11 +16,7 @@ export const FoundationReq = ({ activeSavingOrders: data }: any) => {
         <div className={styles["loanReq-title"]}>Санхүүжилт өгөх хүсэлт</div>
       </Col>
       <Col span={24}>
-        <div className={styles["loanReq-description"]}>
-          Та манай платиниум болон даймонд харилцагч болсноор давуу эрхтэйгээр
-          зээл авах боломжтой. Дэлгэрэнгүйг тусламж цэсний харилцагчийн
-          үйлчилгээний хэсгээс харна уу.
-        </div>
+        <div className={styles["loanReq-description"]}>Захиалгын жагсаалт</div>
       </Col>
       <Col span={24}>
         {data ? (
@@ -60,7 +56,7 @@ export const FoundationReq = ({ activeSavingOrders: data }: any) => {
                             <Row justify="center">
                               <Col span={24}>
                                 <div className={styles["loanReq-list-title"]}>
-                                  Санхүүжилтын хэмжээ
+                                  Санхүүжилтийн хэмжээ
                                 </div>
                               </Col>
                               <Col span={24}>
@@ -173,7 +169,7 @@ export const FoundationReq = ({ activeSavingOrders: data }: any) => {
                             <Row justify="center">
                               <Col span={24}>
                                 <div className={styles["loanReq-list-title"]}>
-                                  Санхүүжилтын хэмжээ
+                                  Санхүүжилтийн хэмжээ
                                 </div>
                               </Col>
                               <Col span={24}>

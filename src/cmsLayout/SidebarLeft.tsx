@@ -117,7 +117,7 @@ export const SidebarLeftComponent = ({ setOpen }: any) => {
                 </Col>
                 <Col span={24}>
                   <div className={style["sidebar-left-footer-text"]}>
-                    ©2023 Fund me birj LLC. Version 1.01
+                    ©2023 FundMe birj LLC. Version 1.01
                   </div>
                 </Col>
               </Row>

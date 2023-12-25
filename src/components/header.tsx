@@ -28,7 +28,7 @@ export const HeaderDashboard = ({ title, subTitle }: any) => {
           <Row gutter={10} justify="end" align="middle">
             <Col flex="none">
               <div className={styles["header-exchange-title"]}>
-                Бирж хаагдах хугацаа:
+                Хаагдах хугацаа:
               </div>
             </Col>
 

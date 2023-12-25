@@ -824,7 +824,7 @@ export const Profile = () => {
               onClick={() => validate(3)}
               className={`${styles["profile-tabs-2-collapse-title"]} flex w-full justify-between border-b px-3 py-[10px] text-start`}
             >
-              <div>Fund me код солих</div>
+              <div>FundMe код солих</div>
               <svg width="25px" height="25px" viewBox="0 0 32 32" version="1.1">
                 <g id="icomoon-ignore"></g>
                 <path
@@ -837,7 +837,7 @@ export const Profile = () => {
               className={`${styles["profile-tabs-2-collapse-title"]} flex w-full justify-between border-b px-3 py-[10px] text-start`}
               onClick={() => validate(4)}
             >
-              <div>Fund me код шинээр үүсгэх</div>
+              <div>FundMe код шинээр үүсгэх</div>
               <svg width="25px" height="25px" viewBox="0 0 32 32" version="1.1">
                 <g id="icomoon-ignore"></g>
                 <path
@@ -943,8 +943,8 @@ export const Profile = () => {
               : clickedEdit == 2
               ? "Нэвтрэх нууц үг солих"
               : clickedEdit == 3
-              ? "Fund me код солих"
-              : clickedEdit == 4 && "Fund me код шинээр үүсгэх"}
+              ? "FundMe код солих"
+              : clickedEdit == 4 && "FundMe код шинээр үүсгэх"}
           </div>
           {clickedEdit == 2 && (
             <div className="mt-5">
@@ -1380,12 +1380,7 @@ export const Profile = () => {
 
         <Col span={22}>
           <Row gutter={[0, 20]}>
-            <HeaderDashboard
-              title={"Миний мэдээлэл"}
-              subTitle={
-                "Та банкны мэдээллээ өөрчлөх бол манай байгууллагын таньд ойрхон салбарт хандана уу."
-              }
-            />
+            <HeaderDashboard title={"Миний мэдээлэл"} subTitle={""} />
             <Col span={24}>
               <Tabs defaultActiveKey="1" items={items} tabBarGutter={0} />
             </Col>

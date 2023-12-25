@@ -318,7 +318,7 @@ export const FundHistory = () => {
               </Col>
               <Col flex="none">
                 <div className={styles["fund-tabs-content-title"]}>
-                  Санхүүжилтын тоо
+                  Санхүүжилтийн тоо
                 </div>
                 <div className={styles["fund-tabs-content-rate"]}>
                   {mySavingOrders ? mySavingOrders.length : 0}
@@ -519,7 +519,7 @@ export const FundHistory = () => {
                                   >
                                     {myFundTabKey == "1"
                                       ? "Үндсэн зээлийн хэмжээ"
-                                      : "Санхүүжилтын хэмжээ"}
+                                      : "Санхүүжилтийн хэмжээ"}
                                   </div>
                                 </Col>
                                 <Col flex="none">
@@ -850,7 +850,7 @@ export const FundHistory = () => {
                                 <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
                                   {myFundTabKey == "1"
                                     ? "Зээлийн гэрээ"
-                                    : "Богино хугацааны санхүүжилтын гэрээ"}
+                                    : "Богино хугацааны Санхүүжилтийн гэрээ"}
                                 </p>
                               </Button>
                             </Col>

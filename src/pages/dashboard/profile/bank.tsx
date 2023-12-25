@@ -198,9 +198,7 @@ export default function Bank() {
       <div className="h-full w-full bg-[#fff] px-[30px] py-[40px]">
         <HeaderDashboard
           title={"Банкны данс холбох"}
-          subTitle={
-            "Харилцагч та нийт идэвхитэй хүсэлтүүд болон өөрийн өгсөн санхүүжилт болон авсан зээлтэй холбоотой мэдээллээ доорх цэсээр харна уу."
-          }
+          subTitle={"Харилцагч та банкны дансны мэдээллээ оруулна уу"}
         />
 
         <div className={`${styles["profile-bankaccount-title"]} mt-3 pb-[8px]`}>

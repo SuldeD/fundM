@@ -5,7 +5,6 @@ import {
   Checkbox,
   Col,
   Drawer,
-  Empty,
   Form,
   Image,
   Layout,
@@ -94,7 +93,7 @@ export const ProtectedLayout = ({ children }: any) => {
     },
     {
       key: "/dashboard/history",
-      label: <Link href="/dashboard/history">Санхүүжилтын түүх</Link>,
+      label: <Link href="/dashboard/history">Санхүүжилтийн түүх</Link>,
       icon: <img src="/images/tugrik.png" style={{ width: 22 }} />,
     },
     {

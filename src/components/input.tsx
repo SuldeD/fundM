@@ -88,7 +88,7 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
               >
                 <Row justify="center" gutter={[0, 20]}>
                   <p className="font-raleway text-[18px] font-bold">
-                    FundMe пин код оруулна уу!
+                    FundMe код оруулна уу!
                   </p>
                   <Col span={20} className="flex justify-between">
                     {code.map(

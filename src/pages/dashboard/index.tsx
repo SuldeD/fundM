@@ -141,7 +141,7 @@ export const Dashboard = () => {
       <Row justify="center" className={styles["dashboard-main-row"]}>
         <Col span={22}>
           <Row justify="center" align="middle" gutter={[0, 30]}>
-            <HeaderDashboard title={"Цахим бирж"} subTitle={undefined} />
+            <HeaderDashboard title={"Мөнгөний зах"} subTitle={undefined} />
             <Col span={24}>
               <Row justify="space-between" gutter={20}>
                 <Col xs={24} lg={12}>

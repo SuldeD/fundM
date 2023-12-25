@@ -26,7 +26,7 @@ export const Home = () => {
       title: "ЗАРЛАСАН ХҮҮ",
       money: "1.92 %",
       detail:
-        "Тухайн өдрийн санхүүжилт өгөх болон зээл олгох заралсан хүү нь эрэлт хэрэгцээн дээр тулгуурлан тогтоодог.",
+        "Тухайн өдрийн санхүүжилт өгөх болон зээл олгох зарласан хүү нь эрэлт хэрэгцээн дээр тулгуурлан тогтоодог.",
       image: "/images/zoos-lg.svg",
     },
   ];
@@ -143,7 +143,7 @@ export const Home = () => {
         </div>
         <div className="py-[100px] pt-[60px]">
           <div className="text-center text-[22px] font-bold leading-[27px] text-[#1a2155]">
-            FUND ME хэрхэн ажилладаг вэ?
+            FUNDME хэрхэн ажилладаг вэ?
           </div>
 
           <div className="mx-auto mt-[75px] justify-center gap-[30px] px-[30px] lg:flex ">

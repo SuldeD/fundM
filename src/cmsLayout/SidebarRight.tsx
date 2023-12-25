@@ -9,7 +9,6 @@ import {
   Button,
   TabsProps,
   Drawer,
-  Tabs,
 } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "../styles/protectedLayout.module.css";

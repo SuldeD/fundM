@@ -27,7 +27,7 @@ export default function Login({
           <Col span={22}>
             <div className="container mx-auto md:px-[80px]">
               <div className="inter text-[40px] font-bold leading-[48px] text-[#fff]">
-                Fund Me нэвтрэх
+                FundMe нэвтрэх
               </div>
               {error && <p className="mt-2 max-w-md text-red-500">{error}</p>}
               <form

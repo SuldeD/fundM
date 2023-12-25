@@ -419,7 +419,7 @@ export const Foundation = () => {
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["foundation-detail-text"]}>
-                          Санхүүжилтын хэмжээ
+                          Санхүүжилтийн хэмжээ
                         </div>
                       </Col>
                       <Col flex="none">
@@ -553,7 +553,7 @@ export const Foundation = () => {
                   <Col flex="none">
                     <div className={styles["foundation-checkbox-text"]}>
                       <a onClick={() => setIsModalOpen(true)}>
-                        Санхүүжилтын үйлчилгээний нөхцөл
+                        Санхүүжилтийн үйлчилгээний нөхцөл
                       </a>
                     </div>
                   </Col>
@@ -571,7 +571,7 @@ export const Foundation = () => {
                     <Row justify="space-between" align="middle">
                       <Col flex="none">
                         <div className={styles["foundation-detail-text"]}>
-                          Санхүүжилтын хэмжээ
+                          Санхүүжилтийн хэмжээ
                         </div>
                       </Col>
                       <Col flex="none">
@@ -756,7 +756,7 @@ export const Foundation = () => {
                             }}
                           >
                             <div className={styles["foundation-checkbox-text"]}>
-                              Санхүүжилтын үйлчилгээний нөхцөл
+                              Санхүүжилтийн үйлчилгээний нөхцөл
                             </div>
                           </Checkbox>
                         </Form.Item>

@@ -16,11 +16,7 @@ export const LoanTakeReqComponent = ({ activeLoanOrders: data }: any) => {
         <div className={styles["loanReq-title"]}>Зээл авах хүсэлт</div>
       </Col>
       <Col span={24}>
-        <div className={styles["loanReq-description"]}>
-          Та манай платиниум болон даймонд харилцагч болсноор давуу эрхтэйгээр
-          зээл авах боломжтой. Дэлгэрэнгүйг тусламж цэсний харилцагчийн
-          үйлчилгээний хэсгээс харна уу.
-        </div>
+        <div className={styles["loanReq-description"]}>Захиалгын жагсаалт</div>
       </Col>
       <Col span={24}>
         {data ? (
