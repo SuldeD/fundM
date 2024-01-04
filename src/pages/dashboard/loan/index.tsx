@@ -291,6 +291,9 @@ export const Loan = () => {
     }
   }
 
+  console.log("statusData", statusData);
+  console.log("loan", loan);
+
   if (layoutStatus == "loading") {
     return null;
   } else {
