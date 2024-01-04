@@ -56,7 +56,7 @@ export const Loan = () => {
       order_up: "1",
       page: "1",
       page_size: "50",
-      filter_type: "dp",
+      filter_type: "active",
     },
     { refetchOnWindowFocus: false }
   );
