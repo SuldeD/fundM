@@ -54,7 +54,7 @@ export default function PopupModal({
                 <LottiePlayer animationData={animation2} loop={false} />
               </div>
             ) : (
-              iconPath.length > 0 && (
+              iconPath?.length > 0 && (
                 <Image
                   width={customIconWidth ? customIconWidth : 180}
                   height={44}
