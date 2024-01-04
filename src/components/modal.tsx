@@ -54,13 +54,15 @@ export default function PopupModal({
                 <LottiePlayer animationData={animation2} loop={false} />
               </div>
             ) : (
-              <Image
-                width={customIconWidth ? customIconWidth : 180}
-                height={44}
-                src={`${iconPath}.svg`}
-                preview={false}
-                alt="Header Logo"
-              />
+              iconPath.length > 0 && (
+                <Image
+                  width={customIconWidth ? customIconWidth : 180}
+                  height={44}
+                  src={`${iconPath}.svg`}
+                  preview={false}
+                  alt="Header Logo"
+                />
+              )
             )}
           </Row>
         </Col>
