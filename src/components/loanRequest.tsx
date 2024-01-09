@@ -10,6 +10,8 @@ export const LoanReqComponent = ({ activeSavingOrders: data }: any) => {
   const router = useRouter();
   const { setMyFundTabKey } = useAppContext();
 
+  console.log("history", data);
+
   return (
     <Row gutter={[0, 25]} justify="center">
       <Col span={24}>

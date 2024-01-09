@@ -58,6 +58,7 @@ export const ProtectedLayout = ({ children }: any) => {
 
   //mutates
   const { mutate } = api.other.notficationSearch.useMutation();
+  const { mutate: mutateChange } = api.other.notificationChange.useMutation();
 
   const mutateTerm = api.term.termOfServiceConfirm.useMutation();
 
@@ -205,7 +206,7 @@ export const ProtectedLayout = ({ children }: any) => {
 
   const notficationWarning = useMemo(() => {
     const dt = notfication?.activity_list?.find((e: any) => {
-      return e.activity_code === "lost_amount";
+      return e.activity_code === "lost_amount" && e.is_read === "1";
     });
 
     const currentDate = moment();
@@ -239,6 +240,52 @@ export const ProtectedLayout = ({ children }: any) => {
   useEffect(() => {
     setIsModalOpen(true);
   }, [statusData, accountInfo]);
+
+  const onRead = () => {
+    mutateChange(
+      {
+        activityId: notficationWarning?.activity_id,
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+        ) => {
+          if (data?.success) {
+            mutate(
+              {
+                order: "date",
+                order_up: "1",
+                page: "1",
+                page_size: `${notfication?.activity_list?.length}`,
+              },
+              {
+                onSuccess: (
+                  /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data
+                ) => {
+                  if (data?.success) {
+                    setNotfication(data);
+                  } else {
+                    error({
+                      title:
+                        "Таны аюулгүй байдлыг хангах үүднээс 15 минутаас дээш хугацаанд идэвхгүй байсан тул таны холболтыг салгалаа.",
+                      content: <div>{data?.description || null}</div>,
+                      onOk: () => signOut(),
+                    });
+                  }
+                },
+              }
+            );
+          } else {
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+            signOut();
+          }
+        },
+      }
+    );
+  };
 
   return (
     <Layout>
@@ -341,6 +388,7 @@ export const ProtectedLayout = ({ children }: any) => {
       <PopupModal
         buttonClick={() => {
           setWarning(false);
+          onRead();
         }}
         buttonText={"Хаах"}
         closableM={null}

@@ -93,7 +93,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
   const NavBars = {
     // CalculateComponent
     "/dashboard/profile": LoanReqComponent,
-    "/dashboard": LoanTakeReqComponent,
+    "/dashboard": FoundationReq,
     "/dashboard/loan": LoanReqComponent,
     "/dashboard/foundation": LoanTakeReqComponent,
     "/dashboard/myfund":
@@ -105,6 +105,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
   const renderNavbar = useMemo(() => {
     // @ts-ignore
     const Comp = NavBars[router.pathname] ?? NavBars["/dashboard/profile"];
+    console.log("comp work", activeSavingOrders, activeLoanOrders);
 
     return (
       <Comp
@@ -113,6 +114,11 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
         }
         activeLoanOrders={
           activeLoanOrders.length > 0 && activeLoanOrders.reverse()
+        }
+        active={
+          activeSavingOrders > activeLoanOrders
+            ? activeSavingOrders
+            : activeLoanOrders
         }
       />
     );
