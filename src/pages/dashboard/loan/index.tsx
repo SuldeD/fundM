@@ -18,7 +18,9 @@ import moment from "moment";
 import InputCode from "app/components/input";
 import { api } from "app/utils/api";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import LottiePlayer from "lottie-react";
+import animation from "../../../../public/check.json";
 
 export const Loan = () => {
   const termsRef: any = useRef();
@@ -1208,11 +1210,11 @@ export const Loan = () => {
                 >
                   <Col span={24}>
                     <Row justify="center">
-                      <Image
-                        width={56}
-                        src={"/images/check.svg"}
-                        preview={false}
-                        alt="Header Logo"
+                      <LottiePlayer
+                        animationData={animation}
+                        loop={false}
+                        width={180}
+                        height={44}
                       />
                     </Row>
                   </Col>
@@ -1244,11 +1246,11 @@ export const Loan = () => {
                 >
                   <Col span={24}>
                     <Row justify="center">
-                      <Image
-                        width={56}
-                        src={"/images/check.svg"}
-                        preview={false}
-                        alt="Header Logo"
+                      <LottiePlayer
+                        animationData={animation}
+                        loop={false}
+                        width={180}
+                        height={44}
                       />
                     </Row>
                   </Col>

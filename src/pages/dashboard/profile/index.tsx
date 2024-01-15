@@ -79,7 +79,9 @@ export const Profile = () => {
   );
 
   const loanReq = useMemo(() => {
-    return loanSearch?.loan_requests;
+    return loanSearch?.loan_requests.length > 0
+      ? loanSearch?.loan_requests
+      : [];
   }, [loanSearch]);
 
   let request_id = -1;
