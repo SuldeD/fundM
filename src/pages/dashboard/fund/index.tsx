@@ -235,12 +235,12 @@ export const FundHistory = () => {
           className={styles["fund-tabs-content-table-number"]}
         >
           {numberToCurrency(
-            Math.round(
+            Math.ceil(
               (loan_amount / 100) *
-                (Math.round(o.loan_rate_day * 10) / 10) *
+                (Math.round(o.loan_rate_day * 1000) / 1000) *
                 Number(o.loan_day) -
                 Number(o.loan_amount / 100) *
-                  (Math.round(o.loan_rate_day * 10) / 10) *
+                  (Math.round(o.loan_rate_day * 1000) / 1000) *
                   Number(o.loan_day) *
                   0.1 +
                 Number(o.loan_amount)
@@ -556,10 +556,12 @@ export const FundHistory = () => {
                                       }
                                     >
                                       {numberToCurrency(
-                                        Math.floor(
+                                        Math.ceil(
                                           (o.loan_amount / 100) *
-                                            (Math.round(o.loan_rate_day * 10) /
-                                              10) *
+                                            (Math.round(
+                                              o.loan_rate_day * 1000
+                                            ) /
+                                              1000) *
                                             Number(o.loan_day)
                                         )
                                       )}
@@ -583,10 +585,12 @@ export const FundHistory = () => {
                                       className={stylesDL["dloan-rate-profit"]}
                                     >
                                       {numberToCurrency(
-                                        Math.round(
+                                        Math.ceil(
                                           Number(o.loan_amount / 100) *
-                                            (Math.round(o.loan_rate_day * 10) /
-                                              10) *
+                                            (Math.round(
+                                              o.loan_rate_day * 1000
+                                            ) /
+                                              1000) *
                                             Number(o.loan_day) *
                                             0.1
                                         )
@@ -668,16 +672,18 @@ export const FundHistory = () => {
                                       }
                                     >
                                       {numberToCurrency(
-                                        Math.round(
+                                        Math.ceil(
                                           (o.loan_amount / 100) *
-                                            (Math.round(o.loan_rate_day * 10) /
-                                              10) *
+                                            (Math.round(
+                                              o.loan_rate_day * 1000
+                                            ) /
+                                              1000) *
                                             Number(o.loan_day) -
                                             Number(o.loan_amount / 100) *
                                               (Math.round(
-                                                o.loan_rate_day * 10
+                                                o.loan_rate_day * 1000
                                               ) /
-                                                10) *
+                                                1000) *
                                               Number(o.loan_day) *
                                               0.1 +
                                             Number(o.loan_amount)

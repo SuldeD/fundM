@@ -1173,6 +1173,28 @@ export const Loan = () => {
                                 form.validateFields();
                                 // setChecked(!checked);
                                 setIsModalOpen(false);
+
+                                checked
+                                  ? !accountInfo?.bank_account
+                                    ? error({
+                                        title: "Амжилтгүй",
+                                        content: (
+                                          <div>
+                                            Та хувийн мэдээлэлээ оруулах
+                                            хэрэгтэй
+                                          </div>
+                                        ),
+                                      }) &&
+                                      router.push("/dashboard/profile/bank")
+                                    : accountInfo?.bank_account?.is_verify == 0
+                                    ? error({
+                                        title: "Амжилтгүй",
+                                        content: (
+                                          <div>Та дансаа баталгаажуулна уу</div>
+                                        ),
+                                      }) && router.push("/dashboard/profile")
+                                    : setIsVerifyOpen(true)
+                                  : setIsModalOpen(true);
                               }}
                               htmlType="submit"
                             >
