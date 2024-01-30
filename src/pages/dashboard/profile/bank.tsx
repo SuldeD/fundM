@@ -131,6 +131,7 @@ export default function Bank() {
       code.join("").length == 4
     ) {
       setLoadingBtn(true);
+
       addBankVerMutate(
         {
           confirm_code: code.join(""),

@@ -525,11 +525,11 @@ export const Loan = () => {
                     >
                       <Col span={24}>
                         <Row justify="center">
-                          <Image
-                            width={56}
-                            src={"/images/check.svg"}
-                            preview={false}
-                            alt="Header Logo"
+                          <LottiePlayer
+                            animationData={animation}
+                            loop={false}
+                            width={180}
+                            height={44}
                           />
                         </Row>
                       </Col>

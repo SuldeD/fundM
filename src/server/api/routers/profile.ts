@@ -65,6 +65,7 @@ export const profileRouter = createTRPCRouter({
           request_id,
         })
       );
+
       const res2 = await fetch(
         `${process.env.BACKEND_URL}/loan/bank/account/verify`,
         {

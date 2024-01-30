@@ -2,7 +2,8 @@ import { Session } from "next-auth";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { loanServiceHeaders } from "app/contants";
-import { decrypt } from "app/utils/aes.helper";
+import { decrypt, encrypt } from "app/utils/aes.helper";
+import z from "zod";
 
 export const accountRouter = createTRPCRouter({
   accountStatus: protectedProcedure.query(async ({ ctx }) => {
@@ -56,6 +57,43 @@ export const accountRouter = createTRPCRouter({
     const accountStatus = decrypt(raw2);
     return accountStatus;
   }),
+
+  accountSignature: protectedProcedure
+    .input(
+      z.object({
+        photo: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const token = await getAccountToken(ctx);
+      const { photo, password } = input;
+
+      const body = encrypt(
+        JSON.stringify({
+          photo,
+          password,
+        })
+      );
+      const res2 = await fetch(
+        `${process.env.BACKEND_URL}/account/signature/add/image`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: body,
+          headers: {
+            ...loanServiceHeaders,
+            Cookie: token!.id_token!,
+            "Session-Token": token!.access_token!,
+            "Device-Id": ctx?.deviceId,
+          },
+        }
+      );
+      const raw2 = await res2.json();
+      const accountStatus = decrypt(raw2);
+      console.log(accountStatus);
+      return accountStatus;
+    }),
 });
 
 export const getAccountToken = async (ctx: {

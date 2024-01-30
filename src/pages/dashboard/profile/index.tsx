@@ -55,6 +55,7 @@ export const Profile = () => {
   const { mutate: forgotTransPassConfirm } =
     api.profile.forgotTransPassConfirm.useMutation();
   const { mutate: addBankVerMutate } = api.profile.addBankVerify.useMutation();
+  const { mutate: addSignature } = api.account.accountSignature.useMutation();
 
   //queries
   const { data: accountInfo, refetch: requestInfo } =
@@ -79,7 +80,7 @@ export const Profile = () => {
   );
 
   const loanReq = useMemo(() => {
-    return loanSearch?.loan_requests.length > 0
+    return loanSearch?.loan_requests?.length > 0
       ? loanSearch?.loan_requests
       : [];
   }, [loanSearch]);
@@ -94,6 +95,8 @@ export const Profile = () => {
   //states
   const [open, setOpen] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openM, setOpenM] = useState<boolean>(false);
+
   const [isOpenVerifyPass, setIsOpenVerifyPass] = useState<boolean>(false);
   const [forgotId, setForgotId] = useState<string>("");
   const [editNumber, setEditNumber] = useState<string>(
@@ -467,11 +470,12 @@ export const Profile = () => {
   function submitVerify() {
     if (imageUrl.length > 0 && request_id > -1 && code.join("").length == 4) {
       setLoadingBtn(true);
+
       addBankVerMutate(
         {
           confirm_code: code.join(""),
           photo: imageUrl,
-          request_id: request_id.toString(),
+          request_id: request_id?.toString(),
         },
         {
           onSuccess: (
@@ -511,6 +515,34 @@ export const Profile = () => {
       }
     }
   }, [accountInfo]);
+
+  function submit2(code: any) {
+    addSignature(
+      {
+        photo: imageUrl,
+        password: code?.toString(),
+      },
+      {
+        onSuccess: (
+          /** @type {{ success: any; loan_requests: import("react").SetStateAction<undefined>; description: any; }} */ data: {
+            success: any;
+            loan_requests: import("react").SetStateAction<undefined>;
+            description: any;
+          }
+        ) => {
+          if (data.success) {
+            requestInfo();
+            setOpenM(false);
+          } else {
+            error({
+              title: "Амжилтгүй",
+              content: <div>{data?.description || null}</div>,
+            });
+          }
+        },
+      }
+    );
+  }
 
   const items = [
     {
@@ -693,6 +725,43 @@ export const Profile = () => {
                 </Col>
               </Row>
             </Col>
+            <Col md={22} style={{ margin: "8px 0" }}>
+              <Row gutter={[0, 20]}>
+                <Col span={24}>
+                  <div className={styles["profile-typography-title"]}>
+                    Гарын үсэг
+                  </div>
+                </Col>
+                <div className="relative bg-[#fff] ">
+                  <Upload
+                    beforeUpload={beforeUpload}
+                    customRequest={() => {
+                      setOpenM(true);
+                    }}
+                    listType="picture"
+                    showUploadList={false}
+                    onChange={handleChange}
+                    // disabled={accountInfo?.signature?.image_id}
+                  >
+                    {accountInfo?.signature?.image_id ? (
+                      <div className="rounded-[9px] border-[2px] border-dashed p-4 text-center ">
+                        <img
+                          className="h-[80px] w-[270px] object-cover"
+                          alt="signature"
+                          src={`data:image/jpeg;base64,${accountInfo?.signature?.file_info?.data}`}
+                        />
+                      </div>
+                    ) : (
+                      <div className="rounded-[9px] border-[2px] border-dashed p-4 text-center ">
+                        <div className="w-[270px] p-[28px] ">
+                          {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                        </div>
+                      </div>
+                    )}
+                  </Upload>
+                </div>
+              </Row>
+            </Col>
             <Col span={24}>
               {statusData?.stat?.valid_dan == 0 && (
                 <Row gutter={[0, 13]} className="mb-[10px]">
@@ -859,6 +928,7 @@ export const Profile = () => {
   } else {
     return (
       <Row justify="center" className={styles["profile-main-row"]}>
+        <InputCode open={openM} onFinish={submit2} setOpen={setOpenM} />
         <Modal
           title={
             <div className={stylesL["dloan-modal-verify-title"]}>
@@ -1264,9 +1334,6 @@ export const Profile = () => {
                     className={stylesL["dloan-modal-verify-button"]}
                     disabled={reDate}
                     onClick={() => {
-                      console.log(
-                        clickedEdit ? (clickedEdit == 0 ? "0" : "1") : "asd"
-                      );
                       return code.join("").length == 4
                         ? imageUrl.length > 1
                           ? submitVerify()
