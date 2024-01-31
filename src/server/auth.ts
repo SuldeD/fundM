@@ -102,12 +102,18 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         username: { label: "Username", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
+        deviceId: { label: "DeviceId", type: "text" },
       },
       async authorize(credentials, req) {
-        const devId =
-          process.env.NODE_ENV === "production"
-            ? req.headers?.cookie?.match(/__Host-next-auth\.csrf-token=([^;]*)/)
-            : req.headers?.cookie?.match(/next-auth\.csrf-token=([^;]*)/);
+        const cookieValues = req.headers?.cookie.split(";");
+        const csrftoken = cookieValues.find(
+          (val: string) => val.indexOf("next-auth.csrf-token") > -1
+        );
+        const [key, devId] = csrftoken.split("=");
+
+        // const devId = req.headers?.cookie?.match(
+        //   /next-auth\.csrf-token=([^;]*)/
+        // );
         const body = encrypt(
           JSON.stringify({
             phone: credentials!.username,
@@ -122,7 +128,7 @@ export const authOptions: NextAuthOptions = {
           credentials: "same-origin",
           headers: {
             ...loanServiceHeaders,
-            "Device-Id": devId[1],
+            "Device-Id": devId,
           },
         });
         const cookie = res.headers.get("Set-Cookie");
@@ -140,12 +146,13 @@ export const authOptions: NextAuthOptions = {
                 ...loanServiceHeaders,
                 Cookie: cookie!,
                 "Session-Token": token!,
-                "Device-Id": devId[1],
+                "Device-Id": devId,
               },
             }
           );
 
           const raw2 = await res2.json();
+          console.log("raw2: ", raw2);
           const account = decrypt(raw2);
 
           if (res.ok && account.success) {

@@ -10,7 +10,7 @@ const config = {
   // next.config.js
 
   // ... rest of the configuration.
-  output: "standalone",
+  //output: "standalone",
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config

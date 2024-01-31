@@ -1,3 +1,4 @@
+import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes: any = [
@@ -28,11 +29,19 @@ const unprotectedRoutes: any = [
 ];
 
 async function middleware(req: NextRequest) {
-  const sessionToken =
-    process.env.NODE_ENV === "production"
-      ? req?.cookies?.get("__Secure-next-auth.session-token")
-      : req?.cookies?.get("next-auth.session-token");
-  const session = sessionToken?.value ? true : false;
+  const session = await getToken({ req });
+  // console.log("node_env: ", process.env.NODE_ENV);
+  // const cookieValues = req.headers?.cookie.split(";");
+  // const csrftoken = cookieValues.find(
+  //   (val: string) => val.indexOf("next-auth.csrf-token") > -1
+  // );
+  // const [key, sessionToken] = csrftoken.split("=");
+
+  // const sessionToken =
+  //   process.env.NODE_ENV === "production"
+  //     ? req?.cookies?.get("__Secure-next-auth.session-token")
+  //     : req?.cookies?.get("next-auth.session-token");
+  // const session = sessionToken?.value ? true : false;
 
   if (!session && protectedRoutes.includes(req.nextUrl.pathname)) {
     const absoluteURL = new URL("/", req.nextUrl.origin);
