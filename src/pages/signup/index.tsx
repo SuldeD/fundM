@@ -1,4 +1,14 @@
-import { Col, Row, Button, Form, Input, Modal, Image, Statistic } from "antd";
+import {
+  Col,
+  Row,
+  Button,
+  Form,
+  Input,
+  Modal,
+  Image,
+  Statistic,
+  Checkbox,
+} from "antd";
 import styles from "app/styles/login.module.css";
 import { useRef, useState } from "react";
 import { api } from "app/utils/api";
@@ -8,6 +18,7 @@ import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { useAppContext } from "app/context/appContext";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import PopupModal from "app/components/modal";
 
 const { error, warning, info, confirm } = Modal;
 
@@ -55,6 +66,9 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState<string>("");
   const [reDate, setReDate] = useState<boolean>(false);
+
+  const [checked, setChecked] = useState<boolean>();
+  const [warningM, setWarning] = useState<boolean>(false);
 
   const onFinishPhone = async (values: any) => {
     setLoading("loading");
@@ -410,17 +424,19 @@ export default function Signup() {
   };
 
   const showInfo2 = (values: any) => {
-    confirm({
-      content:
-        "Та өөрийн байгууллагын БАНКИН ДЭЭРХ БҮРТГЭЛТЭЙ ДАНСНЫ НЭРЭЭ шалгаад оруулна уу. /Жич: зарим тохиолдолд банкны бүртгэл дээр байгууллагын улсын бүртгэл дээр байгаа ХХК, ҮЦК гэх мэт товчлол байхгүй байдгийг анхаарна уу!!!",
-      icon: <ExclamationCircleFilled />,
-      title: "Байгууллагын нэр",
-      okText: "Үргэлжлүүлэх",
-      cancelText: "Буцах",
-      onOk() {
-        validateRegister(values);
-      },
-    });
+    !checked
+      ? confirm({
+          content:
+            "Та өөрийн байгууллагын БАНКИН ДЭЭРХ БҮРТГЭЛТЭЙ ДАНСНЫ НЭРЭЭ шалгаад оруулна уу. /Жич: зарим тохиолдолд банкны бүртгэл дээр байгууллагын улсын бүртгэл дээр байгаа ХХК, ҮЦК гэх мэт товчлол байхгүй байдгийг анхаарна уу!!!",
+          icon: <ExclamationCircleFilled />,
+          title: "Байгууллагын нэр",
+          okText: "Үргэлжлүүлэх",
+          cancelText: "Буцах",
+          onOk() {
+            validateRegister(values);
+          },
+        })
+      : setWarning(true);
   };
 
   const { data } = useSession();
@@ -433,8 +449,33 @@ export default function Signup() {
         justify="center"
         align={"middle"}
       >
+        <PopupModal
+          buttonClick={() => {
+            setWarning(false);
+          }}
+          buttonText={"Хаах"}
+          closableM={null}
+          closeModal={null}
+          customDiv={null}
+          customIconWidth={null}
+          iconPath={"json2"}
+          modalWidth={null}
+          open={warningM}
+          text={
+            <div>
+              <p className="mb-4 text-center text-[18px] font-bold text-primary">
+                Анхааруулга!
+              </p>
+              <p className="text-center text-red-500">
+                Уучилаарай Мөнгө угаах, терроризмыг санхүүжүүлэх (МУТС) тухай
+                хуулийн дагуу таныг бүртгэх боломжгүй болно.
+              </p>
+            </div>
+          }
+          textAlign={"center"}
+        />
         <Col span={20} className={styles["login-col-padding"]}>
-          {registerData.phone == "" && (
+          {registerData.phone == "" && registerData.register.length > 0 && (
             <Row justify="start" gutter={[0, 25]}>
               <Col span={24}>
                 <div className={styles["header-text"]}>
@@ -485,14 +526,35 @@ export default function Signup() {
                       <Row gutter={25}>
                         <Col span={24}>
                           <Form.Item>
-                            <Button
-                              type="primary"
-                              loading={loading == "loading"}
-                              htmlType="submit"
-                              className={`h-[40px] w-full rounded-[9px] bg-primary`}
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                width: "100%",
+                              }}
                             >
-                              Нэг удаагийн код авах
-                            </Button>
+                              {" "}
+                              <Button
+                                type="default"
+                                onClick={() =>
+                                  setRegisterData((prevData) => ({
+                                    ...prevData,
+                                    register: "",
+                                  }))
+                                }
+                                className="h-[40px] w-[45%] rounded-[9px] text-white"
+                              >
+                                Буцах
+                              </Button>
+                              <Button
+                                type="primary"
+                                loading={loading == "loading"}
+                                htmlType="submit"
+                                className={`h-[40px] w-[45%] rounded-[9px] bg-primary`}
+                              >
+                                Нэг удаагийн код авах
+                              </Button>
+                            </div>
                           </Form.Item>
                         </Col>
                       </Row>
@@ -727,193 +789,182 @@ export default function Signup() {
                 </Row>
               </motion.div>
             )}
+          {registerData.register == "" && (
+            <motion.div
+              animate={{ x: "0", opacity: 1, scale: 1 }}
+              initial={{ x: "10%", opacity: 0, scale: 0.5 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Row justify="start" gutter={[0, 25]}>
+                <Col span={24}>
+                  <div className={styles["header-text"]}>
+                    {search == "org"
+                      ? "Байгууллагын мэдээллээ оруулах"
+                      : "Өөрийн мэдээллээ оруулах"}
+                  </div>
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
+                  <Form
+                    name="basic"
+                    initialValues={{
+                      remember: true,
+                    }}
+                    className="login-form"
+                    autoComplete="off"
+                    layout="vertical"
+                    onFinish={showInfo2}
+                    // onFinish={validateRegister}
+                  >
+                    <Row gutter={[0, 13]}>
+                      <Col span={24}>
+                        <div className={styles["phone-number-label"]}>
+                          {search == "org" ? "Удирдлагын нэр" : "Овог"}
+                        </div>
+                      </Col>
+                      <Col span={24}>
+                        <Form.Item
+                          name="last_name"
+                          rules={[
+                            {
+                              required: true,
+                              message:
+                                search == "org" ? "Удирдлагын нэр!" : "Овог!",
+                            },
+                          ]}
+                        >
+                          <Input className={styles["input-style"]} />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <div className={styles["phone-number-label"]}>
+                          {search == "org" ? "Байгууллагын нэр" : "Өөрийн нэр"}
+                        </div>
+                      </Col>
+                      <Col span={24}>
+                        <Form.Item
+                          name="first_name"
+                          rules={[
+                            {
+                              required: true,
+                              message:
+                                search == "org"
+                                  ? "Байгууллагын нэр!"
+                                  : "Өөрийн нэр!",
+                            },
+                          ]}
+                        >
+                          <div className="relative">
+                            <Input
+                              className={styles["input-style"]}
+                              autoFocus
+                            />
 
-          {registerData.phone.length > 0 &&
-            registerData.tmp_user_id.length > 0 &&
-            registerData.username.length > 0 &&
-            registerData.pin_code.length > 0 &&
-            registerData.register == "" && (
-              <motion.div
-                animate={{ x: "0", opacity: 1, scale: 1 }}
-                initial={{ x: "10%", opacity: 0, scale: 0.5 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Row justify="start" gutter={[0, 25]}>
-                  <Col span={24}>
-                    <div className={styles["header-text"]}>
-                      {search == "org"
-                        ? "Байгууллагын мэдээллээ оруулах"
-                        : "Өөрийн мэдээллээ оруулах"}
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
-                    <Form
-                      name="basic"
-                      initialValues={{
-                        remember: true,
-                      }}
-                      className="login-form"
-                      autoComplete="off"
-                      layout="vertical"
-                      onFinish={showInfo2}
-                      // onFinish={validateRegister}
-                    >
-                      <Row gutter={[0, 13]}>
-                        <Col span={24}>
-                          <div className={styles["phone-number-label"]}>
-                            {search == "org" ? "Удирдлагын нэр" : "Овог"}
-                          </div>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="last_name"
-                            rules={[
-                              {
-                                required: true,
-                                message:
-                                  search == "org" ? "Удирдлагын нэр!" : "Овог!",
-                              },
-                            ]}
-                          >
-                            <Input className={styles["input-style"]} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <div className={styles["phone-number-label"]}>
-                            {search == "org"
-                              ? "Байгууллагын нэр"
-                              : "Өөрийн нэр"}
-                          </div>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="first_name"
-                            rules={[
-                              {
-                                required: true,
-                                message:
-                                  search == "org"
-                                    ? "Байгууллагын нэр!"
-                                    : "Өөрийн нэр!",
-                              },
-                            ]}
-                          >
-                            <div className="relative">
-                              <Input
-                                className={styles["input-style"]}
-                                autoFocus
+                            <div className="absolute right-2 top-[15px]">
+                              <Image
+                                width={25}
+                                onClick={() => {
+                                  showInfo();
+                                }}
+                                src={"/images/info-icon.png"}
+                                preview={false}
+                                className="cursor-pointer"
+                                alt="Information"
                               />
-
-                              <div className="absolute right-2 top-[15px]">
-                                <Image
-                                  width={25}
-                                  onClick={() => {
-                                    showInfo();
-                                  }}
-                                  src={"/images/info-icon.png"}
-                                  preview={false}
-                                  className="cursor-pointer"
-                                  alt="Information"
-                                />
-                              </div>
                             </div>
-                          </Form.Item>
-                        </Col>
+                          </div>
+                        </Form.Item>
+                      </Col>
 
-                        <Col span={24}>
-                          <div className={styles["phone-number-label"]}>
-                            {search == "org"
-                              ? "Байгууллагын регистр"
-                              : "Регистрийн дугаар"}
+                      <Col span={24}>
+                        <div className={styles["phone-number-label"]}>
+                          {search == "org"
+                            ? "Байгууллагын регистр"
+                            : "Регистрийн дугаар"}
+                        </div>
+                      </Col>
+                      <Col span={24}>
+                        <Form.Item
+                          name="register"
+                          rules={[
+                            {
+                              required: true,
+                              message:
+                                search == "org"
+                                  ? "Байгууллагын регистр!"
+                                  : "Регистрийн дугаар!",
+                            },
+                          ]}
+                        >
+                          <Input className={styles["input-style"]} />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <div className={styles["phone-number-label"]}>
+                          {search == "org"
+                            ? " Байгууллагын имэйл хаяг"
+                            : "Имэйл хаяг"}
+                        </div>
+                      </Col>
+                      <Col span={24}>
+                        <Form.Item
+                          name="email"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Имэйл хаяг!",
+                            },
+                          ]}
+                        >
+                          <Input className={styles["input-style"]} />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <Row justify="start">
+                          <p className="text-white">
+                            Та улс төрийн нөлөө бүхий этгээд тэдгээртэй
+                            хамараалтай эсэх
+                          </p>
+                          <div className="mb-8 mt-2 flex gap-16 font-lato">
+                            <Checkbox
+                              checked={checked}
+                              onChange={() => setChecked(true)}
+                              className="border-black font-lato text-[20px] font-bold text-white"
+                            >
+                              Тийм
+                            </Checkbox>
+                            <Checkbox
+                              checked={checked === false}
+                              onChange={() => setChecked(false)}
+                              className="font-lato text-[20px] font-bold text-white"
+                            >
+                              Үгүй
+                            </Checkbox>
                           </div>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="register"
-                            rules={[
-                              {
-                                required: true,
-                                message:
-                                  search == "org"
-                                    ? "Байгууллагын регистр!"
-                                    : "Регистрийн дугаар!",
-                              },
-                            ]}
-                          >
-                            <Input className={styles["input-style"]} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                          <div className={styles["phone-number-label"]}>
-                            {search == "org"
-                              ? " Байгууллагын имэйл хаяг"
-                              : "Имэйл хаяг"}
-                          </div>
-                        </Col>
-                        <Col span={24}>
-                          <Form.Item
-                            name="email"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Имэйл хаяг!",
-                              },
-                            ]}
-                          >
-                            <Input className={styles["input-style"]} />
-                          </Form.Item>
-                        </Col>
-                        {/* <Col span={24}>
-                       <Row justify="start">
-                         <p className="text-white">
-                           Та улс төрийн нөлөө бүхий этгээд мөн эсэх
-                         </p>
-                         <div className="mb-8 mt-2 flex gap-16 font-lato">
-                           <Checkbox className="border-black font-lato text-[20px] font-bold text-white">
-                             Тийм
-                           </Checkbox>
-                           <Checkbox className="font-lato text-[20px] font-bold text-white">
-                             Үгүй
-                           </Checkbox>
-                         </div>
-                       </Row>
-                     </Col> */}
-                        <Col span={24}>
-                          <Row gutter={25}>
-                            <Col span={24}>
-                              <div className="flex w-full justify-between">
+                        </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Row gutter={25}>
+                          <Col span={24}>
+                            <div className="flex w-full justify-between">
+                              <Form.Item className="w-[100%]">
                                 <Button
-                                  type="default"
-                                  onClick={() =>
-                                    setRegisterData((prevData) => ({
-                                      ...prevData,
-                                      pin_code: "",
-                                    }))
-                                  }
-                                  className="h-[40px] w-[45%] rounded-[9px] text-white"
+                                  type="primary"
+                                  htmlType="submit"
+                                  className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
                                 >
-                                  Буцах
+                                  Үргэлжлүүлэх
                                 </Button>
-
-                                <Form.Item className="w-[45%]">
-                                  <Button
-                                    type="primary"
-                                    htmlType="submit"
-                                    className={`h-[40px] w-full rounded-[9px] bg-primary font-raleway`}
-                                  >
-                                    Үргэлжлүүлэх
-                                  </Button>
-                                </Form.Item>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Col>
-                </Row>
-              </motion.div>
-            )}
+                              </Form.Item>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+              </Row>
+            </motion.div>
+          )}
           {registerData.phone.length > 0 &&
             registerData.tmp_user_id.length > 0 &&
             registerData.username.length > 0 &&

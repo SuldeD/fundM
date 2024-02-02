@@ -7,6 +7,9 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: false,
+  // compiler: {
+  //   removeConsole: true,
+  // },
   // next.config.js
 
   // ... rest of the configuration.

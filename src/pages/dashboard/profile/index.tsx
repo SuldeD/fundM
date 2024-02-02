@@ -27,11 +27,11 @@ import { useAppContext } from "app/context/appContext";
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
+    message.error("Та зөвхөн JPG болон PNG зураг оруулах боломжтой!");
   }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
+    message.error("Таны оруулах зураг 2MB - аас ихгүй байхыг анхаарна уу!");
   }
 
   return isJpgOrPng && isLt2M;
@@ -116,6 +116,7 @@ export const Profile = () => {
   const [formToken, setFormToken] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenVerify, setOpenVerify] = useState<boolean>(false);
+  const [preview, setOpenPreview] = useState<boolean>(false);
   const [reDate, setReDate] = useState<boolean>(false);
   const [check, setCheck] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
@@ -533,6 +534,7 @@ export const Profile = () => {
           if (data.success) {
             requestInfo();
             setOpenM(false);
+            setOpenPreview(false);
           } else {
             error({
               title: "Амжилтгүй",
@@ -733,32 +735,33 @@ export const Profile = () => {
                   </div>
                 </Col>
                 <div className="relative bg-[#fff] ">
-                  <Upload
-                    beforeUpload={beforeUpload}
-                    customRequest={() => {
-                      setOpenM(true);
-                    }}
-                    listType="picture"
-                    showUploadList={false}
-                    onChange={handleChange}
-                    // disabled={accountInfo?.signature?.image_id}
-                  >
-                    {accountInfo?.signature?.image_id ? (
-                      <div className="rounded-[9px] border-[2px] border-dashed p-4 text-center ">
-                        <img
-                          className="h-[80px] w-[270px] object-cover"
-                          alt="signature"
-                          src={`data:image/jpeg;base64,${accountInfo?.signature?.file_info?.data}`}
-                        />
-                      </div>
-                    ) : (
+                  {accountInfo?.signature?.image_id ? (
+                    <div className="rounded-[9px] border-[2px] border-dashed p-4 text-center">
+                      <img
+                        onClick={() => setOpenPreview(true)}
+                        className="h-[80px] w-[270px] cursor-pointer object-cover"
+                        alt="signature"
+                        src={`data:image/jpeg;base64,${accountInfo?.signature?.file_info?.data}`}
+                      />
+                    </div>
+                  ) : (
+                    <Upload
+                      beforeUpload={beforeUpload}
+                      customRequest={() => {
+                        setOpenM(true);
+                      }}
+                      listType="picture"
+                      showUploadList={false}
+                      onChange={handleChange}
+                      // disabled={accountInfo?.signature?.image_id}
+                    >
                       <div className="rounded-[9px] border-[2px] border-dashed p-4 text-center ">
                         <div className="w-[270px] p-[28px] ">
                           {loading ? <LoadingOutlined /> : <PlusOutlined />}
                         </div>
                       </div>
-                    )}
-                  </Upload>
+                    </Upload>
+                  )}
                 </div>
               </Row>
             </Col>
@@ -1418,6 +1421,60 @@ export const Profile = () => {
                     Үргэлжлүүлэх
                   </Button>
                 </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Modal>
+
+        <Modal
+          centered
+          width={478}
+          title={
+            <div className={stylesL["dloan-modal-verify-title"]}>
+              <Image
+                width="40%"
+                src="/contract.svg"
+                preview={false}
+                alt="emailphone"
+              />
+            </div>
+          }
+          closable={true}
+          onCancel={() => setOpenPreview(false)}
+          open={preview}
+          footer={null}
+        >
+          <Row justify="center">
+            <div className="mb-4 text-center font-raleway text-[18px] font-bold">
+              Гарын үсэг, тамга оруулах
+            </div>
+            <Col span={20}>
+              <Row justify="center" gutter={[0, 20]}>
+                <div className="rounded-[9px] border-[2px] border-dashed p-4 text-center">
+                  <img
+                    className="h-[140px] w-[320px] object-cover"
+                    alt="signature"
+                    src={`data:image/jpeg;base64,${accountInfo?.signature?.file_info?.data}`}
+                  />
+                </div>
+
+                <Upload
+                  beforeUpload={beforeUpload}
+                  customRequest={() => {
+                    setOpenM(true);
+                  }}
+                  listType="picture"
+                  showUploadList={false}
+                  onChange={handleChange}
+                  className="mt-[4px]"
+                >
+                  <Button
+                    type="primary"
+                    className={`${stylesL["dloan-modal-verify-button"]} px-[34px]`}
+                  >
+                    Засварлах
+                  </Button>
+                </Upload>
               </Row>
             </Col>
           </Row>

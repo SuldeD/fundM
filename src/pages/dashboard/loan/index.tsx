@@ -293,6 +293,8 @@ export const Loan = () => {
     }
   }
 
+  console.log(dataTable, "dataTable");
+
   if (layoutStatus == "loading") {
     return null;
   } else {
@@ -835,7 +837,9 @@ export const Loan = () => {
                               {dataTable &&
                                 typeof activeDuration == "number" &&
                                 dataTable[activeDuration]?.duration}{" "}
-                              хоног
+                              {dataTable[activeDuration]?.duration_type === "M"
+                                ? "сар"
+                                : "хоног"}
                             </div>
                           </Col>
                         </Row>
@@ -854,7 +858,10 @@ export const Loan = () => {
                                 moment()
                                   .add(
                                     dataTable[activeDuration]?.duration,
-                                    "days"
+                                    dataTable[activeDuration]?.duration_type ===
+                                      "M"
+                                      ? "months"
+                                      : "days"
                                   )
                                   .calendar()}
                             </div>
@@ -1012,7 +1019,9 @@ export const Loan = () => {
                                 typeof activeDuration == "number" &&
                                 moment()
                                   .add(
-                                    dataTable[activeDuration]?.duration,
+                                    dataTable[activeDuration]?.type === "M"
+                                      ? dataTable[activeDuration]?.duration * 30
+                                      : dataTable[activeDuration]?.duration,
                                     "days"
                                   )
                                   .calendar()}
