@@ -127,6 +127,8 @@ export const Loan = () => {
     return getContent?.page_html;
   }, [getContent]);
 
+  const date = new Date();
+
   //function
   function submit(code: any) {
     setLoadings(true);
@@ -137,11 +139,19 @@ export const Loan = () => {
             account_name: accountInfo?.bank_account?.account_name,
             amount: inputValue.toString(),
             description: "test loan",
+            loan_duration_month:
+              dataTable && dataTable[activeDuration]?.duration_type === "M"
+                ? Number(dataTable[activeDuration]?.duration).toString()
+                : "0",
             loan_duration_day:
-              dataTable &&
-              Number(dataTable[activeDuration]?.duration).toString(),
-            loan_duration_month: "day",
-            pay_day: "0",
+              dataTable && dataTable[activeDuration]?.duration_type === "D"
+                ? Number(dataTable[activeDuration]?.duration).toString()
+                : "0",
+            pay_day: (dataTable &&
+            dataTable[activeDuration]?.duration_type === "M"
+              ? date.getDate()
+              : "0"
+            ).toString(),
             account_num: accountInfo?.bank_account?.account_num,
             bank_id: accountInfo?.bank_account?.BankId,
           },
@@ -182,15 +192,22 @@ export const Loan = () => {
             product_id: (loan?.product_id).toString(),
             loan_amount: inputValue.toString(),
             repayment_amount: (
-              Number(dataTable[activeDuration]?.duration) *
+              (dataTable[activeDuration]?.duration_type === "M"
+                ? Number(dataTable[activeDuration]?.duration * 30)
+                : Number(dataTable[activeDuration]?.duration)) *
                 rate *
                 (inputValue / 100) +
               inputValue +
-              Number(dataTable[activeDuration]?.duration) *
+              (dataTable[activeDuration]?.duration_type === "M"
+                ? Number(dataTable[activeDuration]?.duration * 30)
+                : Number(dataTable[activeDuration]?.duration)) *
                 Number(dataTable[activeDuration]?.fee_percent) *
                 (inputValue / 100)
             ).toString(),
-            loan_month: dataTable[activeDuration].duration,
+            loan_month: (dataTable[activeDuration]?.duration_type === "M"
+              ? Number(dataTable[activeDuration]?.duration * 30)
+              : Number(dataTable[activeDuration]?.duration)
+            ).toString(),
           },
           {
             onSuccess: (data: {
@@ -292,8 +309,6 @@ export const Loan = () => {
       });
     }
   }
-
-  console.log(dataTable, "dataTable");
 
   if (layoutStatus == "loading") {
     return null;
@@ -763,9 +778,15 @@ export const Loan = () => {
                                   Math.ceil(
                                     (inputValue / 100) *
                                       rate *
-                                      Number(
-                                        dataTable[activeDuration]?.duration
-                                      )
+                                      (dataTable[activeDuration]
+                                        ?.duration_type === "M"
+                                        ? Number(
+                                            dataTable[activeDuration]
+                                              ?.duration * 30
+                                          )
+                                        : Number(
+                                            dataTable[activeDuration]?.duration
+                                          ))
                                   )
                                 )}
                             </div>
@@ -810,9 +831,15 @@ export const Loan = () => {
                                   Math.ceil(
                                     (inputValue / 100) *
                                       rate *
-                                      Number(
-                                        dataTable[activeDuration]?.duration
-                                      ) +
+                                      (dataTable[activeDuration]
+                                        ?.duration_type === "M"
+                                        ? Number(
+                                            dataTable[activeDuration]
+                                              ?.duration * 30
+                                          )
+                                        : Number(
+                                            dataTable[activeDuration]?.duration
+                                          )) +
                                       inputValue +
                                       (inputValue / 100) *
                                         Number(
@@ -927,9 +954,15 @@ export const Loan = () => {
                                   Math.round(
                                     (inputValue / 100) *
                                       rate *
-                                      Number(
-                                        dataTable[activeDuration]?.duration
-                                      )
+                                      (dataTable[activeDuration]
+                                        ?.duration_type === "M"
+                                        ? Number(
+                                            dataTable[activeDuration]
+                                              ?.duration * 30
+                                          )
+                                        : Number(
+                                            dataTable[activeDuration]?.duration
+                                          ))
                                   )
                                 )}
                             </div>
@@ -974,9 +1007,15 @@ export const Loan = () => {
                                   Math.ceil(
                                     (inputValue / 100) *
                                       rate *
-                                      Number(
-                                        dataTable[activeDuration]?.duration
-                                      ) +
+                                      (dataTable[activeDuration]
+                                        ?.duration_type === "M"
+                                        ? Number(
+                                            dataTable[activeDuration]
+                                              ?.duration * 30
+                                          )
+                                        : Number(
+                                            dataTable[activeDuration]?.duration
+                                          )) +
                                       inputValue +
                                       (inputValue / 100) *
                                         Number(
@@ -1001,7 +1040,9 @@ export const Loan = () => {
                               {dataTable &&
                                 typeof activeDuration == "number" &&
                                 dataTable[activeDuration]?.duration}{" "}
-                              хоног
+                              {dataTable[activeDuration]?.duration_type === "M"
+                                ? "сар"
+                                : "хоног"}
                             </div>
                           </Col>
                         </Row>
@@ -1019,10 +1060,11 @@ export const Loan = () => {
                                 typeof activeDuration == "number" &&
                                 moment()
                                   .add(
-                                    dataTable[activeDuration]?.type === "M"
-                                      ? dataTable[activeDuration]?.duration * 30
-                                      : dataTable[activeDuration]?.duration,
-                                    "days"
+                                    dataTable[activeDuration]?.duration,
+                                    dataTable[activeDuration]?.duration_type ===
+                                      "M"
+                                      ? "months"
+                                      : "days"
                                   )
                                   .calendar()}
                             </div>
@@ -1298,7 +1340,10 @@ export const Loan = () => {
                           // @ts-ignore
                           dataTable[activeDuration]?.duration}
                       </span>{" "}
-                      хоногийн хугацаатай{" "}
+                      {dataTable[activeDuration]?.duration_type === "M"
+                        ? "сарын"
+                        : "хоногийн"}{" "}
+                      хугацаатай{" "}
                       <span className={styles["dloan-modal-complete-number"]}>
                         {loan?.loan_rate_month} %
                       </span>{" "}

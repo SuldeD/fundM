@@ -67,7 +67,7 @@ export const FooterComponent = () => {
             align="middle"
             className={style["footer-copyright"]}
           >
-            Bichil Globus © 2023 by Infinity Solutions
+            Bichil Globus © 2024 by Infinity Solutions
           </Row>
         </Col>
       </Row>

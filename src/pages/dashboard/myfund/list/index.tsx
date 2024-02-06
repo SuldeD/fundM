@@ -444,7 +444,11 @@ export const List = () => {
                                       Math.ceil(
                                         Number(o.loan_amount / 100) *
                                           Number(o.rate_day) *
-                                          Number(o.duration)
+                                          Number(
+                                            o.duration_type === "M"
+                                              ? o.duration * 30
+                                              : o.duration
+                                          )
                                       )
                                     )}
                                   </div>
@@ -470,7 +474,11 @@ export const List = () => {
                                       Math.round(
                                         Number(o.loan_amount / 100) *
                                           Number(o.rate_day) *
-                                          Number(o.duration) *
+                                          Number(
+                                            o.duration_type === "M"
+                                              ? o.duration * 30
+                                              : o.duration
+                                          ) *
                                           0.1
                                       )
                                     )}
@@ -501,7 +509,11 @@ export const List = () => {
                                       Math.round(
                                         Number(o.loan_amount / 100) *
                                           Number(o.rate_day) *
-                                          Number(o.duration)
+                                          Number(
+                                            o.duration_type === "M"
+                                              ? o.duration * 30
+                                              : o.duration
+                                          )
                                       )
                                     )}
                                   </div>
@@ -529,7 +541,11 @@ export const List = () => {
                                       Math.ceil(
                                         (o.loan_amount / 100) *
                                           o.rate_day *
-                                          Number(o.duration) +
+                                          Number(
+                                            o.duration_type === "M"
+                                              ? o.duration * 30
+                                              : o.duration
+                                          ) +
                                           Number(o.loan_amount) +
                                           (o.loan_amount / 100) *
                                             Number(o.fee_percent)
@@ -560,10 +576,18 @@ export const List = () => {
                                       Math.round(
                                         (o.loan_amount / 100) *
                                           Number(o.rate_day) *
-                                          Number(o.duration) -
+                                          Number(
+                                            o.duration_type === "M"
+                                              ? o.duration * 30
+                                              : o.duration
+                                          ) -
                                           Number(o.loan_amount / 100) *
                                             Number(o.rate_day) *
-                                            Number(o.duration) *
+                                            Number(
+                                              o.duration_type === "M"
+                                                ? o.duration * 30
+                                                : o.duration
+                                            ) *
                                             0.1 +
                                           Number(o.loan_amount)
                                       )
@@ -600,7 +624,8 @@ export const List = () => {
                                 <div
                                   className={stylesDL["dloan-detail-maxValue"]}
                                 >
-                                  {o.duration} хоног
+                                  {o.duration}{" "}
+                                  {o.duration_type === "M" ? "сар" : "хоног"}
                                 </div>
                               </Col>
                             </Row>
@@ -650,7 +675,7 @@ export const List = () => {
                                       stylesDL["dloan-detail-maxValue"]
                                     }
                                   >
-                                    {o.create_date.slice(0, 10)}
+                                    {o.expire_date.slice(0, 10)}
                                   </div>
                                 </Col>
                               </Row>

@@ -3,31 +3,32 @@ import styles from "../styles/modal.module.css";
 import LottiePlayer from "lottie-react";
 import animation from "../../public/check.json";
 import animation2 from "../../public/warn.json";
+import { MouseEventHandler } from "react";
 
 export default function PopupModal({
-  // @ts-ignore
   open,
-  // @ts-ignore
   closeModal,
-  // @ts-ignore
   modalWidth,
-  // @ts-ignore
   text,
-  // @ts-ignore
   buttonText,
-  // @ts-ignore
   iconPath,
-  // @ts-ignore
   customIconWidth,
-  // @ts-ignore
   customDiv,
-  // @ts-ignore
-  // @ts-ignore
   closableM,
-  // @ts-ignore
   buttonClick,
-  // @ts-ignore
   textAlign,
+}: {
+  open: boolean;
+  closeModal: any;
+  modalWidth: any;
+  text: any;
+  buttonText: string;
+  iconPath: string;
+  customIconWidth: any;
+  customDiv: any;
+  closableM: any;
+  buttonClick: MouseEventHandler<HTMLElement>;
+  textAlign: string;
 }) {
   return (
     <Modal

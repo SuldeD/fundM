@@ -714,7 +714,7 @@ export const Profile = () => {
                         disabled
                         value={accountInfo?.account?.email}
                         defaultValue={accountInfo?.account?.email}
-                        className="w-[160px] overflow-hidden border-b border-[#000] bg-[#fff] pe-[25px] ps-[5px]"
+                        className="min-w-[220px] overflow-hidden border-b border-[#000] bg-[#fff] pe-[25px] ps-[5px]"
                       />
                       <img
                         className="absolute right-1 top-0 w-[20px] cursor-pointer"

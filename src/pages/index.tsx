@@ -66,11 +66,11 @@ export const Home = () => {
       <div>
         <div className="bg-black bg-[url('/images/about.png')] bg-cover bg-top bg-no-repeat py-[120px]">
           <div className="container mx-auto flex justify-between px-[20px]">
-            <div className="w-full md:m-[50px]  lg:w-[50%]">
-              <div className="text-[2.375rem] font-bold text-white">
+            <div className="w-full md:m-[50px] lg:w-[50%]">
+              <div className="font-lato text-[2.375rem] font-bold text-white">
                 FundMe-тэй хамт бизнесийн илүү их амжилтанд хүрээрэй
               </div>
-              <ul className="my-[30px] ms-5 list-disc text-[0.875rem] font-normal leading-9 text-white">
+              <ul className="my-[30px] ms-5 list-disc font-lato text-[0.875rem] font-normal leading-9 text-white">
                 <li>Монголын тэргүүлэгч апп</li>
                 <li>Зээлийн асуудалгүй шийдлүүд</li>
                 <li>Танд хамгийн хэрэгтэй үед нь дэмжиж ажиллана</li>
