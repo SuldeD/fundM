@@ -18,17 +18,17 @@ export default function PopupModal({
   buttonClick,
   textAlign,
 }: {
-  open: boolean;
+  open: any;
   closeModal: any;
   modalWidth: any;
   text: any;
-  buttonText: string;
-  iconPath: string;
+  buttonText: any;
+  iconPath: any;
   customIconWidth: any;
   customDiv: any;
   closableM: any;
-  buttonClick: MouseEventHandler<HTMLElement>;
-  textAlign: string;
+  buttonClick: any;
+  textAlign: any;
 }) {
   return (
     <Modal
