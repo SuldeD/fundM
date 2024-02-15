@@ -41,13 +41,17 @@ export const FooterComponent = () => {
               <Col>
                 <div className={style["title-text"]}>Байрлал</div>
                 <div className={style["footer-text"]}>
-                  Улаанбаатар хот, Хан-Уул дүүрэг,
+                Улаанбаатар хот, Сүхбаатар дүүрэг,
                 </div>
                 <div className={style["footer-text"]}>
-                  17-р хороо Их монгол улсын
+                8-р хороо Бага тойруу /14200/,
+                </div>
+                
+                <div className={style["footer-text"]}>
+                Б. Алтангэрэлийн гудамж-5,
                 </div>
                 <div className={style["footer-text"]}>
-                  гудамж 301 байр 112 тоот
+                Сити центр 7 давхар 701 тоот
                 </div>
                 <Image
                   width={232}
