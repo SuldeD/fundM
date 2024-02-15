@@ -32,7 +32,7 @@ export const FooterComponent = () => {
                 <div className={style["footer-text"]}>72229911</div>
                 <div className={style["footer-text"]}>Даваа-Баасан :</div>
                 <div className={style["footer-text"]}>
-                  Өглөө 9:00 - Орой 18:00
+                  Өглөө 9:30 - Орой 17:30
                 </div>
                 <div className={style["footer-text"]}>Бямба-Ням : Амарна</div>
               </Col>

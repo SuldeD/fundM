@@ -1,7 +1,7 @@
 import { RightOutlined } from "@ant-design/icons";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export const Home = () => {
   const router = useRouter();
@@ -13,21 +13,21 @@ export const Home = () => {
       money: "2,249,378.75 ₮",
       detail:
         "Богино хугацааны эх үүсвэртээ өгөөж хүртэн, санхүүгийн эрэлт хэрэгцээгээ хангах боломжтой.",
-      image: "/images/write-lg.svg",
+      image: "/root/found.svg",
     },
     {
       title: "ЗЭЭЛ АВАХ",
       money: "272,532,055.00 ₮",
       detail:
         "Зээлийн эрхийн хэмжээгээ нэг удаа тогтоолгон богино хугацааны санхүүгийн хэрэгцээгээ хурдан шуурхай, шимтгэл бага байдлаар хангах боломжтой.",
-      image: "/images/finance-lg.svg",
+      image: "/root/loan.svg",
     },
     {
       title: "ЗАРЛАСАН ХҮҮ",
       money: "1.92 %",
       detail:
         "Тухайн өдрийн санхүүжилт өгөх болон зээл олгох зарласан хүү нь эрэлт хэрэгцээн дээр тулгуурлан тогтоодог.",
-      image: "/images/zoos-lg.svg",
+      image: "/root/rate.svg",
     },
   ];
 
@@ -35,27 +35,27 @@ export const Home = () => {
     {
       id: "01",
       title: "Бүртгүүлэх",
-      image: "/images/register.svg",
+      image: "/root/loan-reg.svg",
     },
     {
       id: "02",
       title: "Баталгаажуулах",
-      image: "/images/verification.svg",
+      image: "/root/loan-ver.svg",
     },
     {
       id: "03",
       title: "Хүсэлт илгээх",
-      image: "/images/loan.svg",
+      image: "/root/loan-wait.svg",
     },
     {
       id: "04",
       title: "Гэрээ байгуулах",
-      image: "/images/generate.svg",
+      image: "/root/loan-cont.svg",
     },
     {
       id: "05",
       title: "Амжилттай",
-      image: "/images/repayment.svg",
+      image: "/root/loan-done.svg",
     },
   ];
 
@@ -66,11 +66,11 @@ export const Home = () => {
       <div>
         <div className="bg-black bg-[url('/images/about.png')] bg-cover bg-top bg-no-repeat py-[120px]">
           <div className="container mx-auto flex justify-between px-[20px]">
-            <div className="w-full md:m-[50px] lg:w-[50%]">
-              <div className="font-lato text-[2.375rem] font-bold text-white">
-                FundMe-тэй хамт бизнесийн илүү их амжилтанд хүрээрэй
+            <div className="flex w-full items-center md:m-[50px] lg:w-[50%]">
+              <div className="font-lato  text-[2.375rem] font-bold text-white">
+                Байгууллагуудын богино хугацаат санхүүгийн ухаалаг шийдэл.
               </div>
-              <ul className="my-[30px] ms-5 list-disc font-lato text-[0.875rem] font-normal leading-9 text-white">
+              {/* <ul className="my-[30px] ms-5 list-disc font-lato text-[0.875rem] font-normal leading-9 text-white">
                 <li>Монголын тэргүүлэгч апп</li>
                 <li>Зээлийн асуудалгүй шийдлүүд</li>
                 <li>Танд хамгийн хэрэгтэй үед нь дэмжиж ажиллана</li>
@@ -80,7 +80,7 @@ export const Home = () => {
                   <span className="ms-7">Дэлгэрэнгүй</span>
                   {<RightOutlined className="ms-2 mt-[1px] " />}
                 </button>
-              </Link>
+              </Link> */}
             </div>
 
             <div className="hidden lg:flex">
@@ -102,23 +102,27 @@ export const Home = () => {
           </div>
         </div>
 
-        <div className="container mx-auto flex-wrap justify-center gap-[30px] py-[100px] lg:flex">
+        <div className="container mx-auto flex-wrap justify-center gap-[30px] py-24 lg:flex">
           {openInto.map((el, idx) => (
             <div
               key={idx}
-              className="mb-[20px] h-[410px] w-full rounded-[30px] bg-[#fff] px-[60px] py-[30px] shadow-custom lg:max-w-[374px]"
+              className="mb-[20px] min-h-[410px] w-full rounded-[30px] border bg-[#fff] px-[50px] py-[30px] shadow-sm lg:max-w-[374px]"
             >
-              <img src={el.image} className="mx-auto" />
+              <Image
+                className="mx-auto"
+                src={el.image}
+                alt="Picture of the detail"
+                width={150}
+                height={150}
+              />
               <div className="mt-[23px]">
                 <div className="pb-[8px] text-center text-[22px] font-bold leading-[27px] text-[#1a2155]">
                   {el.title}
                 </div>
-
                 <div className="mb-[20px] pb-[15px] text-center text-[30px] font-semibold text-primary">
                   {el.money}
                 </div>
-
-                <div className="text-center text-[16px] font-normal leading-[20px] text-detail">
+                <div className="text-center text-sm text-gray-400">
                   {el.detail}
                 </div>
               </div>
@@ -128,7 +132,7 @@ export const Home = () => {
         <div className="relative">
           <div className=" bg-black bg-[url('/images/fundNow-bg.png')] bg-cover bg-top bg-no-repeat py-[100px]">
             <div className="container mx-auto justify-between px-[20px] md:flex">
-              <div className="max-w-3xl items-center text-[22px] font-bold leading-[27px] text-[#fff]">
+              {/* <div className="max-w-3xl items-center text-[22px] font-bold leading-[27px] text-[#fff]">
                 ТА FUNDME-ЭЭС ХАМГИЙН БАГА ХҮҮТЭЙ 50,000₮ - 100,000,000₮ ЗЭЭЛЭХ
                 БОЛОМЖТОЙ.
               </div>
@@ -137,7 +141,7 @@ export const Home = () => {
                 className="mt-[20px] h-[44px] w-full rounded-[9px] bg-primary text-[14px] font-bold text-[#fff] hover:bg-sky-900 md:w-[220px]"
               >
                 ХАЙХ
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -146,24 +150,30 @@ export const Home = () => {
             FUNDME хэрхэн ажилладаг вэ?
           </div>
 
-          <div className="mx-auto mt-[75px] justify-center gap-[30px] px-[30px] lg:flex ">
+          <div className="mx-auto mt-[75px] justify-center gap-[30px] px-[30px] lg:flex">
             {workerDiagram.map((el, idx) => (
               <div
                 key={idx}
-                className="relative mb-[20px] h-[300px] w-[100%] min-w-[180px] rounded-[30px] bg-[#fff] p-[32px] shadow-custom lg:max-w-[230px]"
+                className="relative mb-[20px] h-[280px] w-[100%] min-w-[180px] items-center justify-center rounded-[30px] border  bg-white p-[32px] shadow-sm lg:max-w-[230px]"
               >
                 {workerDiagram.length - 1 != idx && (
                   <div className="absolute right-[-62.5px] top-1/2 z-10 hidden lg:inline">
-                    <img width="100%" src="/images/arrow.svg" />
+                    <img width="50%" src="/images/arrow.svg" />
                   </div>
                 )}
-                <div className=" flex justify-center pb-[10px] text-[40px] font-bold leading-[48px] text-primary">
+                <div className=" flex justify-center text-[40px] font-bold leading-[48px] text-primary">
                   {el.id}
                 </div>
-                <div className="leding-[24px] my-[20px] text-center text-[20px] font-medium text-[#000]">
+                <div className="mb-8 mt-6 text-center text-xl font-medium text-black">
                   {el.title}
                 </div>
-                <img height={86} src={el.image} className="mx-auto" />
+                <Image
+                  className="mx-auto mt-8 "
+                  src={el.image}
+                  alt="Picture of the detail"
+                  width={50}
+                  height={62}
+                />
               </div>
             ))}
           </div>
