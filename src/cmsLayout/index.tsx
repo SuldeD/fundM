@@ -89,7 +89,7 @@ export const ProtectedLayout = ({ children }: any) => {
     },
     {
       key: "/dashboard/myfund",
-      label: <Link href="/dashboard/myfund">Миний хүсэлтүүд</Link>,
+      label: <Link href="/dashboard/myfund">Миний захиалгууд</Link>,
       icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
     },
     {
@@ -99,12 +99,12 @@ export const ProtectedLayout = ({ children }: any) => {
     },
     {
       key: "/dashboard/loan",
-      label: <Link href="/dashboard/loan">Зээл авах хүсэлт</Link>,
+      label: <Link href="/dashboard/loan">Зээл авах захиалга</Link>,
       icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
     },
     {
       key: "/dashboard/foundation",
-      label: <Link href="/dashboard/foundation">Санхүүжилт өгөх хүсэлт</Link>,
+      label: <Link href="/dashboard/foundation">Санхүүжилт өгөх захиалга</Link>,
       icon: <img src="/images/give-money.png" style={{ width: 22 }} />,
     },
   ];

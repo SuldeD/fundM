@@ -189,7 +189,7 @@ export const MyFund = () => {
       ),
     },
     {
-      title: "Зээлийн хэмжээ",
+      title: "Зээлийн дүн",
       dataIndex: "loan_amount",
       key: "loan_amount",
       align: "center",
@@ -209,11 +209,11 @@ export const MyFund = () => {
       render: (product_type_code: string) =>
         product_type_code == "saving" ? (
           <div className={stylesList["dashboard-list-item-type-2"]}>
-            Өгөх хүсэлт
+            Өгөх захиалга
           </div>
         ) : (
           <div className={stylesList["dashboard-list-item-type-1"]}>
-            Авах хүсэлт
+            Авах захиалга
           </div>
         ),
     },
@@ -275,7 +275,7 @@ export const MyFund = () => {
       ),
     },
     {
-      title: "Санхүүжилтийн хэмжээ",
+      title: "Санхүүжилтийн дүн",
       dataIndex: "loan_amount",
       key: "loan_amount",
       align: "center",
@@ -295,11 +295,11 @@ export const MyFund = () => {
       render: (product_type_code: string) =>
         product_type_code == "saving" ? (
           <div className={stylesList["dashboard-list-item-type-2"]}>
-            Өгөх хүсэлт
+            Өгөх захиалга
           </div>
         ) : (
           <div className={stylesList["dashboard-list-item-type-1"]}>
-            Авах хүсэлт
+            Авах захиалга
           </div>
         ),
     },
@@ -352,7 +352,7 @@ export const MyFund = () => {
   const items = [
     {
       key: "2",
-      label: "Санхүүжилт өгөх хүсэлт",
+      label: "Санхүүжилт өгөх захиалга",
       children: (
         <Row gutter={[0, 30]} justify="center">
           <Col span={24}>
@@ -363,7 +363,7 @@ export const MyFund = () => {
             >
               <Col flex="none">
                 <div className={styles["myfund-tabs-content-title"]}>
-                  Оруулсан хүсэлтийн хэмжээ
+                  Оруулсан захиалгын хэмжээ
                 </div>
                 <div className={styles["myfund-tabs-2-content-money"]}>
                   {numberToCurrency(sumMySaving)}
@@ -371,7 +371,7 @@ export const MyFund = () => {
               </Col>
               <Col flex="none">
                 <div className={styles["myfund-tabs-content-title"]}>
-                  Биржийн хүү
+                  Зарласан хүү /сараар/
                 </div>
                 <div className={styles["myfund-tabs-content-rate"]}>
                   {mySavingOrders && mySavingOrders[0]?.rate_month
@@ -420,7 +420,7 @@ export const MyFund = () => {
     },
     {
       key: "1",
-      label: "Зээл авах хүсэлт",
+      label: "Зээл авах захиалга",
       children: (
         <Col span={24}>
           <Row
@@ -430,7 +430,7 @@ export const MyFund = () => {
           >
             <Col flex="none">
               <div className={styles["myfund-tabs-content-title"]}>
-                Оруулсан хүсэлтийн хэмжээ
+                Оруулсан захиалгын хэмжээ
               </div>
               <div className={styles["myfund-tabs-1-content-money"]}>
                 {numberToCurrency(sumMyLoan)}
@@ -438,7 +438,7 @@ export const MyFund = () => {
             </Col>
             <Col flex="none">
               <div className={styles["myfund-tabs-content-title"]}>
-                Биржийн хүү
+                Зарласан хүү /сараар/
               </div>
               <div className={styles["myfund-tabs-content-rate"]}>
                 {myLoanOrders && myLoanOrders[0]?.rate_month
@@ -492,9 +492,9 @@ export const MyFund = () => {
         <Col span={22}>
           <Row gutter={[0, 20]}>
             <HeaderDashboard
-              title={"Миний хүсэлтүүд"}
+              title={"Миний захиалгууд"}
               subTitle={
-                "Харилцагч та өөрийн санхүүжилт өгөх болон зээл авах хүсэлтийн талаарх мэдээллээ доорх цэсээр харна уу."
+                "Харилцагч та өөрийн санхүүжилт өгөх болон зээл авах захиалгын талаарх мэдээллээ доорх цэсээр харна уу."
               }
             />
 
@@ -515,8 +515,8 @@ export const MyFund = () => {
               title={
                 <div className="text-center font-beau text-[16px] font-medium">
                   {myFundTabKey == "1"
-                    ? "Зээлийн хүсэлт дэлгэрэнгүй"
-                    : "Санхүүжилт хүсэлт дэлгэрэнгүй"}
+                    ? "Зээлийн захиалга дэлгэрэнгүй"
+                    : "Санхүүжилт захиалга дэлгэрэнгүй"}
                 </div>
               }
             >
@@ -546,7 +546,7 @@ export const MyFund = () => {
                                       }
                                     >
                                       {myFundTabKey == "1"
-                                        ? "Үндсэн зээлийн хэмжээ"
+                                        ? "Үндсэн Зээлийн дүн"
                                         : "Санхүүжилтийн хэмжээ"}
                                     </div>
                                   </Col>

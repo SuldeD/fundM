@@ -119,7 +119,7 @@ export const InputCode = ({ setOpen, open, onFinish }: any) => {
                       <span className="font-semibold text-[#0300B4]">
                         FundMe код{" "}
                       </span>
-                      оруулж хүсэлтээ баталгаажуулна уу.
+                      оруулж захиалгаа баталгаажуулна уу.
                     </div>
                   </Col>
                   <Col span={20}>

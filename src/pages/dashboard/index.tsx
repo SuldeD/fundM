@@ -89,11 +89,11 @@ export const Dashboard = () => {
       render: (type) =>
         type == "wallet" ? (
           <div className={styles["dashboard-list-item-type-1"]}>
-            Авах хүсэлт
+            Авах захиалга
           </div>
         ) : (
           <div className={styles["dashboard-list-item-type-2"]}>
-            Өгөх хүсэлт
+            Өгөх захиалга
           </div>
         ),
     },
@@ -141,7 +141,7 @@ export const Dashboard = () => {
       <Row justify="center" className={styles["dashboard-main-row"]}>
         <Col span={22}>
           <Row justify="center" align="middle" gutter={[0, 30]}>
-            <HeaderDashboard title={"Мөнгөний зах"} subTitle={undefined} />
+            <HeaderDashboard title={undefined} subTitle={undefined} />
             <Col span={24}>
               <Row justify="space-between" gutter={20}>
                 <Col xs={24} lg={12}>
@@ -152,8 +152,8 @@ export const Dashboard = () => {
                     <Col span={24}>
                       <div className={styles["dashboard-loan-intro-title"]}>
                         {sumSaving > sumLoan
-                          ? "Санхүүжилт өгөх хүсэлт"
-                          : "Зээл авах хүсэлт"}
+                          ? "Санхүүжилт өгөх захиалга"
+                          : "Зээл авах захиалга"}
                       </div>
                     </Col>
                     <Col span={24}>
@@ -197,7 +197,7 @@ export const Dashboard = () => {
                       <Row gutter={[0, 42]}>
                         <Col span={24}>
                           <div className={styles["dashboard-loan-intro-title"]}>
-                            Зарласан хүү
+                            Зарласан хүү <br /> /сараар/
                           </div>
                         </Col>
                         <Col span={24}>
@@ -225,14 +225,14 @@ export const Dashboard = () => {
               </Row>
             </Col>
             <Col span={24} className={styles["dashboard-bg-image"]}>
-              <Row justify="end" align="bottom" style={{ height: "100%" }}>
+              {/* <Row justify="end" align="bottom" style={{ height: "100%" }}>
                 <Button
                   className={`${styles["dashboard-bg-image-button"]} bg-primary`}
                   type="primary"
                 >
                   Дэлгэрэнгүй {<RightOutlined />}
                 </Button>
-              </Row>
+              </Row> */}
             </Col>
             <Col span={24}>
               <Row gutter={[0, 20]} justify="start">

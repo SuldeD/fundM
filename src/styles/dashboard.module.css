@@ -90,7 +90,7 @@
 }
 
 .dashboard-bg-image {
-  background-image: url("/images/dashboard-loan-bg.png");
+  background-image: url("/dashBg.jpg");
   background-repeat: no-repeat;
   width: 100%;
   background-size: cover;

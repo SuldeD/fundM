@@ -35,12 +35,12 @@ export const SidebarLeftComponent = ({ setOpen }: any) => {
     },
     {
       key: "/dashboard/myfund",
-      label: <Link href="/dashboard/myfund">Миний хүсэлтүүд</Link>,
+      label: <Link href="/dashboard/myfund">Миний захиалгууд</Link>,
       icon: <img src="/images/save-money.png" style={{ width: 22 }} />,
     },
     {
       key: "/dashboard/fund",
-      label: <Link href="/dashboard/fund">Миний санхүүжилт</Link>,
+      label: <Link href="/dashboard/fund">Миний санхүү</Link>,
       icon: <img src="/images/stats.png" style={{ width: 22 }} />,
     },
 

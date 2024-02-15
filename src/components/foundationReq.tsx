@@ -13,7 +13,7 @@ export const FoundationReq = ({ activeSavingOrders: data }: any) => {
   return (
     <Row gutter={[0, 25]} justify="center">
       <Col span={24}>
-        <div className={styles["loanReq-title"]}>Санхүүжилт өгөх хүсэлт</div>
+        <div className={styles["loanReq-title"]}>Санхүүжилт өгөх захиалга</div>
       </Col>
       <Col span={24}>
         <div className={styles["loanReq-description"]}>Захиалгын жагсаалт</div>

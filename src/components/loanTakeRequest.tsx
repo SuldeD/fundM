@@ -13,7 +13,7 @@ export const LoanTakeReqComponent = ({ activeLoanOrders: data }: any) => {
   return (
     <Row gutter={[0, 25]} justify="center">
       <Col span={24}>
-        <div className={styles["loanReq-title"]}>Зээл авах хүсэлт</div>
+        <div className={styles["loanReq-title"]}>Зээл авах захиалга</div>
       </Col>
       <Col span={24}>
         <div className={styles["loanReq-description"]}>Захиалгын жагсаалт</div>

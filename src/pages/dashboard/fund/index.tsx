@@ -773,7 +773,7 @@ export const FundHistory = () => {
                                           stylesDL["dloan-detail-text"]
                                         }
                                       >
-                                        Хугацаа хэтэрүүлсэн зээлийн алданги
+                                        Нэмэгдүүлсэн хүү
                                       </div>
                                     </Col>
                                     <Col flex="none">
@@ -855,7 +855,7 @@ export const FundHistory = () => {
                                 <img src="/images/pdf.svg" alt="pdf" />
                                 <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
                                   {myFundTabKey == "1"
-                                    ? "Зээлийн гэрээ"
+                                    ? "Зээлийн гэрээний хавсралт"
                                     : "Богино хугацааны Санхүүжилтийн гэрээ"}
                                 </p>
                               </Button>
