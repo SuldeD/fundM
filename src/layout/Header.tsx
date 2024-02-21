@@ -32,10 +32,10 @@ export const HeaderComponent = () => {
       key: "/loan",
       label: <Link href="/loan">Зээл авах</Link>,
     },
-    {
-      key: "#contact",
-      label: <Link href="#contact">Холбоо барих</Link>,
-    },
+    // {
+    //   key: "#contact",
+    //   label: <Link href="#contact">Холбоо барих</Link>,
+    // },
   ];
 
   const phoneItems = [
