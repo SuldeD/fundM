@@ -15,6 +15,28 @@ export const MyFund = () => {
   const { status } = useSession();
 
   //queries
+  const { data: getContentLoan } = api.term.getContent.useQuery(
+    {
+      code: "loan",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  const { data: getContentFound } = api.term.getContent.useQuery(
+    {
+      code: "saving",
+    },
+    { refetchOnWindowFocus: false }
+  );
+
+  const getContentLoanHtml = useMemo(() => {
+    return getContentLoan && getContentLoan?.page_html;
+  }, [getContentLoan]);
+
+  const getContentFoundHtml = useMemo(() => {
+    return getContentFound && getContentFound?.page_html;
+  }, [getContentFound]);
+
   const { data: requestSearch } = api.loan.reguestSearch.useQuery(
     {
       order: "date",
@@ -508,6 +530,7 @@ export const MyFund = () => {
             </Col>
 
             <Modal
+              width={800}
               open={open}
               onCancel={() => setOpen(false)}
               footer={null}
@@ -862,34 +885,20 @@ export const MyFund = () => {
                                       ? "САНХҮҮЖИЛТ ӨГӨХ ЗАХИАЛГЫН НӨХЦӨЛ"
                                       : "ЗЭЭЛ АВАХ ЗАХИАЛГЫН НӨХЦӨЛ"}
                                   </p>
-                                  <p className="pt-[5px] font-lato text-[10px] font-light">
-                                    Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны
-                                    хөрөнгийг итгэлцлийн үндсэн дээр гэрээ
-                                    байгуулан авч зах зээлийн эрсдэл үнэгүйдлээс
-                                    хамгаалж өндөр үр шим /ашиг/ олж өгөх
-                                    зорилгоор харилцан ашигтай хамтран ажиллах
-                                    үйлчилгээ юм. Итгэлцлийн хөрөнгө нь ямар ч
-                                    төрөл, хэлбэр, үнэлгээтэй байж болох ба
-                                    түүний үр шимийг хоёр тал өөрсдийн
-                                    хэрэгцээнд тулгуурлан харилцан ашигтай
-                                    ажиллах боломжийг олгодог санхүүгийн
-                                    хэрэгсэл юм.
-                                    <br />
-                                    Итгэлцлийн үйлчилгээний оролцогч талууд
-                                    <br />
-                                    Итгэмжлэгч – Хөрөнгөө удирдах, захиран
-                                    зарцуулах эрхээ гэрээний үндсэн дээр бусдад
-                                    шилжүүлж түүнээс үүсэх үр шимийг хүртэгч.
-                                    <br /> Хувь хүртэгч – Итгэмжлэгчтэй
-                                    байгуулсан гэрээний дагуу итгэмжлэгдсэн
-                                    хөрөнгийн үр шимийг хүртэгч. Гэхдээ энэ нь
-                                    итгэмжлэгдсэн хөрөнгийн эзэмшигч, захиран
-                                    зарцуулах эрх бүхий этгээд биш юм.
-                                    <br /> Итгэмжлэгдэгч – Хувь хүн, Бизнес
-                                    эрхлэгч, Аж ахуй нэгжийн аль нь ч байж болох
-                                    ба итгэмжлэгчтэй байгуулсан хөрөнгө удирдах
-                                    гэрээний дагуу хөрөнгийн үнэ цэнийг өсгөх,
-                                    хадгалах, үр өгөөж бий болгогч.
+                                  <p className="pt-[5px] font-lato text-[14px] font-light">
+                                    {myFundTabKey == "2" ? (
+                                      <div
+                                        dangerouslySetInnerHTML={{
+                                          __html: getContentFoundHtml,
+                                        }}
+                                      />
+                                    ) : (
+                                      <div
+                                        dangerouslySetInnerHTML={{
+                                          __html: getContentLoanHtml,
+                                        }}
+                                      />
+                                    )}
                                   </p>
                                 </Col>
                               </Row>

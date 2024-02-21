@@ -50,7 +50,7 @@ export const Foundation = () => {
   );
 
   //states
-  const [inputValue, setInputValue] = useState<number>(50000);
+  const [inputValue, setInputValue] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isVerifyOpen, setIsVerifyOpen] = useState<boolean>(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
@@ -75,6 +75,10 @@ export const Foundation = () => {
   const minValue = Number(saving && saving?.loan_min_amount);
   const maxValue = Number(saving && saving?.loan_max_amount);
   const rate = Number(saving && saving?.loan_rate_day);
+
+  useEffect(() => {
+    minValue > 0 && setInputValue(minValue);
+  }, [minValue]);
 
   //functions
   function submit(code: any) {
@@ -671,25 +675,7 @@ export const Foundation = () => {
                   </Col>
                   <Col span={24}>
                     <div className={styles["foundation-contract-text"]}>
-                      Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны хөрөнгийг
-                      итгэлцлийн үндсэн дээр гэрээ байгуулан авч зах зээлийн
-                      эрсдэл үнэгүйдлээс хамгаалж өндөр үр шим /ашиг/ олж өгөх
-                      зорилгоор харилцан ашигтай хамтран ажиллах үйлчилгээ юм.
-                      Итгэлцлийн хөрөнгө нь ямар ч төрөл, хэлбэр, үнэлгээтэй
-                      байж болох ба түүний үр шимийг хоёр тал өөрсдийн
-                      хэрэгцээнд тулгуурлан харилцан ашигтай ажиллах боломжийг
-                      олгодог санхүүгийн хэрэгсэл юм. {<br />}Итгэлцлийн
-                      үйлчилгээний оролцогч талууд {<br />} Итгэмжлэгч –
-                      Хөрөнгөө удирдах, захиран зарцуулах эрхээ гэрээний үндсэн
-                      дээр бусдад шилжүүлж түүнээс үүсэх үр шимийг хүртэгч.{" "}
-                      {<br />} Хувь хүртэгч – Итгэмжлэгчтэй байгуулсан гэрээний
-                      дагуу итгэмжлэгдсэн хөрөнгийн үр шимийг хүртэгч. Гэхдээ
-                      энэ нь итгэмжлэгдсэн хөрөнгийн эзэмшигч, захиран зарцуулах
-                      эрх бүхий этгээд биш юм. {<br />} Итгэмжлэгдэгч – Хувь
-                      хүн, Бизнес эрхлэгч, Аж ахуй нэгжийн аль нь ч байж болох
-                      ба итгэмжлэгчтэй байгуулсан хөрөнгө удирдах гэрээний дагуу
-                      хөрөнгийн үнэ цэнийг өсгөх, хадгалах, үр өгөөж бий
-                      болгогч.
+                      <div dangerouslySetInnerHTML={{ __html: html }} />
                     </div>
                   </Col>
                 </Row>

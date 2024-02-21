@@ -1255,7 +1255,7 @@ export const Profile = () => {
                 )}
 
                 <Col span={20}>
-                  <div className="font- text-center font-raleway text-[12px] font-normal text-sub">
+                  <div className="text-center font-raleway text-[14px] font-bold text-[#ff0000]">
                     {imageUrl.length > 0
                       ? "Бид таны бүртгүүлсэн банкны данс руу баталгаажуулах код бүхий гүйлгээ хийсэн. Тухай гүйлгээний утга дээр ирсэн 4 оронтой кодыг оруулна уу!!!"
                       : "Бид таны бүртгэлтэй гар утасны дугаар луу нэг удаагийн баталгаажуулах код илгээлээ."}

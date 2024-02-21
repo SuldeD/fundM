@@ -11,7 +11,7 @@ import {
 } from "antd";
 import styles from "app/styles/dloan.module.css";
 import { useRouter } from "next/router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { numberToCurrency } from "app/utils/number.helpers";
 import { HeaderDashboard } from "app/components/header";
 import moment from "moment";
@@ -128,6 +128,10 @@ export const Loan = () => {
   }, [getContent]);
 
   const date = new Date();
+
+  useEffect(() => {
+    minValue > 0 && setInputValue(minValue);
+  }, [minValue]);
 
   //function
   function submit(code: any) {
@@ -1085,28 +1089,7 @@ export const Loan = () => {
                         </div>
                       </Col>
                       <Col span={24}>
-                        <div className={styles["dloan-contract-text"]}>
-                          Итгэлцэл үйлчилгээ гэдэг нь харилцагч таны хөрөнгийг
-                          итгэлцлийн үндсэн дээр гэрээ байгуулан авч зах зээлийн
-                          эрсдэл үнэгүйдлээс хамгаалж өндөр үр шим /ашиг/ олж
-                          өгөх зорилгоор харилцан ашигтай хамтран ажиллах
-                          үйлчилгээ юм. Итгэлцлийн хөрөнгө нь ямар ч төрөл,
-                          хэлбэр, үнэлгээтэй байж болох ба түүний үр шимийг хоёр
-                          тал өөрсдийн хэрэгцээнд тулгуурлан харилцан ашигтай
-                          ажиллах боломжийг олгодог санхүүгийн хэрэгсэл юм.{" "}
-                          {<br />}Итгэлцлийн үйлчилгээний оролцогч талууд{" "}
-                          {<br />} Итгэмжлэгч – Хөрөнгөө удирдах, захиран
-                          зарцуулах эрхээ гэрээний үндсэн дээр бусдад шилжүүлж
-                          түүнээс үүсэх үр шимийг хүртэгч. {<br />} Хувь хүртэгч
-                          – Итгэмжлэгчтэй байгуулсан гэрээний дагуу
-                          итгэмжлэгдсэн хөрөнгийн үр шимийг хүртэгч. Гэхдээ энэ
-                          нь итгэмжлэгдсэн хөрөнгийн эзэмшигч, захиран зарцуулах
-                          эрх бүхий этгээд биш юм. {<br />} Итгэмжлэгдэгч – Хувь
-                          хүн, Бизнес эрхлэгч, Аж ахуй нэгжийн аль нь ч байж
-                          болох ба итгэмжлэгчтэй байгуулсан хөрөнгө удирдах
-                          гэрээний дагуу хөрөнгийн үнэ цэнийг өсгөх, хадгалах,
-                          үр өгөөж бий болгогч.
-                        </div>
+                        <div dangerouslySetInnerHTML={{ __html: html }} />
                       </Col>
                     </Row>
                   </Col>

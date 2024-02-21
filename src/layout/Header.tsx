@@ -32,6 +32,10 @@ export const HeaderComponent = () => {
       key: "/loan",
       label: <Link href="/loan">Зээл авах</Link>,
     },
+    {
+      key: "#contact",
+      label: <Link href="#contact">Холбоо барих</Link>,
+    },
   ];
 
   const phoneItems = [
@@ -95,6 +99,7 @@ export const HeaderComponent = () => {
                 items={items}
                 style={{
                   lineHeight: 3,
+                  fontSize: "16px",
                   borderBottom: "none",
                 }}
               />
