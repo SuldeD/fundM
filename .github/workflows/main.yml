@@ -21,12 +21,6 @@ jobs:
         port: ${{ secrets.PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          source ~/.bashrc
-          nvm install 18.19
-          nvm use 18.19
-          node -v
-          echo "Hi"
-          pwd
           cd fundM
           git pull origin production
           npm i
