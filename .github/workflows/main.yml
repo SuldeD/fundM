@@ -14,12 +14,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:       
     - name: Deploy using ssh
-    - uses: appleboy/scp-action@master
+      uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 2292
+        port: ${{ secrets.PORT }}
         script: |
           cd fundM
           git pull origin production
