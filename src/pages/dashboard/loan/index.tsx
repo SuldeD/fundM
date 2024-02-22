@@ -95,9 +95,20 @@ export const Loan = () => {
   });
 
   const minValue = useMemo(() => {
-    return status == 1
-      ? Number(statusData?.stat?.wallet_min_amount)
-      : Number(loan?.loan_min_amount);
+    if (status === 1) {
+      if (Number(statusData?.stat?.blocked_wallet_amount) > 0) {
+        const availableAmount =
+          Number(statusData?.stat?.loan_min_amount) +
+          Number(statusData?.stat?.blocked_wallet_amount);
+        return availableAmount > Number(loan?.loan_min_amount)
+          ? availableAmount
+          : Number(loan?.loan_min_amount);
+      } else {
+        return Number(statusData?.stat?.loan_min_amount);
+      }
+    } else {
+      return Number(loan?.loan_min_amount);
+    }
   }, [loan, statusData, status]);
 
   const maxValue = useMemo(() => {
