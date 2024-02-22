@@ -23,8 +23,8 @@ jobs:
         script: |
           cd fundM
           git pull origin production
-          npm i
-          npm run build
-          pm2 restart app.config.js
+          sudo npm i
+          sudo npm run build
+          sudo pm2 restart app.config.js
           echo "Complete"
            
