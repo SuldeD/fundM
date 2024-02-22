@@ -14,7 +14,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:       
     - name: Deploy using ssh
-      uses: ./.github/actions/my-action
+      uses: actions/checkout@v1
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
