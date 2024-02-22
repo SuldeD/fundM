@@ -26,5 +26,5 @@ jobs:
           sudo npm i
           sudo npm run build
           sudo pm2 restart app.config.js
-          echo "Complete"
+          sudo pm2 list
            
