@@ -23,6 +23,7 @@ jobs:
         script: |
            cd fundM
            git pull origin production
+           source ~/.bashrc
            npm i
            npm run build
            pm2 restart app.config.js
