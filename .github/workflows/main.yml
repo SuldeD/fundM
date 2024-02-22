@@ -21,9 +21,11 @@ jobs:
         port: ${{ secrets.PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
+           source ~/.bashrc
+           echo "Hi"
+           pwd
            cd fundM
            git pull origin production
-           source ~/.bashrc
            npm i
            npm run build
            pm2 restart app.config.js
