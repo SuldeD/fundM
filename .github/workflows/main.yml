@@ -21,13 +21,15 @@ jobs:
         port: ${{ secrets.PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-           source ~/.bashrc
-           echo "Hi"
-           pwd
-           cd fundM
-           git pull origin production
-           npm i
-           npm run build
-           pm2 restart app.config.js
-           echo "Complete"
+          whoami
+          source ~/.bashrc
+          node -v
+          echo "Hi"
+          pwd
+          cd fundM
+          git pull origin production
+          npm i
+          npm run build
+          pm2 restart app.config.js
+          echo "Complete"
            
