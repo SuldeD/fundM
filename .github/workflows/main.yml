@@ -20,4 +20,11 @@ jobs:
         username: ${{ secrets.USER }}
         port: ${{ secrets.PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: ls -la
+        script: |
+           cd fundM
+           git pull origin production
+           npm i
+           npm run build
+           pm2 restart app.config.js
+           echo "Complete"
+           
