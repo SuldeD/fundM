@@ -22,6 +22,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           source ~/.bashrc
+          nvm install 18.19
+          nvm use 18.19
           node -v
           echo "Hi"
           pwd
