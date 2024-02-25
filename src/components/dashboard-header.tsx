@@ -1,6 +1,7 @@
 import { Col, Statistic, Row } from "antd";
-import { api } from "app/utils/api";
+import { api } from "../utils/api";
 import styles from "../styles/dashboard-header.module.css";
+import React from "react";
 
 export const HeaderDashboard = ({ title, subTitle }: any) => {
   const { Countdown } = Statistic;

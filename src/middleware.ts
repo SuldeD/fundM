@@ -21,11 +21,7 @@ const unprotectedRoutes: any = [
   "/signup/question",
   "/signup/transaction-password",
   "/",
-  // "/about-us",
-  // "/finance",
   "/loan",
-  // "/#app",
-  // "/#contact",
 ];
 
 async function middleware(req: NextRequest) {

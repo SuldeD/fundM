@@ -1,8 +1,8 @@
 import { Session } from "next-auth";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { Prisma, PrismaClient } from "@prisma/client";
-import { loanServiceHeaders } from "app/contants";
-import { decrypt, encrypt } from "app/utils/aes.helper";
+import { loanServiceHeaders } from "../../../contants";
+import { decrypt, encrypt } from "../../../utils/aes.helper";
 import z from "zod";
 
 export const accountRouter = createTRPCRouter({

@@ -4,7 +4,7 @@ import { numberToCurrency } from "../utils/number.helpers";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
-import { useAppContext } from "app/context/appContext";
+import { useAppContext } from "../context/appContext";
 
 export const LoanTakeReqComponent = ({ activeLoanOrders: data }: any) => {
   const router = useRouter();

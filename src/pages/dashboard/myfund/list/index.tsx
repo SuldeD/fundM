@@ -1,15 +1,16 @@
 import { Row, Col, Table, Image, Button, Modal } from "antd";
-import styles from "app/styles/myfund-list.module.css";
-import stylesList from "app/styles/dashboard.module.css";
-import stylesDL from "app/styles/dloan.module.css";
-import stylesFD from "app/styles/foundation.module.css";
-import { numberToCurrency } from "app/utils/number.helpers";
-import { HeaderDashboard } from "app/components/header";
-import { useAppContext } from "app/context/appContext";
+import styles from "../../../../styles/myfund-list.module.css";
+import stylesList from "../../../../styles/dashboard.module.css";
+import stylesDL from "../../../../styles/dloan.module.css";
+import stylesFD from "../../../../styles/foundation.module.css";
+import { numberToCurrency } from "../../../../utils/number.helpers";
+import { HeaderDashboard } from "../../../../components/dashboard-header";
+import { useAppContext } from "../../../../context/appContext";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { api } from "app/utils/api";
+import { api } from "../../../../utils/api";
 import { useSession } from "next-auth/react";
+import React from "react";
 
 export const List = () => {
   const router = useRouter();
@@ -402,7 +403,7 @@ export const List = () => {
           closeIcon={null}
           width={"50%"}
           title={
-            <div className="text-center font-beau text-[16px] font-medium">
+            <div className="font-beau text-center text-[16px] font-medium">
               {myFundTabKey == "1"
                 ? "Зээлийн захиалгууд дэлгэрэнгүй"
                 : "Санхүүжилт захиалгууд дэлгэрэнгүй"}

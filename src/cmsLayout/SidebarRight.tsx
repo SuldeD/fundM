@@ -17,9 +17,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { LoanTakeReqComponent } from "../components/loanTakeRequest";
 import { FoundationReq } from "../components/foundationReq";
-import { useAppContext } from "app/context/appContext";
+import { useAppContext } from "../context/appContext";
 import { signOut } from "next-auth/react";
-import { api } from "app/utils/api";
+import { api } from "../utils/api";
 
 const { Sider } = Layout;
 
@@ -105,7 +105,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
   const renderNavbar = useMemo(() => {
     // @ts-ignore
     const Comp = NavBars[router.pathname] ?? NavBars["/dashboard/profile"];
-    console.log("comp work", activeSavingOrders, activeLoanOrders);
+    // console.log("comp work", activeSavingOrders, activeLoanOrders);
 
     return (
       <Comp
@@ -315,7 +315,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                     >
                       {nt?.description}
                     </p>
-                    <p className="my-1 font-lato text-[14px] font-normal text-sub">
+                    <p className="text-sub my-1 font-lato text-[14px] font-normal">
                       {nt?.create_date}
                     </p>
                   </div>
@@ -329,7 +329,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           notfication?.activity_list_more ? (
             <Button
               type="primary"
-              className="mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center font-raleway text-[15px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center text-[15px] leading-[18px]"
               onClick={() => {
                 notfication?.activity_list?.length &&
                   allData(`${notfication?.activity_list?.length + 10}`);
@@ -341,7 +341,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             <Button
               type="default"
               disabled
-              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex text-center text-[14px] leading-[18px]"
             >
               Дараах
             </Button>
@@ -421,7 +421,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                     >
                       {nt?.description}
                     </p>
-                    <p className="my-1 font-lato text-[14px] font-normal text-sub">
+                    <p className="text-sub my-1 font-lato text-[14px] font-normal">
                       {nt?.create_date}
                     </p>
                   </div>
@@ -435,7 +435,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           notfication?.activity_list_more ? (
             <Button
               type="primary"
-              className="mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center font-raleway text-[15px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center text-[15px] leading-[18px]"
               onClick={() => {
                 notfication?.activity_list?.length &&
                   allData(`${notfication?.activity_list?.length + 10}`);
@@ -447,7 +447,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             <Button
               type="default"
               disabled
-              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex text-center text-[14px] leading-[18px]"
             >
               Дараах
             </Button>
@@ -526,7 +526,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                     >
                       {nt?.description}
                     </p>
-                    <p className="my-1 font-lato text-[14px] font-normal text-sub">
+                    <p className="text-sub my-1 font-lato text-[14px] font-normal">
                       {nt?.create_date}
                     </p>
                   </div>
@@ -540,7 +540,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           notfication?.activity_list_more ? (
             <Button
               type="primary"
-              className="mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center font-raleway text-[15px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center text-[15px] leading-[18px]"
               onClick={() => {
                 notfication?.activity_list?.length &&
                   allData(`${notfication?.activity_list?.length + 10}`);
@@ -552,7 +552,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             <Button
               type="default"
               disabled
-              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex text-center text-[14px] leading-[18px]"
             >
               Дараах
             </Button>
@@ -641,7 +641,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                     >
                       {nt?.description}
                     </p>
-                    <p className="my-1 font-lato text-[14px] font-normal text-sub">
+                    <p className="text-sub my-1 font-lato text-[14px] font-normal">
                       {nt?.create_date}
                     </p>
                   </div>
@@ -655,7 +655,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           notfication?.activity_list_more ? (
             <Button
               type="primary"
-              className="mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center font-raleway text-[15px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex h-[40px] rounded-[50px] bg-primary px-6 pt-2 text-center text-[15px] leading-[18px]"
               onClick={() => {
                 notfication?.activity_list?.length &&
                   allData(`${notfication?.activity_list?.length + 10}`);
@@ -667,7 +667,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
             <Button
               type="default"
               disabled
-              className="mx-auto mt-[20px] flex text-center font-raleway text-[14px] leading-[18px]"
+              className="font-raleway mx-auto mt-[20px] flex text-center text-[14px] leading-[18px]"
             >
               Дараах
             </Button>
@@ -698,7 +698,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
           <p className="mb-5 font-lato text-[16px] font-medium leading-[18px] text-[#0b0b0b]">
             {selectedNot?.description}
           </p>
-          <p className=" font-lato text-[16px] font-normal text-sub">
+          <p className=" text-sub font-lato text-[16px] font-normal">
             {selectedNot?.create_date}
           </p>
         </Drawer>
@@ -714,7 +714,7 @@ export const SidebarRightComponent = ({ statusData, open, setOpen }: any) => {
                     <Row
                       align="middle"
                       gutter={10}
-                      className="rounded-[20px] bg-bank p-[10px]"
+                      className="bg-bank rounded-[20px] p-[10px]"
                     >
                       <Col>
                         <img

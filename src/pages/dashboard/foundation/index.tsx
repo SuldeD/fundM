@@ -9,18 +9,19 @@ import {
   Form,
   message,
 } from "antd";
-import styles from "app/styles/foundation.module.css";
-import stylesL from "app/styles/dloan.module.css";
+import styles from "../../../styles/foundation.module.css";
+import stylesL from "../../../styles/dloan.module.css";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { numberToCurrency } from "app/utils/number.helpers";
-import { HeaderDashboard } from "app/components/header";
+import { useEffect, useMemo, useState } from "react";
+import { numberToCurrency } from "../../../utils/number.helpers";
+import { HeaderDashboard } from "../../../components/dashboard-header";
 import moment from "moment";
-import InputCode from "app/components/input";
-import { api } from "app/utils/api";
+import InputCode from "../../../components/input";
+import { api } from "../../../utils/api";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { signOut, useSession } from "next-auth/react";
-import PopupModal from "app/components/modal";
+import PopupModal from "../../../components/modal";
+import React from "react";
 
 export const Foundation = () => {
   const { status: layoutStatus } = useSession();
@@ -727,7 +728,7 @@ export const Foundation = () => {
                 <Col>
                   <Col
                     span={24}
-                    className="my-5 rounded-[9px] bg-bank p-[50px]"
+                    className="bg-bank my-5 rounded-[9px] p-[50px]"
                   >
                     <div dangerouslySetInnerHTML={{ __html: html }} />
                   </Col>

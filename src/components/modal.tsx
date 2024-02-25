@@ -3,7 +3,6 @@ import styles from "../styles/modal.module.css";
 import LottiePlayer from "lottie-react";
 import animation from "../../public/check.json";
 import animation2 from "../../public/warn.json";
-import { MouseEventHandler } from "react";
 
 export default function PopupModal({
   open,

@@ -13,16 +13,16 @@ import {
 } from "antd";
 import SidebarRightComponent from "./SidebarRight";
 import SidebarLeftComponent from "./SidebarLeft";
-import PopupModal from "app/components/modal";
-import styles from "app/styles/foundation.module.css";
-import style from "app/styles/Header.module.css";
+import PopupModal from "../components/modal";
+import styles from "../styles/foundation.module.css";
+import style from "../styles/Header.module.css";
 import { signOut } from "next-auth/react";
-import { api } from "app/utils/api";
+import { api } from "../utils/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useAppContext } from "app/context/appContext";
+import { useAppContext } from "../context/appContext";
 import moment from "moment";
 const { Header } = Layout;
 const { Content } = Layout;
@@ -297,7 +297,7 @@ export const ProtectedLayout = ({ children }: any) => {
         iconPath={null}
         customIconWidth={null}
         customDiv={
-          <div className="border-b border-black font-beau text-[16px] font-normal text-black">
+          <div className="font-beau border-b border-black text-[16px] font-normal text-black">
             ҮЙЛЧИЛГЭЭНИЙ ЕРӨНХИЙ НӨХЦӨЛ
           </div>
         }
@@ -310,7 +310,7 @@ export const ProtectedLayout = ({ children }: any) => {
               <Col
                 xs={24}
                 lg={20}
-                className="my-5 justify-center rounded-[9px] bg-bank p-[50px]"
+                className="bg-bank my-5 justify-center rounded-[9px] p-[50px]"
               >
                 <div dangerouslySetInnerHTML={{ __html: html }} />
               </Col>

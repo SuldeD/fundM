@@ -1,13 +1,14 @@
 import { Row, Col, Tabs, Table, Image, Button, Modal, message } from "antd";
-import styles from "app/styles/fund.module.css";
-import stylesDL from "app/styles/dloan.module.css";
-import stylesFD from "app/styles/foundation.module.css";
-import { numberToCurrency } from "app/utils/number.helpers";
-import { HeaderDashboard } from "app/components/header";
+import styles from "../../../styles/fund.module.css";
+import stylesDL from "../../../styles/dloan.module.css";
+import stylesFD from "../../../styles/foundation.module.css";
+import { numberToCurrency } from "../../../utils/number.helpers";
+import { HeaderDashboard } from "../../../components/dashboard-header";
 import { useMemo, useState } from "react";
-import { api } from "app/utils/api";
-import InputCode from "app/components/input";
+import { api } from "../../../utils/api";
+import InputCode from "../../../components/input";
 import { useSession } from "next-auth/react";
+import React from "react";
 
 export const FundHistory = () => {
   const { error } = Modal;
@@ -489,7 +490,7 @@ export const FundHistory = () => {
             footer={null}
             closeIcon={null}
             title={
-              <div className="text-center font-beau text-[16px] font-medium">
+              <div className="font-beau text-center text-[16px] font-medium">
                 {myFundTabKey == "1"
                   ? "Зээлийн дэлгэрэнгүй"
                   : "Санхүүжилт дэлгэрэнгүй"}
@@ -853,7 +854,7 @@ export const FundHistory = () => {
                                 onClick={() => setOpenPdf(true)}
                               >
                                 <img src="/images/pdf.svg" alt="pdf" />
-                                <p className="ps-1 pt-1 font-raleway text-[12px] font-normal ">
+                                <p className="font-raleway ps-1 pt-1 text-[12px] font-normal ">
                                   {myFundTabKey == "1"
                                     ? "Зээлийн гэрээний хавсралт"
                                     : "Богино хугацааны Санхүүжилтийн гэрээ"}

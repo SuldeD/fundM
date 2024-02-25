@@ -1,10 +1,10 @@
-import { loanServiceHeaders } from "app/contants";
+import { loanServiceHeaders } from "../../../contants";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "app/server/api/trpc";
-import { decrypt, encrypt } from "app/utils/aes.helper";
+} from "../../../server/api/trpc";
+import { decrypt, encrypt } from "../../../utils/aes.helper";
 import z from "zod";
 import { getAccountToken } from "./account";
 

@@ -1,6 +1,6 @@
-import { loanServiceHeaders } from "app/contants";
-import { createTRPCRouter, publicProcedure } from "app/server/api/trpc";
-import { decrypt, encrypt } from "app/utils/aes.helper";
+import { loanServiceHeaders } from "../../../contants";
+import { createTRPCRouter, publicProcedure } from "../../../server/api/trpc";
+import { decrypt, encrypt } from "../../../utils/aes.helper";
 import z from "zod";
 
 export const registerRouter = createTRPCRouter({

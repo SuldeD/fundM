@@ -4,13 +4,13 @@ import { numberToCurrency } from "../utils/number.helpers";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
-import { useAppContext } from "app/context/appContext";
+import { useAppContext } from "../context/appContext";
 
 export const LoanReqComponent = ({ activeSavingOrders: data }: any) => {
   const router = useRouter();
   const { setMyFundTabKey } = useAppContext();
 
-  console.log("history", data);
+  // console.log("history", data);
 
   return (
     <Row gutter={[0, 25]} justify="center">

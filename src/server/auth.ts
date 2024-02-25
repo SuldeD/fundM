@@ -7,9 +7,9 @@ import {
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "app/server/db";
-import { decrypt, encrypt } from "app/utils/aes.helper";
-import { loanServiceHeaders } from "app/contants";
+import { prisma } from "../server/db";
+import { decrypt, encrypt } from "../utils/aes.helper";
+import { loanServiceHeaders } from "../contants";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
