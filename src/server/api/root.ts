@@ -1,5 +1,5 @@
-import { exampleRouter } from "app/server/api/routers/example";
-import { createTRPCRouter } from "app/server/api/trpc";
+import { exampleRouter } from "../../server/api/routers/example";
+import { createTRPCRouter } from "../../server/api/trpc";
 import { postsRouter } from "./routers/posts";
 import { loanRouter } from "./routers/loan";
 import { registerRouter } from "./routers/register";

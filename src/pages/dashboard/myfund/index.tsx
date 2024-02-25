@@ -1,14 +1,15 @@
 import { Row, Col, Tabs, Table, Image, Button, Modal } from "antd";
-import styles from "app/styles/my-fund.module.css";
-import stylesList from "app/styles/dashboard.module.css";
-import stylesDL from "app/styles/dloan.module.css";
-import stylesFD from "app/styles/foundation.module.css";
-import { numberToCurrency } from "app/utils/number.helpers";
-import { HeaderDashboard } from "app/components/header";
-import { useAppContext } from "app/context/appContext";
+import styles from "../../../styles/my-fund.module.css";
+import stylesList from "../../../styles/dashboard.module.css";
+import stylesDL from "../../../styles/dloan.module.css";
+import stylesFD from "../../../styles/foundation.module.css";
+import { numberToCurrency } from "../../../utils/number.helpers";
+import { HeaderDashboard } from "../../../components/dashboard-header";
+import { useAppContext } from "../../../context/appContext";
 import { useMemo, useState } from "react";
-import { api } from "app/utils/api";
+import { api } from "../../../utils/api";
 import { useSession } from "next-auth/react";
+import React from "react";
 
 export const MyFund = () => {
   const { myFundTabKey, setMyFundTabKey } = useAppContext();
@@ -536,7 +537,7 @@ export const MyFund = () => {
               footer={null}
               closeIcon={null}
               title={
-                <div className="text-center font-beau text-[16px] font-medium">
+                <div className="font-beau text-center text-[16px] font-medium">
                   {myFundTabKey == "1"
                     ? "Зээлийн захиалга дэлгэрэнгүй"
                     : "Санхүүжилт захиалга дэлгэрэнгүй"}

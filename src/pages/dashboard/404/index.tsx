@@ -1,5 +1,6 @@
 import { Button, Result, Row } from "antd";
 import Link from "next/link";
+import React from "react";
 
 export default function NotFound() {
   return (

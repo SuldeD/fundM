@@ -9,18 +9,19 @@ import {
   Image,
   Form,
 } from "antd";
-import styles from "app/styles/dloan.module.css";
+import styles from "../../../styles/dloan.module.css";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { numberToCurrency } from "app/utils/number.helpers";
-import { HeaderDashboard } from "app/components/header";
+import { numberToCurrency } from "../../../utils/number.helpers";
+import { HeaderDashboard } from "../../../components/dashboard-header";
 import moment from "moment";
-import InputCode from "app/components/input";
-import { api } from "app/utils/api";
+import InputCode from "../../../components/input";
+import { api } from "../../../utils/api";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { useSession } from "next-auth/react";
 import LottiePlayer from "lottie-react";
 import animation from "../../../../public/check.json";
+import React from "react";
 
 export const Loan = () => {
   const termsRef: any = useRef();
@@ -452,7 +453,7 @@ export const Loan = () => {
                       <Col>
                         <Col
                           span={24}
-                          className="my-5 rounded-[9px] bg-bank p-[50px]"
+                          className="bg-bank my-5 rounded-[9px] p-[50px]"
                         >
                           <div dangerouslySetInnerHTML={{ __html: html }} />
                         </Col>
@@ -1149,7 +1150,7 @@ export const Loan = () => {
                   <Col>
                     <Col
                       span={24}
-                      className="my-5 rounded-[9px] bg-bank p-[50px]"
+                      className="bg-bank my-5 rounded-[9px] p-[50px]"
                     >
                       <div dangerouslySetInnerHTML={{ __html: html }} />
                     </Col>

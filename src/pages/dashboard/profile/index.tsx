@@ -11,18 +11,19 @@ import {
   Image,
   Statistic,
 } from "antd";
-import styles from "app/styles/profile.module.css";
-import modalstyles from "app/styles/modal.module.css";
-import { HeaderDashboard } from "app/components/header";
+import styles from "../../../styles/profile.module.css";
+import modalstyles from "../../../styles/modal.module.css";
+import { HeaderDashboard } from "../../../components/dashboard-header";
 import { useMemo, useRef, useState } from "react";
-import { Loaderr } from "app/components/Loader";
+import { Loaderr } from "../../../components/Loader";
 import { useRouter } from "next/router";
-import stylesL from "app/styles/dloan.module.css";
-import { api } from "app/utils/api";
-import InputCode from "app/components/input";
+import stylesL from "../../../styles/dloan.module.css";
+import { api } from "../../../utils/api";
+import InputCode from "../../../components/input";
 import { useSession } from "next-auth/react";
-import PopupModal from "app/components/modal";
-import { useAppContext } from "app/context/appContext";
+import PopupModal from "../../../components/modal";
+import { useAppContext } from "../../../context/appContext";
+import React from "react";
 
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -775,7 +776,7 @@ export const Profile = () => {
                   </Col>
                   <Col flex="right">
                     <div
-                      className="cursor-pointer font-raleway text-[12px] font-normal text-primary hover:text-[#524ffd]"
+                      className="font-raleway cursor-pointer text-[12px] font-normal text-primary hover:text-[#524ffd]"
                       onClick={() => {
                         window.open(dan?.https_redirect, "_blank");
                       }}
@@ -793,7 +794,7 @@ export const Profile = () => {
                 </Col>
                 <Col flex="right">
                   <div
-                    className="cursor-pointer font-raleway text-[12px] font-normal text-primary hover:text-[#524ffd]"
+                    className="font-raleway cursor-pointer text-[12px] font-normal text-primary hover:text-[#524ffd]"
                     onClick={() => {
                       !accountInfo?.bank_account
                         ? router.push("/dashboard/profile/bank")
@@ -1010,7 +1011,7 @@ export const Profile = () => {
             setFundPassNew("");
           }}
         >
-          <div className="text-center font-raleway text-[18px] font-bold">
+          <div className="font-raleway text-center text-[18px] font-bold">
             {clickedEdit == 0
               ? "Утасны дугаар өөрчлөх"
               : clickedEdit == 1
@@ -1169,7 +1170,7 @@ export const Profile = () => {
               />
             </div>
           )}
-          <p className="mx-auto mt-3 w-[80%] text-center font-raleway text-[14px] font-normal text-[red]">
+          <p className="font-raleway mx-auto mt-3 w-[80%] text-center text-[14px] font-normal text-[red]">
             {clickedEdit == 0
               ? "Та өөрийн шинээр бүртгүүлэх утасны дугаараа оруулна уу."
               : clickedEdit == 4
@@ -1205,7 +1206,7 @@ export const Profile = () => {
           footer={null}
         >
           <Row justify="center">
-            <div className="text-center font-raleway text-[18px] font-bold">
+            <div className="font-raleway text-center text-[18px] font-bold">
               {imageUrl.length > 0
                 ? "Данс баталгаажуулах код"
                 : "Баталгаажуулах код оруулах"}
@@ -1255,7 +1256,7 @@ export const Profile = () => {
                 )}
 
                 <Col span={20}>
-                  <div className="text-center font-raleway text-[14px] font-bold text-[#ff0000]">
+                  <div className="font-raleway text-center text-[14px] font-bold text-[#ff0000]">
                     {imageUrl.length > 0
                       ? "Бид таны бүртгүүлсэн банкны данс руу баталгаажуулах код бүхий гүйлгээ хийсэн. Тухай гүйлгээний утга дээр ирсэн 4 оронтой кодыг оруулна уу!!!"
                       : "Бид таны бүртгэлтэй гар утасны дугаар луу нэг удаагийн баталгаажуулах код илгээлээ."}
@@ -1376,7 +1377,7 @@ export const Profile = () => {
           footer={null}
         >
           <Row justify="center">
-            <div className="mb-4 text-center font-raleway text-[18px] font-bold">
+            <div className="font-raleway mb-4 text-center text-[18px] font-bold">
               {accountInfo?.account?.user_type === "user"
                 ? "Гарын үсгийн зураг оруулах"
                 : "Гарын үсэг, тамга оруулах"}
@@ -1445,7 +1446,7 @@ export const Profile = () => {
           footer={null}
         >
           <Row justify="center">
-            <div className="mb-4 text-center font-raleway text-[18px] font-bold">
+            <div className="font-raleway mb-4 text-center text-[18px] font-bold">
               Гарын үсэг, тамга оруулах
             </div>
             <Col span={20}>

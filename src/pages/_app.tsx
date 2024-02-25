@@ -1,13 +1,36 @@
+import { Metadata } from "next";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { type AppType } from "next/app";
-import { api } from "app/utils/api";
-import "app/styles/globals.css";
-import Head from "next/head";
-import mnMN from "antd/locale/mn_MN";
-import { ConfigProvider, App as AntdApp } from "antd";
-import { AppWrapper } from "app/context/appContext";
-import MainLayout from "app/components/mainLayout";
+import { api } from "../utils/api";
+import { AppType } from "next/app";
+import { ThemeProvider } from "../components/theme-provider";
+import { AppWrapper } from "../context/appContext";
+
+import "../styles/globals.css";
+import { siteConfig } from "../../config/site";
+import { cn } from "../../lib/utils";
+import MainLayout from "../components/main-layout";
+import { fontLato } from "../../lib/fonts";
+
+import React from "react";
+import { Toaster as Sonner } from "../../app/ui/sonner";
+import { Toaster } from "../../app/ui/toaster";
+
+export const metadata: Metadata = {
+  title: {
+    default: siteConfig.name,
+    template: `%s - ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/logo.svg",
+  },
+};
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -15,29 +38,24 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <>
-      <Head>
-        <title>FundMe</title>
-        <meta name="description" content="FundMe" charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/favicon.svg" />
-      </Head>
       <SessionProvider session={session}>
-        <AntdApp>
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: "#0300B4",
-              },
-            }}
-            locale={mnMN}
-          >
-            <AppWrapper>
+        <AppWrapper>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div
+              className={cn("bg-background antialiased", fontLato.className)}
+            >
               <MainLayout>
-                <Component {...pageProps} />
+                <div className="relative flex flex-col">
+                  <div className="flex-1">
+                    <Component {...pageProps} />
+                    <Toaster />
+                    <Sonner />
+                  </div>
+                </div>
               </MainLayout>
-            </AppWrapper>
-          </ConfigProvider>
-        </AntdApp>
+            </div>
+          </ThemeProvider>
+        </AppWrapper>
       </SessionProvider>
     </>
   );

@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import z from "zod";
-import { loanServiceHeaders } from "app/contants";
-import { decrypt, encrypt } from "app/utils/aes.helper";
+import { loanServiceHeaders } from "../../../contants";
+import { decrypt, encrypt } from "../../../utils/aes.helper";
 import { getAccountToken } from "./account";
 
 export const otherRouter = createTRPCRouter({

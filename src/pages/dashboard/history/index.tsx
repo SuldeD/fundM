@@ -1,12 +1,13 @@
 import { Row, Col, Select, DatePicker, Button, Table } from "antd";
-import styles from "app/styles/history.module.css";
-import stylesList from "app/styles/dashboard.module.css";
+import styles from "../../../styles/history.module.css";
+import stylesList from "../../../styles/dashboard.module.css";
 import { SearchOutlined } from "@ant-design/icons";
-import { HeaderDashboard } from "app/components/header";
+import { HeaderDashboard } from "../../../components/dashboard-header";
 import { useMemo, useState } from "react";
-import { numberToCurrency } from "app/utils/number.helpers";
-import { api } from "app/utils/api";
+import { numberToCurrency } from "../../../utils/number.helpers";
+import { api } from "../../../utils/api";
 import { useSession } from "next-auth/react";
+import React from "react";
 const { RangePicker } = DatePicker;
 
 const History = () => {

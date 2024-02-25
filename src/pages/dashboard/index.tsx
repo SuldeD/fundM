@@ -1,12 +1,13 @@
 import { Col, Row, Button, Image, Table } from "antd";
-import styles from "app/styles/dashboard.module.css";
+import styles from "../../styles/dashboard.module.css";
 import { RightOutlined } from "@ant-design/icons";
-import { HeaderDashboard } from "app/components/header";
-import { numberToCurrency } from "app/utils/number.helpers";
+import { HeaderDashboard } from "../../components/dashboard-header";
+import { numberToCurrency } from "../../utils/number.helpers";
 import { useRouter } from "next/router";
-import { api } from "app/utils/api";
+import { api } from "../../utils/api";
 import { useMemo } from "react";
 import { useSession } from "next-auth/react";
+import React from "react";
 
 export const Dashboard = () => {
   const { data, status } = useSession();

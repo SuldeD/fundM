@@ -1,19 +1,17 @@
 import { Col, Modal, Row, message, Button, Image } from "antd";
-import { HeaderDashboard } from "app/components/header";
+import { HeaderDashboard } from "../../../components/dashboard-header";
 import React, { useMemo, useRef, useState } from "react";
-import styles from "app/styles/profile.module.css";
-import stylesL from "app/styles/dloan.module.css";
+import styles from "../../../styles/profile.module.css";
+import stylesL from "../../../styles/dloan.module.css";
 import { Upload } from "antd";
-import type { UploadFile, UploadProps } from "antd/es/upload/interface";
 import { useRouter } from "next/router";
-import PopupModal from "app/components/modal";
-import { Loaderr } from "app/components/Loader";
-import { UploadChangeParam } from "antd/lib/upload/interface";
+import PopupModal from "../../../components/modal";
+import { Loaderr } from "../../../components/Loader";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { api } from "app/utils/api";
+import { api } from "../../../utils/api";
 import { signOut, useSession } from "next-auth/react";
 import Select from "react-select";
-import { useAppContext } from "app/context/appContext";
+import { useAppContext } from "../../../context/appContext";
 
 const beforeUpload = (file: any) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -255,7 +253,7 @@ export default function Bank() {
           footer={null}
         >
           <Row justify="center">
-            <div className="text-center font-raleway text-[18px] font-bold">
+            <div className="font-raleway text-center text-[18px] font-bold">
               {imageUrl.length > 0
                 ? "Данс баталгаажуулах код"
                 : "Баталгаажуулах код оруулах"}
@@ -286,7 +284,7 @@ export default function Bank() {
                   )}
                 </Col>
                 <Col span={20}>
-                  <div className="font- text-center font-raleway text-[14px] font-bold text-[#ff0000]">
+                  <div className="font- font-raleway text-center text-[14px] font-bold text-[#ff0000]">
                     Бид таны бүртгүүлсэн банкны данс руу баталгаажуулах код
                     бүхий гүйлгээ хийсэн. Тухай гүйлгээний утга дээр ирсэн 4
                     оронтой кодыг оруулна уу!!!
@@ -328,7 +326,7 @@ export default function Bank() {
           footer={null}
         >
           <Row justify="center">
-            <div className="mb-4 text-center font-raleway text-[18px] font-bold">
+            <div className="font-raleway mb-4 text-center text-[18px] font-bold">
               {accountInfo?.account?.user_type === "user"
                 ? "Гарын үсгийн зураг оруулах"
                 : "Гарын үсэг, тамга оруулах"}

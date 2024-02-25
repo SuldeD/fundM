@@ -1,43 +1,53 @@
-import { type Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 
-export default {
+const config = {
+  darkMode: ["class"],
   content: [
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-
-    // Or if using `src` directory:
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/flowbite-react/**/*.js",
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
+  prefix: "",
   theme: {
-    extend: {
-      animation: {
-        fade: "fadeIn 1000s ease-out",
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1280px",
       },
+    },
+    extend: {
       fontFamily: {
-        inter: ["Inter", "sans-serif"],
         lato: ["Lato", "sans-serif"],
-        raleway: ["Raleway", "sans-serif"],
-        beau: ["PF BeauSans Pro"],
-        tahoma: ["Tahoma"],
       },
       colors: {
-        primary: "#0300B4",
-        detail: "rgba(26, 33, 85, 0.5)",
-        bank: "rgba(40, 82, 164, 0.05)",
-        sub: "rgba(0, 0, 0, 0.5)",
+        primary: "hsl(var(--primary))",
+        hoverPrimary: "hsl(var(--hover-primary))",
+
+        muted: "hsl(var(--muted))",
+        mutedForeground: "hsl(var(--muted-foreground))",
+
+        warning: "hsl(var(--warning))",
+        "warning-foreground": "hsl(var(--warning-foreground))",
       },
-      boxShadow: {
-        custom: "0px 1px 20px 1px rgba(0, 0, 0, 0.15)",
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
       },
-      screens: {
-        sm: "480px",
-        md: "768px",
-        lg: "976px",
-        xl: "1440px",
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
+export default config;
